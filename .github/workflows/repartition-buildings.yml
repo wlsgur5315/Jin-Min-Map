@@ -1,0 +1,45 @@
+name: Repartition Jinju buildings
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tools/repartition_buildings.py"
+      - "tools/building_additions.geojson"
+      - ".github/workflows/repartition-buildings.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repartition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install geometry library
+        run: python -m pip install --disable-pip-version-check shapely==2.1.2
+
+      - name: Repartition buildings by actual geometry
+        run: python tools/repartition_buildings.py
+
+      - name: Commit corrected spatial data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings data/manifest.json data/building_repartition_report.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Repartition Jinju buildings by actual geometry [skip actions]"
+            git push
+          fi
