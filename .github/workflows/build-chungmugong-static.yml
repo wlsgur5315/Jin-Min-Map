@@ -1,0 +1,31 @@
+name: Build Chungmugong static buildings
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/build_chungmugong_static.py'
+      - '.github/workflows/build-chungmugong-static.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests shapely
+      - run: python tools/build_chungmugong_static.py
+      - name: Commit generated static dataset
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/38030760.geojson.gz data/manifest.json data/chungmugong_static_build_report.json
+          if git diff --cached --quiet; then
+            echo "No generated changes"
+          else
+            git commit -m "Build static completed Chungmugong buildings [skip ci]"
+            git push
+          fi
