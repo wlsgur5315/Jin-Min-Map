@@ -1,0 +1,11 @@
+{
+  "gis_input": 199,
+  "gis_valid": 199,
+  "osm_raw": 1038,
+  "osm_added": 592,
+  "osm_duplicate": 107,
+  "register_matched": 0,
+  "estimated": 456,
+  "final_count": 791,
+  "output_bytes": 98971
+}

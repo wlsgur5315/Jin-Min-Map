@@ -166,9 +166,9 @@
     },
     "38030760": {
       "name": "충무공동",
-      "count": 199,
+      "count": 791,
       "file": "data/buildings/38030760.geojson.gz",
-      "bytes": 39375
+      "bytes": 98971
     },
     "38030770": {
       "name": "상대동",
@@ -365,7 +365,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 138886,
+  "building_count": 139478,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
@@ -374,6 +374,7 @@
     "geometry": "원본 도형 단순화 없음; EPSG:5186→EPSG:4326",
     "building_assignment": "2026-09-15 재처리: 건물 실제 도형과 진주시 30개 행정동 경계를 공간교차. 복수 경계 교차 시 최대 중첩면적, 미세 경계 공백은 최단거리로 보정.",
     "building_repartition_moved": 16351,
-    "building_repartition_added": 4
+    "building_repartition_added": 4,
+    "chungmugong_static_build": "2026-09-23: GIS 우선 + OSM 누락 정적 보완 + 건축물대장 높이/층수 사전결합. 런타임 폴리곤 절삭 사용 안 함."
   }
 }
