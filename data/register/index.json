@@ -1,25 +1,34 @@
 {
-  "version": "2026.09.23-01",
-  "source": "국토교통부 건축물대장 표제부 · 사용자 추출 진주시 48170",
-  "source_file": "진주시_표제부_정상.txt",
-  "source_lines": 68895,
+  "version": "v2026.09.23-01",
+  "source": "국토교통부 건축물대장 표제부 · 진주시(48170) 사용자 추출본",
+  "usable_records": 68276,
   "fields": [
     "pnu",
-    "loc_key",
+    "short_key",
+    "full_key",
     "height_m",
     "floors_above",
     "floors_below",
     "building_name",
     "dong_name",
-    "use_name"
+    "use_name",
+    "building_area_m2",
+    "total_area_m2"
   ],
-  "parts": [
-    "data/register/register-part-00.json",
-    "data/register/register-part-01.json",
-    "data/register/register-part-02.json",
-    "data/register/register-part-03.json",
-    "data/register/register-part-04.json",
-    "data/register/register-part-05.json",
-    "data/register/register-part-06.json"
+  "shards": [
+    "data/register/register-01.json",
+    "data/register/register-02.json",
+    "data/register/register-03.json",
+    "data/register/register-04.json",
+    "data/register/register-05.json",
+    "data/register/register-06.json",
+    "data/register/register-07.json",
+    "data/register/register-08.json",
+    "data/register/register-09.json",
+    "data/register/register-10.json",
+    "data/register/register-11.json",
+    "data/register/register-12.json",
+    "data/register/register-13.json",
+    "data/register/register-14.json"
   ]
 }
