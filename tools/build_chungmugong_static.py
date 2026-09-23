@@ -134,11 +134,26 @@ def district_geom():
 def fetch_osm(dg):
     minx,miny,maxx,maxy=dg.bounds
     q=f'[out:json][timeout:180];(way["building"]({miny},{minx},{maxy},{maxx});relation["building"]({miny},{minx},{maxy},{maxx}););out geom tags;'
+    endpoints=(
+        "https://overpass.private.coffee/api/interpreter",
+        "https://overpass.nchc.org.tw/api/interpreter",
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",
+    )
+    headers={"User-Agent":"Jin-Min-Map static dataset builder/1.0"}
     last=None
-    for ep in ("https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"):
-        try:
-            r=requests.post(ep,data={"data":q},timeout=240);r.raise_for_status();return r.json()
-        except Exception as e:last=e;time.sleep(3)
+    for attempt in range(4):
+        for ep in endpoints:
+            try:
+                r=requests.get(ep,params={"data":q},headers=headers,timeout=240)
+                if r.status_code in (429,502,503,504):
+                    last=RuntimeError(f"{ep}: HTTP {r.status_code}")
+                    time.sleep(4+attempt*5);continue
+                r.raise_for_status()
+                data=r.json()
+                if data.get("elements") is not None:return data
+            except Exception as e:
+                last=e;time.sleep(4+attempt*5)
     raise last
 def osm_geom(el):
     if el.get("type")=="way":
