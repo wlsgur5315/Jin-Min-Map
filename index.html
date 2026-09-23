@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.09.23-05</title>
+<title>Jinju3D Local · v2026.09.23-06</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -15,7 +15,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>진주시 2D → 3D 공간 탐색 <span class="version">v2026.09.23-05</span></h1><p>GIS 우선 · OSM 겹침 절삭 · 검증된 높이만 3D</p><button id="latestBtn" class="latest-btn">최신 버전 바로 열기</button><div class="badge"><span class="dot"></span><span id="modeBadge">CLEAN MERGE MODE</span></div></div>
+<div class="top"><h1>진주시 2D → 3D 공간 탐색 <span class="version">v2026.09.23-06</span></h1><p>GIS 우선 · OSM 겹침 절삭 · 검증된 높이만 3D</p><button id="latestBtn" class="latest-btn">최신 버전 바로 열기</button><div class="badge"><span class="dot"></span><span id="modeBadge">CLEAN MERGE MODE</span></div></div>
 <div class="panel">
 <div class="sec"><div class="ttl">① 읍·면·동 선택</div><select id="district"><option>행정구역 불러오는 중…</option></select><div class="row"><button id="go" class="primary">선택 구역 보기</button><button id="home">진주시 전체</button></div><div class="hint" style="margin-top:8px">GIS·필지 밀도를 기준으로 지역별 OSM 수집 정밀도를 자동 조절합니다.</div></div>
 <div class="sec"><div class="ttl">② 자동 GIS+OSM 완성</div><div class="modebox"><b>겹침 제거형 병합</b><div id="mergeState" class="modeState">행정구역 선택 후 자동 계산</div><div class="privacy">OSM이 GIS와 일부 겹치면 겹치는 면적을 잘라낸 뒤 실제 누락 부분만 남깁니다. OSM 높이·층수 정보가 없으면 임의 높이를 만들지 않고 2D로만 표시합니다.</div></div><div class="row"><button id="smartToggle" class="smartBtn">OSM 보완 숨기기</button><button id="mergeRefresh" class="refreshBtn">보완 다시 계산</button></div></div>
@@ -27,16 +27,16 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.09.23-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.09.23-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
-const districtOsmCache=new Map(),REGISTER_BY_PNU=new Map(),REGISTER_BY_SHORT=new Map(),REGISTER_BY_FULL=new Map(),$=id=>document.getElementById(id),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const districtOsmCache=new Map(),REGISTER_BY_PNU=new Map(),REGISTER_BY_SHORT=new Map(),REGISTER_BY_FULL=new Map(),REGISTER_BY_DISTRICT=new Map(),$=id=>document.getElementById(id),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const map=new maplibregl.Map({container:'map',center:[128.1076,35.1802],zoom:10.5,pitch:0,bearing:0,minZoom:9.7,maxPitch:82,antialias:true,style:STYLE_URL});
 const scanMap=new maplibregl.Map({container:'scanMap',center:[128.1076,35.1802],zoom:15,pitch:0,bearing:0,interactive:false,attributionControl:false,fadeDuration:0,style:STYLE_URL});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
 function openLatestVersion(){const u=new URL(location.href);u.searchParams.set('v',APP_VERSION.replace(/^v/,'').replace(/\./g,'').replace(/-/g,''));u.searchParams.set('refresh',Date.now().toString());location.href=u.toString()}
 function message(t){$('msg').textContent=t}function loading(v){$('bar').classList.toggle('on',v)}
 async function loadJson(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error(url);return r.json()}
-async function loadGzipJson(url){const r=await fetch(url+'?v=20260923-5',{cache:'no-store'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
+async function loadGzipJson(url){const r=await fetch(url+'?v=20260923-6',{cache:'no-store'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
 function vectorSourceName(m){const s=m.getStyle().sources||{};if(s.openmaptiles?.type==='vector')return'openmaptiles';for(const[k,v]of Object.entries(s))if(v?.type==='vector')return k;return null}
 function hideBaseBuildings(m){for(const l of m.getStyle().layers||[]){const id=String(l.id||'').toLowerCase(),sl=String(l['source-layer']||'').toLowerCase();if(sl==='building'||sl==='building_part'||id.includes('building'))try{m.setLayoutProperty(l.id,'visibility','none')}catch(e){}}}
 function initTerrain(){try{map.addSource('terrain',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});map.setTerrain({source:'terrain',exaggeration:1.12})}catch(e){}}
@@ -50,12 +50,12 @@ async function loadRegister(){
   if(REGISTER_READY)return;
   if(REGISTER_LOADING)return REGISTER_LOADING;
   REGISTER_LOADING=(async()=>{
-    REGISTER_INDEX=await loadJson('data/register/index.json?v=20260923-5');
+    REGISTER_INDEX=await loadJson('data/register/index.json?v=20260923-6');
     REGISTER_BY_PNU.clear();REGISTER_BY_SHORT.clear();REGISTER_BY_FULL.clear();REGISTER_BY_DISTRICT.clear();
     const shards=REGISTER_INDEX.shards||[];
     for(let i=0;i<shards.length;i++){
       message(`건축물대장 실제 높이 자료 · ${i+1}/${shards.length}`);
-      const part=await loadJson(shards[i]+'?v=20260923-5');
+      const part=await loadJson(shards[i]+'?v=20260923-6');
       for(const r of part.records||[]){
         regAdd(REGISTER_BY_PNU,String(r[0]||''),r);
         regAdd(REGISTER_BY_SHORT,String(r[1]||''),r);
@@ -205,7 +205,7 @@ async function selectDistrict(id){
     const bb=turf.bbox(f);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:1200});loading(false);
     const pf=profileFor(selectedId),ck=selectedId+'@'+pf.level+'@v7';$('mergeState').textContent=districtOsmCache.has(ck)?'저장된 보완 적용 중':`${pf.level} 자동 보완 준비 중`;
     if(districtOsmCache.has(ck))applyCachedSupplement(ck);else setTimeout(()=>buildWholeDistrictSupplement(false),300);
-  }catch(e){console.error(e);loading(false);message('데이터 읽기 오류 · '+APP_VERSION)}
+  }catch(e){console.error(e);loading(false);message('데이터 읽기 오류 · '+(e?.message||e)+' · '+APP_VERSION)}
 }
 function cinematic(c,l){map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({center:c,zoom:18,pitch:67,bearing:30,duration:1600});message(l+' · 3D 공간 보기')}
 function fmt(n){return Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:1}):'-'}
@@ -220,5 +220,5 @@ $('go').onclick=()=>{if($('district').value)selectDistrict($('district').value)}
 $('home').onclick=()=>{scanToken++;selectedDistrict=null;selectedId='';detailReady=false;currentBuildings=null;$('district').value='';$('sDistrict').textContent='진주시 전체';$('sBld').textContent='미로드';for(const k of['sOsmRaw','sDup','sOsm','sOsm3d','sFacility'])$(k).textContent='-';map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[]});$('mergeState').textContent='행정구역 선택 후 자동 계산';const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:1200})};
 $('view2d').onclick=()=>{map.setLayoutProperty('buildings-3d','visibility','none');map.setLayoutProperty('smart-osm-3d','visibility','none');map.setPaintProperty('buildings-2d','fill-opacity',.72);map.setPaintProperty('smart-osm-2d','fill-opacity',.46);map.setPaintProperty('smart-facility-2d','fill-opacity',.26);if(!selectedDistrict){const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:900})}else map.easeTo({pitch:0,bearing:0,duration:900})};
 $('view3d').onclick=()=>{map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({pitch:62,bearing:28,duration:1200})};
-Promise.all([new Promise(r=>map.once('load',r)),new Promise(r=>scanMap.once('load',r))]).then(async()=>{loading(true);try{hideBaseBuildings(map);hideBaseBuildings(scanMap);scanSourceName=vectorSourceName(scanMap);initTerrain();[DISTRICTS,CITY,MANIFEST]=await Promise.all([loadJson('data/jinju_districts.geojson?v=20260923-5'),loadJson('data/jinju_boundary.geojson?v=20260923-5'),loadJson('data/manifest.json?v=20260923-5')]);loadRegister();initAdminLayers();initSelect();addSupplementLayers();message(`준비 완료 · 겹침 제거형 GIS+OSM 병합 · GIS ${MANIFEST.building_count.toLocaleString()}개 · ${APP_VERSION}`)}catch(e){console.error(e);message('초기 데이터 오류 · '+APP_VERSION)}finally{loading(false)}});
+Promise.all([new Promise(r=>map.once('load',r)),new Promise(r=>scanMap.once('load',r))]).then(async()=>{loading(true);try{hideBaseBuildings(map);hideBaseBuildings(scanMap);scanSourceName=vectorSourceName(scanMap);initTerrain();[DISTRICTS,CITY,MANIFEST]=await Promise.all([loadJson('data/jinju_districts.geojson?v=20260923-6'),loadJson('data/jinju_boundary.geojson?v=20260923-6'),loadJson('data/manifest.json?v=20260923-6')]);loadRegister();initAdminLayers();initSelect();addSupplementLayers();message(`준비 완료 · 겹침 제거형 GIS+OSM 병합 · GIS ${MANIFEST.building_count.toLocaleString()}개 · ${APP_VERSION}`)}catch(e){console.error(e);message('초기 데이터 오류 · '+APP_VERSION)}finally{loading(false)}});
 </script></body></html>
