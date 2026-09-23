@@ -69,14 +69,14 @@ async function loadRegister(){
 }
 function propFirst(p,names){for(const n of names){const v=p?.[n];if(v!==undefined&&v!==null&&String(v).trim()!=='')return String(v).trim()}return''}
 function pnuFromProps(p){
-  const raw=propFirst(p,['pnu','PNU','pnu_code','PNU_CODE','parcel_pnu','ld_pnu','plat_pnu']);
+  const raw=propFirst(p,['pnu','PNU','pnu_cd','PNU_CD','pnu_code','PNU_CODE','parcel_pnu','PARCEL_PNU','ld_pnu','LD_PNU','plat_pnu','PLAT_PNU','lot_pnu','LOT_PNU']);
   const d=raw.replace(/\D/g,'');return d.length===19?d:'';
 }
 function regCandidatesByProps(p){
   const out=[];
   const pnu=pnuFromProps(p);if(pnu&&REGISTER_BY_PNU.has(pnu))out.push(...REGISTER_BY_PNU.get(pnu));
-  const legal=propFirst(p,['legal_name','bjd_name','emd_nm','emd_name','li_name']);
-  const jib=propFirst(p,['jibun','jibun_addr','lot_no','plat_plc']);
+  const legal=propFirst(p,['legal_name','bjd_name','BJD_NAM','bjd_nm','BJD_NM','emd_nm','EMD_NM','emd_name','li_name','법정동명']);
+  const jib=propFirst(p,['jibun','JIBUN','jibun_addr','lot_no','LOT_NO','plat_plc','PLAT_PLC','지번']);
   if(legal&&jib){const k=regNorm(legal+jib);if(REGISTER_BY_SHORT.has(k))out.push(...REGISTER_BY_SHORT.get(k))}
   if(selectedDistrict&&legal&&jib){const k=regNorm(selectedDistrict.properties.district_name+legal+jib);if(REGISTER_BY_FULL.has(k))out.push(...REGISTER_BY_FULL.get(k))}
   return [...new Set(out)];
@@ -103,7 +103,9 @@ function applyRegisterToGis(fc){
   let matched=0,height=0,floors=0;
   for(const f of fc.features){
     const p=f.properties||{};let area=0;try{area=turf.area(f)}catch(e){}
-    const rec=chooseRegister(regCandidatesByProps(p),p,area);if(!rec)continue;
+    let rec=chooseRegister(regCandidatesByProps(p),p,area);
+    if(!rec&&currentParcels&&currentParcelGrid)rec=parcelRegisterForFeature(f);
+    if(!rec)continue;
     matched++;const rh=Number(rec[3])||0,rf=Number(rec[4])||0;
     if(rh>0){p.height_m=rh;height++}
     if(rf>0){p.floors_above=rf;floors++}
@@ -126,7 +128,7 @@ function parcelRegisterForFeature(feature){
   let best=null,bestA=0;
   for(const i of ids){
     const q=currentParcels.features[i],cs=regCandidatesByProps(q.properties||{});if(!cs.length)continue;
-    const a=intersectionArea(feature,q);if(a<=bestA)continue;
+    const a=intersectionArea(feature,q);let fa=1;try{fa=Math.max(turf.area(feature),1)}catch(e){}if(a/fa<.20||a<=bestA)continue;
     const rr=chooseRegister(cs,feature.properties||{},area);if(rr){best=rr;bestA=a}
   }
   return best;
@@ -174,7 +176,7 @@ async function mergeWholeDistrict(collected,gis,token){
       let remain=0;try{remain=turf.area(cut)/st.oa}catch(e){}
       if(remain<.42){removed++;continue}finalGeom=cleanPolygonFeature(cut,st.oa);if(!finalGeom){removed++;continue}removed++;
     }
-    finalGeom=cleanPolygonFeature(finalGeom,st.oa);if(!finalGeom){removed++;continue}let info=osm3dInfo(finalGeom.properties||{}),rr=parcelRegisterForFeature(o)||districtAreaRegisterFallback(o);
+    finalGeom=cleanPolygonFeature(finalGeom,st.oa);if(!finalGeom){removed++;continue}let info=osm3dInfo(finalGeom.properties||{}),rr=parcelRegisterForFeature(o);
     if(rr){
       const rh=Number(rr[3])||0,rf=Number(rr[4])||0;
       if(rh>0){info={height:rh,has:true,source:'건축물대장 실높이',floors:rf};regOsm++}
@@ -188,7 +190,7 @@ async function mergeWholeDistrict(collected,gis,token){
   for(const f of collected.facilities){const c=candidatesFor(f,grid),st=coverageStats(f,c,gis);if(st.coverage<.70)facilityKept.push(f)}
   return{raw:collected.buildings.length,dup:removed,kept,facilities:facilityKept,threeD,regOsm}
 }
-async function buildWholeDistrictSupplement(force=false){if(!smartOsm||!detailReady||!currentBuildings||!selectedDistrict||precisionMode)return;const id=selectedId,pf=profileFor(id),cacheKey=id+'@'+pf.level+'@v7';if(!force&&districtOsmCache.has(cacheKey)){applyCachedSupplement(cacheKey);return}const token=++scanToken,btn=$('mergeRefresh');btn.disabled=true;loading(true);$('sOsmRaw').textContent='수집 중';$('sDup').textContent='-';$('sOsm').textContent='-';$('sOsm3d').textContent='-';$('sFacility').textContent='-';try{$('mergeState').textContent=`${pf.level} 자동 보완 시작 · GIS/필지 ${(pf.ratio*100).toFixed(1)}%`;const collected=await collectWholeDistrictOsm(selectedDistrict,token,pf);if(token!==scanToken)return;$('sOsmRaw').textContent=collected.buildings.length.toLocaleString()+'개';const result=await mergeWholeDistrict(collected,currentBuildings.features,token);if(token!==scanToken)return;result.profile=pf;districtOsmCache.set(cacheKey,result);applyCachedSupplement(cacheKey);message(`${selectedDistrict.properties.district_name} 겹침 제거 보완 완료 · ${APP_VERSION}`)}catch(e){if(String(e.message)!=='scan cancelled'){$('mergeState').textContent='OSM 자동 보완 실패 · 다시 계산해 주세요';console.warn(e)}}finally{if(token===scanToken){btn.disabled=false;loading(false)}}}
+async function buildWholeDistrictSupplement(force=false){if(!smartOsm||!detailReady||!currentBuildings||!selectedDistrict||precisionMode)return;const id=selectedId,pf=profileFor(id),cacheKey=id+'@'+pf.level+'@v8';if(!force&&districtOsmCache.has(cacheKey)){applyCachedSupplement(cacheKey);return}const token=++scanToken,btn=$('mergeRefresh');btn.disabled=true;loading(true);$('sOsmRaw').textContent='수집 중';$('sDup').textContent='-';$('sOsm').textContent='-';$('sOsm3d').textContent='-';$('sFacility').textContent='-';try{$('mergeState').textContent=`${pf.level} 자동 보완 시작 · GIS/필지 ${(pf.ratio*100).toFixed(1)}%`;const collected=await collectWholeDistrictOsm(selectedDistrict,token,pf);if(token!==scanToken)return;$('sOsmRaw').textContent=collected.buildings.length.toLocaleString()+'개';const result=await mergeWholeDistrict(collected,currentBuildings.features,token);if(token!==scanToken)return;result.profile=pf;districtOsmCache.set(cacheKey,result);applyCachedSupplement(cacheKey);message(`${selectedDistrict.properties.district_name} 겹침 제거 보완 완료 · ${APP_VERSION}`)}catch(e){if(String(e.message)!=='scan cancelled'){$('mergeState').textContent='OSM 자동 보완 실패 · 다시 계산해 주세요';console.warn(e)}}finally{if(token===scanToken){btn.disabled=false;loading(false)}}}
 function applyCachedSupplement(key){const r=districtOsmCache.get(key);if(!r)return;map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[...r.kept,...r.facilities]});$('sOsmRaw').textContent=r.raw.toLocaleString()+'개';$('sDup').textContent=r.dup.toLocaleString()+'개';$('sOsm').textContent=r.kept.length.toLocaleString()+'개';$('sOsm3d').textContent=r.threeD.toLocaleString()+'개';$('sFacility').textContent=r.facilities.length.toLocaleString()+'개';if($('sReg'))$('sReg').textContent=(registerMatchedGis+(r.regOsm||0)).toLocaleString()+'개';$('mergeState').textContent=`완료 · ${r.profile.level} · 후보 ${r.raw.toLocaleString()} → 겹침/중복 ${r.dup.toLocaleString()} 처리 → ${r.kept.length.toLocaleString()} 보완`}
 function heightSummary(s){const t=s.high+s.mid+s.low;return t?`높음 ${Math.round(s.high/t*100)}% · 보통 ${Math.round(s.mid/t*100)}%`:'-'}
 async function selectDistrict(id){
@@ -198,12 +200,12 @@ async function selectDistrict(id){
   if($('sReg'))$('sReg').textContent='불러오는 중';map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[]});loading(true);
   try{
     const bm=MANIFEST.buildings[selectedId],pm=MANIFEST.parcels[selectedId];
-    const[b,p]=await Promise.all([loadGzipJson(bm.file),loadGzipJson(pm.file),loadRegister()]);
-    currentParcels=p;currentParcelGrid=makeGrid(p.features);applyRegisterToGis(b);normalizeBuildings(b);currentBuildings=b;addDetails(b,p);
+    const[b,p]=await Promise.all([loadGzipJson(bm.file),loadGzipJson(pm.file)]);
+    currentParcels=p;currentParcelGrid=makeGrid(p.features);try{await loadRegister()}catch(e){console.warn('건축물대장 읽기 실패, GIS/OSM만 계속 사용',e)}applyRegisterToGis(b);normalizeBuildings(b);currentBuildings=b;addDetails(b,p);
     $('sBld').textContent=b.features.length.toLocaleString()+'개';$('sPar').textContent=p.features.length.toLocaleString()+'개';$('sHeight').textContent=heightSummary(b._heightStats);
     if($('sReg'))$('sReg').textContent=registerMatchedGis.toLocaleString()+'개';detailReady=true;
     const bb=turf.bbox(f);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:1200});loading(false);
-    const pf=profileFor(selectedId),ck=selectedId+'@'+pf.level+'@v7';$('mergeState').textContent=districtOsmCache.has(ck)?'저장된 보완 적용 중':`${pf.level} 자동 보완 준비 중`;
+    const pf=profileFor(selectedId),ck=selectedId+'@'+pf.level+'@v8';$('mergeState').textContent=districtOsmCache.has(ck)?'저장된 보완 적용 중':`${pf.level} 자동 보완 준비 중`;
     if(districtOsmCache.has(ck))applyCachedSupplement(ck);else setTimeout(()=>buildWholeDistrictSupplement(false),300);
   }catch(e){console.error(e);loading(false);message('데이터 읽기 오류 · '+(e?.message||e)+' · '+APP_VERSION)}
 }
