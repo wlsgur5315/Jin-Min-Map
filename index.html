@@ -39,8 +39,95 @@ function initTerrain(){try{map.addSource('terrain',{type:'raster-dem',tiles:['ht
 function initSelect(){const s=$('district');s.innerHTML='<option value="">읍·면·동 선택</option>';for(const f of [...DISTRICTS.features].sort((a,b)=>a.properties.district_name.localeCompare(b.properties.district_name,'ko'))){const o=document.createElement('option');o.value=f.properties.district_id;o.textContent=f.properties.district_name;s.appendChild(o)}}
 function maskOutside(){const g=CITY.features[0].geometry,holes=[];if(g.type==='Polygon')holes.push(g.coordinates[0]);else if(g.type==='MultiPolygon')for(const p of g.coordinates)holes.push(p[0]);return{type:'FeatureCollection',features:[{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[[[-180,-85],[180,-85],[180,85],[-180,85],[-180,-85]],...holes]}}]}}
 function initAdminLayers(){const b=turf.bbox(CITY),pad=.045;map.setMaxBounds([[b[0]-pad,b[1]-pad],[b[2]+pad,b[3]+pad]]);map.addSource('jinju-mask',{type:'geojson',data:maskOutside()});map.addLayer({id:'jinju-mask',type:'fill',source:'jinju-mask',paint:{'fill-color':'#020617','fill-opacity':.985}});map.addSource('districts',{type:'geojson',data:DISTRICTS});map.addLayer({id:'district-fill',type:'fill',source:'districts',paint:{'fill-color':'#60a5fa','fill-opacity':.06}});map.addLayer({id:'district-line',type:'line',source:'districts',paint:{'line-color':'#94c9ff','line-width':1.2}});map.addLayer({id:'district-label',type:'symbol',source:'districts',layout:{'text-field':['get','district_name'],'text-size':11},paint:{'text-color':'#e8f3ff','text-halo-color':'#08111f','text-halo-width':1.4}});map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:390},duration:1000})}
-function regNorm(s){return String(s||'').replace(/\\s+/g,'').replace(/번지$/,'').trim()}
 
+function regNorm(v){return String(v||'').replace(/번지/g,'').replace(/\s+/g,'').trim()}
+function regAdd(map,key,rec){if(!key)return;const a=map.get(key);if(a)a.push(rec);else map.set(key,[rec])}
+async function loadRegister(){
+  if(REGISTER_READY)return;
+  if(REGISTER_LOADING)return REGISTER_LOADING;
+  REGISTER_LOADING=(async()=>{
+    REGISTER_INDEX=await loadJson('data/register/index.json?v=20260923-3');
+    REGISTER_BY_PNU.clear();REGISTER_BY_SHORT.clear();REGISTER_BY_FULL.clear();
+    const shards=REGISTER_INDEX.shards||[];
+    for(let i=0;i<shards.length;i++){
+      message(`건축물대장 실제 높이 자료 · ${i+1}/${shards.length}`);
+      const part=await loadJson(shards[i]+'?v=20260923-3');
+      for(const r of part.records||[]){
+        regAdd(REGISTER_BY_PNU,String(r[0]||''),r);
+        regAdd(REGISTER_BY_SHORT,String(r[1]||''),r);
+        regAdd(REGISTER_BY_FULL,String(r[2]||''),r);
+      }
+      await sleep(0);
+    }
+    REGISTER_READY=true;
+  })();
+  try{await REGISTER_LOADING}finally{REGISTER_LOADING=null}
+}
+function propFirst(p,names){for(const n of names){const v=p?.[n];if(v!==undefined&&v!==null&&String(v).trim()!=='')return String(v).trim()}return''}
+function pnuFromProps(p){
+  const raw=propFirst(p,['pnu','PNU','pnu_code','PNU_CODE','parcel_pnu','ld_pnu','plat_pnu']);
+  const d=raw.replace(/\D/g,'');return d.length===19?d:'';
+}
+function regCandidatesByProps(p){
+  const out=[];
+  const pnu=pnuFromProps(p);if(pnu&&REGISTER_BY_PNU.has(pnu))out.push(...REGISTER_BY_PNU.get(pnu));
+  const legal=propFirst(p,['legal_name','bjd_name','emd_nm','emd_name','li_name']);
+  const jib=propFirst(p,['jibun','jibun_addr','lot_no','plat_plc']);
+  if(legal&&jib){const k=regNorm(legal+jib);if(REGISTER_BY_SHORT.has(k))out.push(...REGISTER_BY_SHORT.get(k))}
+  if(selectedDistrict&&legal&&jib){const k=regNorm(selectedDistrict.properties.district_name+legal+jib);if(REGISTER_BY_FULL.has(k))out.push(...REGISTER_BY_FULL.get(k))}
+  return [...new Set(out)];
+}
+function chooseRegister(cands,p={},featureArea=0){
+  if(!cands?.length)return null;if(cands.length===1)return cands[0];
+  const txt=regNorm((p.building_name||'')+' '+(p.dong_name||'')+' '+(p.name||'')+' '+(p.ref||''));
+  const use=regNorm(p.use_name||p.main_use_name||'');
+  const lv=Number(p.floors_above||p.levels||p['building:levels'])||0;
+  let best=null,bestScore=-1e9;
+  for(const r of cands){
+    let sc=(Number(r[3])>0?1.5:0)+(Number(r[4])>0?.5:0);
+    const rn=regNorm(r[6]),rd=regNorm(r[7]),ru=regNorm(r[8]);
+    if(txt&&rn&&(txt.includes(rn)||rn.includes(txt)))sc+=5;
+    if(txt&&rd&&(txt.includes(rd)||rd.includes(txt)))sc+=5;
+    if(use&&ru&&(use.includes(ru)||ru.includes(use)))sc+=1;
+    if(lv>0&&Number(r[4])>0)sc+=Math.max(0,2-Math.abs(Number(r[4])-lv)*.5);
+    const ra=Number(r[9])||0;if(featureArea>0&&ra>0)sc+=4*Math.min(featureArea,ra)/Math.max(featureArea,ra);
+    if(sc>bestScore){bestScore=sc;best=r}
+  }
+  return best;
+}
+function applyRegisterToGis(fc){
+  let matched=0,height=0,floors=0;
+  for(const f of fc.features){
+    const p=f.properties||{};let area=0;try{area=turf.area(f)}catch(e){}
+    const rec=chooseRegister(regCandidatesByProps(p),p,area);if(!rec)continue;
+    matched++;const rh=Number(rec[3])||0,rf=Number(rec[4])||0;
+    if(rh>0){p.height_m=rh;height++}
+    if(rf>0){p.floors_above=rf;floors++}
+    if(!p.building_name&&rec[6])p.building_name=rec[6];
+    if(!p.use_name&&rec[8])p.use_name=rec[8];
+    p.register_matched=true;p.register_dong=rec[7]||'';
+  }
+  fc._registerStats={matched,height,floors};registerMatchedGis=matched;return fc;
+}
+function parcelRegisterForFeature(feature){
+  if(!REGISTER_READY||!currentParcels?.features?.length||!currentParcelGrid)return null;
+  let pt;try{pt=turf.pointOnFeature(feature)}catch(e){try{pt=turf.centroid(feature)}catch(e2){return null}}
+  const ids=candidatesFor(feature,currentParcelGrid),hits=[];
+  for(const i of ids){
+    const q=currentParcels.features[i];let inside=false;try{inside=turf.booleanPointInPolygon(pt,q)}catch(e){}
+    if(!inside)continue;const cs=regCandidatesByProps(q.properties||{});if(cs.length)hits.push(...cs);
+  }
+  let area=0;try{area=turf.area(feature)}catch(e){}
+  let rec=chooseRegister([...new Set(hits)],feature.properties||{},area);if(rec)return rec;
+  let best=null,bestA=0;
+  for(const i of ids){
+    const q=currentParcels.features[i],cs=regCandidatesByProps(q.properties||{});if(!cs.length)continue;
+    const a=intersectionArea(feature,q);if(a<=bestA)continue;
+    const rr=chooseRegister(cs,feature.properties||{},area);if(rr){best=rr;bestA=a}
+  }
+  return best;
+}
+function floorHeight(u){u=String(u||'');if(/공동주택|단독주택|다가구|다세대|연립/.test(u))return 2.9;if(/업무|근린생활|판매|의료|교육|학교/.test(u))return 3.6;if(/공장|창고/.test(u))return 4.8;return 3.2}
 function normalizeBuildings(fc){let high=0,mid=0,low=0;for(const f of fc.features){const p=f.properties||{},h=Number(p.height_m),lv=Number(p.floors_above),fh=floorHeight(p.use_name);if(h>0){p.render_height=h;p.height_confidence='높음';p.height_source=p.register_matched?'건축물대장 실제 높이':'GIS 기재 높이';high++}else if(lv>0){p.render_height=lv*fh;p.height_confidence='보통';p.height_source=p.register_matched?'건축물대장 '+lv+'층 기반 추정':lv+'층 기반 추정';mid++}else{p.render_height=/공장|창고/.test(p.use_name||'')?7:/공동주택/.test(p.use_name||'')?9:9.6;p.height_confidence='낮음';p.height_source='GIS 용도 기반 추정';low++}}fc._heightStats={high,mid,low};return fc}
 function addDetails(b,p){if(map.getSource('buildings'))map.getSource('buildings').setData(b);else{map.addSource('buildings',{type:'geojson',data:b});map.addLayer({id:'buildings-2d',type:'fill',source:'buildings',paint:{'fill-color':'#607991','fill-opacity':.72,'fill-outline-color':'#dbeafe'}});map.addLayer({id:'buildings-3d',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':['match',['get','height_confidence'],'높음','#438de0','보통','#6f99c9','#9aa9b8'],'fill-extrusion-height':['get','render_height'],'fill-extrusion-opacity':.95}})}if(map.getSource('parcels'))map.getSource('parcels').setData(p);else{map.addSource('parcels',{type:'geojson',data:p});map.addLayer({id:'parcel-fill',type:'fill',source:'parcels',paint:{'fill-color':'#f59e0b','fill-opacity':.02}});map.addLayer({id:'parcel-line',type:'line',source:'parcels',paint:{'line-color':'#ffbd52','line-width':.8,'line-opacity':.7}})}}
 function addSupplementLayers(){const e={type:'FeatureCollection',features:[]};map.addSource('smart-osm',{type:'geojson',data:e});map.addLayer({id:'smart-osm-2d',type:'fill',source:'smart-osm',filter:['!=',['get','facility'],true],paint:{'fill-color':'#2dd4bf','fill-opacity':.46,'fill-outline-color':'#99f6e4'}});map.addLayer({id:'smart-facility-2d',type:'fill',source:'smart-osm',filter:['==',['get','facility'],true],paint:{'fill-color':'#f59e0b','fill-opacity':.26,'fill-outline-color':'#fbbf24'}});map.addLayer({id:'smart-osm-3d',type:'fill-extrusion',source:'smart-osm',filter:['all',['!=',['get','facility'],true],['==',['get','has_3d'],true]],layout:{visibility:'none'},paint:{'fill-extrusion-color':'#2dd4bf','fill-extrusion-height':['get','render_height'],'fill-extrusion-opacity':.70}})}
