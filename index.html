@@ -117,21 +117,21 @@ function applyRegisterToGis(fc){
 }
 function parcelRegisterForFeature(feature){
   if(!REGISTER_READY||!currentParcels?.features?.length||!currentParcelGrid)return null;
-  let pt;try{pt=turf.pointOnFeature(feature)}catch(e){try{pt=turf.centroid(feature)}catch(e2){return null}}
-  const ids=candidatesFor(feature,currentParcelGrid),hits=[];
-  for(const i of ids){
-    const q=currentParcels.features[i];let inside=false;try{inside=turf.booleanPointInPolygon(pt,q)}catch(e){}
-    if(!inside)continue;const cs=regCandidatesByProps(q.properties||{});if(cs.length)hits.push(...cs);
-  }
+  const ids=candidatesFor(feature,currentParcelGrid);if(!ids.length)return districtAreaRegisterFallback(feature);
   let area=0;try{area=turf.area(feature)}catch(e){}
-  let rec=chooseRegister([...new Set(hits)],feature.properties||{},area);if(rec)return rec;
-  let best=null,bestA=0;
+  let bestParcel=null,bestOverlap=0,bestRec=null;
   for(const i of ids){
-    const q=currentParcels.features[i],cs=regCandidatesByProps(q.properties||{});if(!cs.length)continue;
-    const a=intersectionArea(feature,q);let fa=1;try{fa=Math.max(turf.area(feature),1)}catch(e){}if(a/fa<.20||a<=bestA)continue;
-    const rr=chooseRegister(cs,feature.properties||{},area);if(rr){best=rr;bestA=a}
+    const q=currentParcels.features[i],a=intersectionArea(feature,q);if(a<=0)continue;
+    const cs=regCandidatesByProps(q.properties||{});if(!cs.length)continue;
+    const rr=chooseRegister(cs,feature.properties||{},area);if(!rr)continue;
+    const score=a/Math.max(area,1);
+    if(score>bestOverlap){bestOverlap=score;bestParcel=q;bestRec=rr}
   }
-  return best;
+  if(bestRec)return bestRec;
+  let pt;try{pt=turf.pointOnFeature(feature)}catch(e){try{pt=turf.centroid(feature)}catch(e2){return districtAreaRegisterFallback(feature)}}
+  const hits=[];
+  for(const i of ids){const q=currentParcels.features[i];let inside=false;try{inside=turf.booleanPointInPolygon(pt,q)}catch(e){}if(inside){const cs=regCandidatesByProps(q.properties||{});if(cs.length)hits.push(...cs)}}
+  return chooseRegister([...new Set(hits)],feature.properties||{},area)||districtAreaRegisterFallback(feature);
 }
 function districtAreaRegisterFallback(feature){
   const dn=String(selectedDistrict?.properties?.district_name||'');if(!dn)return null;
@@ -157,6 +157,19 @@ const CELL=.0015;function gridKey(x,y){return x+','+y}function makeGrid(fs){cons
 function intersectionArea(a,b){try{const x=turf.intersect(turf.featureCollection([a,b]));return x?turf.area(x):0}catch(e){return 0}}
 function osmKey(f,prefix='b'){if(f.id!=null)return prefix+':'+f.id;try{const c=turf.centroid(f).geometry.coordinates,a=Math.round(turf.area(f)/5)*5;return prefix+':'+c[0].toFixed(5)+','+c[1].toFixed(5)+','+a}catch(e){return prefix+':'+JSON.stringify(f.geometry).slice(0,160)}}
 function safeIntersects(a,b){try{return turf.booleanIntersects(a,b)}catch(e){return false}}
+function fallbackBuildingHeight(p,feature){
+  const use=String(p?.use_name||p?.building||p?.class||p?.type||'');
+  let levels=Number(p?.floors_above||p?.levels||p?.['building:levels'])||0;
+  if(levels>0)return{height:Math.min(levels*floorHeight(use),350),has:true,source:'층수 기반 추정',floors:levels,confidence:'보통'};
+  let area=0;try{area=feature?turf.area(feature):0}catch(e){}
+  let h=0,fl=0;
+  if(/apart|residential|공동주택|아파트/i.test(use)){fl=area>800?12:area>300?6:3;h=fl*2.9}
+  else if(/retail|commercial|mall|판매|근린/i.test(use)){fl=area>2500?5:area>700?3:2;h=fl*3.6}
+  else if(/school|education|교육|학교/i.test(use)){fl=area>1500?4:3;h=fl*3.6}
+  else if(/industrial|warehouse|factory|공장|창고/i.test(use)){fl=1;h=area>1500?10:7}
+  else{fl=area>500?3:area>120?2:1;h=fl*3.2}
+  return{height:h,has:true,source:'용도·면적 기반 추정',floors:fl,confidence:'낮음'};
+}
 function osm3dInfo(p){const h=Number(p.height||p.render_height);if(Number.isFinite(h)&&h>1)return{height:Math.min(h,350),has:true,source:'OSM height'};const lv=Number(p.levels||p['building:levels']);if(Number.isFinite(lv)&&lv>0)return{height:Math.min(lv*2.9,350),has:true,source:'OSM '+lv+'층'};return{height:0,has:false,source:'OSM 높이정보 없음'}}
 function waitIdle(m,timeout=6500){return new Promise(resolve=>{let done=false;const fin=()=>{if(done)return;done=true;clearTimeout(t);resolve()};const t=setTimeout(fin,timeout);m.once('idle',fin)})}
 function profileFor(id){const b=MANIFEST?.buildings?.[id]?.count||0,p=MANIFEST?.parcels?.[id]?.count||1,r=b/p;if(r<.15)return{level:'최고정밀',zoom:16.35,dx:.0045,dy:.0036,wait:150,ratio:r};if(r<.35)return{level:'강화',zoom:15.8,dx:.0075,dy:.0060,wait:120,ratio:r};if(r<.60)return{level:'정밀',zoom:15.3,dx:.0110,dy:.0085,wait:100,ratio:r};return{level:'일반정밀',zoom:14.9,dx:.0150,dy:.0115,wait:85,ratio:r}}
@@ -166,29 +179,32 @@ async function collectWholeDistrictOsm(feature,token,pf){const centers=scanCente
 function coverageStats(o,cands,gis){let oa=1,total=0,totalBuffered=0;try{oa=Math.max(turf.area(o),1)}catch(e){}for(const i of cands){const g=gis[i];total+=intersectionArea(o,g);try{const bg=turf.buffer(g,1.5,{units:'meters'});totalBuffered+=intersectionArea(o,bg)}catch(e){}}return{oa,coverage:Math.min(total/oa,1),buffered:Math.min(totalBuffered/oa,1)}}
 function subtractGisOverlap(o,cands,gis){let rem=o;for(const i of cands){if(!rem)break;try{const bg=turf.buffer(gis[i],1.2,{units:'meters'});if(intersectionArea(rem,bg)<=0)continue;rem=turf.difference(turf.featureCollection([rem,bg]))}catch(e){}}return rem}
 async function mergeWholeDistrict(collected,gis,token){
-  const grid=makeGrid(gis),kept=[],facilityKept=[];let removed=0,threeD=0,regOsm=0;
+  const grid=makeGrid(gis),kept=[],facilityKept=[];let removed=0,threeD=0,regOsm=0,estimated=0;
   for(let n=0;n<collected.buildings.length;n++){
     if(token!==scanToken)throw Error('scan cancelled');
-    const o=collected.buildings[n],c=candidatesFor(o,grid),st=coverageStats(o,c,gis);let finalGeom=o;
-    if(st.buffered>=.52){removed++;continue}
-    if(st.buffered>=.035){
-      const cut=subtractGisOverlap(o,c,gis);if(!cut){removed++;continue}
-      let remain=0;try{remain=turf.area(cut)/st.oa}catch(e){}
-      if(remain<.42){removed++;continue}finalGeom=cleanPolygonFeature(cut,st.oa);if(!finalGeom){removed++;continue}removed++;
-    }
-    finalGeom=cleanPolygonFeature(finalGeom,st.oa);if(!finalGeom){removed++;continue}let info=osm3dInfo(finalGeom.properties||{}),rr=parcelRegisterForFeature(o);
+    const o=cleanPolygonFeature(collected.buildings[n],0);if(!o){removed++;continue}
+    const c=candidatesFor(o,grid),st=coverageStats(o,c,gis);
+    // 겹치는 건물을 잘라 얇은 조각으로 만들지 않고, GIS가 충분히 덮으면 OSM 전체를 제외
+    if(st.buffered>=.34){removed++;continue}
+    const finalGeom=o;
+    let rr=parcelRegisterForFeature(o),info=osm3dInfo(finalGeom.properties||{});
     if(rr){
       const rh=Number(rr[3])||0,rf=Number(rr[4])||0;
-      if(rh>0){info={height:rh,has:true,source:'건축물대장 실높이',floors:rf};regOsm++}
-      else if(rf>0){info={height:Math.min(rf*floorHeight(rr[8]),350),has:true,source:'건축물대장 '+rf+'층 기반',floors:rf};regOsm++}
+      if(rh>0){info={height:rh,has:true,source:'건축물대장 실제 높이',floors:rf,confidence:'높음'};regOsm++}
+      else if(rf>0){info={height:Math.min(rf*floorHeight(rr[8]),350),has:true,source:'건축물대장 '+rf+'층 기반 추정',floors:rf,confidence:'보통'};regOsm++}
       if(!finalGeom.properties?.name&&rr[6])finalGeom.properties={...(finalGeom.properties||{}),building_name:rr[6]};
     }
-    finalGeom.properties={...(finalGeom.properties||{}),data_source:'OSM 보완',render_height:info.height,has_3d:info.has,height_source:info.source,floors_above:info.floors||finalGeom.properties?.levels||0,register_matched:!!rr};
+    if(!info.has){info=fallbackBuildingHeight(finalGeom.properties||{},finalGeom);estimated++}
+    finalGeom.properties={...(finalGeom.properties||{}),data_source:'OSM 보완',render_height:info.height,has_3d:!!info.has,height_source:info.source,height_confidence:info.confidence||'보통',floors_above:info.floors||finalGeom.properties?.levels||0,register_matched:!!rr};
     if(info.has)threeD++;kept.push(finalGeom);
-    if(n%80===0){$('mergeState').textContent=`GIS 겹침 절삭 · ${n.toLocaleString()}/${collected.buildings.length.toLocaleString()}`;await sleep(0)}
+    if(n%80===0){$('mergeState').textContent=`GIS/OSM 중복 판정 · ${n.toLocaleString()}/${collected.buildings.length.toLocaleString()}`;await sleep(0)}
   }
-  for(const f of collected.facilities){const c=candidatesFor(f,grid),st=coverageStats(f,c,gis);if(st.coverage<.70)facilityKept.push(f)}
-  return{raw:collected.buildings.length,dup:removed,kept,facilities:facilityKept,threeD,regOsm}
+  for(const f of collected.facilities){
+    const clean=cleanPolygonFeature(f,0);if(!clean)continue;
+    const c=candidatesFor(clean,grid),st=coverageStats(clean,c,gis);
+    if(st.coverage<.70)facilityKept.push(clean)
+  }
+  return{raw:collected.buildings.length,dup:removed,kept,facilities:facilityKept,threeD,regOsm,estimated}
 }
 async function buildWholeDistrictSupplement(force=false){if(!smartOsm||!detailReady||!currentBuildings||!selectedDistrict||precisionMode)return;const id=selectedId,pf=profileFor(id),cacheKey=id+'@'+pf.level+'@v8';if(!force&&districtOsmCache.has(cacheKey)){applyCachedSupplement(cacheKey);return}const token=++scanToken,btn=$('mergeRefresh');btn.disabled=true;loading(true);$('sOsmRaw').textContent='수집 중';$('sDup').textContent='-';$('sOsm').textContent='-';$('sOsm3d').textContent='-';$('sFacility').textContent='-';try{$('mergeState').textContent=`${pf.level} 자동 보완 시작 · GIS/필지 ${(pf.ratio*100).toFixed(1)}%`;const collected=await collectWholeDistrictOsm(selectedDistrict,token,pf);if(token!==scanToken)return;$('sOsmRaw').textContent=collected.buildings.length.toLocaleString()+'개';const result=await mergeWholeDistrict(collected,currentBuildings.features,token);if(token!==scanToken)return;result.profile=pf;districtOsmCache.set(cacheKey,result);applyCachedSupplement(cacheKey);message(`${selectedDistrict.properties.district_name} 겹침 제거 보완 완료 · ${APP_VERSION}`)}catch(e){if(String(e.message)!=='scan cancelled'){$('mergeState').textContent='OSM 자동 보완 실패 · 다시 계산해 주세요';console.warn(e)}}finally{if(token===scanToken){btn.disabled=false;loading(false)}}}
 function applyCachedSupplement(key){const r=districtOsmCache.get(key);if(!r)return;map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[...r.kept,...r.facilities]});$('sOsmRaw').textContent=r.raw.toLocaleString()+'개';$('sDup').textContent=r.dup.toLocaleString()+'개';$('sOsm').textContent=r.kept.length.toLocaleString()+'개';$('sOsm3d').textContent=r.threeD.toLocaleString()+'개';$('sFacility').textContent=r.facilities.length.toLocaleString()+'개';if($('sReg'))$('sReg').textContent=(registerMatchedGis+(r.regOsm||0)).toLocaleString()+'개';$('mergeState').textContent=`완료 · ${r.profile.level} · 후보 ${r.raw.toLocaleString()} → 겹침/중복 ${r.dup.toLocaleString()} 처리 → ${r.kept.length.toLocaleString()} 보완`}
@@ -222,5 +238,5 @@ $('go').onclick=()=>{if($('district').value)selectDistrict($('district').value)}
 $('home').onclick=()=>{scanToken++;selectedDistrict=null;selectedId='';detailReady=false;currentBuildings=null;$('district').value='';$('sDistrict').textContent='진주시 전체';$('sBld').textContent='미로드';for(const k of['sOsmRaw','sDup','sOsm','sOsm3d','sFacility'])$(k).textContent='-';map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[]});$('mergeState').textContent='행정구역 선택 후 자동 계산';const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:1200})};
 $('view2d').onclick=()=>{map.setLayoutProperty('buildings-3d','visibility','none');map.setLayoutProperty('smart-osm-3d','visibility','none');map.setPaintProperty('buildings-2d','fill-opacity',.72);map.setPaintProperty('smart-osm-2d','fill-opacity',.46);map.setPaintProperty('smart-facility-2d','fill-opacity',.26);if(!selectedDistrict){const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:900})}else map.easeTo({pitch:0,bearing:0,duration:900})};
 $('view3d').onclick=()=>{map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({pitch:62,bearing:28,duration:1200})};
-Promise.all([new Promise(r=>map.once('load',r)),new Promise(r=>scanMap.once('load',r))]).then(async()=>{loading(true);try{hideBaseBuildings(map);hideBaseBuildings(scanMap);scanSourceName=vectorSourceName(scanMap);initTerrain();[DISTRICTS,CITY,MANIFEST]=await Promise.all([loadJson('data/jinju_districts.geojson?v=20260923-6'),loadJson('data/jinju_boundary.geojson?v=20260923-6'),loadJson('data/manifest.json?v=20260923-6')]);loadRegister();initAdminLayers();initSelect();addSupplementLayers();message(`준비 완료 · 겹침 제거형 GIS+OSM 병합 · GIS ${MANIFEST.building_count.toLocaleString()}개 · ${APP_VERSION}`)}catch(e){console.error(e);message('초기 데이터 오류 · '+APP_VERSION)}finally{loading(false)}});
+Promise.all([new Promise(r=>map.once('load',r)),new Promise(r=>scanMap.once('load',r))]).then(async()=>{loading(true);try{hideBaseBuildings(map);hideBaseBuildings(scanMap);scanSourceName=vectorSourceName(scanMap);initTerrain();[DISTRICTS,CITY,MANIFEST]=await Promise.all([loadJson('data/jinju_districts.geojson?v=20260923-6'),loadJson('data/jinju_boundary.geojson?v=20260923-6'),loadJson('data/manifest.json?v=20260923-6')]);loadRegister();initAdminLayers();initSelect();addSupplementLayers();message(`준비 완료 · 전체 높이 보정 GIS+OSM 병합 · GIS ${MANIFEST.building_count.toLocaleString()}개 · ${APP_VERSION}`)}catch(e){console.error(e);message('초기 데이터 오류 · '+APP_VERSION)}finally{loading(false)}});
 </script></body></html>
