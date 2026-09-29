@@ -1,11 +1,14 @@
 {
-  "gis_input": 791,
-  "gis_valid": 791,
-  "osm_raw": 1038,
-  "osm_added": 0,
-  "osm_duplicate": 699,
-  "register_matched": 751,
-  "estimated": 0,
-  "final_count": 791,
-  "output_bytes": 102231
+  "gis_input": 199,
+  "gis_valid": 199,
+  "osm_raw": 1036,
+  "osm_added": 590,
+  "osm_duplicate": 107,
+  "overture_raw": 1875,
+  "overture_added": 263,
+  "overture_duplicate": 709,
+  "register_matched": 922,
+  "estimated": 97,
+  "final_count": 1052,
+  "output_bytes": 113380
 }

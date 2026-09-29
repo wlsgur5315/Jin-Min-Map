@@ -166,9 +166,9 @@
     },
     "38030760": {
       "name": "충무공동",
-      "count": 791,
+      "count": 1052,
       "file": "data/buildings/38030760.geojson.gz",
-      "bytes": 102231
+      "bytes": 113380
     },
     "38030770": {
       "name": "상대동",
@@ -365,7 +365,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 139478,
+  "building_count": 139739,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
