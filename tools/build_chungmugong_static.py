@@ -122,16 +122,19 @@ def apply_height(props,g,reg=None,source="GIS"):
     area=metric_area(g)
     if reg:
         h=float(reg[3] or 0);fl=int(float(reg[4] or 0));use=reg[8] or prop(props,"use_name")
-        if h>0:
+        # 비정상 높이 방어: 200m 초과 또는 층당 8m 초과는 단위/매칭 오류로 보고 폐기
+        bad_h = h>200 or (fl>0 and h/fl>8)
+        if h>0 and not bad_h:
             props.update(render_height=round(h,3),height_m=round(h,3),floors_above=fl or props.get("floors_above",0),height_source="건축물대장 실제 높이",height_confidence="높음",register_matched=True);return
         if fl>0:
-            props.update(render_height=round(fl*floor_h(use),3),floors_above=fl,height_source=f"건축물대장 {fl}층 기반",height_confidence="보통",register_matched=True);return
+            est=fl*floor_h(use)
+            props.update(render_height=round(est,3),height_m=round(est,3),floors_above=fl,height_source=(f"건축물대장 이상높이 제외 · {fl}층 기반" if bad_h else f"건축물대장 {fl}층 기반"),height_confidence="보통",register_matched=True);return
     try:h=float(prop(props,"height_m","height","render_height") or 0)
     except:h=0
     try:fl=float(prop(props,"floors_above","levels","building:levels") or 0)
     except:fl=0
     use=prop(props,"use_name","building","class")
-    if h>1:props.update(render_height=round(h,3),height_source=f"{source} 기재 높이",height_confidence="높음" if source=="GIS" else "보통")
+    if h>1 and h<=200 and not (fl>0 and h/fl>8):props.update(render_height=round(h,3),height_source=f"{source} 기재 높이",height_confidence="높음" if source=="GIS" else "보통")
     elif fl>0:props.update(render_height=round(fl*floor_h(use),3),floors_above=int(fl),height_source=f"{source} {int(fl)}층 기반",height_confidence="보통")
     else:
         if re.search("apart|residential|공동주택|아파트",use,re.I):n=12 if area>800 else 6 if area>300 else 3;h=n*2.9
