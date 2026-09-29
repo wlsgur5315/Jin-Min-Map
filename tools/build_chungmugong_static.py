@@ -79,11 +79,23 @@ def choose_reg(cands,props,area_m2):
         if area_m2>0 and ra>0:sc+=6*min(area_m2,ra)/max(area_m2,ra)
         if sc>bs:best,bs=r,sc
     return best
+def register_pnu_variants(pnu):
+    if not pnu or len(pnu)!=19:return []
+    out=[pnu]
+    # 건축물대장 추출본은 대장구분(일반=0, 산=1)을 사용했고,
+    # 연속지적 PNU는 필지구분(일반=1, 산=2)을 사용하므로 상호 변환한다.
+    land=pnu[10]
+    if land=="1":out.append(pnu[:10]+"0"+pnu[11:])
+    elif land=="2":out.append(pnu[:10]+"1"+pnu[11:])
+    elif land=="0":out.append(pnu[:10]+"1"+pnu[11:])
+    return list(dict.fromkeys(out))
+
 def register_candidates(props,parcel_props,by_pnu,by_loc):
     out=[]
     for p in (props,parcel_props or {}):
         pnu=pnu_from_props(p)
-        if pnu in by_pnu:out+=by_pnu[pnu]
+        for pv in register_pnu_variants(pnu):
+            if pv in by_pnu:out+=by_pnu[pv]
         legal=prop(p,"legal_name","bjd_name","emd_nm","li_name");jib=prop(p,"jibun","jibun_addr","lot_no","plat_plc")
         if legal and jib:out+=by_loc.get(norm(legal+jib),[])
     seen=set();u=[]
