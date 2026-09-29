@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, gzip, math, re, time
+import json, gzip, math, re, time, subprocess, tempfile
 from pathlib import Path
 import requests
 from shapely.geometry import shape, mapping, Polygon, LineString
@@ -167,6 +167,30 @@ def fetch_osm(dg):
             except Exception as e:
                 last=e;time.sleep(4+attempt*5)
     raise last
+def fetch_overture(dg):
+    minx,miny,maxx,maxy=dg.bounds
+    out=Path(tempfile.gettempdir())/"chungmugong_overture_buildings.geojson"
+    cmd=["overturemaps","download",f"--bbox={minx},{miny},{maxx},{maxy}","-f","geojson","--type=building","-o",str(out)]
+    subprocess.run(cmd,check=True,timeout=300)
+    return json.loads(out.read_text(encoding="utf-8"))
+
+def overture_props(p):
+    q={}
+    q["overture_id"]=p.get("id") or p.get("@id")
+    q["data_source"]="Overture 정적 보완"
+    # Overture schema varies by release; preserve useful generic fields.
+    h=p.get("height")
+    if isinstance(h,(int,float)):q["height_m"]=h
+    nf=p.get("num_floors") or p.get("numFloors")
+    if isinstance(nf,(int,float)):q["floors_above"]=nf
+    cls=p.get("class") or p.get("subtype")
+    if cls:q["use_name"]=str(cls)
+    names=p.get("names")
+    if isinstance(names,dict):
+        primary=names.get("primary")
+        if isinstance(primary,str):q["building_name"]=primary
+    return q
+
 def osm_geom(el):
     if el.get("type")=="way":
         pts=[(x["lon"],x["lat"]) for x in el.get("geometry",[]) if "lon" in x]
@@ -185,8 +209,9 @@ def osm_geom(el):
     return None
 def main():
     dg=district_geom();gis=load_gz(BLD);parcels=load_gz(PAR);by_pnu,by_loc=load_register();pg,pp,ptree=build_parcel_index(parcels)
-    out=[];gg=[];stats={"gis_input":len(gis.get("features",[])),"gis_valid":0,"osm_raw":0,"osm_added":0,"osm_duplicate":0,"register_matched":0,"estimated":0}
-    for f in gis.get("features",[]):
+    base=[f for f in gis.get("features",[]) if str((f.get("properties") or {}).get("data_source") or "") not in ("OSM 정적 보완","Overture 정적 보완")]
+    out=[];gg=[];stats={"gis_input":len(base),"gis_valid":0,"osm_raw":0,"osm_added":0,"osm_duplicate":0,"overture_raw":0,"overture_added":0,"overture_duplicate":0,"register_matched":0,"estimated":0}
+    for f in base:
         g=safe_geom(shape(f["geometry"]))
         if g is None or not g.intersects(dg):continue
         p=dict(f.get("properties",{}));ph=parcel_for(g,pg,pp,ptree);reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"GIS")
@@ -211,6 +236,30 @@ def main():
         if reg:stats["register_matched"]+=1
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});gg.append(g);stats["osm_added"]+=1
+    # Overture is used only for footprints still missing after GIS + OSM.
+    gtree=STRtree(gg)
+    try:ovt=fetch_overture(dg)
+    except Exception as e:
+        print("Overture fetch failed:",e);ovt={"features":[]}
+    stats["overture_raw"]=len(ovt.get("features",[]))
+    for f in ovt.get("features",[]):
+        try:g=safe_geom(shape(f.get("geometry")))
+        except Exception:g=None
+        if g is None or not dg.contains(g.representative_point()):continue
+        dup=False;ga=max(g.area,1e-15)
+        for item in gtree.query(g):
+            try:i=int(item)
+            except:i=gg.index(item)
+            try:ov=g.intersection(gg[i]).area/ga
+            except Exception:ov=0
+            if ov>=0.22:dup=True;break
+        if dup:stats["overture_duplicate"]+=1;continue
+        p=overture_props(f.get("properties") or {})
+        ph=parcel_for(g,pg,pp,ptree);reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"Overture")
+        if reg:stats["register_matched"]+=1
+        if p.get("height_confidence")=="낮음":stats["estimated"]+=1
+        out.append({"type":"Feature","geometry":mapping(g),"properties":p});gg.append(g);stats["overture_added"]+=1
+        gtree=STRtree(gg)
     fc={"type":"FeatureCollection","features":out};size=save_gz(BLD,fc)
     mani=json.loads((ROOT/"data/manifest.json").read_text(encoding="utf-8"));mani["buildings"][DISTRICT_ID]["count"]=len(out);mani["buildings"][DISTRICT_ID]["bytes"]=size;mani["building_count"]=sum(int(v["count"]) for v in mani["buildings"].values());mani.setdefault("notes",{})["chungmugong_static_build"]="2026-09-23: GIS 우선 + OSM 누락 정적 보완 + 건축물대장 높이/층수 사전결합. 런타임 폴리곤 절삭 사용 안 함."; (ROOT/"data/manifest.json").write_text(json.dumps(mani,ensure_ascii=False,indent=2),encoding="utf-8")
     stats.update(final_count=len(out),output_bytes=size);REPORT.write_text(json.dumps(stats,ensure_ascii=False,indent=2),encoding="utf-8");print(json.dumps(stats,ensure_ascii=False,indent=2))
