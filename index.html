@@ -72,6 +72,14 @@ function pnuFromProps(p){
   const raw=propFirst(p,['pnu','PNU','pnu_cd','PNU_CD','pnu_code','PNU_CODE','parcel_pnu','PARCEL_PNU','ld_pnu','LD_PNU','plat_pnu','PLAT_PNU','lot_pnu','LOT_PNU']);
   const d=raw.replace(/\D/g,'');return d.length===19?d:'';
 }
+function pnuVariants(pnu){
+  if(!/^\d{19}$/.test(pnu))return[];
+  const a=[pnu],land=pnu[10];
+  if(land==='1')a.push(pnu.slice(0,10)+'0'+pnu.slice(11));
+  else if(land==='2')a.push(pnu.slice(0,10)+'1'+pnu.slice(11));
+  else if(land==='0')a.push(pnu.slice(0,10)+'1'+pnu.slice(11));
+  return [...new Set(a)];
+}
 function regCandidatesByProps(p){
   const out=[];
   const pnu=pnuFromProps(p);for(const pv of pnuVariants(pnu))if(REGISTER_BY_PNU.has(pv))out.push(...REGISTER_BY_PNU.get(pv));
