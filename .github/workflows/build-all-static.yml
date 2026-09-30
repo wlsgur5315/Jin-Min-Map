@@ -30,5 +30,6 @@ jobs:
             echo "No generated changes"
           else
             git commit -m "Precompute all Jinju building datasets [skip ci]"
+            git pull --rebase origin main
             git push
           fi
