@@ -36,10 +36,16 @@ def safe_geom(g):
     return g
 def floor_h(use):
     s=str(use or "")
-    if re.search("공동주택|단독주택|다가구|다세대|연립",s):return 2.9
-    if re.search("업무|근린생활|판매|의료|교육|학교",s):return 3.6
-    if re.search("공장|창고",s):return 4.8
-    return 3.2
+    # 실제 높이가 없는 경우에만 사용하는 용도별 보수적 층고값.
+    if re.search("공동주택|아파트|연립|다세대|다가구",s):return 2.9
+    if re.search("단독주택",s):return 3.1
+    if re.search("교육|학교|연구",s):return 3.8
+    if re.search("의료|병원",s):return 4.0
+    if re.search("업무|사무",s):return 3.7
+    if re.search("근린생활|판매|상업",s):return 4.0
+    if re.search("문화|집회|체육|운동",s):return 4.5
+    if re.search("공장|창고|산업",s):return 5.0
+    return 3.3
 def metric_area(g):
     lat=35.18*math.pi/180
     return g.area*(111320.0**2)*math.cos(lat) if g else 0
@@ -64,21 +70,82 @@ def load_register_all():
             by_loc.setdefault(norm(r[2]),[]).append(r)
     return by_pnu,by_loc
 def choose_reg(cands,props,area_m2):
+    """다중동 필지에서 잘못된 표제부가 붙는 것을 줄이기 위한 보수적 매칭."""
     if not cands:return None
-    name=norm(prop(props,"building_name","name","BLD_NM","bld_nm"));dong=norm(prop(props,"building_dong","dong_name","dong","동명칭"));use=norm(prop(props,"use_name","main_use_name","building","class"))
+    name=norm(prop(props,"building_name","name","BLD_NM","bld_nm"))
+    dong=norm(prop(props,"building_dong","dong_name","dong","동명칭"))
+    use=norm(prop(props,"use_name","main_use_name","building","class"))
     try:floors=float(prop(props,"floors_above","levels","building:levels") or 0)
     except:floors=0
-    best=None;bs=-1e9
+    try:old_h=float(prop(props,"height_m","height","render_height") or 0)
+    except:old_h=0
+
+    ranked=[]
     for r in cands:
-        try:h=float(r[3] or 0);fl=float(r[4] or 0);ra=float(r[9] or 0)
+        try:
+            h=float(r[3] or 0);fl=float(r[4] or 0);ra=float(r[9] or 0)
         except:continue
-        rn=norm(r[6]);rd=norm(r[7]);ru=norm(r[8]);sc=(2 if h>0 else 0)+(1 if fl>0 else 0)
-        if name and rn and (name in rn or rn in name):sc+=7
-        if dong and rd and (dong in rd or rd in dong):sc+=7
-        if use and ru and (use in ru or ru in use):sc+=1
-        if floors>0 and fl>0:sc+=max(0,3-abs(floors-fl)*.7)
-        if area_m2>0 and ra>0:sc+=6*min(area_m2,ra)/max(area_m2,ra)
-        if sc>bs:best,bs=r,sc
+        rn=norm(r[6]);rd=norm(r[7]);ru=norm(r[8])
+        sc=0.0;strong=0;why=[]
+
+        # 건물명/동명칭은 같은 필지 내 여러 동을 구분하는 가장 강한 단서다.
+        if name and rn:
+            if name==rn:sc+=16;strong+=2;why.append("건물명 정확")
+            elif name in rn or rn in name:sc+=10;strong+=1;why.append("건물명 유사")
+        if dong and rd:
+            if dong==rd:sc+=18;strong+=2;why.append("동명칭 정확")
+            elif dong in rd or rd in dong:sc+=11;strong+=1;why.append("동명칭 유사")
+
+        if use and ru:
+            if use==ru:sc+=3
+            elif use in ru or ru in use:sc+=2
+
+        # 기존 GIS/OSM 층수가 있으면 표제부 층수와의 일치도를 적극 활용한다.
+        if floors>0 and fl>0:
+            df=abs(floors-fl)
+            if df<0.1:sc+=7;strong+=1;why.append("층수 일치")
+            elif df<=1:sc+=4
+            elif df<=2:sc+=1.5
+            elif df>=5:sc-=3
+
+        # 건축면적과 실제 footprint 면적 비교. 면적이 매우 다르면 같은 필지의 다른 동일 가능성이 높다.
+        if area_m2>0 and ra>0:
+            ratio=min(area_m2,ra)/max(area_m2,ra)
+            if ratio>=.85:sc+=10;strong+=1;why.append("면적 매우유사")
+            elif ratio>=.65:sc+=7;why.append("면적 유사")
+            elif ratio>=.45:sc+=4
+            elif ratio>=.25:sc+=1
+            else:sc-=3
+
+        # 기존 높이가 존재하면 큰 불일치는 감점만 하고, 대장 실제 높이를 임의로 덮어쓰지 않도록 한다.
+        if old_h>1 and h>1:
+            rel=abs(old_h-h)/max(old_h,h)
+            if rel<=.08:sc+=5
+            elif rel<=.20:sc+=2
+            elif rel>=.50:sc-=2
+
+        if h>0:sc+=1
+        if fl>0:sc+=.5
+        ranked.append((sc,strong,r,why))
+
+    if not ranked:return None
+    ranked.sort(key=lambda x:x[0],reverse=True)
+    bs,bstrong,best,why=ranked[0]
+    second=ranked[1][0] if len(ranked)>1 else -999
+    margin=bs-second
+
+    # 후보가 하나뿐이면 기본적인 높이/층수 정보만 있어도 허용.
+    if len(ranked)==1:
+        if bs<0:return None
+    else:
+        # 같은 PNU의 여러 동 중 1·2위가 비슷하면 강제 매칭하지 않는다.
+        if bs<4:return None
+        if margin<2.0 and bstrong<2:return None
+        if margin<1.0 and bstrong<3:return None
+
+    props["register_match_score"]=round(bs,2)
+    props["register_match_margin"]=round(margin,2) if len(ranked)>1 else None
+    props["register_match_basis"]=" · ".join(why[:4]) if why else "PNU/주소 후보"
     return best
 def register_candidates(props,parcel_props,by_pnu,by_loc):
     out=[]
@@ -116,9 +183,25 @@ def apply_height(props,g,reg=None,source="GIS"):
     if reg:
         h=float(reg[3] or 0);fl=int(float(reg[4] or 0));use=reg[8] or prop(props,"use_name");bad=h>200 or (fl>0 and h/fl>8)
         if h>0 and not bad:
-            props.update(render_height=round(h,3),height_m=round(h,3),floors_above=fl or props.get("floors_above",0),height_source="건축물대장 실제 높이",height_confidence="높음",register_matched=True);return
+            props.update(
+                render_height=round(h,3),height_m=round(h,3),
+                floors_above=fl or props.get("floors_above",0),
+                floors_below=int(float(reg[5] or 0)),
+                register_name=reg[6] or "",register_dong=reg[7] or "",
+                register_use=reg[8] or "",register_building_area_m2=reg[9] or 0,
+                height_source="건축물대장 실제 높이",height_confidence="높음",
+                register_matched=True
+            );return
         if fl>0:
-            est=fl*floor_h(use);props.update(render_height=round(est,3),height_m=round(est,3),floors_above=fl,height_source=(f"건축물대장 이상높이 제외 · {fl}층 기반" if bad else f"건축물대장 {fl}층 기반"),height_confidence="보통",register_matched=True);return
+            est=fl*floor_h(use)
+            props.update(
+                render_height=round(est,3),height_m=round(est,3),floors_above=fl,
+                floors_below=int(float(reg[5] or 0)),
+                register_name=reg[6] or "",register_dong=reg[7] or "",
+                register_use=reg[8] or "",register_building_area_m2=reg[9] or 0,
+                height_source=(f"건축물대장 이상높이 제외 · {fl}층 기반" if bad else f"건축물대장 {fl}층 기반"),
+                height_confidence="보통",register_matched=True
+            );return
     try:h=float(prop(props,"height_m","height","render_height") or 0)
     except:h=0
     try:fl=float(prop(props,"floors_above","levels","building:levels") or 0)
@@ -230,7 +313,7 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});accepted.append(g);stats["overture_added"]+=1
     size=save_gz(bp,{"type":"FeatureCollection","features":out})
-    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-09-29-01")
+    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-09-30-06")
     stats.update(final_count=len(out),output_bytes=size);print(json.dumps(stats,ensure_ascii=False),flush=True);return stats
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("--district",action="append");args=ap.parse_args()
@@ -244,7 +327,7 @@ def main():
         except Exception as e:print("FAILED",did,dname,repr(e),flush=True);rows.append({"name":dname,"district_id":did,"failed":repr(e)})
         MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     manifest["building_count"]=sum(int(v["count"]) for v in manifest["buildings"].values())
-    manifest.setdefault("notes",{})["static_precompute"]="2026-09-29: GIS + OSM + Overture + 건축물대장 사전결합. static_precomputed=true 지역은 웹에서 실시간 보완 계산 안 함."
+    manifest.setdefault("notes",{})["static_precompute"]="2026-09-30: 다중동 PNU 보수적 매칭 + 용도별 층고 고도화 + GIS/OSM/Overture/건축물대장 사전결합."
     MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
-    REPORT.write_text(json.dumps({"generated_at":"2026-09-29","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
+    REPORT.write_text(json.dumps({"generated_at":"2026-09-30","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
 if __name__=="__main__":main()
