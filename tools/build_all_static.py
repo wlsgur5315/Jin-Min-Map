@@ -86,7 +86,7 @@ def load_register_all():
             by_loc.setdefault(norm(r[2]),[]).append(r)
     return by_pnu,by_loc
 def choose_reg(cands,props,area_m2):
-    """다중동 필지에서는 footprint 면적을 최우선으로 사용해 잘못된 동 매칭을 줄인다."""
+    """기존 GIS 건물명/동명칭이 있으면 그것을 최우선으로 보존하고, 없을 때 면적을 사용한다."""
     if not cands:return None
     name=norm(prop(props,"building_name","name","BLD_NM","bld_nm"))
     dong=norm(prop(props,"building_dong","dong_name","dong","동명칭"))
@@ -95,73 +95,81 @@ def choose_reg(cands,props,area_m2):
     except:floors=0
     many=len(cands)>=5
 
+    # 1) 원 GIS에 동명칭이 있으면 같은 동명칭 후보를 먼저 확정한다.
+    if dong:
+        exact=[r for r in cands if norm(r[7])==dong]
+        if len(exact)==1:
+            props["register_match_score"]=100
+            props["register_match_margin"]=100
+            props["register_match_area_ratio"]=None
+            props["register_match_basis"]="GIS 동명칭 정확 일치"
+            return exact[0]
+        similar=[r for r in cands if norm(r[7]) and (dong in norm(r[7]) or norm(r[7]) in dong)]
+        if len(similar)==1:
+            props["register_match_score"]=90
+            props["register_match_margin"]=90
+            props["register_match_area_ratio"]=None
+            props["register_match_basis"]="GIS 동명칭 유사 일치"
+            return similar[0]
+
+    # 2) 건물명이 있으면 건물명 정확/유사 일치를 우선한다.
+    if name:
+        exact=[r for r in cands if norm(r[6])==name]
+        if len(exact)==1:
+            props["register_match_score"]=95
+            props["register_match_margin"]=95
+            props["register_match_area_ratio"]=None
+            props["register_match_basis"]="GIS 건물명 정확 일치"
+            return exact[0]
+        similar=[r for r in cands if norm(r[6]) and (name in norm(r[6]) or norm(r[6]) in name)]
+        if len(similar)==1:
+            props["register_match_score"]=85
+            props["register_match_margin"]=85
+            props["register_match_area_ratio"]=None
+            props["register_match_basis"]="GIS 건물명 유사 일치"
+            return similar[0]
+
     ranked=[]
     for r in cands:
         try:
             h=float(r[3] or 0);fl=float(r[4] or 0);ra=float(r[9] or 0)
         except:continue
-        rn=norm(r[6]);rd=norm(r[7]);ru=norm(r[8])
-        sc=0.0;strong=0;why=[];area_ratio=0.0
-
-        if name and rn:
-            if name==rn:sc+=24;strong+=3;why.append("건물명 정확")
-            elif name in rn or rn in name:sc+=15;strong+=2;why.append("건물명 유사")
-        if dong and rd:
-            if dong==rd:sc+=28;strong+=3;why.append("동명칭 정확")
-            elif dong in rd or rd in dong:sc+=17;strong+=2;why.append("동명칭 유사")
-
+        ru=norm(r[8]);sc=0.0;why=[];area_ratio=0.0
         if area_m2>0 and ra>0:
             area_ratio=min(area_m2,ra)/max(area_m2,ra)
             if many:
-                # 대학·병원·공장처럼 한 필지에 많은 동이 있는 경우 면적이 가장 안정적인 구분 단서
-                if area_ratio>=.93:sc+=30;strong+=2;why.append("면적 거의일치")
-                elif area_ratio>=.85:sc+=25;strong+=1;why.append("면적 매우유사")
+                if area_ratio>=.93:sc+=30;why.append("면적 거의일치")
+                elif area_ratio>=.85:sc+=25;why.append("면적 매우유사")
                 elif area_ratio>=.72:sc+=18;why.append("면적 유사")
                 elif area_ratio>=.55:sc+=10
                 elif area_ratio>=.35:sc+=3
                 else:sc-=8
             else:
-                if area_ratio>=.85:sc+=12;strong+=1;why.append("면적 매우유사")
+                if area_ratio>=.85:sc+=12;why.append("면적 매우유사")
                 elif area_ratio>=.65:sc+=8;why.append("면적 유사")
                 elif area_ratio>=.45:sc+=4
                 elif area_ratio>=.25:sc+=1
                 else:sc-=3
-
         if use and ru:
             if use==ru:sc+=3
             elif use in ru or ru in use:sc+=2
-
         if floors>0 and fl>0:
             df=abs(floors-fl)
-            # 다중동 필지에서는 원 GIS 층수 자체가 틀릴 수 있으므로 보조 단서로만 사용
-            if many:
-                if df<0.1:sc+=2
-                elif df<=1:sc+=1
-                elif df>=6:sc-=1
-            else:
-                if df<0.1:sc+=7;strong+=1;why.append("층수 일치")
-                elif df<=1:sc+=4
-                elif df<=2:sc+=1.5
-                elif df>=5:sc-=3
-
+            if not many:
+                if df<0.1:sc+=5
+                elif df<=1:sc+=2
         if h>0:sc+=1
         if fl>0:sc+=.5
-        ranked.append((sc,strong,area_ratio,r,why))
+        ranked.append((sc,area_ratio,r,why))
 
     if not ranked:return None
     ranked.sort(key=lambda x:x[0],reverse=True)
-    bs,bstrong,bratio,best,why=ranked[0]
+    bs,bratio,best,why=ranked[0]
     second=ranked[1][0] if len(ranked)>1 else -999
     margin=bs-second
-
-    if len(ranked)==1:
-        if bs<0:return None
-    else:
-        if many and bstrong==0 and bratio<.55:return None
-        if bs<5:return None
-        if margin<1.5 and bstrong<2:return None
-        if margin<.75 and bstrong<3:return None
-
+    if len(ranked)>1:
+        if many and bratio<.72:return None
+        if bs<8 or margin<3:return None
     props["register_match_score"]=round(bs,2)
     props["register_match_margin"]=round(margin,2) if len(ranked)>1 else None
     props["register_match_area_ratio"]=round(bratio,4) if bratio else None
@@ -333,7 +341,7 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});accepted.append(g);stats["overture_added"]+=1
     size=save_gz(bp,{"type":"FeatureCollection","features":out})
-    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-01-02")
+    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-01-03")
     stats.update(final_count=len(out),output_bytes=size);print(json.dumps(stats,ensure_ascii=False),flush=True);return stats
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("--district",action="append");args=ap.parse_args()
@@ -347,7 +355,7 @@ def main():
         except Exception as e:print("FAILED",did,dname,repr(e),flush=True);rows.append({"name":dname,"district_id":did,"failed":repr(e)})
         MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     manifest["building_count"]=sum(int(v["count"]) for v in manifest["buildings"].values())
-    manifest.setdefault("notes",{})["static_precompute"]="2026-10-01: 다중동 PNU에서 footprint 면적 우선 매칭 + 이전 대장값 자기강화 제거 + 용도별 층고 보정."
+    manifest.setdefault("notes",{})["static_precompute"]="2026-10-01: GIS 건물명/동명칭 최우선 매칭 + 다중동 면적 보조 매칭 + 이전 대장값 자기강화 제거."
     MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     REPORT.write_text(json.dumps({"generated_at":"2026-10-01","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
 if __name__=="__main__":main()
