@@ -52,6 +52,22 @@ def metric_area(g):
 def pnu_from_props(p):
     d=re.sub(r"\D","",prop(p,"pnu","PNU","pnu_cd","PNU_CD","pnu_code","PNU_CODE","parcel_pnu","PARCEL_PNU","ld_pnu","LD_PNU","plat_pnu","PLAT_PNU","lot_pnu","LOT_PNU"))
     return d if len(d)==19 else ""
+def clear_previous_register_enrichment(p):
+    """이전 정적 빌드에서 붙은 대장값이 다음 매칭을 자기강화하지 않도록 제거한다."""
+    q=dict(p or {})
+    src=str(q.get("height_source") or "")
+    if q.get("register_matched") or "건축물대장" in src or "비정상 높이 제외" in src:
+        for k in (
+            "render_height","render_base","render_top","height_m",
+            "floors_above","floors_below",
+            "register_matched","register_name","register_dong","register_use",
+            "register_building_area_m2","register_match_score",
+            "register_match_margin","register_match_basis"
+        ):
+            q.pop(k,None)
+        q.pop("height_confidence",None)
+        q.pop("height_source",None)
+    return q
 def pnu_variants(pnu):
     if not pnu or len(pnu)!=19:return[]
     out=[pnu];land=pnu[10]
@@ -281,7 +297,7 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         try:g=safe_geom(shape(f["geometry"]))
         except:g=None
         if g is None or not g.intersects(dg):continue
-        p=dict(f.get("properties",{}));ph=parcel_for(g,pg,pps,ptree);reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"GIS")
+        p=clear_previous_register_enrichment(f.get("properties",{}));ph=parcel_for(g,pg,pps,ptree);reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"GIS")
         if reg:stats["register_matched"]+=1
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});gg.append(g)
@@ -313,7 +329,7 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});accepted.append(g);stats["overture_added"]+=1
     size=save_gz(bp,{"type":"FeatureCollection","features":out})
-    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-09-30-06")
+    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-01-01")
     stats.update(final_count=len(out),output_bytes=size);print(json.dumps(stats,ensure_ascii=False),flush=True);return stats
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("--district",action="append");args=ap.parse_args()
@@ -327,7 +343,7 @@ def main():
         except Exception as e:print("FAILED",did,dname,repr(e),flush=True);rows.append({"name":dname,"district_id":did,"failed":repr(e)})
         MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     manifest["building_count"]=sum(int(v["count"]) for v in manifest["buildings"].values())
-    manifest.setdefault("notes",{})["static_precompute"]="2026-09-30: 다중동 PNU 보수적 매칭 + 용도별 층고 고도화 + GIS/OSM/Overture/건축물대장 사전결합."
+    manifest.setdefault("notes",{})["static_precompute"]="2026-10-01: 이전 정적 빌드의 대장 높이/층수 자기강화 제거 + 다중동 PNU 재매칭 + 용도별 층고 보정."
     MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
-    REPORT.write_text(json.dumps({"generated_at":"2026-09-30","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
+    REPORT.write_text(json.dumps({"generated_at":"2026-10-01","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
 if __name__=="__main__":main()
