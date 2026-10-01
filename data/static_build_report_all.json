@@ -5,16 +5,16 @@
       "name": "문산읍",
       "gis_input": 8137,
       "gis_valid": 8137,
-      "osm_raw": 1862,
-      "osm_added": 347,
-      "osm_duplicate": 156,
+      "osm_raw": 1878,
+      "osm_added": 349,
+      "osm_duplicate": 168,
       "overture_raw": 4872,
       "overture_added": 610,
       "overture_duplicate": 1654,
-      "register_matched": 5638,
-      "estimated": 896,
-      "final_count": 9094,
-      "output_bytes": 1154032
+      "register_matched": 5644,
+      "estimated": 720,
+      "final_count": 9096,
+      "output_bytes": 1153759
     },
     {
       "name": "내동면",
@@ -26,40 +26,40 @@
       "overture_raw": 1824,
       "overture_added": 322,
       "overture_duplicate": 635,
-      "register_matched": 2215,
-      "estimated": 383,
+      "register_matched": 2205,
+      "estimated": 344,
       "final_count": 3837,
-      "output_bytes": 471800
+      "output_bytes": 471193
     },
     {
       "name": "정촌면",
       "gis_input": 4257,
       "gis_valid": 4257,
-      "osm_raw": 836,
+      "osm_raw": 830,
       "osm_added": 523,
       "osm_duplicate": 273,
       "overture_raw": 2882,
       "overture_added": 382,
       "overture_duplicate": 1310,
-      "register_matched": 3216,
-      "estimated": 574,
+      "register_matched": 3234,
+      "estimated": 493,
       "final_count": 5162,
-      "output_bytes": 618046
+      "output_bytes": 617695
     },
     {
       "name": "금곡면",
       "gis_input": 5589,
       "gis_valid": 5589,
-      "osm_raw": 22,
+      "osm_raw": 23,
       "osm_added": 2,
       "osm_duplicate": 2,
       "overture_raw": 1826,
       "overture_added": 742,
       "overture_duplicate": 471,
-      "register_matched": 4037,
-      "estimated": 785,
+      "register_matched": 4051,
+      "estimated": 704,
       "final_count": 6333,
-      "output_bytes": 739012
+      "output_bytes": 738503
     },
     {
       "name": "진성면",
@@ -71,10 +71,10 @@
       "overture_raw": 865,
       "overture_added": 58,
       "overture_duplicate": 364,
-      "register_matched": 3749,
-      "estimated": 252,
+      "register_matched": 3747,
+      "estimated": 134,
       "final_count": 5615,
-      "output_bytes": 697947
+      "output_bytes": 697111
     },
     {
       "name": "일반성면",
@@ -86,10 +86,10 @@
       "overture_raw": 2,
       "overture_added": 0,
       "overture_duplicate": 1,
-      "register_matched": 2649,
-      "estimated": 115,
+      "register_matched": 2639,
+      "estimated": 35,
       "final_count": 4150,
-      "output_bytes": 542753
+      "output_bytes": 541644
     },
     {
       "name": "이반성면",
@@ -101,10 +101,10 @@
       "overture_raw": 13,
       "overture_added": 0,
       "overture_duplicate": 8,
-      "register_matched": 3327,
-      "estimated": 187,
+      "register_matched": 3323,
+      "estimated": 41,
       "final_count": 5436,
-      "output_bytes": 683836
+      "output_bytes": 683202
     },
     {
       "name": "사봉면",
@@ -116,10 +116,10 @@
       "overture_raw": 588,
       "overture_added": 113,
       "overture_duplicate": 72,
-      "register_matched": 3120,
-      "estimated": 203,
+      "register_matched": 3116,
+      "estimated": 126,
       "final_count": 4787,
-      "output_bytes": 606340
+      "output_bytes": 607563
     },
     {
       "name": "지수면",
@@ -131,10 +131,10 @@
       "overture_raw": 1063,
       "overture_added": 254,
       "overture_duplicate": 283,
-      "register_matched": 3126,
-      "estimated": 410,
+      "register_matched": 3130,
+      "estimated": 276,
       "final_count": 5032,
-      "output_bytes": 604618
+      "output_bytes": 604182
     },
     {
       "name": "대곡면",
@@ -146,25 +146,25 @@
       "overture_raw": 5134,
       "overture_added": 1472,
       "overture_duplicate": 259,
-      "register_matched": 4924,
-      "estimated": 1680,
+      "register_matched": 4915,
+      "estimated": 1501,
       "final_count": 9397,
-      "output_bytes": 1068465
+      "output_bytes": 1067248
     },
     {
       "name": "금산면",
       "gis_input": 5893,
       "gis_valid": 5893,
       "osm_raw": 1010,
-      "osm_added": 365,
-      "osm_duplicate": 372,
+      "osm_added": 364,
+      "osm_duplicate": 373,
       "overture_raw": 5009,
       "overture_added": 1988,
       "overture_duplicate": 1581,
-      "register_matched": 4600,
-      "estimated": 2102,
-      "final_count": 8246,
-      "output_bytes": 995026
+      "register_matched": 4604,
+      "estimated": 1991,
+      "final_count": 8245,
+      "output_bytes": 995490
     },
     {
       "name": "집현면",
@@ -176,10 +176,10 @@
       "overture_raw": 4762,
       "overture_added": 1021,
       "overture_duplicate": 812,
-      "register_matched": 3975,
-      "estimated": 1009,
+      "register_matched": 3970,
+      "estimated": 948,
       "final_count": 6696,
-      "output_bytes": 792365
+      "output_bytes": 791641
     },
     {
       "name": "미천면",
@@ -191,25 +191,25 @@
       "overture_raw": 345,
       "overture_added": 50,
       "overture_duplicate": 71,
-      "register_matched": 2823,
-      "estimated": 128,
+      "register_matched": 2821,
+      "estimated": 64,
       "final_count": 4433,
-      "output_bytes": 537635
+      "output_bytes": 536916
     },
     {
       "name": "명석면",
       "gis_input": 6326,
       "gis_valid": 6326,
-      "osm_raw": 376,
-      "osm_added": 19,
-      "osm_duplicate": 85,
+      "osm_raw": 387,
+      "osm_added": 26,
+      "osm_duplicate": 89,
       "overture_raw": 1437,
-      "overture_added": 392,
-      "overture_duplicate": 589,
-      "register_matched": 4166,
-      "estimated": 420,
-      "final_count": 6737,
-      "output_bytes": 844517
+      "overture_added": 391,
+      "overture_duplicate": 590,
+      "register_matched": 4184,
+      "estimated": 310,
+      "final_count": 6743,
+      "output_bytes": 844198
     },
     {
       "name": "대평면",
@@ -221,10 +221,10 @@
       "overture_raw": 1195,
       "overture_added": 146,
       "overture_duplicate": 171,
-      "register_matched": 904,
-      "estimated": 161,
+      "register_matched": 911,
+      "estimated": 131,
       "final_count": 1487,
-      "output_bytes": 200775
+      "output_bytes": 200830
     },
     {
       "name": "수곡면",
@@ -236,10 +236,10 @@
       "overture_raw": 1021,
       "overture_added": 628,
       "overture_duplicate": 69,
-      "register_matched": 3013,
-      "estimated": 729,
+      "register_matched": 2993,
+      "estimated": 651,
       "final_count": 5621,
-      "output_bytes": 657829
+      "output_bytes": 656589
     },
     {
       "name": "상평동",
@@ -251,10 +251,10 @@
       "overture_raw": 3368,
       "overture_added": 413,
       "overture_duplicate": 2490,
-      "register_matched": 4955,
-      "estimated": 441,
+      "register_matched": 5008,
+      "estimated": 220,
       "final_count": 6345,
-      "output_bytes": 918590
+      "output_bytes": 918956
     },
     {
       "name": "초장동",
@@ -266,10 +266,10 @@
       "overture_raw": 6733,
       "overture_added": 558,
       "overture_duplicate": 1243,
-      "register_matched": 2546,
-      "estimated": 574,
+      "register_matched": 2570,
+      "estimated": 471,
       "final_count": 4187,
-      "output_bytes": 553343
+      "output_bytes": 553901
     },
     {
       "name": "평거동",
@@ -281,10 +281,10 @@
       "overture_raw": 2491,
       "overture_added": 136,
       "overture_duplicate": 1344,
-      "register_matched": 2389,
-      "estimated": 102,
+      "register_matched": 2393,
+      "estimated": 63,
       "final_count": 2985,
-      "output_bytes": 530010
+      "output_bytes": 530393
     },
     {
       "name": "신안동",
@@ -296,115 +296,115 @@
       "overture_raw": 2051,
       "overture_added": 65,
       "overture_duplicate": 918,
-      "register_matched": 1567,
-      "estimated": 63,
+      "register_matched": 1557,
+      "estimated": 40,
       "final_count": 1838,
-      "output_bytes": 333951
+      "output_bytes": 333637
     },
     {
       "name": "이현동",
       "gis_input": 2941,
       "gis_valid": 2941,
-      "osm_raw": 856,
+      "osm_raw": 855,
       "osm_added": 34,
       "osm_duplicate": 212,
       "overture_raw": 2363,
       "overture_added": 148,
       "overture_duplicate": 993,
-      "register_matched": 2322,
-      "estimated": 185,
+      "register_matched": 2330,
+      "estimated": 122,
       "final_count": 3123,
-      "output_bytes": 497384
+      "output_bytes": 497218
     },
     {
       "name": "판문동",
       "gis_input": 2854,
       "gis_valid": 2854,
-      "osm_raw": 792,
-      "osm_added": 105,
-      "osm_duplicate": 75,
+      "osm_raw": 709,
+      "osm_added": 106,
+      "osm_duplicate": 74,
       "overture_raw": 1986,
       "overture_added": 183,
       "overture_duplicate": 657,
-      "register_matched": 1891,
-      "estimated": 235,
-      "final_count": 3142,
-      "output_bytes": 458063
+      "register_matched": 1894,
+      "estimated": 137,
+      "final_count": 3143,
+      "output_bytes": 458142
     },
     {
       "name": "가호동",
       "gis_input": 2991,
       "gis_valid": 2991,
-      "osm_raw": 980,
-      "osm_added": 176,
-      "osm_duplicate": 290,
+      "osm_raw": 957,
+      "osm_added": 159,
+      "osm_duplicate": 284,
       "overture_raw": 3514,
-      "overture_added": 291,
-      "overture_duplicate": 1182,
-      "register_matched": 2205,
-      "estimated": 333,
-      "final_count": 3458,
-      "output_bytes": 545936
+      "overture_added": 299,
+      "overture_duplicate": 1174,
+      "register_matched": 2208,
+      "estimated": 229,
+      "final_count": 3449,
+      "output_bytes": 544561
     },
     {
       "name": "천전동",
       "gis_input": 7773,
       "gis_valid": 7773,
-      "osm_raw": 747,
-      "osm_added": 58,
-      "osm_duplicate": 412,
+      "osm_raw": 727,
+      "osm_added": 57,
+      "osm_duplicate": 413,
       "overture_raw": 4549,
       "overture_added": 224,
       "overture_duplicate": 2471,
-      "register_matched": 6154,
-      "estimated": 274,
-      "final_count": 8055,
-      "output_bytes": 1324909
+      "register_matched": 6143,
+      "estimated": 171,
+      "final_count": 8054,
+      "output_bytes": 1324482
     },
     {
       "name": "성북동",
       "gis_input": 3829,
       "gis_valid": 3829,
-      "osm_raw": 1175,
-      "osm_added": 26,
-      "osm_duplicate": 221,
+      "osm_raw": 1344,
+      "osm_added": 33,
+      "osm_duplicate": 382,
       "overture_raw": 3513,
-      "overture_added": 97,
-      "overture_duplicate": 1609,
-      "register_matched": 3414,
-      "estimated": 120,
+      "overture_added": 90,
+      "overture_duplicate": 1616,
+      "register_matched": 3426,
+      "estimated": 61,
       "final_count": 3952,
-      "output_bytes": 682641
+      "output_bytes": 682638
     },
     {
       "name": "중앙동",
       "gis_input": 6384,
       "gis_valid": 6384,
-      "osm_raw": 132,
+      "osm_raw": 133,
       "osm_added": 10,
-      "osm_duplicate": 75,
+      "osm_duplicate": 76,
       "overture_raw": 2234,
       "overture_added": 204,
       "overture_duplicate": 1641,
-      "register_matched": 5285,
-      "estimated": 222,
+      "register_matched": 5294,
+      "estimated": 118,
       "final_count": 6598,
-      "output_bytes": 1039090
+      "output_bytes": 1040267
     },
     {
       "name": "상봉동",
       "gis_input": 4363,
       "gis_valid": 4363,
-      "osm_raw": 2890,
+      "osm_raw": 2900,
       "osm_added": 230,
       "osm_duplicate": 2437,
       "overture_raw": 3786,
       "overture_added": 61,
       "overture_duplicate": 2917,
-      "register_matched": 3824,
-      "estimated": 170,
+      "register_matched": 3826,
+      "estimated": 115,
       "final_count": 4654,
-      "output_bytes": 736969
+      "output_bytes": 736873
     },
     {
       "name": "충무공동",
@@ -416,10 +416,10 @@
       "overture_raw": 1875,
       "overture_added": 263,
       "overture_duplicate": 709,
-      "register_matched": 667,
-      "estimated": 256,
+      "register_matched": 669,
+      "estimated": 249,
       "final_count": 1052,
-      "output_bytes": 128727
+      "output_bytes": 128969
     },
     {
       "name": "상대동",
@@ -431,10 +431,10 @@
       "overture_raw": 5286,
       "overture_added": 309,
       "overture_duplicate": 2800,
-      "register_matched": 5163,
-      "estimated": 288,
+      "register_matched": 5164,
+      "estimated": 198,
       "final_count": 6225,
-      "output_bytes": 1013685
+      "output_bytes": 1012839
     },
     {
       "name": "하대동",
@@ -446,10 +446,10 @@
       "overture_raw": 3191,
       "overture_added": 218,
       "overture_duplicate": 2157,
-      "register_matched": 3649,
-      "estimated": 211,
+      "register_matched": 3655,
+      "estimated": 128,
       "final_count": 4371,
-      "output_bytes": 751301
+      "output_bytes": 750319
     }
   ]
 }
