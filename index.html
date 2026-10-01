@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.01-05</title>
+<title>Jinju3D Local · v2026.10.01-06</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -15,7 +15,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>진주시 2D → 3D 공간 탐색 <span class="version">v2026.10.01-05</span></h1><p>GIS 우선 · 다중동 건축물대장 정밀매칭 · 검증된 높이만 3D</p><button id="latestBtn" class="latest-btn">최신 버전 바로 열기</button><div class="badge"><span class="dot"></span><span id="modeBadge">CLEAN MERGE MODE</span></div></div>
+<div class="top"><h1>진주시 2D → 3D 공간 탐색 <span class="version">v2026.10.01-06</span></h1><p>GIS 우선 · 다중동 건축물대장 정밀매칭 · 검증된 높이만 3D</p><button id="latestBtn" class="latest-btn">최신 버전 바로 열기</button><div class="badge"><span class="dot"></span><span id="modeBadge">CLEAN MERGE MODE</span></div></div>
 <div class="panel">
 <div class="sec"><div class="ttl">① 읍·면·동 선택</div><select id="district"><option>행정구역 불러오는 중…</option></select><div class="row"><button id="go" class="primary">선택 구역 보기</button><button id="home">진주시 전체</button></div><div class="hint" style="margin-top:8px">GIS·필지 밀도를 기준으로 지역별 OSM 수집 정밀도를 자동 조절합니다.</div></div>
 <div class="sec"><div class="ttl">② 자동 GIS+OSM 완성</div><div class="modebox"><b>겹침 제거형 병합</b><div id="mergeState" class="modeState">행정구역 선택 후 자동 계산</div><div class="privacy">OSM이 GIS와 일부 겹치면 겹치는 면적을 잘라낸 뒤 실제 누락 부분만 남깁니다. OSM 높이·층수 정보가 없으면 임의 높이를 만들지 않고 2D로만 표시합니다.</div></div><div class="row"><button id="smartToggle" class="smartBtn">OSM 보완 숨기기</button><button id="mergeRefresh" class="refreshBtn">보완 다시 계산</button></div></div>
@@ -27,7 +27,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.01-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.01-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -41,7 +41,7 @@ map.on('sourcedata',e=>{if(e.sourceId==='terrain'&&currentBuildings&&terrainSour
 function openLatestVersion(){const u=new URL(location.href);u.searchParams.set('v',APP_VERSION.replace(/^v/,'').replace(/\./g,'').replace(/-/g,''));u.searchParams.set('refresh',Date.now().toString());location.href=u.toString()}
 function message(t){$('msg').textContent=t}function loading(v){$('bar').classList.toggle('on',v)}
 async function loadJson(url){const r=await fetch(url,{cache:'force-cache'});if(!r.ok)throw Error(url);return r.json()}
-async function loadGzipJson(url){const r=await fetch(url+'?v=20261001-5',{cache:'force-cache'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
+async function loadGzipJson(url){const r=await fetch(url+'?v=20261001-6',{cache:'force-cache'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
 function vectorSourceName(m){const s=m.getStyle().sources||{};if(s.openmaptiles?.type==='vector')return'openmaptiles';for(const[k,v]of Object.entries(s))if(v?.type==='vector')return k;return null}
 function hideBaseBuildings(m){for(const l of m.getStyle().layers||[]){const id=String(l.id||'').toLowerCase(),sl=String(l['source-layer']||'').toLowerCase();if(sl==='building'||sl==='building_part'||id.includes('building'))try{m.setLayoutProperty(l.id,'visibility','none')}catch(e){}}}
 function terrainSourceReady(){
@@ -100,12 +100,12 @@ async function loadRegister(){
   if(REGISTER_READY)return;
   if(REGISTER_LOADING)return REGISTER_LOADING;
   REGISTER_LOADING=(async()=>{
-    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261001-5');
+    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261001-6');
     REGISTER_BY_PNU.clear();REGISTER_BY_SHORT.clear();REGISTER_BY_FULL.clear();REGISTER_BY_DISTRICT.clear();
     const shards=REGISTER_INDEX.shards||[];
     for(let i=0;i<shards.length;i++){
       message(`건축물대장 실제 높이 자료 · ${i+1}/${shards.length}`);
-      const part=await loadJson(shards[i]+'?v=20261001-5');
+      const part=await loadJson(shards[i]+'?v=20261001-6');
       for(const r of part.records||[]){
         regAdd(REGISTER_BY_PNU,String(r[0]||''),r);
         regAdd(REGISTER_BY_SHORT,String(r[1]||''),r);
@@ -230,43 +230,34 @@ function saneBuildingHeight(h,lv,use){
 function normalizeBuildings(fc){let high=0,mid=0,low=0;for(const f of fc.features){const p=f.properties||{},rawH=Number(p.height_m),lv=Number(p.floors_above),fh=floorHeight(p.use_name),h=saneBuildingHeight(rawH,lv,p.use_name);if(h>0){p.render_height=h;p.height_confidence='높음';p.height_source=(rawH!==h)?'비정상 높이 제외 · 층수 기반 보정':(p.register_matched?'건축물대장 실제 높이':'GIS 기재 높이');high++}else if(lv>0){p.render_height=lv*fh;p.height_confidence='보통';p.height_source=p.register_matched?'건축물대장 '+lv+'층 기반 추정':lv+'층 기반 추정';mid++}else{p.render_height=/공장|창고/.test(p.use_name||'')?7:/공동주택/.test(p.use_name||'')?9:9.6;p.height_confidence='낮음';p.height_source='GIS 용도 기반 추정';low++}}fc._heightStats={high,mid,low};return fc}
 function applyKnownBuildingCorrections(fc){
   if(!fc?.features?.length)return fc;
-  fc.features=fc.features.filter(f=>{
-    const p=f.properties||{};
-    const pnu=String(p.pnu||'');
-    const area=Number(p.building_area)||0;
-    // 칠암동 384(진주남중학교)에는 면적 0의 잘못된 중복 폴리곤이 존재함.
-    // 실제 학교 본체(면적/건물명이 있는 feature)만 남긴다.
-    if(pnu==='4817010400103840000' && area<=0 && !p.building_name)return false;
-    return true;
-  });
+  // 중요: 폴리곤 자체는 삭제하지 않는다. 이전 -05에서 진주남중학교 형상을
+  // 잘못 숨긴 문제가 있어, 여기서는 속성만 보정한다.
   for(const f of fc.features){
     const p=f.properties||(f.properties={});
     const pnu=String(p.pnu||'');
     const uid=String(p.building_uid||'');
-    const regDong=String(p.register_dong||'');
-    // 칠암캠퍼스 100주년기념관: 대장 종합교육관 73.7m / 지상 15층 / 지하 1층
-    if(
-      pnu==='4817010400101500001' &&
-      (regDong==='종합교육관' || uid==='1973299623041875047600000000')
-    ){
-      p.building_name='100주년기념관';
-      p.building_dong='100주년기념관';
-      p.register_dong='종합교육관';
+
+    // 진주남중학교: 기존 건물 형상은 모두 유지한다.
+    if(pnu==='4817010400103840000'){
+      if(Number(p.building_area)>0 || p.building_name==='진주남중학교'){
+        p.building_name='진주남중학교';
+        p.render_height=20.4;
+        p.height_m=20.4;
+        p.floors_above=4;
+        p.floors_below=1;
+        p.height_source='건축물대장 실제 높이';
+        p.height_confidence='높음';
+        p.register_matched=true;
+      }
+      // 면적 0 보조/중복 도형은 삭제하지 않고, 오인 클릭을 막기 위해 이름 강제부여는 하지 않는다.
+    }
+
+    // 100주년기념관은 정확한 위치 폴리곤이 아직 확정되지 않았으므로
+    // UID 하나를 추정해 강제 보정하지 않는다. 종합교육관으로 이미 명확히 매칭된 경우만 유지.
+    if(pnu==='4817010400101500001' && String(p.register_dong||'')==='종합교육관'){
       p.render_height=73.7;
       p.height_m=73.7;
       p.floors_above=15;
-      p.floors_below=1;
-      p.height_source='건축물대장 실제 높이 · 칠암캠퍼스 검증 보정';
-      p.height_confidence='높음';
-      p.register_matched=true;
-      p.verified_override='GNU 칠암캠퍼스 100주년기념관';
-    }
-    // 진주남중학교 실제 본체는 이름/대장값을 확실히 유지
-    if(pnu==='4817010400103840000' && Number(p.building_area)>0){
-      p.building_name='진주남중학교';
-      p.render_height=20.4;
-      p.height_m=20.4;
-      p.floors_above=4;
       p.floors_below=1;
       p.height_source='건축물대장 실제 높이';
       p.height_confidence='높음';
@@ -426,9 +417,9 @@ async function waitForMapReady(m,timeout=5000){
   try{
     message('진주시 공간정보 불러오는 중…');
     const dataPromise=Promise.all([
-      loadJson('data/jinju_districts.geojson?v=20261001-5'),
-      loadJson('data/jinju_boundary.geojson?v=20261001-5'),
-      loadJson('data/manifest.json?v=20261001-5')
+      loadJson('data/jinju_districts.geojson?v=20261001-6'),
+      loadJson('data/jinju_boundary.geojson?v=20261001-6'),
+      loadJson('data/manifest.json?v=20261001-6')
     ]);
     await waitForMapReady(map);
     [DISTRICTS,CITY,MANIFEST]=await dataPromise;
