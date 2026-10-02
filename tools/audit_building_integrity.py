@@ -151,3 +151,5 @@ report={
 }
 OUT.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
 print(json.dumps({"output":str(OUT),"summary":dict(summary)},ensure_ascii=False,indent=2))
+
+# audit trigger: v2026.10.02-01
