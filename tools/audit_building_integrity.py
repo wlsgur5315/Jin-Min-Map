@@ -22,6 +22,17 @@ def metric_area(g):
     lat=35.18*math.pi/180
     return g.area*(111320.0**2)*math.cos(lat) if g else 0
 
+def max_height_per_floor(p):
+    """용도별 층당 높이 이상치 기준(m/층). 대공간 건물은 더 높은 층고를 허용."""
+    s=" ".join(str((p or {}).get(k) or "") for k in [
+        "use_name","register_use","building","class","building_name","building_dong","register_name","register_dong"
+    ])
+    if any(x in s for x in ("공장","창고","산업")):
+        return 15.0
+    if any(x in s for x in ("체육관","운동","문화","집회","강당","경기장")):
+        return 12.0
+    return 8.0
+
 def parcel_index(fc):
     geoms=[];props=[]
     for f in fc.get("features",[]):
@@ -75,8 +86,9 @@ for did,bm in manifest.get("buildings",{}).items():
 
         if h>200:
             reasons.append("height_over_200m");sev+=5
-        if fl>0 and h>0 and h/fl>8:
-            reasons.append("height_per_floor_over_8m");sev+=5
+        limit=max_height_per_floor(p)
+        if fl>0 and h>0 and h/fl>limit:
+            reasons.append("height_per_floor_over_limit");sev+=5
         if matched and overlap>=0.55 and fpnu and ppnu and fpnu!=ppnu:
             reasons.append("feature_pnu_differs_from_actual_parcel");sev+=8
         if matched and ar is not None and ar<0.35:
@@ -108,6 +120,8 @@ for did,bm in manifest.get("buildings",{}).items():
                 "register_dong":p.get("register_dong"),
                 "render_height":h,
                 "floors_above":fl,
+                "height_per_floor":round(h/fl,3) if fl>0 else None,
+                "height_per_floor_limit":max_height_per_floor(p),
                 "footprint_area_m2":round(area,1),
                 "register_building_area_m2":rarea,
                 "area_ratio":round(ar,4) if ar is not None else None,
