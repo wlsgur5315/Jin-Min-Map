@@ -325,6 +325,58 @@ def duplicate_ratio(g,geoms,tree,threshold):
         except:ov=0
         if ov>=threshold:return True
     return False
+def suppress_highrise_register_on_tiny_parts(features):
+    """같은 PNU에서 동일 고층 대장값이 여러 폴리곤에 복제된 경우 작은 부속 조각의 높이만 차단."""
+    groups={}
+    geom_cache={}
+    for f in features:
+        p=f.get("properties") or {}
+        pn=pnu_from_props(p)
+        if not pn or not p.get("register_matched"):continue
+        try:g=safe_geom(shape(f.get("geometry")))
+        except:g=None
+        if g is None:continue
+        geom_cache[id(f)]=(g,metric_area(g))
+        try:h=float(p.get("render_height") or 0);fl=float(p.get("floors_above") or 0)
+        except:h=0;fl=0
+        if h<30 and fl<8:continue
+        regkey=(norm(p.get("register_name")),norm(p.get("register_dong")),round(h,1),int(fl))
+        groups.setdefault((pn,regkey),[]).append(f)
+
+    changed=0
+    for (pn,regkey),items in groups.items():
+        if len(items)<2:continue
+        vals=[]
+        for f in items:
+            g,a=geom_cache[id(f)]
+            p=f.get("properties") or {}
+            try:ra=float(p.get("register_building_area_m2") or 0)
+            except:ra=0
+            ratio=(min(a,ra)/max(a,ra)) if a>0 and ra>0 else 0
+            vals.append((f,g,a,ra,ratio))
+        vals.sort(key=lambda x:x[4],reverse=True)
+        best_ratio=vals[0][4]
+        best_area=max(x[2] for x in vals)
+
+        # 같은 대장값을 공유하는 더 큰/더 잘 맞는 본체 후보가 실제로 있을 때만 작은 조각을 억제.
+        for f,g,a,ra,ratio in vals:
+            p=f.get("properties") or {}
+            tiny=(a<250 and a<best_area*0.18)
+            clearly_worse=(ratio<0.20 and (best_ratio>=0.35 or best_ratio>=ratio*3))
+            if not (tiny and clearly_worse):continue
+
+            p["suppressed_register_height"]=True
+            p["suppressed_register_height_reason"]="동일 PNU·동일 대장 고층값의 작은 부속 폴리곤 복제 차단"
+            p["suppressed_register_height_original"]=p.get("render_height")
+            for k in ("render_height","height_m","floors_above","floors_below"):
+                p.pop(k,None)
+            # 대장 식별정보는 진단용으로 보존하되, 이 조각에는 대장 높이를 사용하지 않는다.
+            p["register_matched"]=False
+            apply_height(p,g,None,"부속 폴리곤")
+            if p.get("height_confidence")=="높음":p["height_confidence"]="보통"
+            changed+=1
+    return changed
+
 def build_one(did,dname,dg,manifest,by_pnu,by_loc):
     bp=ROOT/manifest["buildings"][did]["file"];ppath=ROOT/manifest["parcels"][did]["file"]
     gis=load_gz(bp);parcels=load_gz(ppath);pg,pps,ptree=build_index(parcels)
@@ -392,8 +444,9 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         if reg:stats["register_matched"]+=1
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});accepted.append(g);stats["overture_added"]+=1
+    stats["suppressed_tiny_highrise_parts"]=suppress_highrise_register_on_tiny_parts(out)
     size=save_gz(bp,{"type":"FeatureCollection","features":out})
-    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-02-01")
+    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-02-03")
     stats.update(final_count=len(out),output_bytes=size);print(json.dumps(stats,ensure_ascii=False),flush=True);return stats
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("--district",action="append");args=ap.parse_args()
@@ -407,7 +460,7 @@ def main():
         except Exception as e:print("FAILED",did,dname,repr(e),flush=True);rows.append({"name":dname,"district_id":did,"failed":repr(e)})
         MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     manifest["building_count"]=sum(int(v["count"]) for v in manifest["buildings"].values())
-    manifest.setdefault("notes",{})["static_precompute"]="2026-10-02: 건물 도형이 실제로 겹치는 필지 PNU를 우선 적용(중첩률 55% 이상) + 건축물대장 재매칭 + 기존 높이 검증."
+    manifest.setdefault("notes",{})["static_precompute"]="2026-10-02: 공간 PNU 우선 + 동일 PNU·동일 대장의 고층값이 작은 부속 폴리곤에 복제되는 오류 차단 + 건축물대장 재매칭."
     MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     REPORT.write_text(json.dumps({"generated_at":"2026-10-01","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
 if __name__=="__main__":main()
