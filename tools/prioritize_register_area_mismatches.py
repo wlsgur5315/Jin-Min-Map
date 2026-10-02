@@ -122,3 +122,5 @@ report={
 }
 OUT.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
 print(json.dumps({"summary":summary,"top20":rows[:20]},ensure_ascii=False,indent=2))
+
+# rerun v2026.10.02-03
