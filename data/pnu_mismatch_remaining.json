@@ -1,0 +1,77 @@
+{
+  "count": 3,
+  "features": [
+    {
+      "district_id": "38030110",
+      "district_name": "문산읍",
+      "index": 2296,
+      "centroid": [
+        128.1687771,
+        35.150341
+      ],
+      "feature_pnu": "4817025024111060006",
+      "parcel_pnu": "4817025024111060005",
+      "overlap_ratio": 1.0,
+      "building_name": null,
+      "building_dong": null,
+      "register_name": "",
+      "register_dong": "",
+      "height": 3.3,
+      "floors": 1,
+      "building_uid": "0000306429481840910200000000",
+      "source_pnu_before_spatial_fix": null,
+      "pnu_spatial_corrected": null,
+      "data_source": null,
+      "height_source": "건축물대장 1층 기반",
+      "match_basis": "면적 유사"
+    },
+    {
+      "district_id": "38030110",
+      "district_name": "문산읍",
+      "index": 2298,
+      "centroid": [
+        128.16889,
+        35.1503155
+      ],
+      "feature_pnu": "4817025024111060006",
+      "parcel_pnu": "4817025024111060005",
+      "overlap_ratio": 1.0,
+      "building_name": null,
+      "building_dong": null,
+      "register_name": "",
+      "register_dong": "",
+      "height": 3.3,
+      "floors": 1,
+      "building_uid": "0000306440001840895700000000",
+      "source_pnu_before_spatial_fix": null,
+      "pnu_spatial_corrected": null,
+      "data_source": null,
+      "height_source": "건축물대장 1층 기반",
+      "match_basis": "PNU/주소 후보"
+    },
+    {
+      "district_id": "38030110",
+      "district_name": "문산읍",
+      "index": 2398,
+      "centroid": [
+        128.1686576,
+        35.1503462
+      ],
+      "feature_pnu": "4817025024111060006",
+      "parcel_pnu": "4817025024111060005",
+      "overlap_ratio": 1.0,
+      "building_name": null,
+      "building_dong": null,
+      "register_name": "",
+      "register_dong": "",
+      "height": 3.3,
+      "floors": 1,
+      "building_uid": "0000306418391840904500000000",
+      "source_pnu_before_spatial_fix": null,
+      "pnu_spatial_corrected": null,
+      "data_source": null,
+      "height_source": "건축물대장 1층 기반",
+      "match_basis": "PNU/주소 후보"
+    }
+  ]
+}
