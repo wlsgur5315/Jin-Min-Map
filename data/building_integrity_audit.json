@@ -1,14 +1,14 @@
 {
   "generated_for_static_versions": [
-    "2026-10-02-01"
+    "2026-10-02-01",
+    "2026-10-02-02"
   ],
   "building_count": 152045,
   "summary": {
     "register_area_vs_footprint_low": 25259,
-    "suspect_features": 43439,
+    "suspect_features": 43438,
     "low_register_match_score": 40912,
     "zero_source_area_but_large_polygon": 3467,
-    "feature_pnu_differs_from_actual_parcel": 3,
     "height_per_floor_over_limit": 9
   },
   "districts": {
@@ -17,10 +17,9 @@
       "building_count": 9096,
       "summary": {
         "register_area_vs_footprint_low": 1557,
-        "suspect_features": 2725,
+        "suspect_features": 2724,
         "low_register_match_score": 2594,
         "zero_source_area_but_large_polygon": 223,
-        "feature_pnu_differs_from_actual_parcel": 3,
         "height_per_floor_over_limit": 1
       },
       "top_suspects": [
