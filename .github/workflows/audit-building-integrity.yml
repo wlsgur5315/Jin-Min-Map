@@ -5,6 +5,8 @@ on:
     paths:
       - 'tools/audit_building_integrity.py'
       - '.github/workflows/audit-building-integrity.yml'
+      - 'data/buildings/*.geojson.gz'
+      - 'data/manifest.json'
 permissions:
   contents: write
 jobs:
