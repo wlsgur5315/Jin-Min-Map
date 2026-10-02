@@ -1,0 +1,26 @@
+name: Fix remaining PNU mismatches
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/fix_remaining_pnu_mismatches.py'
+      - '.github/workflows/fix-remaining-pnu.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/fix_remaining_pnu_mismatches.py
+      - name: Commit targeted fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/38030110.geojson.gz data/manifest.json
+          git commit -m "Fix final 3 PNU mismatches [skip ci]"
+          git pull --rebase origin main
+          git push
