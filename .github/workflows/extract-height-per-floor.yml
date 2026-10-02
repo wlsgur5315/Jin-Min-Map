@@ -1,0 +1,30 @@
+name: Extract height-per-floor anomalies
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/extract_height_per_floor_anomalies.py'
+      - '.github/workflows/extract-height-per-floor.yml'
+permissions:
+  contents: write
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/extract_height_per_floor_anomalies.py
+      - name: Commit result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/height_per_floor_over_8m.json
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Extract height-per-floor anomalies [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
