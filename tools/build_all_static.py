@@ -334,7 +334,23 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         try:g=safe_geom(shape(f["geometry"]))
         except:g=None
         if g is None or not g.intersects(dg):continue
-        p=clear_previous_register_enrichment(f.get("properties",{}));ph=parcel_for(g,pg,pps,ptree);reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"GIS")
+        p=clear_previous_register_enrichment(f.get("properties",{}));ph=parcel_for(g,pg,pps,ptree)
+        if ph:
+            pp=ph[0] or {}
+            actual_pnu=pnu_from_props(pp)
+            feature_pnu=pnu_from_props(p)
+            try:overlap_ratio=g.intersection(ph[1]).area/max(g.area,1e-15)
+            except:overlap_ratio=0
+            if actual_pnu and overlap_ratio>=0.55:
+                if feature_pnu and feature_pnu!=actual_pnu:
+                    p["source_pnu_before_spatial_fix"]=feature_pnu
+                    p["pnu_spatial_corrected"]=True
+                p["pnu"]=actual_pnu
+                pj=prop(pp,"jibun","JIBUN","jibun_addr","lot_no","LOT_NO","plat_plc","PLAT_PLC","지번")
+                if pj:p["jibun"]=pj
+                pl=prop(pp,"legal_name","bjd_name","BJD_NAM","bjd_nm","BJD_NM","emd_nm","EMD_NM","emd_name","li_name","법정동명")
+                if pl:p["legal_name"]=pl
+        reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"GIS")
         if reg:stats["register_matched"]+=1
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});gg.append(g)
@@ -345,7 +361,18 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         if g is None or not dg.contains(g.representative_point()):continue
         if duplicate_ratio(g,gg,gtree,.25):stats["osm_duplicate"]+=1;continue
         p=dict(el.get("tags",{}));p.update(data_source="OSM 정적 보완",osm_id=f'{el.get("type")}/{el.get("id")}')
-        ph=parcel_for(g,pg,pps,ptree);reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"OSM")
+        ph=parcel_for(g,pg,pps,ptree)
+        if ph:
+            pp=ph[0] or {};actual_pnu=pnu_from_props(pp)
+            try:overlap_ratio=g.intersection(ph[1]).area/max(g.area,1e-15)
+            except:overlap_ratio=0
+            if actual_pnu and overlap_ratio>=0.55:
+                p["pnu"]=actual_pnu
+                pj=prop(pp,"jibun","JIBUN","jibun_addr","lot_no","LOT_NO","plat_plc","PLAT_PLC","지번")
+                if pj:p["jibun"]=pj
+                pl=prop(pp,"legal_name","bjd_name","BJD_NAM","bjd_nm","BJD_NM","emd_nm","EMD_NM","emd_name","li_name","법정동명")
+                if pl:p["legal_name"]=pl
+        reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"OSM")
         if reg:stats["register_matched"]+=1
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});gg.append(g);stats["osm_added"]+=1
@@ -366,7 +393,7 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});accepted.append(g);stats["overture_added"]+=1
     size=save_gz(bp,{"type":"FeatureCollection","features":out})
-    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-01-04")
+    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-02-01")
     stats.update(final_count=len(out),output_bytes=size);print(json.dumps(stats,ensure_ascii=False),flush=True);return stats
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("--district",action="append");args=ap.parse_args()
@@ -380,7 +407,7 @@ def main():
         except Exception as e:print("FAILED",did,dname,repr(e),flush=True);rows.append({"name":dname,"district_id":did,"failed":repr(e)})
         MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     manifest["building_count"]=sum(int(v["count"]) for v in manifest["buildings"].values())
-    manifest.setdefault("notes",{})["static_precompute"]="2026-10-01: GIS 속성/footprint 불일치 시 면적 우선 재매칭 + 다중동 보정 + 이전 대장값 자기강화 제거."
+    manifest.setdefault("notes",{})["static_precompute"]="2026-10-02: 건물 도형이 실제로 겹치는 필지 PNU를 우선 적용(중첩률 55% 이상) + 건축물대장 재매칭 + 기존 높이 검증."
     MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     REPORT.write_text(json.dumps({"generated_at":"2026-10-01","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
 if __name__=="__main__":main()
