@@ -84,43 +84,43 @@
     },
     "38030400": {
       "name": "금산면",
-      "count": 8245,
+      "count": 8246,
       "file": "data/buildings/38030400.geojson.gz",
-      "bytes": 1006356,
+      "bytes": 1006298,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030410": {
       "name": "집현면",
       "count": 6696,
       "file": "data/buildings/38030410.geojson.gz",
-      "bytes": 799966,
+      "bytes": 799933,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030420": {
       "name": "미천면",
       "count": 4433,
       "file": "data/buildings/38030420.geojson.gz",
-      "bytes": 542756,
+      "bytes": 542790,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030430": {
       "name": "명석면",
-      "count": 6737,
+      "count": 6743,
       "file": "data/buildings/38030430.geojson.gz",
-      "bytes": 852570,
+      "bytes": 853032,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030440": {
       "name": "대평면",
       "count": 1487,
       "file": "data/buildings/38030440.geojson.gz",
-      "bytes": 202715,
+      "bytes": 202643,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030450": {
       "name": "수곡면",
@@ -425,7 +425,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 152048,
+  "building_count": 152055,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
