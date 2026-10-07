@@ -126,41 +126,41 @@
       "name": "수곡면",
       "count": 5621,
       "file": "data/buildings/38030450.geojson.gz",
-      "bytes": 662846,
+      "bytes": 662848,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030650": {
       "name": "상평동",
       "count": 6345,
       "file": "data/buildings/38030650.geojson.gz",
-      "bytes": 924755,
+      "bytes": 924402,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030660": {
       "name": "초장동",
-      "count": 4191,
+      "count": 4187,
       "file": "data/buildings/38030660.geojson.gz",
-      "bytes": 557578,
+      "bytes": 559521,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030670": {
       "name": "평거동",
       "count": 2985,
       "file": "data/buildings/38030670.geojson.gz",
-      "bytes": 533965,
+      "bytes": 533884,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030680": {
       "name": "신안동",
       "count": 1838,
       "file": "data/buildings/38030680.geojson.gz",
-      "bytes": 335779,
+      "bytes": 335922,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030690": {
       "name": "이현동",
@@ -425,7 +425,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 152055,
+  "building_count": 152051,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
