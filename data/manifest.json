@@ -222,17 +222,17 @@
       "name": "충무공동",
       "count": 1056,
       "file": "data/buildings/38030760.geojson.gz",
-      "bytes": 133395,
+      "bytes": 123083,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030770": {
       "name": "상대동",
       "count": 6225,
       "file": "data/buildings/38030770.geojson.gz",
-      "bytes": 1020400,
+      "bytes": 1020412,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030780": {
       "name": "하대동",
