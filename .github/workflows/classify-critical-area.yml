@@ -15,6 +15,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: pip install shapely
       - run: python tools/classify_critical_area_mismatches.py
       - name: Commit classification
         run: |
