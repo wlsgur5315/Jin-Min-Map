@@ -238,9 +238,9 @@
       "name": "하대동",
       "count": 4371,
       "file": "data/buildings/38030780.geojson.gz",
-      "bytes": 755012,
+      "bytes": 755044,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     }
   },
   "parcels": {

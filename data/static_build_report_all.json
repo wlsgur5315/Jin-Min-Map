@@ -2,36 +2,20 @@
   "generated_at": "2026-10-01",
   "districts": [
     {
-      "name": "충무공동",
-      "gis_input": 199,
-      "gis_valid": 199,
-      "osm_raw": 0,
+      "name": "하대동",
+      "gis_input": 4153,
+      "gis_valid": 4153,
+      "osm_raw": 108,
       "osm_added": 0,
-      "osm_duplicate": 0,
-      "overture_raw": 1875,
-      "overture_added": 857,
-      "overture_duplicate": 115,
-      "register_matched": 663,
-      "estimated": 255,
-      "suppressed_tiny_highrise_parts": 0,
-      "final_count": 1056,
-      "output_bytes": 123083
-    },
-    {
-      "name": "상대동",
-      "gis_input": 5852,
-      "gis_valid": 5852,
-      "osm_raw": 525,
-      "osm_added": 64,
-      "osm_duplicate": 300,
-      "overture_raw": 5286,
-      "overture_added": 309,
-      "overture_duplicate": 2800,
-      "register_matched": 5088,
-      "estimated": 200,
-      "suppressed_tiny_highrise_parts": 2,
-      "final_count": 6225,
-      "output_bytes": 1020412
+      "osm_duplicate": 90,
+      "overture_raw": 3191,
+      "overture_added": 218,
+      "overture_duplicate": 2157,
+      "register_matched": 3632,
+      "estimated": 134,
+      "suppressed_tiny_highrise_parts": 1,
+      "final_count": 4371,
+      "output_bytes": 755044
     }
   ]
 }
