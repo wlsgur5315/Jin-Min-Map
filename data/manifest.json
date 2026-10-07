@@ -46,41 +46,41 @@
       "name": "일반성면",
       "count": 4150,
       "file": "data/buildings/38030350.geojson.gz",
-      "bytes": 546589,
+      "bytes": 546646,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030360": {
       "name": "이반성면",
       "count": 5436,
       "file": "data/buildings/38030360.geojson.gz",
-      "bytes": 690610,
+      "bytes": 690523,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030370": {
       "name": "사봉면",
       "count": 4787,
       "file": "data/buildings/38030370.geojson.gz",
-      "bytes": 614414,
+      "bytes": 614454,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030380": {
       "name": "지수면",
       "count": 5032,
       "file": "data/buildings/38030380.geojson.gz",
-      "bytes": 611190,
+      "bytes": 610922,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030390": {
       "name": "대곡면",
       "count": 9397,
       "file": "data/buildings/38030390.geojson.gz",
-      "bytes": 1078751,
+      "bytes": 1078403,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030400": {
       "name": "금산면",
