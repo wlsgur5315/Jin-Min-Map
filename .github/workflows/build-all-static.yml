@@ -10,26 +10,172 @@ permissions:
 concurrency:
   group: build-all-jinju-static
   cancel-in-progress: false
+
 jobs:
-  build:
+  batch1:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install requests shapely overturemaps
-      - run: python tools/build_all_static.py
-      - name: Commit all precomputed district datasets
+      - run: python tools/build_all_static.py --district 38030110 --district 38030310 --district 38030320 --district 38030330 --district 38030340
+      - name: Commit batch 1
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/buildings/*.geojson.gz data/manifest.json data/static_build_report_all.json
-          if git diff --cached --quiet; then
-            echo "No generated changes"
-          else
-            git commit -m "Precompute all Jinju building datasets [skip ci]"
+          if ! git diff --cached --quiet; then
+            git commit -m "Precompute Jinju static batch 1 [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
+
+  batch2:
+    needs: batch1
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests shapely overturemaps
+      - run: python tools/build_all_static.py --district 38030350 --district 38030360 --district 38030370 --district 38030380 --district 38030390
+      - name: Commit batch 2
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/*.geojson.gz data/manifest.json data/static_build_report_all.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Precompute Jinju static batch 2 [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
+
+  batch3:
+    needs: batch2
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests shapely overturemaps
+      - run: python tools/build_all_static.py --district 38030400 --district 38030410 --district 38030420 --district 38030430 --district 38030440
+      - name: Commit batch 3
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/*.geojson.gz data/manifest.json data/static_build_report_all.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Precompute Jinju static batch 3 [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
+
+  batch4:
+    needs: batch3
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests shapely overturemaps
+      - run: python tools/build_all_static.py --district 38030450 --district 38030650 --district 38030660 --district 38030670 --district 38030680
+      - name: Commit batch 4
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/*.geojson.gz data/manifest.json data/static_build_report_all.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Precompute Jinju static batch 4 [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
+
+  batch5:
+    needs: batch4
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests shapely overturemaps
+      - run: python tools/build_all_static.py --district 38030690 --district 38030700 --district 38030710 --district 38030720 --district 38030730
+      - name: Commit batch 5
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/*.geojson.gz data/manifest.json data/static_build_report_all.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Precompute Jinju static batch 5 [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
+
+  batch6:
+    needs: batch5
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests shapely overturemaps
+      - run: python tools/build_all_static.py --district 38030740 --district 38030750 --district 38030760 --district 38030770 --district 38030780
+      - name: Commit batch 6
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/*.geojson.gz data/manifest.json data/static_build_report_all.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Precompute Jinju static batch 6 [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
+
+  verify:
+    needs: batch6
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install shapely
+      - run: python tools/audit_building_integrity.py
+      - run: python tools/prioritize_register_area_mismatches.py
+      - name: Commit verification reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/building_integrity_audit.json data/register_area_mismatch_priority.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Verify Jinju static rebuild [skip ci]"
             git pull --rebase origin main
             git push
           fi
