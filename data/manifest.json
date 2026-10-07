@@ -4,9 +4,9 @@
   "buildings": {
     "38030110": {
       "name": "문산읍",
-      "count": 9096,
+      "count": 9094,
       "file": "data/buildings/38030110.geojson.gz",
-      "bytes": 1167133,
+      "bytes": 1166907,
       "static_precomputed": true,
       "static_version": "2026-10-07-01"
     },
@@ -14,7 +14,7 @@
       "name": "내동면",
       "count": 3838,
       "file": "data/buildings/38030310.geojson.gz",
-      "bytes": 478407,
+      "bytes": 478466,
       "static_precomputed": true,
       "static_version": "2026-10-07-01"
     },
@@ -22,7 +22,7 @@
       "name": "정촌면",
       "count": 5162,
       "file": "data/buildings/38030320.geojson.gz",
-      "bytes": 628699,
+      "bytes": 628680,
       "static_precomputed": true,
       "static_version": "2026-10-07-01"
     },
@@ -30,7 +30,7 @@
       "name": "금곡면",
       "count": 6333,
       "file": "data/buildings/38030330.geojson.gz",
-      "bytes": 747405,
+      "bytes": 747520,
       "static_precomputed": true,
       "static_version": "2026-10-07-01"
     },
@@ -38,7 +38,7 @@
       "name": "진성면",
       "count": 5615,
       "file": "data/buildings/38030340.geojson.gz",
-      "bytes": 705722,
+      "bytes": 705907,
       "static_precomputed": true,
       "static_version": "2026-10-07-01"
     },
@@ -425,7 +425,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 152056,
+  "building_count": 152054,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
