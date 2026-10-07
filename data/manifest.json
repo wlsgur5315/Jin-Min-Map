@@ -206,17 +206,17 @@
       "name": "중앙동",
       "count": 6598,
       "file": "data/buildings/38030740.geojson.gz",
-      "bytes": 1051043,
+      "bytes": 1051181,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030750": {
       "name": "상봉동",
       "count": 4654,
       "file": "data/buildings/38030750.geojson.gz",
-      "bytes": 743636,
+      "bytes": 743727,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030760": {
       "name": "충무공동",
