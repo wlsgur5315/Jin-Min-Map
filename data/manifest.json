@@ -4,43 +4,43 @@
   "buildings": {
     "38030110": {
       "name": "문산읍",
-      "count": 9094,
+      "count": 9096,
       "file": "data/buildings/38030110.geojson.gz",
-      "bytes": 1166915,
+      "bytes": 1167133,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030310": {
       "name": "내동면",
-      "count": 3837,
+      "count": 3838,
       "file": "data/buildings/38030310.geojson.gz",
-      "bytes": 478044,
+      "bytes": 478407,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030320": {
       "name": "정촌면",
       "count": 5162,
       "file": "data/buildings/38030320.geojson.gz",
-      "bytes": 628682,
+      "bytes": 628699,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030330": {
       "name": "금곡면",
       "count": 6333,
       "file": "data/buildings/38030330.geojson.gz",
-      "bytes": 747520,
+      "bytes": 747405,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030340": {
       "name": "진성면",
       "count": 5615,
       "file": "data/buildings/38030340.geojson.gz",
-      "bytes": 705907,
+      "bytes": 705722,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030350": {
       "name": "일반성면",
@@ -425,7 +425,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 152045,
+  "building_count": 152048,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
@@ -436,7 +436,7 @@
     "building_repartition_moved": 16351,
     "building_repartition_added": 4,
     "chungmugong_static_build": "2026-09-23: GIS 우선 + OSM 누락 정적 보완 + 건축물대장 높이/층수 사전결합. 런타임 폴리곤 절삭 사용 안 함.",
-    "static_precompute": "2026-10-02: 공간 PNU 우선 + 동일 PNU·동일 대장의 고층값이 작은 부속 폴리곤에 복제되는 오류 차단 + 건축물대장 재매칭.",
+    "static_precompute": "2026-10-07: 공간 PNU 우선 + 작은 부속/파편 폴리곤의 고층 대장값 복제 차단 강화 + 오매칭 의심군 별도 검증.",
     "pnu_manual_fix": "2026-10-02: 문산읍 잔여 PNU 불일치 3건을 실제 필지 100% 중첩 기준으로 보정."
   }
 }
