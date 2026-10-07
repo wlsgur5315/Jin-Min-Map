@@ -361,8 +361,10 @@ def suppress_highrise_register_on_tiny_parts(features):
         # 같은 대장값을 공유하는 더 큰/더 잘 맞는 본체 후보가 실제로 있을 때만 작은 조각을 억제.
         for f,g,a,ra,ratio in vals:
             p=f.get("properties") or {}
-            tiny=(a<250 and a<best_area*0.18)
-            clearly_worse=(ratio<0.20 and (best_ratio>=0.35 or best_ratio>=ratio*3))
+            # 긴급 분류에서 확인된 작은 부속/파편 유형을 더 보수적으로 차단.
+            # 단, 동일 PNU·동일 대장값 그룹 안에서 더 큰 본체 후보가 있을 때만 적용.
+            tiny=(a<120 and a<best_area*0.25)
+            clearly_worse=(ratio<0.10 and (best_ratio>=0.25 or best_ratio>=ratio*4))
             if not (tiny and clearly_worse):continue
 
             p["suppressed_register_height"]=True
@@ -446,7 +448,7 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});accepted.append(g);stats["overture_added"]+=1
     stats["suppressed_tiny_highrise_parts"]=suppress_highrise_register_on_tiny_parts(out)
     size=save_gz(bp,{"type":"FeatureCollection","features":out})
-    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-02-03")
+    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-07-01")
     stats.update(final_count=len(out),output_bytes=size);print(json.dumps(stats,ensure_ascii=False),flush=True);return stats
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("--district",action="append");args=ap.parse_args()
@@ -460,7 +462,7 @@ def main():
         except Exception as e:print("FAILED",did,dname,repr(e),flush=True);rows.append({"name":dname,"district_id":did,"failed":repr(e)})
         MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     manifest["building_count"]=sum(int(v["count"]) for v in manifest["buildings"].values())
-    manifest.setdefault("notes",{})["static_precompute"]="2026-10-02: 공간 PNU 우선 + 동일 PNU·동일 대장의 고층값이 작은 부속 폴리곤에 복제되는 오류 차단 + 건축물대장 재매칭."
+    manifest.setdefault("notes",{})["static_precompute"]="2026-10-07: 공간 PNU 우선 + 작은 부속/파편 폴리곤의 고층 대장값 복제 차단 강화 + 오매칭 의심군 별도 검증."
     MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     REPORT.write_text(json.dumps({"generated_at":"2026-10-01","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
 if __name__=="__main__":main()
