@@ -164,43 +164,43 @@
     },
     "38030690": {
       "name": "이현동",
-      "count": 3123,
+      "count": 3119,
       "file": "data/buildings/38030690.geojson.gz",
-      "bytes": 501705,
+      "bytes": 500511,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030700": {
       "name": "판문동",
       "count": 3142,
       "file": "data/buildings/38030700.geojson.gz",
-      "bytes": 462783,
+      "bytes": 462648,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030710": {
       "name": "가호동",
-      "count": 3449,
+      "count": 3458,
       "file": "data/buildings/38030710.geojson.gz",
-      "bytes": 550557,
+      "bytes": 551647,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030720": {
       "name": "천전동",
       "count": 8054,
       "file": "data/buildings/38030720.geojson.gz",
-      "bytes": 1337039,
+      "bytes": 1336976,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030730": {
       "name": "성북동",
       "count": 3952,
       "file": "data/buildings/38030730.geojson.gz",
-      "bytes": 686984,
+      "bytes": 687006,
       "static_precomputed": true,
-      "static_version": "2026-10-02-03"
+      "static_version": "2026-10-07-01"
     },
     "38030740": {
       "name": "중앙동",
@@ -425,7 +425,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 152051,
+  "building_count": 152056,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
