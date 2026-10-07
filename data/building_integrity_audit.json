@@ -1,12 +1,12 @@
 {
   "generated_for_static_versions": [
-    "2026-10-02-03"
+    "2026-10-07-01"
   ],
-  "building_count": 152045,
+  "building_count": 152050,
   "summary": {
-    "register_area_vs_footprint_low": 25226,
-    "suspect_features": 43521,
-    "low_register_match_score": 40954,
+    "register_area_vs_footprint_low": 25234,
+    "suspect_features": 43529,
+    "low_register_match_score": 40963,
     "zero_source_area_but_large_polygon": 3494,
     "feature_pnu_differs_from_actual_parcel": 3,
     "height_per_floor_over_limit": 9
@@ -1728,11 +1728,11 @@
     },
     "38030310": {
       "name": "내동면",
-      "building_count": 3837,
+      "building_count": 3838,
       "summary": {
-        "low_register_match_score": 1151,
-        "suspect_features": 1201,
-        "register_area_vs_footprint_low": 746,
+        "low_register_match_score": 1152,
+        "suspect_features": 1202,
+        "register_area_vs_footprint_low": 747,
         "zero_source_area_but_large_polygon": 78
       },
       "top_suspects": [
@@ -2011,7 +2011,7 @@
         {
           "district_id": "38030310",
           "district_name": "내동면",
-          "index": 3598,
+          "index": 3599,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -2045,7 +2045,7 @@
         {
           "district_id": "38030310",
           "district_name": "내동면",
-          "index": 3688,
+          "index": 3689,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -2079,7 +2079,7 @@
         {
           "district_id": "38030310",
           "district_name": "내동면",
-          "index": 3689,
+          "index": 3690,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -2113,7 +2113,7 @@
         {
           "district_id": "38030310",
           "district_name": "내동면",
-          "index": 3705,
+          "index": 3706,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -15180,9 +15180,9 @@
       "name": "대곡면",
       "building_count": 9397,
       "summary": {
-        "low_register_match_score": 2403,
-        "suspect_features": 2469,
-        "register_area_vs_footprint_low": 1374,
+        "low_register_match_score": 2404,
+        "suspect_features": 2470,
+        "register_area_vs_footprint_low": 1375,
         "zero_source_area_but_large_polygon": 101
       },
       "top_suspects": [
@@ -16871,7 +16871,7 @@
     },
     "38030400": {
       "name": "금산면",
-      "building_count": 8245,
+      "building_count": 8246,
       "summary": {
         "register_area_vs_footprint_low": 1465,
         "low_register_match_score": 2188,
@@ -17086,7 +17086,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 5913,
+          "index": 5914,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17120,7 +17120,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 5942,
+          "index": 5943,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17154,7 +17154,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 5955,
+          "index": 5956,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17188,7 +17188,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 5973,
+          "index": 5974,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17222,7 +17222,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6030,
+          "index": 6031,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17256,7 +17256,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6233,
+          "index": 6234,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17290,7 +17290,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6234,
+          "index": 6235,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17324,7 +17324,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6246,
+          "index": 6247,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17358,7 +17358,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6247,
+          "index": 6248,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17392,7 +17392,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6248,
+          "index": 6249,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17426,7 +17426,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6252,
+          "index": 6253,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17460,7 +17460,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6254,
+          "index": 6255,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17494,7 +17494,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6255,
+          "index": 6256,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17528,7 +17528,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6256,
+          "index": 6257,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17562,7 +17562,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6335,
+          "index": 6336,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17596,7 +17596,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6346,
+          "index": 6347,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17630,7 +17630,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6402,
+          "index": 6403,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17664,7 +17664,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6463,
+          "index": 6464,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17698,7 +17698,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 6491,
+          "index": 6492,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17732,7 +17732,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 7070,
+          "index": 7071,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -17766,7 +17766,7 @@
         {
           "district_id": "38030400",
           "district_name": "금산면",
-          "index": 7279,
+          "index": 7280,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -21906,12 +21906,12 @@
     },
     "38030430": {
       "name": "명석면",
-      "building_count": 6737,
+      "building_count": 6743,
       "summary": {
-        "low_register_match_score": 1907,
-        "suspect_features": 1949,
-        "register_area_vs_footprint_low": 1174,
-        "zero_source_area_but_large_polygon": 65
+        "low_register_match_score": 1909,
+        "suspect_features": 1952,
+        "register_area_vs_footprint_low": 1175,
+        "zero_source_area_but_large_polygon": 66
       },
       "top_suspects": [
         {
@@ -22393,7 +22393,7 @@
         {
           "district_id": "38030430",
           "district_name": "명석면",
-          "index": 6517,
+          "index": 6524,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -22427,7 +22427,7 @@
         {
           "district_id": "38030430",
           "district_name": "명석면",
-          "index": 6655,
+          "index": 6662,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -28638,12 +28638,12 @@
     },
     "38030660": {
       "name": "초장동",
-      "building_count": 4191,
+      "building_count": 4187,
       "summary": {
-        "low_register_match_score": 837,
-        "suspect_features": 1070,
+        "low_register_match_score": 836,
+        "suspect_features": 1069,
         "register_area_vs_footprint_low": 515,
-        "zero_source_area_but_large_polygon": 251
+        "zero_source_area_but_large_polygon": 250
       },
       "top_suspects": [
         {
@@ -28887,7 +28887,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 3413,
+          "index": 3411,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -28921,7 +28921,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 3418,
+          "index": 3416,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -28955,7 +28955,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 3419,
+          "index": 3417,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -28989,7 +28989,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 3420,
+          "index": 3418,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -29023,7 +29023,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 3630,
+          "index": 3790,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -29057,7 +29057,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 3660,
+          "index": 3814,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -29091,7 +29091,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 4101,
+          "index": 4097,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -29125,7 +29125,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 4103,
+          "index": 4099,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -29159,7 +29159,7 @@
         {
           "district_id": "38030660",
           "district_name": "초장동",
-          "index": 4146,
+          "index": 4142,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -30318,10 +30318,10 @@
       "name": "평거동",
       "building_count": 2985,
       "summary": {
-        "low_register_match_score": 532,
-        "suspect_features": 571,
-        "register_area_vs_footprint_low": 412,
-        "zero_source_area_but_large_polygon": 48
+        "low_register_match_score": 533,
+        "suspect_features": 572,
+        "register_area_vs_footprint_low": 413,
+        "zero_source_area_but_large_polygon": 49
       },
       "top_suspects": [
         {
@@ -30424,6 +30424,40 @@
           "match_margin": null,
           "height_source": "건축물대장 실제 높이",
           "building_uid": "2002297008321866828400000000",
+          "data_source": null
+        },
+        {
+          "district_id": "38030670",
+          "district_name": "평거동",
+          "index": 2581,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.0660743,
+            35.1820352
+          ],
+          "feature_pnu": "4817012500104230000",
+          "parcel_pnu": "4817012500104230000",
+          "parcel_overlap_ratio": 0.8939,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "참조은산부인과",
+          "register_dong": "",
+          "render_height": 46.3,
+          "floors_above": 10.0,
+          "height_per_floor": 4.63,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 158.4,
+          "register_building_area_m2": 945.93,
+          "area_ratio": 0.1674,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": "0000297032111875018700000000",
           "data_source": null
         },
         {
@@ -31946,39 +31980,6 @@
           "match_margin": null,
           "height_source": "건축물대장 실제 높이",
           "building_uid": "0000297250331865858100000000",
-          "data_source": null
-        },
-        {
-          "district_id": "38030670",
-          "district_name": "평거동",
-          "index": 574,
-          "severity": 10,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score"
-          ],
-          "centroid": [
-            128.0663566,
-            35.1745718
-          ],
-          "feature_pnu": "4817012600107480004",
-          "parcel_pnu": "4817012600107480004",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "신진초등학교",
-          "register_dong": "",
-          "render_height": 20.75,
-          "floors_above": 4.0,
-          "height_per_floor": 5.188,
-          "height_per_floor_limit": 8.0,
-          "footprint_area_m2": 26.4,
-          "register_building_area_m2": 3007.84,
-          "area_ratio": 0.0088,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": "0000297067311866745400000000",
           "data_source": null
         }
       ]
@@ -36990,9 +36991,9 @@
       "name": "가호동",
       "building_count": 3449,
       "summary": {
-        "register_area_vs_footprint_low": 387,
-        "low_register_match_score": 506,
-        "suspect_features": 611,
+        "register_area_vs_footprint_low": 389,
+        "low_register_match_score": 508,
+        "suspect_features": 613,
         "zero_source_area_but_large_polygon": 123
       },
       "top_suspects": [
@@ -38664,12 +38665,12 @@
     },
     "38030720": {
       "name": "천전동",
-      "building_count": 8054,
+      "building_count": 8055,
       "summary": {
-        "low_register_match_score": 2095,
-        "suspect_features": 2205,
-        "register_area_vs_footprint_low": 1207,
-        "zero_source_area_but_large_polygon": 105
+        "low_register_match_score": 2098,
+        "suspect_features": 2209,
+        "register_area_vs_footprint_low": 1210,
+        "zero_source_area_but_large_polygon": 106
       },
       "top_suspects": [
         {
@@ -39083,7 +39084,7 @@
         {
           "district_id": "38030720",
           "district_name": "천전동",
-          "index": 7857,
+          "index": 7858,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -39117,7 +39118,7 @@
         {
           "district_id": "38030720",
           "district_name": "천전동",
-          "index": 7865,
+          "index": 7866,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -39151,7 +39152,7 @@
         {
           "district_id": "38030720",
           "district_name": "천전동",
-          "index": 7890,
+          "index": 7891,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -39185,7 +39186,7 @@
         {
           "district_id": "38030720",
           "district_name": "천전동",
-          "index": 7942,
+          "index": 7943,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -39219,7 +39220,7 @@
         {
           "district_id": "38030720",
           "district_name": "천전동",
-          "index": 7947,
+          "index": 7948,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -39253,7 +39254,7 @@
         {
           "district_id": "38030720",
           "district_name": "천전동",
-          "index": 7996,
+          "index": 7997,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -40346,9 +40347,9 @@
       "name": "성북동",
       "building_count": 3952,
       "summary": {
-        "register_area_vs_footprint_low": 496,
-        "low_register_match_score": 969,
-        "suspect_features": 999,
+        "register_area_vs_footprint_low": 497,
+        "low_register_match_score": 970,
+        "suspect_features": 1000,
         "zero_source_area_but_large_polygon": 33
       },
       "top_suspects": [
@@ -40389,7 +40390,7 @@
         {
           "district_id": "38030730",
           "district_name": "성북동",
-          "index": 3856,
+          "index": 3892,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -40418,12 +40419,12 @@
           "match_margin": null,
           "height_source": "건축물대장 2층 기반",
           "building_uid": null,
-          "data_source": "OSM 정적 보완"
+          "data_source": "Overture 정적 보완"
         },
         {
           "district_id": "38030730",
           "district_name": "성북동",
-          "index": 3902,
+          "index": 3897,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -40457,7 +40458,7 @@
         {
           "district_id": "38030730",
           "district_name": "성북동",
-          "index": 3947,
+          "index": 3945,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -42012,10 +42013,10 @@
       "name": "중앙동",
       "building_count": 6598,
       "summary": {
-        "low_register_match_score": 1661,
-        "suspect_features": 1762,
+        "low_register_match_score": 1660,
+        "suspect_features": 1759,
         "zero_source_area_but_large_polygon": 45,
-        "register_area_vs_footprint_low": 860
+        "register_area_vs_footprint_low": 857
       },
       "top_suspects": [
         {
@@ -45427,75 +45428,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 203,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.140286,
-            35.1772522
-          ],
-          "feature_pnu": "4817013700101340000",
-          "parcel_pnu": "4817013700101340000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "휴앤인엘리시움",
-          "register_dong": "휴앤인엘리시움",
-          "render_height": 90.9,
-          "floors_above": 27.0,
-          "height_per_floor": 3.367,
-          "height_per_floor_limit": 8.0,
-          "footprint_area_m2": 507.8,
-          "register_building_area_m2": 3963.7769,
-          "area_ratio": 0.1281,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 204,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1397418,
-            35.177234
-          ],
-          "feature_pnu": "4817013700101340000",
-          "parcel_pnu": "4817013700101340000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "휴앤인엘리시움",
-          "register_dong": "휴앤인엘리시움",
-          "render_height": 90.9,
-          "floors_above": 27.0,
-          "height_per_floor": 3.367,
-          "height_per_floor_limit": 8.0,
-          "footprint_area_m2": 507.6,
-          "register_building_area_m2": 3963.7769,
-          "area_ratio": 0.1281,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 234,
+          "index": 344,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -45506,7 +45439,7 @@
             128.1522865,
             35.174449
           ],
-          "feature_pnu": "4817013700102770007",
+          "feature_pnu": "",
           "parcel_pnu": "4817013700102770007",
           "parcel_overlap_ratio": 1.0,
           "building_name": null,
@@ -45524,386 +45457,12 @@
           "match_margin": null,
           "height_source": "건축물대장 실제 높이",
           "building_uid": null,
-          "data_source": "OSM 정적 보완"
+          "data_source": "Overture 정적 보완"
         },
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 236,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1533169,
-            35.174693
-          ],
-          "feature_pnu": "4817013700102770007",
-          "parcel_pnu": "4817013700102770007",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "진주혁신도시아슬란스포츠몰",
-          "register_dong": "",
-          "render_height": 24.6,
-          "floors_above": 5.0,
-          "height_per_floor": 4.92,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 164.3,
-          "register_building_area_m2": 9176.38,
-          "area_ratio": 0.0179,
-          "match_score": 3.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 237,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1527943,
-            35.1743923
-          ],
-          "feature_pnu": "4817013700102770007",
-          "parcel_pnu": "4817013700102770007",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "진주혁신도시아슬란스포츠몰",
-          "register_dong": "",
-          "render_height": 24.6,
-          "floors_above": 5.0,
-          "height_per_floor": 4.92,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 1895.3,
-          "register_building_area_m2": 9176.38,
-          "area_ratio": 0.2065,
-          "match_score": 3.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 238,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1538748,
-            35.1746815
-          ],
-          "feature_pnu": "4817013700102770007",
-          "parcel_pnu": "4817013700102770007",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "진주혁신도시아슬란스포츠몰",
-          "register_dong": "",
-          "render_height": 24.6,
-          "floors_above": 5.0,
-          "height_per_floor": 4.92,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 1860.6,
-          "register_building_area_m2": 9176.38,
-          "area_ratio": 0.2028,
-          "match_score": 3.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 240,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.152973,
-            35.1755765
-          ],
-          "feature_pnu": "4817013700102730003",
-          "parcel_pnu": "4817013700102730003",
-          "parcel_overlap_ratio": 0.9988,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "진양고등학교",
-          "register_dong": "주1",
-          "render_height": 19.95,
-          "floors_above": 5.0,
-          "height_per_floor": 3.99,
-          "height_per_floor_limit": 8.0,
-          "footprint_area_m2": 1148.5,
-          "register_building_area_m2": 3523.8,
-          "area_ratio": 0.3259,
-          "match_score": 4.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 447,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1310126,
-            35.1691851
-          ],
-          "feature_pnu": "4817013700100870004",
-          "parcel_pnu": "4817013700100870004",
-          "parcel_overlap_ratio": 0.8367,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "",
-          "register_dong": "주1동",
-          "render_height": 40.717,
-          "floors_above": 8.0,
-          "height_per_floor": 5.09,
-          "height_per_floor_limit": 8.0,
-          "footprint_area_m2": 287.2,
-          "register_building_area_m2": 959.95,
-          "area_ratio": 0.2992,
-          "match_score": 2.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 471,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1278364,
-            35.1650665
-          ],
-          "feature_pnu": "4817013700100690003",
-          "parcel_pnu": "4817013700100690003",
-          "parcel_overlap_ratio": 0.9496,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "윙스타워",
-          "register_dong": "",
-          "render_height": 84.6,
-          "floors_above": 19.0,
-          "height_per_floor": 4.453,
-          "height_per_floor_limit": 15.0,
-          "footprint_area_m2": 2319.7,
-          "register_building_area_m2": 9708.72,
-          "area_ratio": 0.2389,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 472,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1271156,
-            35.1649772
-          ],
-          "feature_pnu": "4817013700100690003",
-          "parcel_pnu": "4817013700100690003",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "윙스타워",
-          "register_dong": "",
-          "render_height": 84.6,
-          "floors_above": 19.0,
-          "height_per_floor": 4.453,
-          "height_per_floor_limit": 15.0,
-          "footprint_area_m2": 1801.2,
-          "register_building_area_m2": 9708.72,
-          "area_ratio": 0.1855,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 473,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1266422,
-            35.164416
-          ],
-          "feature_pnu": "4817013700100690003",
-          "parcel_pnu": "4817013700100690003",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "윙스타워",
-          "register_dong": "",
-          "render_height": 84.6,
-          "floors_above": 19.0,
-          "height_per_floor": 4.453,
-          "height_per_floor_limit": 15.0,
-          "footprint_area_m2": 612.5,
-          "register_building_area_m2": 9708.72,
-          "area_ratio": 0.0631,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 575,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1397498,
-            35.1768548
-          ],
-          "feature_pnu": "4817013700101340000",
-          "parcel_pnu": "4817013700101340000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "휴앤인엘리시움",
-          "register_dong": "휴앤인엘리시움",
-          "render_height": 90.9,
-          "floors_above": 27.0,
-          "height_per_floor": 3.367,
-          "height_per_floor_limit": 8.0,
-          "footprint_area_m2": 392.3,
-          "register_building_area_m2": 3963.7769,
-          "area_ratio": 0.099,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 703,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1390698,
-            35.1691136
-          ],
-          "feature_pnu": "4817013700101360000",
-          "parcel_pnu": "4817013700101360000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "",
-          "register_dong": "주1동",
-          "render_height": 11.4,
-          "floors_above": 2.0,
-          "height_per_floor": 5.7,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 164.9,
-          "register_building_area_m2": 1064.24,
-          "area_ratio": 0.1549,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 733,
-          "severity": 15,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score",
-            "zero_source_area_but_large_polygon"
-          ],
-          "centroid": [
-            128.1400919,
-            35.1768685
-          ],
-          "feature_pnu": "4817013700101340000",
-          "parcel_pnu": "4817013700101340000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "휴앤인엘리시움",
-          "register_dong": "휴앤인엘리시움",
-          "render_height": 90.9,
-          "floors_above": 27.0,
-          "height_per_floor": 3.367,
-          "height_per_floor_limit": 8.0,
-          "footprint_area_m2": 487.3,
-          "register_building_area_m2": 3963.7769,
-          "area_ratio": 0.123,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 841,
+          "index": 347,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -45937,7 +45496,143 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 906,
+          "index": 399,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.152973,
+            35.1755765
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700102730003",
+          "parcel_overlap_ratio": 0.9988,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "진양고등학교",
+          "register_dong": "주1",
+          "render_height": 19.95,
+          "floors_above": 5.0,
+          "height_per_floor": 3.99,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 1148.5,
+          "register_building_area_m2": 3523.8,
+          "area_ratio": 0.3259,
+          "match_score": 4.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 487,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1533169,
+            35.174693
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700102770007",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "진주혁신도시아슬란스포츠몰",
+          "register_dong": "",
+          "render_height": 24.6,
+          "floors_above": 5.0,
+          "height_per_floor": 4.92,
+          "height_per_floor_limit": 12.0,
+          "footprint_area_m2": 164.3,
+          "register_building_area_m2": 9176.38,
+          "area_ratio": 0.0179,
+          "match_score": 3.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 488,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1538748,
+            35.1746815
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700102770007",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "진주혁신도시아슬란스포츠몰",
+          "register_dong": "",
+          "render_height": 24.6,
+          "floors_above": 5.0,
+          "height_per_floor": 4.92,
+          "height_per_floor_limit": 12.0,
+          "footprint_area_m2": 1860.6,
+          "register_building_area_m2": 9176.38,
+          "area_ratio": 0.2028,
+          "match_score": 3.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 489,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1527943,
+            35.1743923
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700102770007",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": "아슬란몰",
+          "building_dong": null,
+          "register_name": "진주혁신도시아슬란스포츠몰",
+          "register_dong": "",
+          "render_height": 24.6,
+          "floors_above": 5.0,
+          "height_per_floor": 4.92,
+          "height_per_floor_limit": 12.0,
+          "footprint_area_m2": 1895.3,
+          "register_building_area_m2": 9176.38,
+          "area_ratio": 0.2065,
+          "match_score": 3.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 571,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -45971,7 +45666,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 956,
+          "index": 652,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46005,7 +45700,75 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 979,
+          "index": 737,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1400919,
+            35.1768685
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700101340000",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "휴앤인엘리시움",
+          "register_dong": "휴앤인엘리시움",
+          "render_height": 90.9,
+          "floors_above": 27.0,
+          "height_per_floor": 3.367,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 487.3,
+          "register_building_area_m2": 3963.7769,
+          "area_ratio": 0.123,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 738,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1397498,
+            35.1768548
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700101340000",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": "103",
+          "building_dong": null,
+          "register_name": "휴앤인엘리시움",
+          "register_dong": "휴앤인엘리시움",
+          "render_height": 90.9,
+          "floors_above": 27.0,
+          "height_per_floor": 3.367,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 392.3,
+          "register_building_area_m2": 3963.7769,
+          "area_ratio": 0.099,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 739,
           "severity": 15,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46039,7 +45802,245 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 207,
+          "index": 740,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.140286,
+            35.1772522
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700101340000",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": "101",
+          "building_dong": null,
+          "register_name": "휴앤인엘리시움",
+          "register_dong": "휴앤인엘리시움",
+          "render_height": 90.9,
+          "floors_above": 27.0,
+          "height_per_floor": 3.367,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 507.8,
+          "register_building_area_m2": 3963.7769,
+          "area_ratio": 0.1281,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 741,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1397418,
+            35.177234
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700101340000",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": "102",
+          "building_dong": null,
+          "register_name": "휴앤인엘리시움",
+          "register_dong": "휴앤인엘리시움",
+          "render_height": 90.9,
+          "floors_above": 27.0,
+          "height_per_floor": 3.367,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 507.6,
+          "register_building_area_m2": 3963.7769,
+          "area_ratio": 0.1281,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 890,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1390698,
+            35.1691136
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700101360000",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "",
+          "register_dong": "주1동",
+          "render_height": 11.4,
+          "floors_above": 2.0,
+          "height_per_floor": 5.7,
+          "height_per_floor_limit": 12.0,
+          "footprint_area_m2": 164.9,
+          "register_building_area_m2": 1064.24,
+          "area_ratio": 0.1549,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 985,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1271156,
+            35.1649772
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100690003",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "윙스타워",
+          "register_dong": "",
+          "render_height": 84.6,
+          "floors_above": 19.0,
+          "height_per_floor": 4.453,
+          "height_per_floor_limit": 15.0,
+          "footprint_area_m2": 1801.2,
+          "register_building_area_m2": 9708.72,
+          "area_ratio": 0.1855,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 986,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1278364,
+            35.1650665
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100690003",
+          "parcel_overlap_ratio": 0.9496,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "윙스타워",
+          "register_dong": "",
+          "render_height": 84.6,
+          "floors_above": 19.0,
+          "height_per_floor": 4.453,
+          "height_per_floor_limit": 15.0,
+          "footprint_area_m2": 2319.7,
+          "register_building_area_m2": 9708.72,
+          "area_ratio": 0.2389,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 988,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1266422,
+            35.164416
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100690003",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "윙스타워",
+          "register_dong": "",
+          "render_height": 84.6,
+          "floors_above": 19.0,
+          "height_per_floor": 4.453,
+          "height_per_floor_limit": 15.0,
+          "footprint_area_m2": 612.5,
+          "register_building_area_m2": 9708.72,
+          "area_ratio": 0.0631,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 1012,
+          "severity": 15,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score",
+            "zero_source_area_but_large_polygon"
+          ],
+          "centroid": [
+            128.1310126,
+            35.1691851
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100870004",
+          "parcel_overlap_ratio": 0.8367,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "",
+          "register_dong": "주1동",
+          "render_height": 40.717,
+          "floors_above": 8.0,
+          "height_per_floor": 5.09,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 287.2,
+          "register_building_area_m2": 959.95,
+          "area_ratio": 0.2992,
+          "match_score": 2.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 358,
           "severity": 11,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46049,10 +46050,10 @@
             128.1465433,
             35.1755861
           ],
-          "feature_pnu": "4817013700102860000",
+          "feature_pnu": "",
           "parcel_pnu": "4817013700102860000",
           "parcel_overlap_ratio": 0.9992,
-          "building_name": null,
+          "building_name": "한국산업기술시험원",
           "building_dong": null,
           "register_name": "한국산업기술시험원",
           "register_dong": "음향시험동",
@@ -46067,7 +46068,7 @@
           "match_margin": 95,
           "height_source": "건축물대장 실제 높이",
           "building_uid": null,
-          "data_source": "OSM 정적 보완"
+          "data_source": "Overture 정적 보완"
         },
         {
           "district_id": "38030760",
@@ -46402,238 +46403,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 235,
-          "severity": 10,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score"
-          ],
-          "centroid": [
-            128.1526252,
-            35.1746948
-          ],
-          "feature_pnu": "4817013700102770007",
-          "parcel_pnu": "4817013700102770007",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "진주혁신도시아슬란스포츠몰",
-          "register_dong": "",
-          "render_height": 24.6,
-          "floors_above": 5.0,
-          "height_per_floor": 4.92,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 136.4,
-          "register_building_area_m2": 9176.38,
-          "area_ratio": 0.0149,
-          "match_score": 3.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 574,
-          "severity": 10,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score"
-          ],
-          "centroid": [
-            128.1400064,
-            35.1764298
-          ],
-          "feature_pnu": "4817013700101360000",
-          "parcel_pnu": "4817013700101360000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "",
-          "register_dong": "주1동",
-          "render_height": 11.4,
-          "floors_above": 2.0,
-          "height_per_floor": 5.7,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 18.8,
-          "register_building_area_m2": 1064.24,
-          "area_ratio": 0.0177,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 576,
-          "severity": 10,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score"
-          ],
-          "centroid": [
-            128.1395991,
-            35.1768481
-          ],
-          "feature_pnu": "4817013700101340000",
-          "parcel_pnu": "4817013700101340000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "휴앤인엘리시움",
-          "register_dong": "휴앤인엘리시움",
-          "render_height": 90.9,
-          "floors_above": 27.0,
-          "height_per_floor": 3.367,
-          "height_per_floor_limit": 8.0,
-          "footprint_area_m2": 106.4,
-          "register_building_area_m2": 3963.7769,
-          "area_ratio": 0.0268,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 702,
-          "severity": 10,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score"
-          ],
-          "centroid": [
-            128.1395187,
-            35.169297
-          ],
-          "feature_pnu": "4817013700101360000",
-          "parcel_pnu": "4817013700101360000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "",
-          "register_dong": "주1동",
-          "render_height": 11.4,
-          "floors_above": 2.0,
-          "height_per_floor": 5.7,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 91.7,
-          "register_building_area_m2": 1064.24,
-          "area_ratio": 0.0862,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 704,
-          "severity": 10,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score"
-          ],
-          "centroid": [
-            128.1391984,
-            35.1689207
-          ],
-          "feature_pnu": "4817013700101360000",
-          "parcel_pnu": "4817013700101360000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "",
-          "register_dong": "주1동",
-          "render_height": 11.4,
-          "floors_above": 2.0,
-          "height_per_floor": 5.7,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 137.9,
-          "register_building_area_m2": 1064.24,
-          "area_ratio": 0.1296,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 705,
-          "severity": 10,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score"
-          ],
-          "centroid": [
-            128.1393765,
-            35.1685806
-          ],
-          "feature_pnu": "4817013700101360000",
-          "parcel_pnu": "4817013700101360000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "",
-          "register_dong": "주1동",
-          "render_height": 11.4,
-          "floors_above": 2.0,
-          "height_per_floor": 5.7,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 131.3,
-          "register_building_area_m2": 1064.24,
-          "area_ratio": 0.1233,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 706,
-          "severity": 10,
-          "reasons": [
-            "register_area_vs_footprint_low",
-            "low_register_match_score"
-          ],
-          "centroid": [
-            128.1397214,
-            35.1684272
-          ],
-          "feature_pnu": "4817013700101360000",
-          "parcel_pnu": "4817013700101360000",
-          "parcel_overlap_ratio": 1.0,
-          "building_name": null,
-          "building_dong": null,
-          "register_name": "",
-          "register_dong": "주1동",
-          "render_height": 11.4,
-          "floors_above": 2.0,
-          "height_per_floor": 5.7,
-          "height_per_floor_limit": 12.0,
-          "footprint_area_m2": 26.4,
-          "register_building_area_m2": 1064.24,
-          "area_ratio": 0.0248,
-          "match_score": -1.5,
-          "match_margin": null,
-          "height_source": "건축물대장 실제 높이",
-          "building_uid": null,
-          "data_source": "OSM 정적 보완"
-        },
-        {
-          "district_id": "38030760",
-          "district_name": "충무공동",
-          "index": 792,
+          "index": 200,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46666,7 +46436,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 798,
+          "index": 206,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46699,7 +46469,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 800,
+          "index": 208,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46732,7 +46502,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 801,
+          "index": 209,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46765,7 +46535,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 812,
+          "index": 233,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46798,7 +46568,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 831,
+          "index": 303,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46831,7 +46601,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 837,
+          "index": 331,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46864,7 +46634,40 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 870,
+          "index": 346,
+          "severity": 10,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score"
+          ],
+          "centroid": [
+            128.1526252,
+            35.1746948
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700102770007",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "진주혁신도시아슬란스포츠몰",
+          "register_dong": "",
+          "render_height": 24.6,
+          "floors_above": 5.0,
+          "height_per_floor": 4.92,
+          "height_per_floor_limit": 12.0,
+          "footprint_area_m2": 136.4,
+          "register_building_area_m2": 9176.38,
+          "area_ratio": 0.0149,
+          "match_score": 3.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 476,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46897,7 +46700,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 902,
+          "index": 567,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46930,7 +46733,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 904,
+          "index": 569,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46963,7 +46766,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 912,
+          "index": 582,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -46996,7 +46799,7 @@
         {
           "district_id": "38030760",
           "district_name": "충무공동",
-          "index": 913,
+          "index": 583,
           "severity": 10,
           "reasons": [
             "register_area_vs_footprint_low",
@@ -47025,6 +46828,204 @@
           "height_source": "건축물대장 실제 높이",
           "building_uid": null,
           "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 622,
+          "severity": 10,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score"
+          ],
+          "centroid": [
+            128.1380558,
+            35.178441
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100290001",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "이노드림씨티",
+          "register_dong": "",
+          "render_height": 16.8,
+          "floors_above": 3.0,
+          "height_per_floor": 5.6,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 60.2,
+          "register_building_area_m2": 653.49,
+          "area_ratio": 0.092,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 630,
+          "severity": 10,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score"
+          ],
+          "centroid": [
+            128.1379905,
+            35.1788625
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100310001",
+          "parcel_overlap_ratio": 0.5066,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "",
+          "register_dong": "",
+          "render_height": 19.85,
+          "floors_above": 4.0,
+          "height_per_floor": 4.963,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 52.6,
+          "register_building_area_m2": 526.7,
+          "area_ratio": 0.0999,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 632,
+          "severity": 10,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score"
+          ],
+          "centroid": [
+            128.1351609,
+            35.1789286
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100150006",
+          "parcel_overlap_ratio": 0.5925,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "진주혁신도시복합혁신센터",
+          "register_dong": "주건축물제1동",
+          "render_height": 18.7,
+          "floors_above": 4.0,
+          "height_per_floor": 4.675,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 10.5,
+          "register_building_area_m2": 2727.43,
+          "area_ratio": 0.0039,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 636,
+          "severity": 10,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score"
+          ],
+          "centroid": [
+            128.1351633,
+            35.1788384
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100150006",
+          "parcel_overlap_ratio": 0.6401,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "진주혁신도시복합혁신센터",
+          "register_dong": "주건축물제1동",
+          "render_height": 18.7,
+          "floors_above": 4.0,
+          "height_per_floor": 4.675,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 82.7,
+          "register_building_area_m2": 2727.43,
+          "area_ratio": 0.0303,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 640,
+          "severity": 10,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score"
+          ],
+          "centroid": [
+            128.1357036,
+            35.1801859
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100160001",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "",
+          "register_dong": "",
+          "render_height": 24.7,
+          "floors_above": 4.0,
+          "height_per_floor": 6.175,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 40.6,
+          "register_building_area_m2": 1298.16,
+          "area_ratio": 0.0313,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
+        },
+        {
+          "district_id": "38030760",
+          "district_name": "충무공동",
+          "index": 641,
+          "severity": 10,
+          "reasons": [
+            "register_area_vs_footprint_low",
+            "low_register_match_score"
+          ],
+          "centroid": [
+            128.1355462,
+            35.1800858
+          ],
+          "feature_pnu": "",
+          "parcel_pnu": "4817013700100160001",
+          "parcel_overlap_ratio": 1.0,
+          "building_name": null,
+          "building_dong": null,
+          "register_name": "",
+          "register_dong": "",
+          "render_height": 24.7,
+          "floors_above": 4.0,
+          "height_per_floor": 6.175,
+          "height_per_floor_limit": 8.0,
+          "footprint_area_m2": 12.0,
+          "register_building_area_m2": 1298.16,
+          "area_ratio": 0.0093,
+          "match_score": -1.5,
+          "match_margin": null,
+          "height_source": "건축물대장 실제 높이",
+          "building_uid": null,
+          "data_source": "Overture 정적 보완"
         }
       ]
     },
@@ -47032,10 +47033,10 @@
       "name": "상대동",
       "building_count": 6225,
       "summary": {
-        "register_area_vs_footprint_low": 1181,
+        "register_area_vs_footprint_low": 1182,
         "low_register_match_score": 1711,
-        "zero_source_area_but_large_polygon": 241,
-        "suspect_features": 1839,
+        "zero_source_area_but_large_polygon": 239,
+        "suspect_features": 1838,
         "height_per_floor_over_limit": 1
       },
       "top_suspects": [
@@ -52391,7 +52392,7 @@
     {
       "district_id": "38030310",
       "district_name": "내동면",
-      "index": 3598,
+      "index": 3599,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -52425,7 +52426,7 @@
     {
       "district_id": "38030310",
       "district_name": "내동면",
-      "index": 3688,
+      "index": 3689,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -52459,7 +52460,7 @@
     {
       "district_id": "38030310",
       "district_name": "내동면",
-      "index": 3689,
+      "index": 3690,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -52493,7 +52494,7 @@
     {
       "district_id": "38030310",
       "district_name": "내동면",
-      "index": 3705,
+      "index": 3706,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58545,7 +58546,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 5913,
+      "index": 5914,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58579,7 +58580,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 5942,
+      "index": 5943,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58613,7 +58614,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 5955,
+      "index": 5956,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58647,7 +58648,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 5973,
+      "index": 5974,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58681,7 +58682,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6030,
+      "index": 6031,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58715,7 +58716,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6233,
+      "index": 6234,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58749,7 +58750,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6234,
+      "index": 6235,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58783,7 +58784,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6246,
+      "index": 6247,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58817,7 +58818,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6247,
+      "index": 6248,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58851,7 +58852,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6248,
+      "index": 6249,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58885,7 +58886,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6252,
+      "index": 6253,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58919,7 +58920,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6254,
+      "index": 6255,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58953,7 +58954,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6255,
+      "index": 6256,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -58987,7 +58988,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6256,
+      "index": 6257,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -59021,7 +59022,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6335,
+      "index": 6336,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -59055,7 +59056,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6346,
+      "index": 6347,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -59089,7 +59090,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6402,
+      "index": 6403,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -59123,7 +59124,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6463,
+      "index": 6464,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -59157,7 +59158,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 6491,
+      "index": 6492,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -59191,7 +59192,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 7070,
+      "index": 7071,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -59225,7 +59226,7 @@
     {
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 7279,
+      "index": 7280,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -60483,7 +60484,7 @@
     {
       "district_id": "38030430",
       "district_name": "명석면",
-      "index": 6517,
+      "index": 6524,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",
@@ -60517,7 +60518,7 @@
     {
       "district_id": "38030430",
       "district_name": "명석면",
-      "index": 6655,
+      "index": 6662,
       "severity": 15,
       "reasons": [
         "register_area_vs_footprint_low",

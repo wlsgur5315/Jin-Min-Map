@@ -1,8 +1,8 @@
 {
   "summary": {
-    "total": 25226,
-    "긴급": 515,
-    "높음": 7206,
+    "total": 25234,
+    "긴급": 522,
+    "높음": 7207,
     "검토": 17505
   },
   "criteria": {
@@ -58,14 +58,14 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 576,
+      "index": 728,
       "centroid": [
         128.1395991,
         35.1768481
       ],
       "building_uid": null,
-      "pnu": "4817013700101340000",
-      "jibun": "134대",
+      "pnu": null,
+      "jibun": null,
       "building_name": null,
       "building_dong": null,
       "register_name": "휴앤인엘리시움",
@@ -79,7 +79,7 @@
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -94,14 +94,14 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 473,
+      "index": 988,
       "centroid": [
         128.1266422,
         35.164416
       ],
       "building_uid": null,
-      "pnu": "4817013700100690003",
-      "jibun": "69-3 장",
+      "pnu": null,
+      "jibun": null,
       "building_name": null,
       "building_dong": null,
       "register_name": "윙스타워",
@@ -115,7 +115,7 @@
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -130,7 +130,7 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 979,
+      "index": 739,
       "centroid": [
         128.1400997,
         35.1770674
@@ -166,15 +166,15 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 575,
+      "index": 738,
       "centroid": [
         128.1397498,
         35.1768548
       ],
       "building_uid": null,
-      "pnu": "4817013700101340000",
-      "jibun": "134대",
-      "building_name": null,
+      "pnu": null,
+      "jibun": null,
+      "building_name": "103",
       "building_dong": null,
       "register_name": "휴앤인엘리시움",
       "register_dong": "휴앤인엘리시움",
@@ -187,7 +187,7 @@
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -236,16 +236,52 @@
         "식별명칭있음",
         "대장실제높이사용"
       ],
+      "district_id": "38030710",
+      "district_name": "가호동",
+      "index": 1250,
+      "centroid": [
+        128.1186847,
+        35.1540685
+      ],
+      "building_uid": "1988301859941844519600000000",
+      "pnu": "4817013100120680002",
+      "jibun": "2068-2대",
+      "building_name": null,
+      "building_dong": null,
+      "register_name": "신진주역세권 줌시티",
+      "register_dong": "주1동",
+      "render_height": 60.0,
+      "floors_above": 15.0,
+      "footprint_area_m2": 205.8,
+      "register_building_area_m2": 1988.01,
+      "area_ratio": 0.1035,
+      "height_source": "건축물대장 실제 높이",
+      "match_score": -1.5,
+      "match_margin": null,
+      "match_basis": "PNU/주소 후보",
+      "data_source": null,
+      "pnu_spatial_corrected": true
+    },
+    {
+      "priority": "긴급",
+      "risk_score": 15,
+      "reasons": [
+        "면적비<0.20",
+        "높이>=50m",
+        "15층이상",
+        "식별명칭있음",
+        "대장실제높이사용"
+      ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 733,
+      "index": 737,
       "centroid": [
         128.1400919,
         35.1768685
       ],
       "building_uid": null,
-      "pnu": "4817013700101340000",
-      "jibun": "134대",
+      "pnu": null,
+      "jibun": null,
       "building_name": null,
       "building_dong": null,
       "register_name": "휴앤인엘리시움",
@@ -259,7 +295,7 @@
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -310,15 +346,15 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 203,
+      "index": 740,
       "centroid": [
         128.140286,
         35.1772522
       ],
       "building_uid": null,
-      "pnu": "4817013700101340000",
-      "jibun": "134대",
-      "building_name": null,
+      "pnu": null,
+      "jibun": null,
+      "building_name": "101",
       "building_dong": null,
       "register_name": "휴앤인엘리시움",
       "register_dong": "휴앤인엘리시움",
@@ -331,7 +367,7 @@
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -346,15 +382,15 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 204,
+      "index": 741,
       "centroid": [
         128.1397418,
         35.177234
       ],
       "building_uid": null,
-      "pnu": "4817013700101340000",
-      "jibun": "134대",
-      "building_name": null,
+      "pnu": null,
+      "jibun": null,
+      "building_name": "102",
       "building_dong": null,
       "register_name": "휴앤인엘리시움",
       "register_dong": "휴앤인엘리시움",
@@ -367,7 +403,7 @@
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -382,14 +418,14 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 472,
+      "index": 985,
       "centroid": [
         128.1271156,
         35.1649772
       ],
       "building_uid": null,
-      "pnu": "4817013700100690003",
-      "jibun": "69-3 장",
+      "pnu": null,
+      "jibun": null,
       "building_name": null,
       "building_dong": null,
       "register_name": "윙스타워",
@@ -403,7 +439,7 @@
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -418,7 +454,7 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 1037,
+      "index": 981,
       "centroid": [
         128.1290558,
         35.1667853
@@ -553,37 +589,37 @@
       "priority": "긴급",
       "risk_score": 14,
       "reasons": [
-        "면적비<0.10",
-        "높이>=30m",
+        "면적비<0.20",
+        "높이>=50m",
         "8층이상",
         "식별명칭있음",
         "대장실제높이사용"
       ],
-      "district_id": "38030740",
-      "district_name": "중앙동",
-      "index": 3660,
+      "district_id": "38030710",
+      "district_name": "가호동",
+      "index": 987,
       "centroid": [
-        128.0879878,
-        35.1917536
+        128.1192632,
+        35.1526432
       ],
-      "building_uid": "1978299017211886022600000000",
-      "pnu": "4817011700101000010",
-      "jibun": "100-10대",
+      "building_uid": "2003301914601842944700000000",
+      "pnu": "4817013100120730000",
+      "jibun": "2073대",
       "building_name": null,
       "building_dong": null,
-      "register_name": "반도병원",
-      "register_dong": "",
-      "render_height": 31.65,
-      "floors_above": 9.0,
-      "footprint_area_m2": 89.0,
-      "register_building_area_m2": 1005.56,
-      "area_ratio": 0.0885,
+      "register_name": "코아루 웰가",
+      "register_dong": "코아루 웰가",
+      "render_height": 51.78,
+      "floors_above": 11.0,
+      "footprint_area_m2": 126.9,
+      "register_building_area_m2": 1076.344,
+      "area_ratio": 0.1179,
       "height_source": "건축물대장 실제 높이",
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
       "data_source": null,
-      "pnu_spatial_corrected": null
+      "pnu_spatial_corrected": true
     },
     {
       "priority": "긴급",
@@ -633,14 +669,14 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 471,
+      "index": 986,
       "centroid": [
         128.1278364,
         35.1650665
       ],
       "building_uid": null,
-      "pnu": "4817013700100690003",
-      "jibun": "69-3 장",
+      "pnu": null,
+      "jibun": null,
       "building_name": null,
       "building_dong": null,
       "register_name": "윙스타워",
@@ -654,7 +690,7 @@
       "match_score": -1.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -875,6 +911,42 @@
       "priority": "긴급",
       "risk_score": 13,
       "reasons": [
+        "면적비<0.20",
+        "높이>=30m",
+        "8층이상",
+        "식별명칭있음",
+        "대장실제높이사용"
+      ],
+      "district_id": "38030670",
+      "district_name": "평거동",
+      "index": 2581,
+      "centroid": [
+        128.0660743,
+        35.1820352
+      ],
+      "building_uid": "0000297032111875018700000000",
+      "pnu": "4817012500104230000",
+      "jibun": "423대",
+      "building_name": null,
+      "building_dong": null,
+      "register_name": "참조은산부인과",
+      "register_dong": "",
+      "render_height": 46.3,
+      "floors_above": 10.0,
+      "footprint_area_m2": 158.4,
+      "register_building_area_m2": 945.93,
+      "area_ratio": 0.1674,
+      "height_source": "건축물대장 실제 높이",
+      "match_score": -1.5,
+      "match_margin": null,
+      "match_basis": "PNU/주소 후보",
+      "data_source": null,
+      "pnu_spatial_corrected": null
+    },
+    {
+      "priority": "긴급",
+      "risk_score": 13,
+      "reasons": [
         "면적비<0.35",
         "높이>=50m",
         "15층이상",
@@ -948,6 +1020,41 @@
       "risk_score": 12,
       "reasons": [
         "면적비<0.20",
+        "높이>=30m",
+        "8층이상",
+        "대장실제높이사용"
+      ],
+      "district_id": "38030730",
+      "district_name": "성북동",
+      "index": 2192,
+      "centroid": [
+        128.0829763,
+        35.1922891
+      ],
+      "building_uid": "1994298560001886564800000000",
+      "pnu": "4817010500100010007",
+      "jibun": "1-7대",
+      "building_name": null,
+      "building_dong": null,
+      "register_name": "",
+      "register_dong": "",
+      "render_height": 35.6,
+      "floors_above": 10.0,
+      "footprint_area_m2": 45.7,
+      "register_building_area_m2": 422.14,
+      "area_ratio": 0.1082,
+      "height_source": "건축물대장 실제 높이",
+      "match_score": -1.5,
+      "match_margin": null,
+      "match_basis": "PNU/주소 후보",
+      "data_source": null,
+      "pnu_spatial_corrected": null
+    },
+    {
+      "priority": "긴급",
+      "risk_score": 12,
+      "reasons": [
+        "면적비<0.20",
         "높이>=15m",
         "8층이상",
         "식별명칭있음",
@@ -978,6 +1085,42 @@
       "match_basis": "PNU/주소 후보",
       "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
+    },
+    {
+      "priority": "긴급",
+      "risk_score": 12,
+      "reasons": [
+        "면적비<0.20",
+        "높이>=15m",
+        "8층이상",
+        "식별명칭있음",
+        "대장실제높이사용"
+      ],
+      "district_id": "38030390",
+      "district_name": "대곡면",
+      "index": 2323,
+      "centroid": [
+        128.1680228,
+        35.2627524
+      ],
+      "building_uid": "0000306217571965639500000000",
+      "pnu": "4817040022103150001",
+      "jibun": "315-1 대",
+      "building_name": null,
+      "building_dong": null,
+      "register_name": "대곡한양아파트",
+      "register_dong": "",
+      "render_height": 24.2,
+      "floors_above": 9.0,
+      "footprint_area_m2": 46.9,
+      "register_building_area_m2": 421.35,
+      "area_ratio": 0.1112,
+      "height_source": "건축물대장 실제 높이",
+      "match_score": -1.5,
+      "match_margin": null,
+      "match_basis": "PNU/주소 후보",
+      "data_source": null,
+      "pnu_spatial_corrected": true
     },
     {
       "priority": "긴급",
@@ -1147,6 +1290,41 @@
       "footprint_area_m2": 91.0,
       "register_building_area_m2": 533.147,
       "area_ratio": 0.1707,
+      "height_source": "건축물대장 실제 높이",
+      "match_score": -1.5,
+      "match_margin": null,
+      "match_basis": "PNU/주소 후보",
+      "data_source": null,
+      "pnu_spatial_corrected": true
+    },
+    {
+      "priority": "긴급",
+      "risk_score": 12,
+      "reasons": [
+        "면적비<0.20",
+        "높이>=30m",
+        "8층이상",
+        "대장실제높이사용"
+      ],
+      "district_id": "38030720",
+      "district_name": "천전동",
+      "index": 4639,
+      "centroid": [
+        128.0879575,
+        35.1842026
+      ],
+      "building_uid": "1996299023391877646100000000",
+      "pnu": "4817010300101800000",
+      "jibun": "180 차",
+      "building_name": null,
+      "building_dong": null,
+      "register_name": "",
+      "register_dong": "",
+      "render_height": 42.85,
+      "floors_above": 11.0,
+      "footprint_area_m2": 21.7,
+      "register_building_area_m2": 121.23,
+      "area_ratio": 0.179,
       "height_source": "건축물대장 실제 높이",
       "match_score": -1.5,
       "match_margin": null,
@@ -1693,7 +1871,7 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 941,
+      "index": 632,
       "centroid": [
         128.1351609,
         35.1789286
@@ -1903,7 +2081,7 @@
       ],
       "district_id": "38030400",
       "district_name": "금산면",
-      "index": 7023,
+      "index": 7024,
       "centroid": [
         128.1427686,
         35.2187864
@@ -3443,14 +3621,14 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 235,
+      "index": 346,
       "centroid": [
         128.1526252,
         35.1746948
       ],
       "building_uid": null,
-      "pnu": "4817013700102770007",
-      "jibun": "277-7대",
+      "pnu": null,
+      "jibun": null,
       "building_name": null,
       "building_dong": null,
       "register_name": "진주혁신도시아슬란스포츠몰",
@@ -3464,7 +3642,7 @@
       "match_score": 3.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -3723,14 +3901,14 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 236,
+      "index": 487,
       "centroid": [
         128.1533169,
         35.174693
       ],
       "building_uid": null,
-      "pnu": "4817013700102770007",
-      "jibun": "277-7대",
+      "pnu": null,
+      "jibun": null,
       "building_name": null,
       "building_dong": null,
       "register_name": "진주혁신도시아슬란스포츠몰",
@@ -3744,7 +3922,7 @@
       "match_score": 3.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -4983,7 +5161,7 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 943,
+      "index": 636,
       "centroid": [
         128.1351633,
         35.1788384
@@ -5648,7 +5826,7 @@
       ],
       "district_id": "38030310",
       "district_name": "내동면",
-      "index": 3618,
+      "index": 3619,
       "centroid": [
         128.0817546,
         35.1558495
@@ -5962,7 +6140,7 @@
       ],
       "district_id": "38030720",
       "district_name": "천전동",
-      "index": 8037,
+      "index": 8038,
       "centroid": [
         128.0933984,
         35.169359
@@ -5997,7 +6175,7 @@
       ],
       "district_id": "38030660",
       "district_name": "초장동",
-      "index": 4004,
+      "index": 4009,
       "centroid": [
         128.1121202,
         35.2122429
@@ -7047,7 +7225,7 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 841,
+      "index": 347,
       "centroid": [
         128.152578,
         35.1751798
@@ -7082,7 +7260,7 @@
       ],
       "district_id": "38030720",
       "district_name": "천전동",
-      "index": 8017,
+      "index": 8018,
       "centroid": [
         128.0926358,
         35.1744843
@@ -7432,7 +7610,7 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 936,
+      "index": 622,
       "centroid": [
         128.1380558,
         35.178441
@@ -7714,14 +7892,14 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 447,
+      "index": 1012,
       "centroid": [
         128.1310126,
         35.1691851
       ],
       "building_uid": null,
-      "pnu": "4817013700100870004",
-      "jibun": "87-4대",
+      "pnu": null,
+      "jibun": null,
       "building_name": null,
       "building_dong": null,
       "register_name": "",
@@ -7735,7 +7913,7 @@
       "match_score": 2.5,
       "match_margin": null,
       "match_basis": "PNU/주소 후보",
-      "data_source": "OSM 정적 보완",
+      "data_source": "Overture 정적 보완",
       "pnu_spatial_corrected": null
     },
     {
@@ -8602,7 +8780,7 @@
       ],
       "district_id": "38030760",
       "district_name": "충무공동",
-      "index": 946,
+      "index": 641,
       "centroid": [
         128.1355462,
         35.1800858
@@ -10291,177 +10469,7 @@
       "match_basis": "PNU/주소 후보",
       "data_source": null,
       "pnu_spatial_corrected": null
-    },
-    {
-      "priority": "긴급",
-      "risk_score": 10,
-      "reasons": [
-        "면적비<0.10",
-        "높이>=15m",
-        "대장실제높이사용"
-      ],
-      "district_id": "38030350",
-      "district_name": "일반성면",
-      "index": 2913,
-      "centroid": [
-        128.2777767,
-        35.1716744
-      ],
-      "building_uid": "0000316331981865800900000000",
-      "pnu": "4817036021106170007",
-      "jibun": "617-7 대",
-      "building_name": null,
-      "building_dong": null,
-      "register_name": "",
-      "register_dong": "",
-      "render_height": 15.9,
-      "floors_above": 3.0,
-      "footprint_area_m2": 15.3,
-      "register_building_area_m2": 559.27,
-      "area_ratio": 0.0274,
-      "height_source": "건축물대장 실제 높이",
-      "match_score": -1.5,
-      "match_margin": null,
-      "match_basis": "PNU/주소 후보",
-      "data_source": null,
-      "pnu_spatial_corrected": true
-    },
-    {
-      "priority": "긴급",
-      "risk_score": 10,
-      "reasons": [
-        "면적비<0.10",
-        "높이>=15m",
-        "대장실제높이사용"
-      ],
-      "district_id": "38030780",
-      "district_name": "하대동",
-      "index": 3115,
-      "centroid": [
-        128.1172653,
-        35.1900895
-      ],
-      "building_uid": "0000301685791884470700000000",
-      "pnu": "4817012000103430001",
-      "jibun": "343-1대",
-      "building_name": null,
-      "building_dong": null,
-      "register_name": "",
-      "register_dong": "",
-      "render_height": 21.8,
-      "floors_above": 5.0,
-      "footprint_area_m2": 6.9,
-      "register_building_area_m2": 248.25,
-      "area_ratio": 0.0276,
-      "height_source": "건축물대장 실제 높이",
-      "match_score": -1.5,
-      "match_margin": null,
-      "match_basis": "PNU/주소 후보",
-      "data_source": null,
-      "pnu_spatial_corrected": null
-    },
-    {
-      "priority": "긴급",
-      "risk_score": 10,
-      "reasons": [
-        "면적비<0.10",
-        "높이>=15m",
-        "대장실제높이사용"
-      ],
-      "district_id": "38030650",
-      "district_name": "상평동",
-      "index": 5987,
-      "centroid": [
-        128.1249108,
-        35.1740329
-      ],
-      "building_uid": null,
-      "pnu": null,
-      "jibun": null,
-      "building_name": null,
-      "building_dong": null,
-      "register_name": "",
-      "register_dong": "",
-      "render_height": 15.2,
-      "floors_above": 2.0,
-      "footprint_area_m2": 210.4,
-      "register_building_area_m2": 7539.09,
-      "area_ratio": 0.0279,
-      "height_source": "건축물대장 실제 높이",
-      "match_score": -1.5,
-      "match_margin": null,
-      "match_basis": "PNU/주소 후보",
-      "data_source": "Overture 정적 보완",
-      "pnu_spatial_corrected": null
-    },
-    {
-      "priority": "긴급",
-      "risk_score": 10,
-      "reasons": [
-        "면적비<0.10",
-        "높이>=15m",
-        "대장실제높이사용"
-      ],
-      "district_id": "38030730",
-      "district_name": "성북동",
-      "index": 1758,
-      "centroid": [
-        128.0779243,
-        35.1906863
-      ],
-      "building_uid": "0000298101821884733700000000",
-      "pnu": "4817010700100030018",
-      "jibun": "3-18대",
-      "building_name": null,
-      "building_dong": null,
-      "register_name": "",
-      "register_dong": "",
-      "render_height": 15.15,
-      "floors_above": 3.0,
-      "footprint_area_m2": 29.7,
-      "register_building_area_m2": 1043.79,
-      "area_ratio": 0.0284,
-      "height_source": "건축물대장 실제 높이",
-      "match_score": -1.5,
-      "match_margin": null,
-      "match_basis": "PNU/주소 후보",
-      "data_source": null,
-      "pnu_spatial_corrected": null
-    },
-    {
-      "priority": "긴급",
-      "risk_score": 10,
-      "reasons": [
-        "면적비<0.10",
-        "높이>=15m",
-        "대장실제높이사용"
-      ],
-      "district_id": "38030400",
-      "district_name": "금산면",
-      "index": 3123,
-      "centroid": [
-        128.1413524,
-        35.2150584
-      ],
-      "building_uid": "0000303847941912423800000000",
-      "pnu": "4817041026102940005",
-      "jibun": "294-5 대",
-      "building_name": null,
-      "building_dong": null,
-      "register_name": "",
-      "register_dong": "",
-      "render_height": 15.8,
-      "floors_above": 4.0,
-      "footprint_area_m2": 4.6,
-      "register_building_area_m2": 158.43,
-      "area_ratio": 0.0288,
-      "height_source": "건축물대장 실제 높이",
-      "match_score": -1.5,
-      "match_margin": null,
-      "match_basis": "PNU/주소 후보",
-      "data_source": null,
-      "pnu_spatial_corrected": null
     }
   ],
-  "all_count": 25226
+  "all_count": 25234
 }
