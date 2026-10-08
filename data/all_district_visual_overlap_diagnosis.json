@@ -1,39 +1,39 @@
 {
   "summary": {
     "38030110": {
-      "meaningful": 6,
+      "meaningful": 3,
       "overture_vs_gis": 0,
-      "same_pnu_native": 5,
+      "same_pnu_native": 2,
       "cross_pnu": 1
     },
     "38030310": {
+      "meaningful": 8,
+      "overture_vs_gis": 0,
+      "same_pnu_native": 8,
+      "cross_pnu": 0
+    },
+    "38030320": {
       "meaningful": 9,
       "overture_vs_gis": 0,
       "same_pnu_native": 9,
       "cross_pnu": 0
     },
-    "38030320": {
-      "meaningful": 14,
-      "overture_vs_gis": 0,
-      "same_pnu_native": 14,
-      "cross_pnu": 0
-    },
     "38030330": {
-      "meaningful": 4,
+      "meaningful": 0,
       "overture_vs_gis": 0,
-      "same_pnu_native": 4,
+      "same_pnu_native": 0,
       "cross_pnu": 0
     },
     "38030340": {
-      "meaningful": 5,
+      "meaningful": 2,
       "overture_vs_gis": 0,
-      "same_pnu_native": 5,
+      "same_pnu_native": 2,
       "cross_pnu": 0
     },
     "38030350": {
-      "meaningful": 9,
+      "meaningful": 8,
       "overture_vs_gis": 0,
-      "same_pnu_native": 6,
+      "same_pnu_native": 5,
       "cross_pnu": 3
     },
     "38030360": {
@@ -43,9 +43,9 @@
       "cross_pnu": 0
     },
     "38030370": {
-      "meaningful": 5,
+      "meaningful": 2,
       "overture_vs_gis": 0,
-      "same_pnu_native": 5,
+      "same_pnu_native": 2,
       "cross_pnu": 0
     },
     "38030380": {
@@ -61,9 +61,9 @@
       "cross_pnu": 2
     },
     "38030400": {
-      "meaningful": 20,
+      "meaningful": 15,
       "overture_vs_gis": 0,
-      "same_pnu_native": 18,
+      "same_pnu_native": 13,
       "cross_pnu": 2
     },
     "38030410": {
@@ -73,15 +73,15 @@
       "cross_pnu": 1
     },
     "38030420": {
-      "meaningful": 5,
+      "meaningful": 3,
       "overture_vs_gis": 0,
-      "same_pnu_native": 5,
+      "same_pnu_native": 3,
       "cross_pnu": 0
     },
     "38030430": {
-      "meaningful": 10,
+      "meaningful": 6,
       "overture_vs_gis": 0,
-      "same_pnu_native": 10,
+      "same_pnu_native": 6,
       "cross_pnu": 0
     },
     "38030440": {
@@ -91,15 +91,15 @@
       "cross_pnu": 0
     },
     "38030450": {
-      "meaningful": 6,
+      "meaningful": 4,
       "overture_vs_gis": 0,
-      "same_pnu_native": 6,
+      "same_pnu_native": 4,
       "cross_pnu": 0
     },
     "38030650": {
-      "meaningful": 29,
+      "meaningful": 22,
       "overture_vs_gis": 0,
-      "same_pnu_native": 26,
+      "same_pnu_native": 19,
       "cross_pnu": 3
     },
     "38030660": {
@@ -109,57 +109,57 @@
       "cross_pnu": 1
     },
     "38030670": {
-      "meaningful": 10,
+      "meaningful": 7,
       "overture_vs_gis": 0,
-      "same_pnu_native": 8,
+      "same_pnu_native": 5,
       "cross_pnu": 2
     },
     "38030680": {
-      "meaningful": 7,
+      "meaningful": 4,
       "overture_vs_gis": 0,
-      "same_pnu_native": 7,
+      "same_pnu_native": 4,
       "cross_pnu": 0
     },
     "38030690": {
-      "meaningful": 11,
+      "meaningful": 8,
       "overture_vs_gis": 0,
-      "same_pnu_native": 10,
+      "same_pnu_native": 7,
       "cross_pnu": 1
     },
     "38030700": {
-      "meaningful": 3,
+      "meaningful": 1,
       "overture_vs_gis": 0,
-      "same_pnu_native": 3,
+      "same_pnu_native": 1,
       "cross_pnu": 0
     },
     "38030710": {
-      "meaningful": 11,
+      "meaningful": 5,
       "overture_vs_gis": 0,
-      "same_pnu_native": 9,
+      "same_pnu_native": 3,
       "cross_pnu": 2
     },
     "38030720": {
-      "meaningful": 6,
+      "meaningful": 3,
       "overture_vs_gis": 0,
-      "same_pnu_native": 5,
+      "same_pnu_native": 2,
       "cross_pnu": 1
     },
     "38030730": {
-      "meaningful": 5,
+      "meaningful": 2,
       "overture_vs_gis": 0,
-      "same_pnu_native": 5,
+      "same_pnu_native": 2,
       "cross_pnu": 0
     },
     "38030740": {
-      "meaningful": 12,
+      "meaningful": 8,
       "overture_vs_gis": 0,
-      "same_pnu_native": 9,
+      "same_pnu_native": 5,
       "cross_pnu": 3
     },
     "38030750": {
-      "meaningful": 12,
+      "meaningful": 8,
       "overture_vs_gis": 0,
-      "same_pnu_native": 12,
+      "same_pnu_native": 8,
       "cross_pnu": 0
     },
     "38030760": {
@@ -169,9 +169,9 @@
       "cross_pnu": 0
     },
     "38030770": {
-      "meaningful": 28,
+      "meaningful": 22,
       "overture_vs_gis": 0,
-      "same_pnu_native": 28,
+      "same_pnu_native": 22,
       "cross_pnu": 0
     },
     "38030780": {
@@ -184,66 +184,8 @@
   "examples": {
     "38030110": [
       {
-        "a_index": 717,
-        "b_index": 7212,
-        "type": "same_pnu_native",
-        "overlap_small": 1.0,
-        "iou": 0.2245,
-        "area_ratio": 0.2245,
-        "distance_m": 2.26,
-        "a": {
-          "pnu": "4817025024109170000",
-          "uid": "0000306308741838951400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.4,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817025024109170000",
-          "uid": "2014124072961835881200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.4,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1666,
-        "b_index": 7930,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8929,
-        "iou": 0.43,
-        "area_ratio": 0.5078,
-        "distance_m": 2.77,
-        "a": {
-          "pnu": "4817025029105380003",
-          "uid": "0000311030401834287100000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.3,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817025029105380003",
-          "uid": "2014128782761830310200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.3,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2869,
-        "b_index": 7683,
+        "a_index": 2866,
+        "b_index": 7680,
         "type": "same_pnu_native",
         "overlap_small": 0.682,
         "iou": 0.1162,
@@ -271,37 +213,8 @@
         }
       },
       {
-        "a_index": 716,
-        "b_index": 7212,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5832,
-        "iou": 0.1212,
-        "area_ratio": 0.2275,
-        "distance_m": 5.9,
-        "a": {
-          "pnu": "4817025024109170000",
-          "uid": "0000306302361838897500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.4,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817025024109170000",
-          "uid": "2014124072961835881200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.4,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1181,
-        "b_index": 7212,
+        "a_index": 1179,
+        "b_index": 7209,
         "type": "cross_pnu",
         "overlap_small": 0.3025,
         "iou": 0.1246,
@@ -329,8 +242,8 @@
         }
       },
       {
-        "a_index": 3057,
-        "b_index": 7904,
+        "a_index": 3054,
+        "b_index": 7901,
         "type": "same_pnu_native",
         "overlap_small": 0.2634,
         "iou": 0.0396,
@@ -361,7 +274,7 @@
     "38030310": [
       {
         "a_index": 33,
-        "b_index": 2353,
+        "b_index": 2352,
         "type": "same_pnu_native",
         "overlap_small": 0.8711,
         "iou": 0.3501,
@@ -389,37 +302,8 @@
         }
       },
       {
-        "a_index": 8,
-        "b_index": 1858,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4173,
-        "iou": 0.1944,
-        "area_ratio": 0.6392,
-        "distance_m": 5.78,
-        "a": {
-          "pnu": "4817031024106880008",
-          "uid": "2014110482191818801000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.75,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817031024106880008",
-          "uid": "0000292754511819180500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.75,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 33,
-        "b_index": 2335,
+        "b_index": 2334,
         "type": "same_pnu_native",
         "overlap_small": 0.2874,
         "iou": 0.0219,
@@ -448,7 +332,7 @@
       },
       {
         "a_index": 68,
-        "b_index": 3360,
+        "b_index": 3359,
         "type": "same_pnu_native",
         "overlap_small": 0.2325,
         "iou": 0.0902,
@@ -477,7 +361,7 @@
       },
       {
         "a_index": 33,
-        "b_index": 2274,
+        "b_index": 2273,
         "type": "same_pnu_native",
         "overlap_small": 0.2173,
         "iou": 0.0165,
@@ -505,8 +389,8 @@
         }
       },
       {
-        "a_index": 2453,
-        "b_index": 3333,
+        "a_index": 2452,
+        "b_index": 3332,
         "type": "same_pnu_native",
         "overlap_small": 0.2043,
         "iou": 0.011,
@@ -534,8 +418,8 @@
         }
       },
       {
-        "a_index": 2056,
-        "b_index": 2935,
+        "a_index": 2055,
+        "b_index": 2934,
         "type": "same_pnu_native",
         "overlap_small": 0.2026,
         "iou": 0.0726,
@@ -564,7 +448,7 @@
       },
       {
         "a_index": 198,
-        "b_index": 3242,
+        "b_index": 3241,
         "type": "same_pnu_native",
         "overlap_small": 0.1988,
         "iou": 0.0849,
@@ -592,8 +476,8 @@
         }
       },
       {
-        "a_index": 2452,
-        "b_index": 3333,
+        "a_index": 2451,
+        "b_index": 3332,
         "type": "same_pnu_native",
         "overlap_small": 0.1577,
         "iou": 0.0205,
@@ -623,37 +507,8 @@
     ],
     "38030320": [
       {
-        "a_index": 2713,
-        "b_index": 4248,
-        "type": "same_pnu_native",
-        "overlap_small": 1.0,
-        "iou": 0.1218,
-        "area_ratio": 0.1218,
-        "distance_m": 2.41,
-        "a": {
-          "pnu": "4817032021116500011",
-          "uid": "0000299805131824934300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.38,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817032021116500011",
-          "uid": "2014117545021823225300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.38,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2162,
-        "b_index": 2542,
+        "a_index": 2161,
+        "b_index": 2540,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.0444,
@@ -681,37 +536,8 @@
         }
       },
       {
-        "a_index": 2162,
-        "b_index": 2436,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9952,
-        "iou": 0.4079,
-        "area_ratio": 0.4107,
-        "distance_m": 2.85,
-        "a": {
-          "pnu": "4817032021115840002",
-          "uid": "2014117829331819959400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 12.9,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817032021115840002",
-          "uid": "2005300094591821780000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 12.9,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 3734,
-        "b_index": 3735,
+        "a_index": 3729,
+        "b_index": 3730,
         "type": "same_pnu_native",
         "overlap_small": 0.979,
         "iou": 0.9559,
@@ -739,8 +565,8 @@
         }
       },
       {
-        "a_index": 3734,
-        "b_index": 4094,
+        "a_index": 3729,
+        "b_index": 4089,
         "type": "same_pnu_native",
         "overlap_small": 0.9547,
         "iou": 0.8969,
@@ -768,8 +594,8 @@
         }
       },
       {
-        "a_index": 3735,
-        "b_index": 4094,
+        "a_index": 3730,
+        "b_index": 4089,
         "type": "same_pnu_native",
         "overlap_small": 0.9443,
         "iou": 0.8812,
@@ -797,8 +623,8 @@
         }
       },
       {
-        "a_index": 2177,
-        "b_index": 3753,
+        "a_index": 2176,
+        "b_index": 3748,
         "type": "same_pnu_native",
         "overlap_small": 0.9082,
         "iou": 0.0214,
@@ -826,95 +652,8 @@
         }
       },
       {
-        "a_index": 2778,
-        "b_index": 4248,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6587,
-        "iou": 0.1593,
-        "area_ratio": 0.2635,
-        "distance_m": 6.26,
-        "a": {
-          "pnu": "4817032021116500011",
-          "uid": "0000299805871824898600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.38,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817032021116500011",
-          "uid": "2014117545021823225300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.38,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 807,
-        "b_index": 4137,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6378,
-        "iou": 0.263,
-        "area_ratio": 0.4847,
-        "distance_m": 3.66,
-        "a": {
-          "pnu": "4817032023102400000",
-          "uid": "0000302357931809732300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.5,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817032023102400000",
-          "uid": "2014120064121807504700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.5,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2712,
-        "b_index": 4248,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5584,
-        "iou": 0.0746,
-        "area_ratio": 0.142,
-        "distance_m": 9.97,
-        "a": {
-          "pnu": "4817032021116500011",
-          "uid": "0000299809281825049300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.38,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817032021116500011",
-          "uid": "2014117545021823225300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.38,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2320,
-        "b_index": 4110,
+        "a_index": 2319,
+        "b_index": 4105,
         "type": "same_pnu_native",
         "overlap_small": 0.2422,
         "iou": 0.0609,
@@ -942,8 +681,8 @@
         }
       },
       {
-        "a_index": 2543,
-        "b_index": 4248,
+        "a_index": 2541,
+        "b_index": 4243,
         "type": "same_pnu_native",
         "overlap_small": 0.2165,
         "iou": 0.0763,
@@ -1000,8 +739,8 @@
         }
       },
       {
-        "a_index": 3902,
-        "b_index": 4242,
+        "a_index": 3897,
+        "b_index": 4237,
         "type": "same_pnu_native",
         "overlap_small": 0.1844,
         "iou": 0.0217,
@@ -1029,186 +768,10 @@
         }
       }
     ],
-    "38030330": [
-      {
-        "a_index": 1298,
-        "b_index": 5452,
-        "type": "same_pnu_native",
-        "overlap_small": 0.964,
-        "iou": 0.2744,
-        "area_ratio": 0.2876,
-        "distance_m": 3.35,
-        "a": {
-          "pnu": "4817033021107730001",
-          "uid": "0000308617331810585900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.6,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817033021107730001",
-          "uid": "2014126327991807070800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.6,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 61,
-        "b_index": 3343,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9581,
-        "iou": 0.2212,
-        "area_ratio": 0.2331,
-        "distance_m": 3.46,
-        "a": {
-          "pnu": "4817033021101100006",
-          "uid": "2014127107731811435900000000",
-          "source": "",
-          "name": "",
-          "dong": "주1동",
-          "height": 7.48,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817033021101100006",
-          "uid": "0000309393001815126700000000",
-          "source": "",
-          "name": "",
-          "dong": "주1동",
-          "height": 7.48,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 4797,
-        "b_index": 5484,
-        "type": "same_pnu_native",
-        "overlap_small": 0.751,
-        "iou": 0.1897,
-        "area_ratio": 0.2696,
-        "distance_m": 4.72,
-        "a": {
-          "pnu": "4817033024106600000",
-          "uid": "0000307089531823891300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.9,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817033024106600000",
-          "uid": "2015124820411820659300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.9,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 4798,
-        "b_index": 5484,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5164,
-        "iou": 0.1923,
-        "area_ratio": 0.4543,
-        "distance_m": 6.78,
-        "a": {
-          "pnu": "4817033024106600000",
-          "uid": "1952307078821823848100000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.9,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817033024106600000",
-          "uid": "2015124820411820659300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.9,
-          "floors": 1.0,
-          "overture": false
-        }
-      }
-    ],
     "38030340": [
       {
-        "a_index": 27,
-        "b_index": 2916,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7187,
-        "iou": 0.274,
-        "area_ratio": 0.427,
-        "distance_m": 3.96,
-        "a": {
-          "pnu": "4817035025107000000",
-          "uid": "2014130869241873951800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.45,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817035025107000000",
-          "uid": "0000313025381878335500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.45,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 27,
-        "b_index": 2915,
-        "type": "same_pnu_native",
-        "overlap_small": 0.508,
-        "iou": 0.193,
-        "area_ratio": 0.4673,
-        "distance_m": 6.79,
-        "a": {
-          "pnu": "4817035025107000000",
-          "uid": "2014130869241873951800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.45,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817035025107000000",
-          "uid": "1948313031541878335000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.45,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 2396,
-        "b_index": 5368,
+        "b_index": 5365,
         "type": "same_pnu_native",
         "overlap_small": 0.5056,
         "iou": 0.0325,
@@ -1236,37 +799,8 @@
         }
       },
       {
-        "a_index": 3124,
-        "b_index": 5339,
-        "type": "same_pnu_native",
-        "overlap_small": 0.3682,
-        "iou": 0.1261,
-        "area_ratio": 0.4373,
-        "distance_m": 6.25,
-        "a": {
-          "pnu": "4817035029111250002",
-          "uid": "1965310020481894011400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.1,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817035029111250002",
-          "uid": "2013127890481890223700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.1,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 27,
-        "b_index": 2917,
+        "b_index": 2915,
         "type": "same_pnu_native",
         "overlap_small": 0.2018,
         "iou": 0.0918,
@@ -1297,7 +831,7 @@
     "38030350": [
       {
         "a_index": 1251,
-        "b_index": 4028,
+        "b_index": 4027,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.3907,
@@ -1326,7 +860,7 @@
       },
       {
         "a_index": 413,
-        "b_index": 2612,
+        "b_index": 2611,
         "type": "same_pnu_native",
         "overlap_small": 0.5627,
         "iou": 0.2665,
@@ -1355,7 +889,7 @@
       },
       {
         "a_index": 413,
-        "b_index": 4060,
+        "b_index": 4059,
         "type": "cross_pnu",
         "overlap_small": 0.5485,
         "iou": 0.2022,
@@ -1383,37 +917,8 @@
         }
       },
       {
-        "a_index": 17,
-        "b_index": 2492,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5203,
-        "iou": 0.1546,
-        "area_ratio": 0.3465,
-        "distance_m": 3.0,
-        "a": {
-          "pnu": "4817036024107820000",
-          "uid": "2014134839241845062700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.9,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817036024107820000",
-          "uid": "0000317049731850309300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.9,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 231,
-        "b_index": 2602,
+        "b_index": 2601,
         "type": "cross_pnu",
         "overlap_small": 0.5055,
         "iou": 0.0691,
@@ -1442,7 +947,7 @@
       },
       {
         "a_index": 1370,
-        "b_index": 3539,
+        "b_index": 3538,
         "type": "same_pnu_native",
         "overlap_small": 0.3496,
         "iou": 0.1588,
@@ -1471,7 +976,7 @@
       },
       {
         "a_index": 1305,
-        "b_index": 4028,
+        "b_index": 4027,
         "type": "same_pnu_native",
         "overlap_small": 0.312,
         "iou": 0.0242,
@@ -1500,7 +1005,7 @@
       },
       {
         "a_index": 1579,
-        "b_index": 4112,
+        "b_index": 4111,
         "type": "same_pnu_native",
         "overlap_small": 0.2834,
         "iou": 0.1152,
@@ -1528,8 +1033,8 @@
         }
       },
       {
-        "a_index": 2612,
-        "b_index": 3539,
+        "a_index": 2611,
+        "b_index": 3538,
         "type": "cross_pnu",
         "overlap_small": 0.2739,
         "iou": 0.1062,
@@ -1764,8 +1269,8 @@
     ],
     "38030370": [
       {
-        "a_index": 373,
-        "b_index": 2426,
+        "a_index": 372,
+        "b_index": 2424,
         "type": "same_pnu_native",
         "overlap_small": 0.7497,
         "iou": 0.0791,
@@ -1793,95 +1298,8 @@
         }
       },
       {
-        "a_index": 299,
-        "b_index": 4383,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6386,
-        "iou": 0.2961,
-        "area_ratio": 0.557,
-        "distance_m": 11.59,
-        "a": {
-          "pnu": "4817038021107320000",
-          "uid": "1997312941341909349300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817038021107320000",
-          "uid": "2014130846001904827400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 373,
-        "b_index": 2605,
-        "type": "same_pnu_native",
-        "overlap_small": 0.487,
-        "iou": 0.126,
-        "area_ratio": 0.2984,
-        "distance_m": 5.25,
-        "a": {
-          "pnu": "4817038023105760000",
-          "uid": "2014133477571868223200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817038023105760000",
-          "uid": "0000315647131873116100000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1786,
-        "b_index": 4585,
-        "type": "same_pnu_native",
-        "overlap_small": 0.364,
-        "iou": 0.0443,
-        "area_ratio": 0.1319,
-        "distance_m": 4.48,
-        "a": {
-          "pnu": "4817038024113790000",
-          "uid": "0000315049531888230500000000",
-          "source": "",
-          "name": "우곡경로당",
-          "dong": "",
-          "height": 9.0,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817038024113790000",
-          "uid": "2015132909231883366800000000",
-          "source": "",
-          "name": "우곡경로당",
-          "dong": "",
-          "height": 9.0,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 373,
-        "b_index": 2598,
+        "a_index": 372,
+        "b_index": 2596,
         "type": "same_pnu_native",
         "overlap_small": 0.2786,
         "iou": 0.0793,
@@ -2263,8 +1681,8 @@
     ],
     "38030400": [
       {
-        "a_index": 1969,
-        "b_index": 5661,
+        "a_index": 1968,
+        "b_index": 5656,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.0327,
@@ -2292,8 +1710,8 @@
         }
       },
       {
-        "a_index": 5099,
-        "b_index": 5709,
+        "a_index": 5094,
+        "b_index": 5704,
         "type": "same_pnu_native",
         "overlap_small": 0.9352,
         "iou": 0.0653,
@@ -2321,37 +1739,8 @@
         }
       },
       {
-        "a_index": 2079,
-        "b_index": 3330,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7425,
-        "iou": 0.1398,
-        "area_ratio": 0.1978,
-        "distance_m": 0.64,
-        "a": {
-          "pnu": "4817041026106550000",
-          "uid": "2014121009561911592900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.8,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817041026106550000",
-          "uid": "0000303091851914028600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.8,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2335,
-        "b_index": 2597,
+        "a_index": 2334,
+        "b_index": 2596,
         "type": "same_pnu_native",
         "overlap_small": 0.7399,
         "iou": 0.0619,
@@ -2379,37 +1768,8 @@
         }
       },
       {
-        "a_index": 5098,
-        "b_index": 5709,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6675,
-        "iou": 0.2384,
-        "area_ratio": 0.4053,
-        "distance_m": 3.98,
-        "a": {
-          "pnu": "4817041021106530004",
-          "uid": "0000305505521936740000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.6,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817041021106530004",
-          "uid": "2014123465761933790800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.6,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 3127,
-        "b_index": 5826,
+        "a_index": 3125,
+        "b_index": 5821,
         "type": "same_pnu_native",
         "overlap_small": 0.6585,
         "iou": 0.0445,
@@ -2437,8 +1797,8 @@
         }
       },
       {
-        "a_index": 1570,
-        "b_index": 5544,
+        "a_index": 1569,
+        "b_index": 5539,
         "type": "same_pnu_native",
         "overlap_small": 0.5817,
         "iou": 0.0434,
@@ -2462,35 +1822,6 @@
           "dong": "",
           "height": 7.9,
           "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2079,
-        "b_index": 3332,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5686,
-        "iou": 0.2438,
-        "area_ratio": 0.5261,
-        "distance_m": 4.1,
-        "a": {
-          "pnu": "4817041026106550000",
-          "uid": "2014121009561911592900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.8,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817041026106550000",
-          "uid": "0000303093041914057900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.8,
-          "floors": 1.0,
           "overture": false
         }
       },
@@ -2524,66 +1855,8 @@
         }
       },
       {
-        "a_index": 815,
-        "b_index": 5661,
-        "type": "same_pnu_native",
-        "overlap_small": 0.3594,
-        "iou": 0.1144,
-        "area_ratio": 0.3998,
-        "distance_m": 6.54,
-        "a": {
-          "pnu": "4817041023108920000",
-          "uid": "0000305803751884648000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.2,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817041023108920000",
-          "uid": "2014123658641881748400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.2,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 3032,
-        "b_index": 5579,
-        "type": "same_pnu_native",
-        "overlap_small": 0.358,
-        "iou": 0.1141,
-        "area_ratio": 0.4006,
-        "distance_m": 5.08,
-        "a": {
-          "pnu": "4817041026103960000",
-          "uid": "0000303963201912544300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.5,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817041026103960000",
-          "uid": "2014121880791909904700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.5,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 14,
-        "b_index": 5802,
+        "b_index": 5797,
         "type": "same_pnu_native",
         "overlap_small": 0.3485,
         "iou": 0.0476,
@@ -2611,8 +1884,8 @@
         }
       },
       {
-        "a_index": 1733,
-        "b_index": 2508,
+        "a_index": 1732,
+        "b_index": 2507,
         "type": "same_pnu_native",
         "overlap_small": 0.3431,
         "iou": 0.1986,
@@ -2640,8 +1913,8 @@
         }
       },
       {
-        "a_index": 1319,
-        "b_index": 5661,
+        "a_index": 1318,
+        "b_index": 5656,
         "type": "same_pnu_native",
         "overlap_small": 0.3126,
         "iou": 0.0186,
@@ -2669,8 +1942,8 @@
         }
       },
       {
-        "a_index": 2079,
-        "b_index": 3475,
+        "a_index": 2078,
+        "b_index": 3471,
         "type": "same_pnu_native",
         "overlap_small": 0.2887,
         "iou": 0.1245,
@@ -2698,8 +1971,8 @@
         }
       },
       {
-        "a_index": 1575,
-        "b_index": 2508,
+        "a_index": 1574,
+        "b_index": 2507,
         "type": "same_pnu_native",
         "overlap_small": 0.248,
         "iou": 0.0229,
@@ -2727,8 +2000,8 @@
         }
       },
       {
-        "a_index": 5094,
-        "b_index": 5709,
+        "a_index": 5090,
+        "b_index": 5704,
         "type": "same_pnu_native",
         "overlap_small": 0.245,
         "iou": 0.067,
@@ -2756,8 +2029,8 @@
         }
       },
       {
-        "a_index": 5130,
-        "b_index": 5393,
+        "a_index": 5125,
+        "b_index": 5388,
         "type": "same_pnu_native",
         "overlap_small": 0.2402,
         "iou": 0.0253,
@@ -2785,8 +2058,8 @@
         }
       },
       {
-        "a_index": 1968,
-        "b_index": 5661,
+        "a_index": 1967,
+        "b_index": 5656,
         "type": "cross_pnu",
         "overlap_small": 0.2235,
         "iou": 0.0072,
@@ -2814,8 +2087,8 @@
         }
       },
       {
-        "a_index": 1568,
-        "b_index": 2508,
+        "a_index": 1567,
+        "b_index": 2507,
         "type": "cross_pnu",
         "overlap_small": 0.1624,
         "iou": 0.0827,
@@ -2906,7 +2179,7 @@
     "38030420": [
       {
         "a_index": 20,
-        "b_index": 3530,
+        "b_index": 3528,
         "type": "same_pnu_native",
         "overlap_small": 0.849,
         "iou": 0.4782,
@@ -2935,7 +2208,7 @@
       },
       {
         "a_index": 4,
-        "b_index": 1930,
+        "b_index": 1929,
         "type": "same_pnu_native",
         "overlap_small": 0.6977,
         "iou": 0.2457,
@@ -2963,37 +2236,8 @@
         }
       },
       {
-        "a_index": 2739,
-        "b_index": 4370,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6663,
-        "iou": 0.1761,
-        "area_ratio": 0.2898,
-        "distance_m": 3.91,
-        "a": {
-          "pnu": "4817043024103690002",
-          "uid": "0000302180871982027700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.162,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817043024103690002",
-          "uid": "2015120239801979759700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.162,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 405,
-        "b_index": 4358,
+        "a_index": 404,
+        "b_index": 4356,
         "type": "same_pnu_native",
         "overlap_small": 0.497,
         "iou": 0.1093,
@@ -3019,41 +2263,12 @@
           "floors": 1.0,
           "overture": false
         }
-      },
-      {
-        "a_index": 286,
-        "b_index": 4367,
-        "type": "same_pnu_native",
-        "overlap_small": 0.3669,
-        "iou": 0.1976,
-        "area_ratio": 0.8176,
-        "distance_m": 4.88,
-        "a": {
-          "pnu": "4817043029103570002",
-          "uid": "0000298227312040571300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.7,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817043029103570002",
-          "uid": "2014116403972039062500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.7,
-          "floors": 1.0,
-          "overture": false
-        }
       }
     ],
     "38030430": [
       {
         "a_index": 39,
-        "b_index": 5799,
+        "b_index": 5796,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.0613,
@@ -3082,7 +2297,7 @@
       },
       {
         "a_index": 176,
-        "b_index": 4913,
+        "b_index": 4910,
         "type": "same_pnu_native",
         "overlap_small": 0.9491,
         "iou": 0.1159,
@@ -3111,123 +2326,7 @@
       },
       {
         "a_index": 20,
-        "b_index": 2456,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8649,
-        "iou": 0.2079,
-        "area_ratio": 0.2484,
-        "distance_m": 5.66,
-        "a": {
-          "pnu": "4817044025102980005",
-          "uid": "2014112955611971053700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.4,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817044025102980005",
-          "uid": "0000294916281971868800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.4,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 5012,
-        "b_index": 5979,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7651,
-        "iou": 0.2111,
-        "area_ratio": 0.295,
-        "distance_m": 3.76,
-        "a": {
-          "pnu": "4817044030100590000",
-          "uid": "2013111649121918873600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 3.6,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817044030100590000",
-          "uid": "0000293720331919452400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 3.6,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 367,
-        "b_index": 6176,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5273,
-        "iou": 0.3115,
-        "area_ratio": 0.8196,
-        "distance_m": 8.11,
-        "a": {
-          "pnu": "4817044027105870003",
-          "uid": "0000290596331957832200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.55,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817044027105870003",
-          "uid": "2015108610671957856600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.55,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 724,
-        "b_index": 6285,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4328,
-        "iou": 0.2274,
-        "area_ratio": 0.7485,
-        "distance_m": 6.01,
-        "a": {
-          "pnu": "4817044027107450004",
-          "uid": "0000290747631983193500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.56,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817044027107450004",
-          "uid": "2015108811881983198100000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.56,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 20,
-        "b_index": 2455,
+        "b_index": 2453,
         "type": "same_pnu_native",
         "overlap_small": 0.2883,
         "iou": 0.1593,
@@ -3255,8 +2354,8 @@
         }
       },
       {
-        "a_index": 2289,
-        "b_index": 6279,
+        "a_index": 2287,
+        "b_index": 6275,
         "type": "same_pnu_native",
         "overlap_small": 0.2199,
         "iou": 0.1193,
@@ -3284,8 +2383,8 @@
         }
       },
       {
-        "a_index": 1604,
-        "b_index": 6258,
+        "a_index": 1602,
+        "b_index": 6254,
         "type": "same_pnu_native",
         "overlap_small": 0.215,
         "iou": 0.0931,
@@ -3313,8 +2412,8 @@
         }
       },
       {
-        "a_index": 3763,
-        "b_index": 4816,
+        "a_index": 3760,
+        "b_index": 4813,
         "type": "same_pnu_native",
         "overlap_small": 0.1771,
         "iou": 0.0251,
@@ -3376,64 +2475,6 @@
     "38030450": [
       {
         "a_index": 21,
-        "b_index": 505,
-        "type": "same_pnu_native",
-        "overlap_small": 0.883,
-        "iou": 0.1418,
-        "area_ratio": 0.1637,
-        "distance_m": 1.52,
-        "a": {
-          "pnu": "4817046027103850001",
-          "uid": "2014103836351856048400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.8,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817046027103850001",
-          "uid": "0000286033321855064200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.5,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1684,
-        "b_index": 4895,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4307,
-        "iou": 0.2372,
-        "area_ratio": 0.8023,
-        "distance_m": 4.25,
-        "a": {
-          "pnu": "4817046024106240000",
-          "uid": "0000281758281890321800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.65,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817046024106240000",
-          "uid": "2015996365101892213900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.65,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 21,
         "b_index": 164,
         "type": "same_pnu_native",
         "overlap_small": 0.2866,
@@ -3463,7 +2504,7 @@
       },
       {
         "a_index": 21,
-        "b_index": 2226,
+        "b_index": 2224,
         "type": "same_pnu_native",
         "overlap_small": 0.2665,
         "iou": 0.1108,
@@ -3492,7 +2533,7 @@
       },
       {
         "a_index": 68,
-        "b_index": 2226,
+        "b_index": 2224,
         "type": "same_pnu_native",
         "overlap_small": 0.2466,
         "iou": 0.0939,
@@ -3520,8 +2561,8 @@
         }
       },
       {
-        "a_index": 853,
-        "b_index": 4809,
+        "a_index": 852,
+        "b_index": 4807,
         "type": "same_pnu_native",
         "overlap_small": 0.2026,
         "iou": 0.0662,
@@ -3551,8 +2592,8 @@
     ],
     "38030650": [
       {
-        "a_index": 3699,
-        "b_index": 5587,
+        "a_index": 3694,
+        "b_index": 5581,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.0227,
@@ -3580,8 +2621,8 @@
         }
       },
       {
-        "a_index": 4942,
-        "b_index": 5587,
+        "a_index": 4936,
+        "b_index": 5581,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.0171,
@@ -3609,37 +2650,8 @@
         }
       },
       {
-        "a_index": 180,
-        "b_index": 2234,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9962,
-        "iou": 0.2417,
-        "area_ratio": 0.2429,
-        "distance_m": 9.75,
-        "a": {
-          "pnu": "4817012100102670004",
-          "uid": "2014118488501864961100000000",
-          "source": "",
-          "name": "",
-          "dong": "부속건축물제2동",
-          "height": 8.4,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012100102670004",
-          "uid": "1974300673051866944300000000",
-          "source": "",
-          "name": "",
-          "dong": "부속건축물제2동",
-          "height": 8.4,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2288,
-        "b_index": 5125,
+        "a_index": 2287,
+        "b_index": 5119,
         "type": "same_pnu_native",
         "overlap_small": 0.9798,
         "iou": 0.0328,
@@ -3668,7 +2680,7 @@
       },
       {
         "a_index": 180,
-        "b_index": 5125,
+        "b_index": 5119,
         "type": "same_pnu_native",
         "overlap_small": 0.9791,
         "iou": 0.9572,
@@ -3696,37 +2708,8 @@
         }
       },
       {
-        "a_index": 2234,
-        "b_index": 5125,
-        "type": "same_pnu_native",
-        "overlap_small": 0.974,
-        "iou": 0.2346,
-        "area_ratio": 0.2424,
-        "distance_m": 10.1,
-        "a": {
-          "pnu": "4817012100102670004",
-          "uid": "1974300673051866944300000000",
-          "source": "",
-          "name": "",
-          "dong": "부속건축물제2동",
-          "height": 8.4,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012100102670004",
-          "uid": "2014118488021864961600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 180,
-        "b_index": 2288,
+        "b_index": 2287,
         "type": "same_pnu_native",
         "overlap_small": 0.9563,
         "iou": 0.0321,
@@ -3755,7 +2738,7 @@
       },
       {
         "a_index": 1186,
-        "b_index": 3854,
+        "b_index": 3848,
         "type": "same_pnu_native",
         "overlap_small": 0.9553,
         "iou": 0.0764,
@@ -3783,8 +2766,8 @@
         }
       },
       {
-        "a_index": 5464,
-        "b_index": 5579,
+        "a_index": 5458,
+        "b_index": 5573,
         "type": "same_pnu_native",
         "overlap_small": 0.9176,
         "iou": 0.8477,
@@ -3842,7 +2825,7 @@
       },
       {
         "a_index": 2029,
-        "b_index": 5580,
+        "b_index": 5574,
         "type": "same_pnu_native",
         "overlap_small": 0.8796,
         "iou": 0.0746,
@@ -3870,37 +2853,8 @@
         }
       },
       {
-        "a_index": 3748,
-        "b_index": 5587,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8356,
-        "iou": 0.2112,
-        "area_ratio": 0.2638,
-        "distance_m": 8.01,
-        "a": {
-          "pnu": "4817012100101530031",
-          "uid": "0000301885181870770500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012100101530031",
-          "uid": "2014119707901868640300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 635,
-        "b_index": 5580,
+        "b_index": 5574,
         "type": "same_pnu_native",
         "overlap_small": 0.8035,
         "iou": 0.0492,
@@ -3923,35 +2877,6 @@
           "name": "",
           "dong": "",
           "height": 7.1,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 3539,
-        "b_index": 5587,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7809,
-        "iou": 0.3302,
-        "area_ratio": 0.4659,
-        "distance_m": 8.11,
-        "a": {
-          "pnu": "4817012100101530031",
-          "uid": "0000301883411870854600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012100101530031",
-          "uid": "2014119707901868640300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
           "floors": 1.0,
           "overture": false
         }
@@ -3987,7 +2912,7 @@
       },
       {
         "a_index": 62,
-        "b_index": 5490,
+        "b_index": 5484,
         "type": "cross_pnu",
         "overlap_small": 0.6958,
         "iou": 0.5256,
@@ -4015,95 +2940,8 @@
         }
       },
       {
-        "a_index": 3692,
-        "b_index": 5587,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6587,
-        "iou": 0.1478,
-        "area_ratio": 0.243,
-        "distance_m": 15.04,
-        "a": {
-          "pnu": "4817012100101530031",
-          "uid": "0000301861481870819300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012100101530031",
-          "uid": "2014119707901868640300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2936,
-        "b_index": 5610,
-        "type": "same_pnu_native",
-        "overlap_small": 0.599,
-        "iou": 0.2118,
-        "area_ratio": 0.4119,
-        "distance_m": 7.44,
-        "a": {
-          "pnu": "4817012100103050007",
-          "uid": "0000302185721863351500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.3,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012100103050007",
-          "uid": "2014120007371861103800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.3,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 2935,
-        "b_index": 5580,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5734,
-        "iou": 0.1128,
-        "area_ratio": 0.2148,
-        "distance_m": 12.14,
-        "a": {
-          "pnu": "4817012100103050010",
-          "uid": "1955302182071863142000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.1,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012100103050010",
-          "uid": "2014120005561860955000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.1,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 4967,
-        "b_index": 5587,
+        "a_index": 4961,
+        "b_index": 5581,
         "type": "same_pnu_native",
         "overlap_small": 0.4849,
         "iou": 0.0185,
@@ -4160,8 +2998,8 @@
         }
       },
       {
-        "a_index": 4941,
-        "b_index": 5587,
+        "a_index": 4935,
+        "b_index": 5581,
         "type": "same_pnu_native",
         "overlap_small": 0.3754,
         "iou": 0.0055,
@@ -4189,8 +3027,8 @@
         }
       },
       {
-        "a_index": 2620,
-        "b_index": 5685,
+        "a_index": 2619,
+        "b_index": 5679,
         "type": "cross_pnu",
         "overlap_small": 0.3743,
         "iou": 0.1026,
@@ -4218,8 +3056,8 @@
         }
       },
       {
-        "a_index": 3017,
-        "b_index": 5580,
+        "a_index": 3014,
+        "b_index": 5574,
         "type": "same_pnu_native",
         "overlap_small": 0.3366,
         "iou": 0.1211,
@@ -4247,8 +3085,8 @@
         }
       },
       {
-        "a_index": 4153,
-        "b_index": 5383,
+        "a_index": 4147,
+        "b_index": 5377,
         "type": "same_pnu_native",
         "overlap_small": 0.2781,
         "iou": 0.1381,
@@ -4277,7 +3115,7 @@
       },
       {
         "a_index": 1187,
-        "b_index": 3854,
+        "b_index": 3848,
         "type": "same_pnu_native",
         "overlap_small": 0.2528,
         "iou": 0.0176,
@@ -4306,7 +3144,7 @@
       },
       {
         "a_index": 62,
-        "b_index": 2566,
+        "b_index": 2565,
         "type": "same_pnu_native",
         "overlap_small": 0.2319,
         "iou": 0.0166,
@@ -4334,8 +3172,8 @@
         }
       },
       {
-        "a_index": 3219,
-        "b_index": 5221,
+        "a_index": 3216,
+        "b_index": 5215,
         "type": "same_pnu_native",
         "overlap_small": 0.1682,
         "iou": 0.0281,
@@ -4363,8 +3201,8 @@
         }
       },
       {
-        "a_index": 2566,
-        "b_index": 5490,
+        "a_index": 2565,
+        "b_index": 5484,
         "type": "cross_pnu",
         "overlap_small": 0.1652,
         "iou": 0.0115,
@@ -4454,66 +3292,8 @@
     ],
     "38030670": [
       {
-        "a_index": 424,
-        "b_index": 2754,
-        "type": "same_pnu_native",
-        "overlap_small": 1.0,
-        "iou": 0.2799,
-        "area_ratio": 0.2799,
-        "distance_m": 4.41,
-        "a": {
-          "pnu": "4817012600109100000",
-          "uid": "0000296555481863044700000000",
-          "source": "",
-          "name": "코앞2빌딩",
-          "dong": "",
-          "height": 18.1,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012600109100000",
-          "uid": "2013114376401861921000000000",
-          "source": "",
-          "name": "코앞2빌딩",
-          "dong": "",
-          "height": 18.1,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 256,
-        "b_index": 2363,
-        "type": "same_pnu_native",
-        "overlap_small": 1.0,
-        "iou": 0.1423,
-        "area_ratio": 0.1423,
-        "distance_m": 3.87,
-        "a": {
-          "pnu": "4817012500104170003",
-          "uid": "2014114806681872506700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.75,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012500104170003",
-          "uid": "0000296967591873660600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.75,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1752,
-        "b_index": 2762,
+        "a_index": 1750,
+        "b_index": 2759,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.1134,
@@ -4542,7 +3322,7 @@
       },
       {
         "a_index": 256,
-        "b_index": 2365,
+        "b_index": 2362,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.0715,
@@ -4570,37 +3350,8 @@
         }
       },
       {
-        "a_index": 241,
-        "b_index": 860,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8864,
-        "iou": 0.1999,
-        "area_ratio": 0.2315,
-        "distance_m": 8.85,
-        "a": {
-          "pnu": "4817012600101380007",
-          "uid": "2013114215821864750900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.4,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012600101380007",
-          "uid": "1995296388891865741300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.4,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 119,
-        "b_index": 1176,
+        "b_index": 1174,
         "type": "cross_pnu",
         "overlap_small": 0.8334,
         "iou": 0.0532,
@@ -4629,7 +3380,7 @@
       },
       {
         "a_index": 82,
-        "b_index": 1914,
+        "b_index": 1912,
         "type": "same_pnu_native",
         "overlap_small": 0.331,
         "iou": 0.1698,
@@ -4657,8 +3408,8 @@
         }
       },
       {
-        "a_index": 1286,
-        "b_index": 1950,
+        "a_index": 1284,
+        "b_index": 1948,
         "type": "same_pnu_native",
         "overlap_small": 0.2758,
         "iou": 0.0812,
@@ -4686,8 +3437,8 @@
         }
       },
       {
-        "a_index": 1089,
-        "b_index": 1176,
+        "a_index": 1087,
+        "b_index": 1174,
         "type": "cross_pnu",
         "overlap_small": 0.2357,
         "iou": 0.0155,
@@ -4716,7 +3467,7 @@
       },
       {
         "a_index": 241,
-        "b_index": 817,
+        "b_index": 816,
         "type": "same_pnu_native",
         "overlap_small": 0.2089,
         "iou": 0.0029,
@@ -4747,7 +3498,7 @@
     "38030680": [
       {
         "a_index": 341,
-        "b_index": 806,
+        "b_index": 805,
         "type": "same_pnu_native",
         "overlap_small": 0.7982,
         "iou": 0.0923,
@@ -4776,7 +3527,7 @@
       },
       {
         "a_index": 187,
-        "b_index": 831,
+        "b_index": 830,
         "type": "same_pnu_native",
         "overlap_small": 0.7079,
         "iou": 0.2578,
@@ -4800,93 +3551,6 @@
           "dong": "",
           "height": 9.9,
           "floors": 3.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 15,
-        "b_index": 1162,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6863,
-        "iou": 0.2187,
-        "area_ratio": 0.3541,
-        "distance_m": 4.87,
-        "a": {
-          "pnu": "4817012500100120033",
-          "uid": "2014115193791879051700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.75,
-          "floors": 3.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012500100120033",
-          "uid": "0000297346761880305900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.75,
-          "floors": 3.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 104,
-        "b_index": 749,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5501,
-        "iou": 0.1963,
-        "area_ratio": 0.4252,
-        "distance_m": 7.85,
-        "a": {
-          "pnu": "4817012500100190025",
-          "uid": "2013115349221877673800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 12.55,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012500100190025",
-          "uid": "0000297509061878964200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 12.55,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 22,
-        "b_index": 1139,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4144,
-        "iou": 0.1549,
-        "area_ratio": 0.4786,
-        "distance_m": 7.21,
-        "a": {
-          "pnu": "4817012500100180005",
-          "uid": "2013115460031877181400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 13.2,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012500100180005",
-          "uid": "0000297606191878529300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 13.2,
-          "floors": 4.0,
           "overture": false
         }
       },
@@ -4951,37 +3615,8 @@
     ],
     "38030690": [
       {
-        "a_index": 13,
-        "b_index": 1469,
-        "type": "same_pnu_native",
-        "overlap_small": 1.0,
-        "iou": 0.1324,
-        "area_ratio": 0.1324,
-        "distance_m": 1.97,
-        "a": {
-          "pnu": "4817012700102840006",
-          "uid": "2014114257181881880100000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.05,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012700102840006",
-          "uid": "0000296401571882933600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.05,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 54,
-        "b_index": 2241,
+        "b_index": 2238,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.062,
@@ -5010,7 +3645,7 @@
       },
       {
         "a_index": 54,
-        "b_index": 2137,
+        "b_index": 2134,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.0257,
@@ -5039,7 +3674,7 @@
       },
       {
         "a_index": 54,
-        "b_index": 2160,
+        "b_index": 2157,
         "type": "same_pnu_native",
         "overlap_small": 1.0,
         "iou": 0.0066,
@@ -5067,8 +3702,8 @@
         }
       },
       {
-        "a_index": 1957,
-        "b_index": 2897,
+        "a_index": 1954,
+        "b_index": 2894,
         "type": "same_pnu_native",
         "overlap_small": 0.9231,
         "iou": 0.4854,
@@ -5092,35 +3727,6 @@
           "dong": "",
           "height": 6.95,
           "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 13,
-        "b_index": 1850,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7004,
-        "iou": 0.0817,
-        "area_ratio": 0.1208,
-        "distance_m": 5.12,
-        "a": {
-          "pnu": "4817012700102840006",
-          "uid": "2014114257181881880100000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.05,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012700102840006",
-          "uid": "0000296402501882903000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.05,
-          "floors": 2.0,
           "overture": false
         }
       },
@@ -5154,37 +3760,8 @@
         }
       },
       {
-        "a_index": 1391,
-        "b_index": 2714,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4192,
-        "iou": 0.1459,
-        "area_ratio": 0.4364,
-        "distance_m": 7.16,
-        "a": {
-          "pnu": "4817012800100290013",
-          "uid": "0000297149121888945500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.9,
-          "floors": 3.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012800100290013",
-          "uid": "2014115024101887710900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.9,
-          "floors": 3.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1819,
-        "b_index": 2805,
+        "a_index": 1817,
+        "b_index": 2802,
         "type": "same_pnu_native",
         "overlap_small": 0.2981,
         "iou": 0.0462,
@@ -5212,8 +3789,8 @@
         }
       },
       {
-        "a_index": 1463,
-        "b_index": 2830,
+        "a_index": 1462,
+        "b_index": 2827,
         "type": "same_pnu_native",
         "overlap_small": 0.2367,
         "iou": 0.0334,
@@ -5272,66 +3849,8 @@
     ],
     "38030700": [
       {
-        "a_index": 667,
-        "b_index": 2720,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7025,
-        "iou": 0.0957,
-        "area_ratio": 0.142,
-        "distance_m": 2.89,
-        "a": {
-          "pnu": "4817012900102190000",
-          "uid": "0000294776841863572500000000",
-          "source": "",
-          "name": "오동경로당",
-          "dong": "",
-          "height": 4.8,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012900102190000",
-          "uid": "2014112598031862806300000000",
-          "source": "",
-          "name": "오동경로당",
-          "dong": "",
-          "height": 4.8,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 196,
-        "b_index": 1563,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4742,
-        "iou": 0.1088,
-        "area_ratio": 0.2609,
-        "distance_m": 6.04,
-        "a": {
-          "pnu": "4817012600107390012",
-          "uid": "2014113332281859167300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.05,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817012600107390012",
-          "uid": "0000295522601860110500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 7.05,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1010,
-        "b_index": 2828,
+        "a_index": 1009,
+        "b_index": 2826,
         "type": "same_pnu_native",
         "overlap_small": 0.1958,
         "iou": 0.0912,
@@ -5390,95 +3909,8 @@
         }
       },
       {
-        "a_index": 304,
-        "b_index": 1824,
-        "type": "same_pnu_native",
-        "overlap_small": 0.969,
-        "iou": 0.3384,
-        "area_ratio": 0.353,
-        "distance_m": 1.4,
-        "a": {
-          "pnu": "4817013100108310000",
-          "uid": "2014118098441847685900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.25,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817013100108310000",
-          "uid": "0000300308401849537900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.25,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 152,
-        "b_index": 808,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9239,
-        "iou": 0.2421,
-        "area_ratio": 0.2674,
-        "distance_m": 1.99,
-        "a": {
-          "pnu": "4817013100106520030",
-          "uid": "2015118590581851742900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.8,
-          "floors": 3.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817013100106520030",
-          "uid": "0000300794621853672500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.8,
-          "floors": 3.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1526,
-        "b_index": 2430,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8782,
-        "iou": 0.4395,
-        "area_ratio": 0.5329,
-        "distance_m": 1.96,
-        "a": {
-          "pnu": "4817013100106520010",
-          "uid": "0000300783901854012900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 14.5,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817013100106520010",
-          "uid": "2015118583041852077700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 14.5,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 533,
-        "b_index": 2437,
+        "a_index": 532,
+        "b_index": 2431,
         "type": "cross_pnu",
         "overlap_small": 0.7372,
         "iou": 0.3066,
@@ -5506,66 +3938,8 @@
         }
       },
       {
-        "a_index": 411,
-        "b_index": 2903,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6238,
-        "iou": 0.1003,
-        "area_ratio": 0.1712,
-        "distance_m": 4.17,
-        "a": {
-          "pnu": "4817013100119210000",
-          "uid": "0000300348801834050100000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.5,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817013100119210000",
-          "uid": "2014118103141832224600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.5,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 771,
-        "b_index": 2816,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5846,
-        "iou": 0.1888,
-        "area_ratio": 0.373,
-        "distance_m": 4.52,
-        "a": {
-          "pnu": "4817013200106440005",
-          "uid": "2010301708891856252400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.8,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817013200106440005",
-          "uid": "2016119506831854159500000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.8,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 839,
-        "b_index": 2469,
+        "a_index": 836,
+        "b_index": 2463,
         "type": "same_pnu_native",
         "overlap_small": 0.575,
         "iou": 0.03,
@@ -5593,37 +3967,8 @@
         }
       },
       {
-        "a_index": 1579,
-        "b_index": 2430,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4033,
-        "iou": 0.1436,
-        "area_ratio": 0.452,
-        "distance_m": 5.62,
-        "a": {
-          "pnu": "4817013100106520010",
-          "uid": "0000300783541854082600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 14.5,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817013100106520010",
-          "uid": "2015118583041852077700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 14.5,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 188,
-        "b_index": 802,
+        "b_index": 800,
         "type": "cross_pnu",
         "overlap_small": 0.2036,
         "iou": 0.0901,
@@ -5652,7 +3997,7 @@
       },
       {
         "a_index": 363,
-        "b_index": 809,
+        "b_index": 806,
         "type": "same_pnu_native",
         "overlap_small": 0.1993,
         "iou": 0.0822,
@@ -5681,64 +4026,6 @@
       }
     ],
     "38030720": [
-      {
-        "a_index": 2252,
-        "b_index": 5506,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9591,
-        "iou": 0.3901,
-        "area_ratio": 0.4136,
-        "distance_m": 0.68,
-        "a": {
-          "pnu": "4817010300101170004",
-          "uid": "2014116688081878136800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.7,
-          "floors": 3.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817010300101170004",
-          "uid": "0000298838421879703000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.7,
-          "floors": 3.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 3186,
-        "b_index": 7485,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9203,
-        "iou": 0.4269,
-        "area_ratio": 0.4817,
-        "distance_m": 4.47,
-        "a": {
-          "pnu": "4817010300100070036",
-          "uid": "1971299041311880862800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 10.1,
-          "floors": 3.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817010300100070036",
-          "uid": "2014116894491879266700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 10.1,
-          "floors": 3.0,
-          "overture": false
-        }
-      },
       {
         "a_index": 742,
         "b_index": 2032,
@@ -5769,37 +4056,8 @@
         }
       },
       {
-        "a_index": 742,
-        "b_index": 2759,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6452,
-        "iou": 0.159,
-        "area_ratio": 0.27,
-        "distance_m": 6.2,
-        "a": {
-          "pnu": "4817010400100420017",
-          "uid": "2013117614501871231300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 3.2,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817010400100420017",
-          "uid": "1977299784391873007400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 3.3,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 339,
-        "b_index": 2849,
+        "b_index": 2848,
         "type": "same_pnu_native",
         "overlap_small": 0.2947,
         "iou": 0.0553,
@@ -5859,7 +4117,7 @@
     "38030730": [
       {
         "a_index": 366,
-        "b_index": 3423,
+        "b_index": 3420,
         "type": "same_pnu_native",
         "overlap_small": 0.9944,
         "iou": 0.0527,
@@ -5888,94 +4146,7 @@
       },
       {
         "a_index": 763,
-        "b_index": 1964,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7752,
-        "iou": 0.1637,
-        "area_ratio": 0.2217,
-        "distance_m": 4.9,
-        "a": {
-          "pnu": "4817010800101320028",
-          "uid": "2014115799341884619100000000",
-          "source": "",
-          "name": "",
-          "dong": "주건축물제1동",
-          "height": 13.4,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817010800101320028",
-          "uid": "0000297939431885961300000000",
-          "source": "",
-          "name": "",
-          "dong": "주건축물제1동",
-          "height": 13.4,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 259,
-        "b_index": 2517,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6787,
-        "iou": 0.2415,
-        "area_ratio": 0.4017,
-        "distance_m": 3.54,
-        "a": {
-          "pnu": "4817011300100180004",
-          "uid": "2014115985481887581200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.6,
-          "floors": 3.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011300100180004",
-          "uid": "0000298116771888961200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.6,
-          "floors": 3.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 766,
-        "b_index": 877,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4964,
-        "iou": 0.1141,
-        "area_ratio": 0.2599,
-        "distance_m": 6.91,
-        "a": {
-          "pnu": "4817010500100150006",
-          "uid": "2015116177081884330400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.9,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817010500100150006",
-          "uid": "0000298318061885694700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 9.9,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 763,
-        "b_index": 1672,
+        "b_index": 1671,
         "type": "same_pnu_native",
         "overlap_small": 0.3997,
         "iou": 0.0382,
@@ -6005,37 +4176,8 @@
     ],
     "38030740": [
       {
-        "a_index": 542,
-        "b_index": 3262,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8023,
-        "iou": 0.2336,
-        "area_ratio": 0.309,
-        "distance_m": 1.68,
-        "a": {
-          "pnu": "4817011700100610004",
-          "uid": "2014116757821888617700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.355,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011700100610004",
-          "uid": "0000298887601890192400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.355,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 359,
-        "b_index": 2594,
+        "b_index": 2593,
         "type": "cross_pnu",
         "overlap_small": 0.6741,
         "iou": 0.4762,
@@ -6063,37 +4205,8 @@
         }
       },
       {
-        "a_index": 542,
-        "b_index": 3303,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6431,
-        "iou": 0.2091,
-        "area_ratio": 0.3678,
-        "distance_m": 6.62,
-        "a": {
-          "pnu": "4817011700100610004",
-          "uid": "2014116757821888617700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.355,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011700100610004",
-          "uid": "0000298879631890206400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.355,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 3225,
-        "b_index": 6131,
+        "a_index": 3224,
+        "b_index": 6127,
         "type": "cross_pnu",
         "overlap_small": 0.6288,
         "iou": 0.1526,
@@ -6122,7 +4235,7 @@
       },
       {
         "a_index": 997,
-        "b_index": 3014,
+        "b_index": 3013,
         "type": "same_pnu_native",
         "overlap_small": 0.5556,
         "iou": 0.2503,
@@ -6151,36 +4264,7 @@
       },
       {
         "a_index": 542,
-        "b_index": 3230,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5482,
-        "iou": 0.2041,
-        "area_ratio": 0.4476,
-        "distance_m": 6.81,
-        "a": {
-          "pnu": "4817011700100610004",
-          "uid": "2014116757821888617700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.355,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011700100610004",
-          "uid": "0000298891771890133700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.355,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 542,
-        "b_index": 3794,
+        "b_index": 3790,
         "type": "cross_pnu",
         "overlap_small": 0.5042,
         "iou": 0.0326,
@@ -6208,37 +4292,8 @@
         }
       },
       {
-        "a_index": 359,
-        "b_index": 2561,
-        "type": "same_pnu_native",
-        "overlap_small": 0.4322,
-        "iou": 0.0981,
-        "area_ratio": 0.2606,
-        "distance_m": 3.72,
-        "a": {
-          "pnu": "4817011800106010000",
-          "uid": "2015117099791886829300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.78,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011800106010000",
-          "uid": "0000299232511888418800000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 6.78,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 294,
-        "b_index": 4036,
+        "b_index": 4032,
         "type": "same_pnu_native",
         "overlap_small": 0.2684,
         "iou": 0.1134,
@@ -6267,7 +4322,7 @@
       },
       {
         "a_index": 359,
-        "b_index": 2839,
+        "b_index": 2838,
         "type": "same_pnu_native",
         "overlap_small": 0.2035,
         "iou": 0.0458,
@@ -6296,7 +4351,7 @@
       },
       {
         "a_index": 997,
-        "b_index": 3094,
+        "b_index": 3093,
         "type": "same_pnu_native",
         "overlap_small": 0.1676,
         "iou": 0.0649,
@@ -6324,8 +4379,8 @@
         }
       },
       {
-        "a_index": 2790,
-        "b_index": 6232,
+        "a_index": 2789,
+        "b_index": 6228,
         "type": "same_pnu_native",
         "overlap_small": 0.1657,
         "iou": 0.0633,
@@ -6354,35 +4409,6 @@
       }
     ],
     "38030750": [
-      {
-        "a_index": 1127,
-        "b_index": 1442,
-        "type": "same_pnu_native",
-        "overlap_small": 1.0,
-        "iou": 0.1942,
-        "area_ratio": 0.1942,
-        "distance_m": 3.04,
-        "a": {
-          "pnu": "4817011400109280001",
-          "uid": "2014116084201892900900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 13.7,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011400109280001",
-          "uid": "1971298203561894302200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 13.7,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
       {
         "a_index": 126,
         "b_index": 457,
@@ -6413,95 +4439,8 @@
         }
       },
       {
-        "a_index": 1127,
-        "b_index": 1427,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9558,
-        "iou": 0.4382,
-        "area_ratio": 0.4679,
-        "distance_m": 0.85,
-        "a": {
-          "pnu": "4817011400109280001",
-          "uid": "2014116084201892900900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 13.7,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011400109280001",
-          "uid": "1971298205751894342000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 13.7,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 973,
-        "b_index": 2018,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8949,
-        "iou": 0.1854,
-        "area_ratio": 0.2117,
-        "distance_m": 3.55,
-        "a": {
-          "pnu": "4817011400110530009",
-          "uid": "2013115755011889883600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 12.92,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011400110530009",
-          "uid": "0000297880951891223900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 12.92,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1523,
-        "b_index": 4293,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7788,
-        "iou": 0.3015,
-        "area_ratio": 0.4234,
-        "distance_m": 3.74,
-        "a": {
-          "pnu": "4817011400109130022",
-          "uid": "0000298237371892888900000000",
-          "source": "",
-          "name": ".",
-          "dong": "",
-          "height": 13.1,
-          "floors": 4.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011400109130022",
-          "uid": "2014116111411891475400000000",
-          "source": "",
-          "name": ".",
-          "dong": "",
-          "height": 13.1,
-          "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 1519,
-        "b_index": 4293,
+        "a_index": 1517,
+        "b_index": 4289,
         "type": "same_pnu_native",
         "overlap_small": 0.6192,
         "iou": 0.2848,
@@ -6530,7 +4469,7 @@
       },
       {
         "a_index": 1127,
-        "b_index": 2004,
+        "b_index": 2001,
         "type": "same_pnu_native",
         "overlap_small": 0.3504,
         "iou": 0.0286,
@@ -6559,7 +4498,7 @@
       },
       {
         "a_index": 600,
-        "b_index": 3991,
+        "b_index": 3987,
         "type": "same_pnu_native",
         "overlap_small": 0.3366,
         "iou": 0.1678,
@@ -6587,8 +4526,8 @@
         }
       },
       {
-        "a_index": 3514,
-        "b_index": 4266,
+        "a_index": 3510,
+        "b_index": 4262,
         "type": "same_pnu_native",
         "overlap_small": 0.2665,
         "iou": 0.0344,
@@ -6617,7 +4556,7 @@
       },
       {
         "a_index": 1127,
-        "b_index": 1501,
+        "b_index": 1499,
         "type": "same_pnu_native",
         "overlap_small": 0.2358,
         "iou": 0.0762,
@@ -6646,7 +4585,7 @@
       },
       {
         "a_index": 1346,
-        "b_index": 4093,
+        "b_index": 4089,
         "type": "same_pnu_native",
         "overlap_small": 0.2289,
         "iou": 0.1185,
@@ -6675,7 +4614,7 @@
       },
       {
         "a_index": 322,
-        "b_index": 3617,
+        "b_index": 3613,
         "type": "same_pnu_native",
         "overlap_small": 0.1873,
         "iou": 0.0724,
@@ -6706,7 +4645,7 @@
     "38030770": [
       {
         "a_index": 215,
-        "b_index": 4119,
+        "b_index": 4116,
         "type": "same_pnu_native",
         "overlap_small": 0.9969,
         "iou": 0.3538,
@@ -6763,8 +4702,8 @@
         }
       },
       {
-        "a_index": 5447,
-        "b_index": 5449,
+        "a_index": 5441,
+        "b_index": 5443,
         "type": "same_pnu_native",
         "overlap_small": 0.9717,
         "iou": 0.9437,
@@ -6793,7 +4732,7 @@
       },
       {
         "a_index": 349,
-        "b_index": 5222,
+        "b_index": 5217,
         "type": "same_pnu_native",
         "overlap_small": 0.9707,
         "iou": 0.4001,
@@ -6821,8 +4760,8 @@
         }
       },
       {
-        "a_index": 5448,
-        "b_index": 5449,
+        "a_index": 5442,
+        "b_index": 5443,
         "type": "same_pnu_native",
         "overlap_small": 0.9661,
         "iou": 0.9321,
@@ -6851,7 +4790,7 @@
       },
       {
         "a_index": 442,
-        "b_index": 5625,
+        "b_index": 5619,
         "type": "same_pnu_native",
         "overlap_small": 0.9622,
         "iou": 0.239,
@@ -6879,8 +4818,8 @@
         }
       },
       {
-        "a_index": 5447,
-        "b_index": 5448,
+        "a_index": 5441,
+        "b_index": 5442,
         "type": "same_pnu_native",
         "overlap_small": 0.9556,
         "iou": 0.9139,
@@ -6909,7 +4848,7 @@
       },
       {
         "a_index": 442,
-        "b_index": 5628,
+        "b_index": 5622,
         "type": "same_pnu_native",
         "overlap_small": 0.9042,
         "iou": 0.1958,
@@ -6937,8 +4876,8 @@
         }
       },
       {
-        "a_index": 5447,
-        "b_index": 5458,
+        "a_index": 5441,
+        "b_index": 5452,
         "type": "same_pnu_native",
         "overlap_small": 0.8846,
         "iou": 0.7926,
@@ -6966,8 +4905,8 @@
         }
       },
       {
-        "a_index": 5449,
-        "b_index": 5458,
+        "a_index": 5443,
+        "b_index": 5452,
         "type": "same_pnu_native",
         "overlap_small": 0.8747,
         "iou": 0.7769,
@@ -6995,37 +4934,8 @@
         }
       },
       {
-        "a_index": 410,
-        "b_index": 4736,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8446,
-        "iou": 0.2225,
-        "area_ratio": 0.2746,
-        "distance_m": 5.24,
-        "a": {
-          "pnu": "4817011900107640008",
-          "uid": "2013118133321873346600000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.75,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900107640008",
-          "uid": "0000300288811875231400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 4.75,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 5448,
-        "b_index": 5458,
+        "a_index": 5442,
+        "b_index": 5452,
         "type": "same_pnu_native",
         "overlap_small": 0.8435,
         "iou": 0.7281,
@@ -7054,7 +4964,7 @@
       },
       {
         "a_index": 678,
-        "b_index": 5077,
+        "b_index": 5072,
         "type": "same_pnu_native",
         "overlap_small": 0.834,
         "iou": 0.0175,
@@ -7077,35 +4987,6 @@
           "name": "허브플러스빌",
           "dong": "",
           "height": 3.2,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 86,
-        "b_index": 1719,
-        "type": "same_pnu_native",
-        "overlap_small": 0.7619,
-        "iou": 0.3169,
-        "area_ratio": 0.4616,
-        "distance_m": 7.59,
-        "a": {
-          "pnu": "4817011900103130016",
-          "uid": "2014119656231870150400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900103130016",
-          "uid": "0000301823381872234700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
           "floors": 1.0,
           "overture": false
         }
@@ -7141,7 +5022,7 @@
       },
       {
         "a_index": 410,
-        "b_index": 4536,
+        "b_index": 4533,
         "type": "same_pnu_native",
         "overlap_small": 0.7249,
         "iou": 0.074,
@@ -7170,7 +5051,7 @@
       },
       {
         "a_index": 909,
-        "b_index": 3066,
+        "b_index": 3063,
         "type": "same_pnu_native",
         "overlap_small": 0.6538,
         "iou": 0.0423,
@@ -7198,8 +5079,8 @@
         }
       },
       {
-        "a_index": 4472,
-        "b_index": 5312,
+        "a_index": 4469,
+        "b_index": 5306,
         "type": "same_pnu_native",
         "overlap_small": 0.6453,
         "iou": 0.048,
@@ -7227,37 +5108,8 @@
         }
       },
       {
-        "a_index": 2956,
-        "b_index": 5312,
-        "type": "same_pnu_native",
-        "overlap_small": 0.6407,
-        "iou": 0.1372,
-        "area_ratio": 0.232,
-        "distance_m": 4.84,
-        "a": {
-          "pnu": "4817011900103050022",
-          "uid": "0000301435881875676700000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.9,
-          "floors": 3.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900103050022",
-          "uid": "2014119273341873628200000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 8.9,
-          "floors": 3.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 754,
-        "b_index": 5614,
+        "b_index": 5608,
         "type": "same_pnu_native",
         "overlap_small": 0.631,
         "iou": 0.1583,
@@ -7285,37 +5137,8 @@
         }
       },
       {
-        "a_index": 349,
-        "b_index": 5232,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5987,
-        "iou": 0.4233,
-        "area_ratio": 0.987,
-        "distance_m": 13.43,
-        "a": {
-          "pnu": "4817011900100330006",
-          "uid": "2015120196541874483400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.4,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900100330006",
-          "uid": "1991302346891876592000000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 11.4,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 754,
-        "b_index": 4937,
+        "b_index": 4932,
         "type": "same_pnu_native",
         "overlap_small": 0.5567,
         "iou": 0.1115,
@@ -7344,7 +5167,7 @@
       },
       {
         "a_index": 754,
-        "b_index": 5081,
+        "b_index": 5076,
         "type": "same_pnu_native",
         "overlap_small": 0.5229,
         "iou": 0.0817,
@@ -7372,66 +5195,8 @@
         }
       },
       {
-        "a_index": 2520,
-        "b_index": 5145,
-        "type": "same_pnu_native",
-        "overlap_small": 0.5054,
-        "iou": 0.0755,
-        "area_ratio": 0.1612,
-        "distance_m": 4.12,
-        "a": {
-          "pnu": "4817011900102720011",
-          "uid": "0000301027621876076400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 15.8,
-          "floors": 5.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900102720011",
-          "uid": "2015118866301874138300000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 15.8,
-          "floors": 5.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 86,
-        "b_index": 4762,
-        "type": "same_pnu_native",
-        "overlap_small": 0.3589,
-        "iou": 0.0681,
-        "area_ratio": 0.216,
-        "distance_m": 10.93,
-        "a": {
-          "pnu": "4817011900103130016",
-          "uid": "2014119656231870150400000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900103130016",
-          "uid": "0000301815861872220900000000",
-          "source": "",
-          "name": "",
-          "dong": "",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 843,
-        "b_index": 3140,
+        "b_index": 3137,
         "type": "same_pnu_native",
         "overlap_small": 0.3349,
         "iou": 0.0307,
@@ -7460,7 +5225,7 @@
       },
       {
         "a_index": 762,
-        "b_index": 3770,
+        "b_index": 3767,
         "type": "same_pnu_native",
         "overlap_small": 0.3059,
         "iou": 0.058,
@@ -7488,8 +5253,8 @@
         }
       },
       {
-        "a_index": 2443,
-        "b_index": 5145,
+        "a_index": 2442,
+        "b_index": 5140,
         "type": "same_pnu_native",
         "overlap_small": 0.2237,
         "iou": 0.038,
