@@ -1,0 +1,2548 @@
+{
+  "summary": {
+    "likely_normal_industrial": 9,
+    "high_impossible_low_per_floor": 122,
+    "high_tiny_highrise": 2,
+    "high_extreme_height": 0,
+    "medium_tall_per_floor_nonindustrial": 0,
+    "other_suspicious": 0
+  },
+  "categories": {
+    "likely_normal_industrial": [
+      {
+        "district_id": "38030110",
+        "index": 8381,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 1925.6,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.1662528,
+          35.1606412
+        ]
+      },
+      {
+        "district_id": "38030320",
+        "index": 4337,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 2259.8,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.1068992,
+          35.1147747
+        ]
+      },
+      {
+        "district_id": "38030320",
+        "index": 4576,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 1543.3,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.1031406,
+          35.1162868
+        ]
+      },
+      {
+        "district_id": "38030320",
+        "index": 4762,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 5853.4,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.1047394,
+          35.1246985
+        ]
+      },
+      {
+        "district_id": "38030360",
+        "index": 5433,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 10331.3,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.3241151,
+          35.1458463
+        ]
+      },
+      {
+        "district_id": "38030360",
+        "index": 5434,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 12302.9,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.3239016,
+          35.1476342
+        ]
+      },
+      {
+        "district_id": "38030360",
+        "index": 5435,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 9121.0,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.3248421,
+          35.1467031
+        ]
+      },
+      {
+        "district_id": "38030650",
+        "index": 5830,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 3320.9,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.1011936,
+          35.1722224
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 5856,
+        "name": null,
+        "dong": null,
+        "use": "industrial",
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 2573.1,
+        "reasons": [
+          "층당높이>8m"
+        ],
+        "height_source": "용도·면적 기반 추정",
+        "height_confidence": "낮음",
+        "centroid": [
+          128.1192188,
+          35.1836163
+        ]
+      }
+    ],
+    "high_impossible_low_per_floor": [
+      {
+        "district_id": "38030320",
+        "index": 3882,
+        "name": "",
+        "dong": "나동",
+        "use": "공장",
+        "height": 4.0,
+        "floors": 4.0,
+        "area_m2": 599.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1017373,
+          35.1208029
+        ]
+      },
+      {
+        "district_id": "38030320",
+        "index": 4403,
+        "name": "진주 정촌 대경파미르 아파트",
+        "dong": "상가2동",
+        "use": "근린생활시설,목욕장",
+        "height": 3.4,
+        "floors": 2.0,
+        "area_m2": 431.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1017617,
+          35.1276758
+        ]
+      },
+      {
+        "district_id": "38030320",
+        "index": 4448,
+        "name": "",
+        "dong": "",
+        "use": "단독주택(다가구주택),일반음식점",
+        "height": 3.6,
+        "floors": 4.0,
+        "area_m2": 151.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0996798,
+          35.1260955
+        ]
+      },
+      {
+        "district_id": "38030330",
+        "index": 2420,
+        "name": "",
+        "dong": "",
+        "use": "주택, 근린생활",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 80.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.187076,
+          35.0910037
+        ]
+      },
+      {
+        "district_id": "38030330",
+        "index": 2650,
+        "name": "",
+        "dong": "",
+        "use": "주택, 근린생활",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 73.9,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1870856,
+          35.0910727
+        ]
+      },
+      {
+        "district_id": "38030330",
+        "index": 2892,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 120.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1872419,
+          35.0909355
+        ]
+      },
+      {
+        "district_id": "38030330",
+        "index": 5515,
+        "name": "",
+        "dong": "",
+        "use": "창고시설",
+        "height": 3.55,
+        "floors": 2.0,
+        "area_m2": 155.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1706978,
+          35.1377485
+        ]
+      },
+      {
+        "district_id": "38030350",
+        "index": 200,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.6,
+        "floors": 5.0,
+        "area_m2": 116.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.2814493,
+          35.1700466
+        ]
+      },
+      {
+        "district_id": "38030350",
+        "index": 239,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 141.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.2843784,
+          35.1715037
+        ]
+      },
+      {
+        "district_id": "38030360",
+        "index": 2827,
+        "name": "",
+        "dong": "",
+        "use": "단독주택, 제1종근린생활시설",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 32.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.3266946,
+          35.1701029
+        ]
+      },
+      {
+        "district_id": "38030360",
+        "index": 5343,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 87.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.3266766,
+          35.1700385
+        ]
+      },
+      {
+        "district_id": "38030390",
+        "index": 2341,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 18.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1694914,
+          35.2626152
+        ]
+      },
+      {
+        "district_id": "38030390",
+        "index": 2872,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 34.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1694491,
+          35.2626734
+        ]
+      },
+      {
+        "district_id": "38030390",
+        "index": 3313,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.15,
+        "floors": 2.0,
+        "area_m2": 122.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1443472,
+          35.253832
+        ]
+      },
+      {
+        "district_id": "38030390",
+        "index": 3550,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 108.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1361181,
+          35.2640975
+        ]
+      },
+      {
+        "district_id": "38030390",
+        "index": 3581,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 141.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1362036,
+          35.2641459
+        ]
+      },
+      {
+        "district_id": "38030390",
+        "index": 4057,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 373.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1696095,
+          35.2628124
+        ]
+      },
+      {
+        "district_id": "38030400",
+        "index": 2261,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 63.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1433788,
+          35.1875484
+        ]
+      },
+      {
+        "district_id": "38030400",
+        "index": 2262,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 68.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1433639,
+          35.1874783
+        ]
+      },
+      {
+        "district_id": "38030400",
+        "index": 2283,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 43.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1434434,
+          35.1873991
+        ]
+      },
+      {
+        "district_id": "38030430",
+        "index": 3141,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 1.0,
+        "floors": 2.0,
+        "area_m2": 87.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          127.9920903,
+          35.2655978
+        ]
+      },
+      {
+        "district_id": "38030430",
+        "index": 5774,
+        "name": "",
+        "dong": "주건축물",
+        "use": "단독주택",
+        "height": 2.9,
+        "floors": 2.0,
+        "area_m2": 69.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0271814,
+          35.2171103
+        ]
+      },
+      {
+        "district_id": "38030430",
+        "index": 6057,
+        "name": "",
+        "dong": "주건축물",
+        "use": "단독주택",
+        "height": 2.9,
+        "floors": 2.0,
+        "area_m2": 54.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0272671,
+          35.2170097
+        ]
+      },
+      {
+        "district_id": "38030440",
+        "index": 1143,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.2,
+        "floors": 2.0,
+        "area_m2": 157.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          127.9593785,
+          35.2315602
+        ]
+      },
+      {
+        "district_id": "38030450",
+        "index": 4792,
+        "name": "",
+        "dong": "",
+        "use": "창고시설",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 199.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          127.9599553,
+          35.1654356
+        ]
+      },
+      {
+        "district_id": "38030450",
+        "index": 5081,
+        "name": "",
+        "dong": "",
+        "use": "창고시설",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 461.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          127.9601643,
+          35.165478
+        ]
+      },
+      {
+        "district_id": "38030450",
+        "index": 5082,
+        "name": "",
+        "dong": "",
+        "use": "창고시설",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 58.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          127.9601121,
+          35.1655971
+        ]
+      },
+      {
+        "district_id": "38030650",
+        "index": 884,
+        "name": "",
+        "dong": "",
+        "use": "근린생활시설, 주택",
+        "height": 4.6,
+        "floors": 3.0,
+        "area_m2": 51.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1096955,
+          35.1686759
+        ]
+      },
+      {
+        "district_id": "38030650",
+        "index": 885,
+        "name": "",
+        "dong": "",
+        "use": "근린생활시설, 주택",
+        "height": 4.6,
+        "floors": 3.0,
+        "area_m2": 59.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1097554,
+          35.1686713
+        ]
+      },
+      {
+        "district_id": "38030650",
+        "index": 1300,
+        "name": "",
+        "dong": "",
+        "use": "숙박시설",
+        "height": 6.2,
+        "floors": 5.0,
+        "area_m2": 153.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1100746,
+          35.1692832
+        ]
+      },
+      {
+        "district_id": "38030650",
+        "index": 1533,
+        "name": "",
+        "dong": "",
+        "use": "근린생활시설, 주택",
+        "height": 4.6,
+        "floors": 3.0,
+        "area_m2": 59.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1096566,
+          35.16877
+        ]
+      },
+      {
+        "district_id": "38030650",
+        "index": 5065,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 4.6,
+        "floors": 3.0,
+        "area_m2": 100.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1097342,
+          35.1687605
+        ]
+      },
+      {
+        "district_id": "38030660",
+        "index": 323,
+        "name": "",
+        "dong": "청과물도매시장",
+        "use": "판매및영업시설",
+        "height": 2.8,
+        "floors": 2.0,
+        "area_m2": 13346.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1230266,
+          35.2113797
+        ]
+      },
+      {
+        "district_id": "38030660",
+        "index": 1031,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.3,
+        "floors": 3.0,
+        "area_m2": 124.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1132654,
+          35.2100141
+        ]
+      },
+      {
+        "district_id": "38030660",
+        "index": 1582,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.4,
+        "floors": 2.0,
+        "area_m2": 90.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1153411,
+          35.2031154
+        ]
+      },
+      {
+        "district_id": "38030670",
+        "index": 125,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.2,
+        "floors": 2.0,
+        "area_m2": 118.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0664999,
+          35.1720302
+        ]
+      },
+      {
+        "district_id": "38030670",
+        "index": 195,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 2.7,
+        "floors": 2.0,
+        "area_m2": 100.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.062812,
+          35.1824485
+        ]
+      },
+      {
+        "district_id": "38030670",
+        "index": 2567,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 7.85,
+        "floors": 5.0,
+        "area_m2": 172.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0583947,
+          35.1733177
+        ]
+      },
+      {
+        "district_id": "38030680",
+        "index": 239,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 244.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0691046,
+          35.1886554
+        ]
+      },
+      {
+        "district_id": "38030680",
+        "index": 814,
+        "name": "",
+        "dong": "",
+        "use": "사무실",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 28.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0691879,
+          35.188688
+        ]
+      },
+      {
+        "district_id": "38030680",
+        "index": 1007,
+        "name": "",
+        "dong": "",
+        "use": "주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 6.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.069657,
+          35.1887438
+        ]
+      },
+      {
+        "district_id": "38030680",
+        "index": 1212,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 106.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0695958,
+          35.1886738
+        ]
+      },
+      {
+        "district_id": "38030690",
+        "index": 541,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 2.4,
+        "floors": 2.0,
+        "area_m2": 135.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0572261,
+          35.1910322
+        ]
+      },
+      {
+        "district_id": "38030690",
+        "index": 922,
+        "name": "이현동 13-46",
+        "dong": "주건축물제1동",
+        "use": "단독주택",
+        "height": 1.1,
+        "floors": 2.0,
+        "area_m2": 132.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0628824,
+          35.1920167
+        ]
+      },
+      {
+        "district_id": "38030700",
+        "index": 221,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.2,
+        "floors": 2.0,
+        "area_m2": 145.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0500066,
+          35.1687462
+        ]
+      },
+      {
+        "district_id": "38030700",
+        "index": 733,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 2.3,
+        "floors": 2.0,
+        "area_m2": 83.9,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0447506,
+          35.167758
+        ]
+      },
+      {
+        "district_id": "38030700",
+        "index": 1251,
+        "name": "",
+        "dong": "주건축물제1동",
+        "use": "제1종근린생활시설",
+        "height": 3.7,
+        "floors": 4.0,
+        "area_m2": 47.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0514596,
+          35.1691194
+        ]
+      },
+      {
+        "district_id": "38030700",
+        "index": 1914,
+        "name": "",
+        "dong": "판문동사무소",
+        "use": "제2종근린생활시설",
+        "height": 3.4,
+        "floors": 5.0,
+        "area_m2": 165.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0522299,
+          35.1681784
+        ]
+      },
+      {
+        "district_id": "38030700",
+        "index": 1917,
+        "name": "",
+        "dong": "",
+        "use": "제1종근린생활시설",
+        "height": 4.2,
+        "floors": 3.0,
+        "area_m2": 339.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0385996,
+          35.1883155
+        ]
+      },
+      {
+        "district_id": "38030700",
+        "index": 3103,
+        "name": "",
+        "dong": "주건축물제1동",
+        "use": "단독주택(다가구주택) 및 제1종근린생활시설",
+        "height": 3.7,
+        "floors": 4.0,
+        "area_m2": 12.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0514964,
+          35.1690759
+        ]
+      },
+      {
+        "district_id": "38030710",
+        "index": 1989,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 4.2,
+        "floors": 3.0,
+        "area_m2": 177.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1062794,
+          35.1584608
+        ]
+      },
+      {
+        "district_id": "38030710",
+        "index": 2035,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 4.15,
+        "floors": 3.0,
+        "area_m2": 163.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1061871,
+          35.1577179
+        ]
+      },
+      {
+        "district_id": "38030720",
+        "index": 229,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 108.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0833806,
+          35.1821066
+        ]
+      },
+      {
+        "district_id": "38030720",
+        "index": 3460,
+        "name": "",
+        "dong": "",
+        "use": "단독주택, 근린생활시설",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 59.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0833122,
+          35.1821056
+        ]
+      },
+      {
+        "district_id": "38030720",
+        "index": 5731,
+        "name": "",
+        "dong": "",
+        "use": "단독주택,제2종근린생활시설",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 17.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0921543,
+          35.1842814
+        ]
+      },
+      {
+        "district_id": "38030720",
+        "index": 6230,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 50.9,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0827244,
+          35.1807794
+        ]
+      },
+      {
+        "district_id": "38030720",
+        "index": 6279,
+        "name": "",
+        "dong": "",
+        "use": "단독주택, 근린생활시설",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 6.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.083345,
+          35.1820285
+        ]
+      },
+      {
+        "district_id": "38030720",
+        "index": 6599,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 55.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0832618,
+          35.1808599
+        ]
+      },
+      {
+        "district_id": "38030720",
+        "index": 7419,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.5,
+        "floors": 2.0,
+        "area_m2": 85.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0920861,
+          35.1843393
+        ]
+      },
+      {
+        "district_id": "38030720",
+        "index": 7646,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 4.1,
+        "floors": 3.0,
+        "area_m2": 282.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0910634,
+          35.1710491
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 168,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 2.4,
+        "floors": 3.0,
+        "area_m2": 74.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0724586,
+          35.1891438
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 436,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 4.6,
+        "floors": 3.0,
+        "area_m2": 291.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0790626,
+          35.1940152
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 1251,
+        "name": "",
+        "dong": "",
+        "use": "제1종근린생활시설",
+        "height": 4.15,
+        "floors": 3.0,
+        "area_m2": 314.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0729298,
+          35.1943277
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 1633,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 2.2,
+        "floors": 4.0,
+        "area_m2": 128.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0822129,
+          35.1910856
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 2654,
+        "name": "",
+        "dong": "",
+        "use": "주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 3.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0741288,
+          35.1924843
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 2715,
+        "name": "",
+        "dong": "",
+        "use": "자동차관련시설, 근린생활시설, 유기장",
+        "height": 4.15,
+        "floors": 3.0,
+        "area_m2": 133.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0728406,
+          35.1944453
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 3096,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 72.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.071917,
+          35.1918225
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 3115,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.4,
+        "floors": 2.0,
+        "area_m2": 38.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.072314,
+          35.1936158
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 3244,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 107.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0718007,
+          35.1929545
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 3247,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 87.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0740414,
+          35.1925096
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 3390,
+        "name": "",
+        "dong": "",
+        "use": "자동차관련시설, 근린생활시설, 유기장",
+        "height": 4.15,
+        "floors": 3.0,
+        "area_m2": 18.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0730144,
+          35.1945382
+        ]
+      },
+      {
+        "district_id": "38030730",
+        "index": 3653,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 4.3,
+        "floors": 3.0,
+        "area_m2": 72.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0732507,
+          35.1883701
+        ]
+      },
+      {
+        "district_id": "38030740",
+        "index": 85,
+        "name": "",
+        "dong": "부1동",
+        "use": "제2종근린생활시설",
+        "height": 3.4,
+        "floors": 2.0,
+        "area_m2": 24.9,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0930651,
+          35.1900311
+        ]
+      },
+      {
+        "district_id": "38030740",
+        "index": 710,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 4.1,
+        "floors": 3.0,
+        "area_m2": 65.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0924876,
+          35.1927493
+        ]
+      },
+      {
+        "district_id": "38030740",
+        "index": 1306,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.4,
+        "floors": 2.0,
+        "area_m2": 89.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0964251,
+          35.1982673
+        ]
+      },
+      {
+        "district_id": "38030740",
+        "index": 3167,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 2.4,
+        "floors": 2.0,
+        "area_m2": 65.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0901682,
+          35.1926072
+        ]
+      },
+      {
+        "district_id": "38030740",
+        "index": 3908,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 3.0,
+        "area_m2": 45.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.085771,
+          35.1996103
+        ]
+      },
+      {
+        "district_id": "38030740",
+        "index": 5597,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 5.0,
+        "floors": 3.0,
+        "area_m2": 101.9,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0824767,
+          35.2005362
+        ]
+      },
+      {
+        "district_id": "38030740",
+        "index": 5884,
+        "name": "",
+        "dong": "",
+        "use": "주택",
+        "height": 5.0,
+        "floors": 3.0,
+        "area_m2": 3.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0826161,
+          35.2004913
+        ]
+      },
+      {
+        "district_id": "38030740",
+        "index": 6531,
+        "name": "진주옥봉엘에이치아파트",
+        "dong": "상가동",
+        "use": "근린생활시설",
+        "height": 4.0,
+        "floors": 3.0,
+        "area_m2": 243.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0935578,
+          35.1934557
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 337,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.1,
+        "floors": 2.0,
+        "area_m2": 67.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0719384,
+          35.2021687
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 504,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 108.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0748613,
+          35.1985316
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 618,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 67.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0719076,
+          35.2020966
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 1714,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 2.8,
+        "floors": 2.0,
+        "area_m2": 9.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0762235,
+          35.198986
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 1908,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 2.8,
+        "floors": 2.0,
+        "area_m2": 8.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0762781,
+          35.1990031
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 2003,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 2.8,
+        "floors": 2.0,
+        "area_m2": 62.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0762393,
+          35.1990502
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 2032,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 130.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0751478,
+          35.1963764
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 2672,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 80.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0703571,
+          35.1973768
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 2788,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 108.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0718562,
+          35.1971909
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 3505,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 69.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0747608,
+          35.2055716
+        ]
+      },
+      {
+        "district_id": "38030750",
+        "index": 4520,
+        "name": "",
+        "dong": "1",
+        "use": "단독주택",
+        "height": 3.2,
+        "floors": 4.0,
+        "area_m2": 227.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.0704903,
+          35.1976911
+        ]
+      },
+      {
+        "district_id": "38030760",
+        "index": 51,
+        "name": "",
+        "dong": "주1동",
+        "use": "단독주택",
+        "height": 2.9,
+        "floors": 2.0,
+        "area_m2": 86.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1388125,
+          35.1673163
+        ]
+      },
+      {
+        "district_id": "38030760",
+        "index": 397,
+        "name": "",
+        "dong": "",
+        "use": "detached",
+        "height": 3.2,
+        "floors": 2.0,
+        "area_m2": 166.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1543492,
+          35.1762271
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 31,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 8.3,
+        "floors": 5.0,
+        "area_m2": 231.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1050161,
+          35.1791861
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 338,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "업무시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 660.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1218746,
+          35.1827147
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 983,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.3,
+        "floors": 3.0,
+        "area_m2": 252.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1189958,
+          35.185617
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 1410,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 481.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.120243,
+          35.1830265
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 1411,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 27.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1200328,
+          35.1831415
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 1480,
+        "name": "",
+        "dong": "",
+        "use": "업무시설",
+        "height": 5.3,
+        "floors": 3.0,
+        "area_m2": 355.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1144406,
+          35.1800224
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 1488,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 4.1,
+        "floors": 4.0,
+        "area_m2": 139.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1148108,
+          35.1819526
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 1714,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 573.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1212464,
+          35.1827148
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 1825,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 7.9,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1199755,
+          35.1827685
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 2571,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.3,
+        "floors": 2.0,
+        "area_m2": 145.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1048616,
+          35.1786309
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 3107,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 7.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1215729,
+          35.1839529
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 3108,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 6.7,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1218303,
+          35.182405
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 3392,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 3.0,
+        "floors": 2.0,
+        "area_m2": 66.2,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.116323,
+          35.1852107
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 4849,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 36.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1200015,
+          35.1825171
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 4850,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 14.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1199759,
+          35.1825909
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 4978,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 46.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1204449,
+          35.1828112
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 4988,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 32.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1218813,
+          35.1826344
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 5198,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 4.6,
+        "floors": 5.0,
+        "area_m2": 164.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1070992,
+          35.1815401
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 5889,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 306.6,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1217681,
+          35.1834026
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 5890,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 11.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.121732,
+          35.1832158
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 5995,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 820.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1203026,
+          35.1825314
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 5996,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 398.1,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1201325,
+          35.1835631
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "index": 6159,
+        "name": "한국전력공사 진주전력지사",
+        "dong": "",
+        "use": "공공용시설",
+        "height": 6.85,
+        "floors": 4.0,
+        "area_m2": 240.5,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1199732,
+          35.1837738
+        ]
+      },
+      {
+        "district_id": "38030780",
+        "index": 104,
+        "name": "",
+        "dong": "",
+        "use": "단독주택",
+        "height": 5.2,
+        "floors": 3.0,
+        "area_m2": 103.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.12114,
+          35.1856859
+        ]
+      },
+      {
+        "district_id": "38030780",
+        "index": 1612,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 4.85,
+        "floors": 4.0,
+        "area_m2": 166.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1218071,
+          35.190909
+        ]
+      },
+      {
+        "district_id": "38030780",
+        "index": 2046,
+        "name": "",
+        "dong": "",
+        "use": "제2종근린생활시설",
+        "height": 3.6,
+        "floors": 4.0,
+        "area_m2": 116.4,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1219131,
+          35.1896426
+        ]
+      },
+      {
+        "district_id": "38030780",
+        "index": 3123,
+        "name": "",
+        "dong": "",
+        "use": "단독주택(다가구주택) 및 근린생활시설",
+        "height": 3.9,
+        "floors": 4.0,
+        "area_m2": 15.8,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1238602,
+          35.1867068
+        ]
+      },
+      {
+        "district_id": "38030780",
+        "index": 3343,
+        "name": "",
+        "dong": "",
+        "use": "근린생활시설",
+        "height": 4.85,
+        "floors": 4.0,
+        "area_m2": 10.3,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1216957,
+          35.1908583
+        ]
+      },
+      {
+        "district_id": "38030780",
+        "index": 3985,
+        "name": "",
+        "dong": "",
+        "use": "제1종근린생활시설",
+        "height": 3.9,
+        "floors": 4.0,
+        "area_m2": 312.0,
+        "reasons": [
+          "층당높이<1.8m"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1239321,
+          35.186619
+        ]
+      }
+    ],
+    "high_tiny_highrise": [
+      {
+        "district_id": "38030750",
+        "index": 1267,
+        "name": "상봉한주타운",
+        "dong": "1동",
+        "use": "공동주택",
+        "height": 55.1,
+        "floors": 19.0,
+        "area_m2": 9.9,
+        "reasons": [
+          "작은 footprint 고층"
+        ],
+        "height_source": "건축물대장 19층 기반",
+        "height_confidence": "보통",
+        "centroid": [
+          128.0715932,
+          35.1960548
+        ]
+      },
+      {
+        "district_id": "38030780",
+        "index": 21,
+        "name": "하대 한보아파트",
+        "dong": "1동",
+        "use": "공동주택",
+        "height": 55.1,
+        "floors": 20.0,
+        "area_m2": 28.1,
+        "reasons": [
+          "작은 footprint 고층"
+        ],
+        "height_source": "건축물대장 실제 높이",
+        "height_confidence": "높음",
+        "centroid": [
+          128.1282302,
+          35.1859628
+        ]
+      }
+    ],
+    "high_extreme_height": [],
+    "medium_tall_per_floor_nonindustrial": [],
+    "other_suspicious": []
+  }
+}
