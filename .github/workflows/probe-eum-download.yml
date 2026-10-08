@@ -1,4 +1,5 @@
 name: Probe EUM zoning download
+# rerun endpoint probe
 on:
   push:
     paths:
