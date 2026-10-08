@@ -1,443 +1,52 @@
 {
   "url": "https://www.eum.go.kr/web/op/sv/svItemDet.jsp?currentPageNo=1&dataCd=004&dataTypeCd=SHP&selectType=subject",
   "status": 200,
-  "length": 34638,
-  "matches": {
-    "https?://[^\"\\']+": [],
-    "[^\"\\']+\\.zip[^\"\\']*": [
-      "/web/op/sv/manualDownload.jsp?fileNm=004-SHP.zip&fileNmKr=(도시계획)용도지역정보_SHP.zip",
-      ">(도시계획)용도지역정보_20260929_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260819_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260723_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260622_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260513_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260409_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260223_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260220_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260115_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20260112_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20251208_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20251119_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20251027_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20250910_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20250811_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20250728_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20250708_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20250625_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20250529_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=",
-      ">(도시계획)용도지역정보_20250523_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class="
-    ],
-    "onclick=\"([^\"]+)\"": [
-      "$.fn.changeType('csv');",
-      "$.fn.dataDownload('675');",
-      "$.fn.dataDownload('663');",
-      "$.fn.dataDownload('652');",
-      "$.fn.dataDownload('637');",
-      "$.fn.dataDownload('617');",
-      "$.fn.dataDownload('606');",
-      "$.fn.dataDownload('576');",
-      "$.fn.dataDownload('555');",
-      "$.fn.dataDownload('540');",
-      "$.fn.dataDownload('532');",
-      "$.fn.dataDownload('514');",
-      "$.fn.dataDownload('499');",
-      "$.fn.dataDownload('481');",
-      "$.fn.dataDownload('445');",
-      "$.fn.dataDownload('429');",
-      "$.fn.dataDownload('424');",
-      "$.fn.dataDownload('413');",
-      "$.fn.dataDownload('381');",
-      "$.fn.dataDownload('371');",
-      "$.fn.dataDownload('362');",
-      "$.fn.dataChkDownload();"
-    ],
-    "(?:download|down|file)[A-Za-z0-9_]*\\([^)]*\\)": [
-      "Download('675')",
-      "Download('663')",
-      "Download('652')",
-      "Download('637')",
-      "Download('617')",
-      "Download('606')",
-      "Download('576')",
-      "Download('555')",
-      "Download('540')",
-      "Download('532')",
-      "Download('514')",
-      "Download('499')",
-      "Download('481')",
-      "Download('445')",
-      "Download('429')",
-      "Download('424')",
-      "Download('413')",
-      "Download('381')",
-      "Download('371')",
-      "Download('362')",
-      "Download()"
-    ],
-    "<form[^>]+action=\"([^\"]+)\"": [
-      "/web/op/sv/svItemDet.jsp",
-      "/web/op/sv/svItemList.jsp"
-    ]
-  },
-  "js_length": 5753,
+  "length": 34635,
   "js_status": 200,
-  "js_context": [
-    "$.fn.dataDownload = function(fileId){",
-    "$(\"#fileList\").val(fileId);",
-    "$.fn.selectFileInfo();",
-    "$.fn.dataChkDownload = function(){",
-    "var chkSize=$(\"#fileTb tbody td input[type='checkbox']:checked\").length;",
-    "var fileId=\"\";",
-    "$(\"#fileTb tbody td input[type='checkbox']:checked\").each(function(index){",
-    "fileId+=\"@\";",
-    "fileId+=$(this).val();;",
-    "$(\"#fileList\").val(fileId);",
-    "$.fn.selectFileInfo();",
-    "$(\"#fileList\").val(\"\");",
-    "closeLayer('download_layer');",
-    "$.fn.selectFileInfo = function(){",
-    "\"function\" : \"selectFileInfo\",",
-    "\"fileId\" : $(\"#fileList\").val()",
-    "var fileList = $.xml2json(data.fileList, true);",
-    "$.fn.dextDown(fileList.node);",
-    "var fileData=null;",
-    "location.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;",
-    "fileData=null;",
-    "//dx5.get(\"dext5\").download(\"AUTO\", true);",
-    "fileData=dataList[i];",
-    "//location.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;",
-    "//fileData=null;",
-    "location.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;",
-    "fileData=null;",
-    "//dx5.get(\"dext5\").download(\"AUTO\", true);",
-    "openLayer('download_layer');",
-    "downloadButtonVisible: false",
-    "dx.setLimitMultiDownloadSize(1024 * 1024 * 300);",
-    "dx.addVirtualFile({",
-    "name: data.fileNmKr[0].text,",
-    "size: data.fileSize[0].text,",
-    "downUrl: updownUrl + \"/OpenData/opDownloader.jsp?key=\"+data.key[0].text+\"&filename=\"+data.fileNm[0].text",
-    "dx5.get(\"dext5\").download(\"AUTO\", true);",
-    "openLayer('download_layer');"
+  "js_length": 5753,
+  "js_text": "$(document).ready(function(){\r\n\t$(\"#dataType\").on(\"change\",function(){\r\n\t\t$(\"#detailForm input[name='subCurrentPageNo']\").val(1);\r\n\t\t$(\"#detailForm input[name='dataTypeCd']\").val($(this).val());\r\n\t\t$(\"#detailForm\").submit();\r\n\t});\r\n\t\r\n\t$(\"#startDate, #endDate\").on(\"change\",function(){\r\n\t\t$.fn.search();\r\n\t});\r\n\t\r\n});\r\n\r\n$.fn.goItemList = function(){\r\n\t$(\"#listForm\").submit();\r\n}\r\n\r\n$.fn.onSearch = function(pagaNum){\r\n\t$(\"#detailForm input[name='subCurrentPageNo']\").val(pagaNum);\r\n\t$(\"#detailForm\").submit();\r\n}\r\n\r\n$.fn.changeType = function(type){\r\n\t$(\"#detailForm input[name='subCurrentPageNo']\").val(1);\r\n\t$(\"#detailForm input[name='dataTypeCd']\").val(type.toUpperCase());\r\n\t$(\"#detailForm\").submit();\r\n}\r\n\r\n$.fn.dataDownload = function(fileId){\r\n\t$(\"#useType\").val(\"\");\r\n\t$(\"#useDesc\").val(\"\");\r\n\t$(\"#fileList\").val(fileId);\r\n\t$.fn.selectFileInfo();\r\n\t\r\n}\r\n\r\n$.fn.dataChkDownload = function(){\r\n\t$(\"#useType\").val(\"\");\r\n\t$(\"#useDesc\").val(\"\");\r\n\t\r\n\tvar chkSize=$(\"#fileTb tbody td input[type='checkbox']:checked\").length;\r\n\tif(chkSize<1){\r\n\t\talert(\"선택된 자료가 존재하지 않습니다.\");\r\n\t\treturn;\r\n\t}\r\n\t\r\n\tvar fileId=\"\";\r\n\t$(\"#fileTb tbody td input[type='checkbox']:checked\").each(function(index){\r\n\t\tif(index!=0){\r\n\t\t\tfileId+=\"@\";\r\n\t\t}\r\n\t\tfileId+=$(this).val();;\r\n\t});\r\n\t$(\"#fileList\").val(fileId);\r\n\t$.fn.selectFileInfo();\r\n}\r\n\r\n$.fn.closeLayer = function(){\r\n\t$(\"#useType\").val(\"\");\r\n\t$(\"#useDesc\").val(\"\");\r\n\t$(\"#fileList\").val(\"\");\r\n\tcloseLayer('download_layer');\r\n}\r\n\r\n\r\n$.fn.selectFileInfo = function(){\r\n\t$.ajax({\r\n\t\ttype:\"POST\", \r\n\t\turl: context+\"/op/sv/svItemAjaxXml.jsp\",\r\n\t\tdataType:\"json\",  \r\n\t\tdata:{\r\n\t\t\t\"function\" : \"selectFileInfo\",\r\n\t\t\t\"dataCd\" : $(\"#detailForm input[name='dataCd']\").val(),\r\n\t\t\t\"dataTypeCd\" : $(\"#detailForm input[name='dataTypeCd']\").val(),\r\n\t\t\t\"refDt\" : $(\"#useRefDt\").val(),\r\n\t\t\t\"fileId\" : $(\"#fileList\").val()\r\n\t\t},\r\n\t\terror:function(){   \r\n\t\t\t//console.log(\"예상치 못한 에러가 발생하였습니다.\");   \r\n\t\t}, \r\n\t\tsuccess : function(data){\r\n\t\t\tvar fileList = $.xml2json(data.fileList, true);\r\n\t\t\t$.fn.dextDown(fileList.node);\r\n\t\t},\r\n\t\tcomplete : function(){\r\n\t\t}\r\n\t});\r\n}\r\n\r\n\r\nvar fileData=null;\r\n\r\n$.fn.insertStatData = function(){\r\n\t\r\n\tvar useType=$(\"#useType\").val();\r\n\tvar useDesc=$(\"#useDesc\").val();\r\n\tif(useType==null || useType==''){\r\n\t\talert(\"구분정보는 필수 입니다.\");\r\n\t\treturn ;\r\n\t}\r\n\t\r\n\t$.ajax({\r\n\t\ttype:\"POST\", \r\n\t\turl: context+\"/op/sv/svItemAjaxXml.jsp\",\r\n\t\tdataType:\"json\",  \r\n\t\tdata:{\r\n\t\t\t\"function\" : \"insertStatInfo\",\r\n\t\t\t\"dataCd\" : $(\"#detailForm input[name='dataCd']\").val(),\r\n\t\t\t\"dataTypeCd\" : $(\"#detailForm input[name='dataTypeCd']\").val(),\r\n\t\t\t\"useType\" : useType,\r\n\t\t\t\"useDesc\" : useDesc\r\n\t\t},\r\n\t\terror:function(){   \r\n\t\t\t//console.log(\"예상치 못한 에러가 발생하였습니다.\");   \r\n\t\t}, \r\n\t\tsuccess : function(data){\r\n\t\t\t$.cookie(\"statFlag\",'true');\r\n\t\t\t$.cookie(\"useType\",$(\"#useType\").val());\r\n\t\t\t$.cookie(\"useDesc\",$(\"#useDesc\").val());\r\n\t\t\tlocation.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;\r\n\t\t\tfileData=null;\r\n\t\t\t$.fn.closeLayer();\r\n\t\t\t//var dx = dx5.get(\"dext5\");\r\n\t\t\t//dx5.get(\"dext5\").download(\"AUTO\", true);\r\n\t\t},\r\n\t\tcomplete : function(){\r\n\t\t}\r\n\t});\r\n}\r\n\r\n$.fn.dextDown = function(dataList){\r\n\r\n\tfor(var i=0 ; i<dataList.length ; i++){\r\n\t\tif(i==0){\r\n\t\t\tfileData=dataList[i];\r\n\t\t}\r\n\t\t\r\n\t}\t\r\n\t\r\n\tvar statFlag=$.cookie(\"statFlag\");\r\n\tif(statFlag=='true'){\r\n\t\t$(\"#statArea\").hide();\r\n\t\t\r\n\t\t//쿠키정보 이용하여 매번 로그 남기도록 수정 - modified by tsjang (2024.03.13)\r\n\t\t//location.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;\r\n\t\t//fileData=null;\r\n\t\tconsole.log(\"statFlag=\"+$.cookie(\"statFlag\"));\r\n\t\tconsole.log(\"useType=\"+$.cookie(\"useType\"));\r\n\t\tconsole.log(\"useDesc=\"+$.cookie(\"useDesc\"));\r\n\t\t$.ajax({\r\n\t\t\ttype:\"POST\", \r\n\t\t\turl: context+\"/op/sv/svItemAjaxXml.jsp\",\r\n\t\t\tdataType:\"json\",  \r\n\t\t\tdata:{\r\n\t\t\t\t\"function\" : \"insertStatInfo\",\r\n\t\t\t\t\"dataCd\" : $(\"#detailForm input[name='dataCd']\").val(),\r\n\t\t\t\t\"dataTypeCd\" : $(\"#detailForm input[name='dataTypeCd']\").val(),\r\n\t\t\t\t\"useType\" : $.cookie(\"useType\"),\r\n\t\t\t\t\"useDesc\" : $.cookie(\"useDesc\")\r\n\t\t\t},\r\n\t\t\terror:function(){   \r\n\t\t\t\t//console.log(\"예상치 못한 에러가 발생하였습니다.\");   \r\n\t\t\t}, \r\n\t\t\tsuccess : function(data){\r\n\t\t\t\tlocation.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;\r\n\t\t\t\tfileData=null;\r\n\t\t\t\t$.fn.closeLayer();\r\n\t\t\t\t//var dx = dx5.get(\"dext5\");\r\n\t\t\t\t//dx5.get(\"dext5\").download(\"AUTO\", true);\r\n\t\t\t},\r\n\t\t\tcomplete : function(){\r\n\t\t\t}\r\n\t\t});\t\t\r\n\t}else{\r\n\t\topenLayer('download_layer');\r\n\t\t$(\"#statArea\").show();\r\n\t}\r\n}\r\n\r\n\r\n/*$.fn.dextDown = function(dataList){\r\nvar dx = dx5.get(\"dext5\");\r\n\r\ndx.setUIStyle({\r\n downloadButtonVisible: false\r\n});\r\n\r\ndx.setLimitMultiDownloadSize(1024 * 1024 * 300);\r\n\r\nfor(var i=0 ; i<dataList.length ; i++){\r\n\tvar data=dataList[i];\r\n\t//console.log(data)\r\n\tdx.addVirtualFile({\r\n\t  vindex: \"IDX\"+i, \r\n\t  // 인코딩 불필요\r\n\t  name: data.fileNmKr[0].text,\r\n\t  size: data.fileSize[0].text, \r\n\t  // 인코딩 필요\r\n\t  downUrl: updownUrl + \"/OpenData/opDownloader.jsp?key=\"+data.key[0].text+\"&filename=\"+data.fileNm[0].text\r\n\t});\r\n}\r\n\r\n\r\nvar statFlag=$.cookie(\"statFlag\");\r\nif(statFlag=='true'){\r\n\t$(\"#statArea\").hide();\r\n\tsetTimeout(function() {\r\n\t\tdx5.get(\"dext5\").download(\"AUTO\", true);\r\n\t}, 500);\r\n}else{\r\n\t$(\"#statArea\").show();\r\n}\r\nopenLayer('download_layer');\r\n\r\n}*/\r\n\r\n\r\n$.fn.search = function(){\r\n\t$(\"#detailForm input[name='subCurrentPageNo']\").val(1);\r\n\t\r\n\t//$(\"#detailForm input[name='dataTypeCd']\").val($(\"#dataType\").val());\r\n\t$(\"#detailForm input[name='dataStartDate']\").val($(\"#startDate\").val());\r\n\t$(\"#detailForm input[name='dataEndDate']\").val($(\"#endDate\").val());\r\n\t$(\"#detailForm\").submit();\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+  "download_ids": [
+    "675",
+    "663",
+    "652",
+    "637",
+    "617",
+    "606",
+    "576",
+    "555",
+    "540",
+    "532",
+    "514",
+    "499",
+    "481",
+    "445",
+    "429",
+    "424",
+    "413",
+    "381",
+    "371",
+    "362"
   ],
-  "snippets": [
-    {
-      "line": 336,
-      "text": "//\t$(\"div.download_layer\").hide();"
-    },
-    {
-      "line": 405,
-      "text": "<a href=\"/web/op/sv/manualDownload.jsp?fileNm=004-SHP.zip&fileNmKr=(도시계획)용도지역정보_SHP.zip\" >매뉴얼</a>"
-    },
-    {
-      "line": 447,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260929_전국.zip</td>"
-    },
-    {
-      "line": 449,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('675');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 455,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260819_전국.zip</td>"
-    },
-    {
-      "line": 457,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('663');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 463,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260723_전국.zip</td>"
-    },
-    {
-      "line": 465,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('652');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 471,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260622_전국.zip</td>"
-    },
-    {
-      "line": 473,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('637');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 479,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260513_전국.zip</td>"
-    },
-    {
-      "line": 481,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('617');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 487,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260409_전국.zip</td>"
-    },
-    {
-      "line": 489,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('606');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 495,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260223_전국.zip</td>"
-    },
-    {
-      "line": 497,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('576');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 503,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260220_전국.zip</td>"
-    },
-    {
-      "line": 505,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('555');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 511,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260115_전국.zip</td>"
-    },
-    {
-      "line": 513,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('540');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 519,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20260112_전국.zip</td>"
-    },
-    {
-      "line": 521,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('532');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 527,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20251208_전국.zip</td>"
-    },
-    {
-      "line": 529,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('514');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 535,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20251119_전국.zip</td>"
-    },
-    {
-      "line": 537,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('499');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 543,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20251027_전국.zip</td>"
-    },
-    {
-      "line": 545,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('481');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 551,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20250910_전국.zip</td>"
-    },
-    {
-      "line": 553,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('445');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 559,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20250811_전국.zip</td>"
-    },
-    {
-      "line": 561,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('429');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 567,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20250728_전국.zip</td>"
-    },
-    {
-      "line": 569,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('424');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 575,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20250708_전국.zip</td>"
-    },
-    {
-      "line": 577,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('413');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 583,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20250625_전국.zip</td>"
-    },
-    {
-      "line": 585,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('381');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 591,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20250529_전국.zip</td>"
-    },
-    {
-      "line": 593,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('371');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 599,
-      "text": "<td class=\"left\">(도시계획)용도지역정보_20250523_전국.zip</td>"
-    },
-    {
-      "line": 601,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('362');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 612,
-      "text": "<span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataChkDownload();\">선택받기</a></span>"
-    },
-    {
-      "line": 793,
-      "text": "<div class=\"layer_pop download_layer\" style=\"display: none;\">"
-    }
-  ],
-  "function_context": [
-    {
-      "line": 52,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/jquery-1.12.4.min.js\"></script>"
-    },
-    {
-      "line": 53,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/jquery-ui.js\"></script>"
-    },
-    {
-      "line": 54,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/ux.js\"></script>"
-    },
-    {
-      "line": 55,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/mb/mbCmmn.js\"></script>"
-    },
-    {
-      "line": 56,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/jquery.cookie.js\"></script>"
-    },
-    {
-      "line": 57,
-      "text": "<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-M5PF8WRR6M\"></script>"
-    },
-    {
-      "line": 58,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/google_analytics.js\"></script>"
-    },
-    {
-      "line": 78,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/ac/common.js\"></script>"
-    },
-    {
-      "line": 283,
-      "text": "<script src=\"/web/op/common/js/prettify/prettify.js\"></script>"
-    },
-    {
-      "line": 284,
-      "text": "<script src=\"/web/op/common/js/common.js\"></script>"
-    },
-    {
-      "line": 286,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/jquery-1.12.4.min.js\"></script>"
-    },
-    {
-      "line": 287,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/jquery-ui.js\"></script>"
-    },
-    {
-      "line": 288,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/jquery.cookie.js\"></script>"
-    },
-    {
-      "line": 289,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/jquery.xml2json.js\"></script>"
-    },
-    {
-      "line": 290,
-      "text": "<script type=\"text/javascript\" src=\"/web/js/op/sv/svItemDet.js\"></script>"
-    },
-    {
-      "line": 449,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('675');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 457,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('663');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 465,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('652');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 473,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('637');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 481,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('617');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 489,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('606');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 497,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('576');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 505,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('555');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 513,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('540');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 521,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('532');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 529,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('514');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 537,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('499');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 545,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('481');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 553,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('445');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 561,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('429');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 569,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('424');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 577,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('413');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 585,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('381');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 593,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('371');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    },
-    {
-      "line": 601,
-      "text": "<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('362');\"><em class=\"mb\">내려받기</em></a></span></td>"
-    }
+  "zip_names": [
+    "(도시계획)용도지역정보_20260929_전국.zip",
+    "(도시계획)용도지역정보_20260819_전국.zip",
+    "(도시계획)용도지역정보_20260723_전국.zip",
+    "(도시계획)용도지역정보_20260622_전국.zip",
+    "(도시계획)용도지역정보_20260513_전국.zip",
+    "(도시계획)용도지역정보_20260409_전국.zip",
+    "(도시계획)용도지역정보_20260223_전국.zip",
+    "(도시계획)용도지역정보_20260220_전국.zip",
+    "(도시계획)용도지역정보_20260115_전국.zip",
+    "(도시계획)용도지역정보_20260112_전국.zip",
+    "(도시계획)용도지역정보_20251208_전국.zip",
+    "(도시계획)용도지역정보_20251119_전국.zip",
+    "(도시계획)용도지역정보_20251027_전국.zip",
+    "(도시계획)용도지역정보_20250910_전국.zip",
+    "(도시계획)용도지역정보_20250811_전국.zip",
+    "(도시계획)용도지역정보_20250728_전국.zip",
+    "(도시계획)용도지역정보_20250708_전국.zip",
+    "(도시계획)용도지역정보_20250625_전국.zip",
+    "(도시계획)용도지역정보_20250529_전국.zip",
+    "(도시계획)용도지역정보_20250523_전국.zip"
   ]
 }
