@@ -325,6 +325,78 @@ def duplicate_ratio(g,geoms,tree,threshold):
         except:ov=0
         if ov>=threshold:return True
     return False
+def _dist_m(a,b):
+    x=(b[0]-a[0])*111320*math.cos(math.radians((a[1]+b[1])/2))
+    y=(b[1]-a[1])*110540
+    return math.hypot(x,y)
+
+def _cluster_rows(rows,max_dist=120):
+    left=set(range(len(rows)));clusters=[]
+    while left:
+        seed=left.pop();cluster=[seed];stack=[seed]
+        while stack:
+            i=stack.pop();a=rows[i]["pt"]
+            near=[j for j in list(left) if _dist_m(a,rows[j]["pt"])<=max_dist]
+            for j in near:
+                left.remove(j);cluster.append(j);stack.append(j)
+        clusters.append(cluster)
+    return clusters
+
+def merge_split_register_groups(features):
+    """동일 PNU·동일 대장 레코드가 여러 분할 polygon에 복제되면 120m 이내 그룹을 하나의 geometry로 병합."""
+    groups={};rows=[]
+    for idx,f in enumerate(features):
+        p=f.get("properties") or {}
+        if not p.get("register_matched"):continue
+        pn=pnu_from_props(p)
+        if not pn:continue
+        try:g=safe_geom(shape(f.get("geometry")))
+        except:g=None
+        if g is None:continue
+        try:
+            h=round(float(p.get("render_height") or p.get("height_m") or 0),1)
+            fl=round(float(p.get("floors_above") or 0),1)
+            ra=round(float(p.get("register_building_area_m2") or 0),1)
+        except:continue
+        if ra<=0:continue
+        rp=g.representative_point()
+        rec={"idx":idx,"f":f,"p":p,"g":g,"area":metric_area(g),"pt":(rp.x,rp.y),"ra":ra}
+        rows.append(rec)
+        key=(pn,norm(p.get("register_name")),norm(p.get("register_dong")),h,fl,ra)
+        groups.setdefault(key,[]).append(rec)
+
+    replace={};removed=set();stats={"candidate_groups":0,"merged_groups":0,"merged_features":0}
+    for key,items in groups.items():
+        if len(items)<2:continue
+        stats["candidate_groups"]+=1
+        for ci in _cluster_rows(items,120):
+            part=[items[i] for i in ci]
+            if len(part)<2:continue
+            ug=safe_geom(unary_union([x["g"] for x in part]))
+            if ug is None:continue
+            group_area=metric_area(ug);ra=part[0]["ra"]
+            ratio=min(group_area,ra)/max(group_area,ra) if group_area>0 and ra>0 else 0
+            if ratio<0.35:continue
+            rep=sorted(part,key=lambda x:((1 if x["p"].get("building_name") else 0)+(1 if x["p"].get("building_dong") else 0),x["area"]),reverse=True)[0]
+            nf=dict(rep["f"]);np=dict(rep["p"])
+            nf["geometry"]=mapping(ug);nf["properties"]=np
+            np["register_grouped_parts"]=len(part)
+            np["register_group_footprint_area_m2"]=round(group_area,1)
+            np["register_group_area_ratio"]=round(ratio,4)
+            old=str(np.get("register_match_basis") or "")
+            tag="동일 PNU 분할 footprint 그룹 병합"
+            np["register_match_basis"]=(old+" · "+tag).strip(" ·") if old else tag
+            np["register_group_sources"]=" / ".join(sorted({str(x["p"].get("data_source") or "GIS 원본") for x in part}))
+            replace[rep["idx"]]=nf
+            for x in part:
+                if x["idx"]!=rep["idx"]:removed.add(x["idx"])
+            stats["merged_groups"]+=1;stats["merged_features"]+=len(part)-1
+    out=[]
+    for i,f in enumerate(features):
+        if i in removed:continue
+        out.append(replace.get(i,f))
+    return out,stats
+
 def suppress_highrise_register_on_tiny_parts(features):
     """같은 PNU에서 동일 고층 대장값이 여러 폴리곤에 복제된 경우 작은 부속 조각의 높이만 차단."""
     groups={}
@@ -442,13 +514,29 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
                 if g.intersection(ag).area/ga>=.22:isdup=True;break
             except:pass
         if isdup:stats["overture_duplicate"]+=1;continue
-        p=overture_props(f.get("properties") or {});ph=parcel_for(g,pg,pps,ptree);reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"Overture")
+        p=overture_props(f.get("properties") or {});ph=parcel_for(g,pg,pps,ptree)
+        if ph:
+            pp=ph[0] or {};actual_pnu=pnu_from_props(pp)
+            try:overlap_ratio=g.intersection(ph[1]).area/max(g.area,1e-15)
+            except:overlap_ratio=0
+            if actual_pnu and overlap_ratio>=0.55:
+                p["pnu"]=actual_pnu
+                pj=prop(pp,"jibun","JIBUN","jibun_addr","lot_no","LOT_NO","plat_plc","PLAT_PLC","지번")
+                if pj:p["jibun"]=pj
+                pl=prop(pp,"legal_name","bjd_name","BJD_NAM","bjd_nm","BJD_NM","emd_nm","EMD_NM","emd_name","li_name","법정동명")
+                if pl:p["legal_name"]=pl
+                p["pnu_spatial_corrected"]=True
+        reg=choose_reg(register_candidates(p,ph[0] if ph else None,by_pnu,by_loc),p,metric_area(g));apply_height(p,g,reg,"Overture")
         if reg:stats["register_matched"]+=1
         if p.get("height_confidence")=="낮음":stats["estimated"]+=1
         out.append({"type":"Feature","geometry":mapping(g),"properties":p});accepted.append(g);stats["overture_added"]+=1
+    out,group_stats=merge_split_register_groups(out)
+    stats["register_group_candidates"]=group_stats["candidate_groups"]
+    stats["register_groups_merged"]=group_stats["merged_groups"]
+    stats["register_group_features_merged"]=group_stats["merged_features"]
     stats["suppressed_tiny_highrise_parts"]=suppress_highrise_register_on_tiny_parts(out)
     size=save_gz(bp,{"type":"FeatureCollection","features":out})
-    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-07-01")
+    manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-08-01")
     stats.update(final_count=len(out),output_bytes=size);print(json.dumps(stats,ensure_ascii=False),flush=True);return stats
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("--district",action="append");args=ap.parse_args()
@@ -462,7 +550,7 @@ def main():
         except Exception as e:print("FAILED",did,dname,repr(e),flush=True);rows.append({"name":dname,"district_id":did,"failed":repr(e)})
         MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     manifest["building_count"]=sum(int(v["count"]) for v in manifest["buildings"].values())
-    manifest.setdefault("notes",{})["static_precompute"]="2026-10-07: 공간 PNU 우선 + 작은 부속/파편 폴리곤의 고층 대장값 복제 차단 강화 + 오매칭 의심군 별도 검증."
+    manifest.setdefault("notes",{})["static_precompute"]="2026-10-08: 공간 PNU 우선 + Overture PNU 공간보완 + 동일 PNU·동일 대장 분할 footprint 그룹 병합 + 작은 부속/파편 고층값 복제 차단."
     MANIFEST.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
     REPORT.write_text(json.dumps({"generated_at":"2026-10-01","districts":rows},ensure_ascii=False,indent=2),encoding="utf-8")
 if __name__=="__main__":main()
