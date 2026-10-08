@@ -1,0 +1,101 @@
+{
+  "count": 8,
+  "records": [
+    {
+      "index": 1293,
+      "uid": "0000302303951875922200000000",
+      "pnu": "4817011900100330015",
+      "name": null,
+      "dong": null,
+      "height": 3.2,
+      "floors": 1,
+      "source": null,
+      "verified": null,
+      "geometry_type": "Polygon"
+    },
+    {
+      "index": 1362,
+      "uid": "0000302208591875382000000000",
+      "pnu": "4817011900100330015",
+      "name": "토비스유압(주))",
+      "dong": "제4동",
+      "height": 3.7,
+      "floors": 1,
+      "source": null,
+      "verified": null,
+      "geometry_type": "Polygon"
+    },
+    {
+      "index": 1383,
+      "uid": "1982302215971875499300000000",
+      "pnu": "4817011900100330015",
+      "name": null,
+      "dong": null,
+      "height": 9.6,
+      "floors": 3,
+      "source": null,
+      "verified": null,
+      "geometry_type": "Polygon"
+    },
+    {
+      "index": 1904,
+      "uid": "1982302192481875832500000000",
+      "pnu": "4817011900100330015",
+      "name": null,
+      "dong": null,
+      "height": 3.2,
+      "floors": 1,
+      "source": null,
+      "verified": null,
+      "geometry_type": "Polygon"
+    },
+    {
+      "index": 1909,
+      "uid": "1982302296401875700100000000",
+      "pnu": "4817011900100330015",
+      "name": null,
+      "dong": null,
+      "height": 9.6,
+      "floors": 3,
+      "source": null,
+      "verified": null,
+      "geometry_type": "Polygon"
+    },
+    {
+      "index": 1910,
+      "uid": "1982302282281875690200000000",
+      "pnu": "4817011900100330015",
+      "name": null,
+      "dong": null,
+      "height": 7.0,
+      "floors": 1,
+      "source": null,
+      "verified": null,
+      "geometry_type": "Polygon"
+    },
+    {
+      "index": 1931,
+      "uid": "0000302220851875842700000000",
+      "pnu": "4817011900100330015",
+      "name": null,
+      "dong": null,
+      "height": 6.4,
+      "floors": 2,
+      "source": null,
+      "verified": null,
+      "geometry_type": "Polygon"
+    },
+    {
+      "index": 5092,
+      "uid": "1982302215301875512800000000",
+      "pnu": "4817011900100330015",
+      "name": "토비스유압(주))",
+      "dong": "제3동",
+      "height": 10.5,
+      "floors": 2,
+      "source": null,
+      "verified": null,
+      "geometry_type": "Polygon"
+    }
+  ]
+}
