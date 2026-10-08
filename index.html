@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.08-01</title>
+<title>Jinju3D Local · v2026.10.08-02</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -15,7 +15,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>진주시 2D → 3D 공간 탐색 <span class="version">v2026.10.08-01</span></h1><p>GIS 우선 · 다중동 건축물대장 정밀매칭 · 검증된 높이만 3D</p><button id="latestBtn" class="latest-btn">최신 버전 바로 열기</button><div class="badge"><span class="dot"></span><span id="modeBadge">CLEAN MERGE MODE</span></div></div>
+<div class="top"><h1>진주시 2D → 3D 공간 탐색 <span class="version">v2026.10.08-02</span></h1><p>GIS 우선 · 다중동 건축물대장 정밀매칭 · 검증된 높이만 3D</p><button id="latestBtn" class="latest-btn">최신 버전 바로 열기</button><div class="badge"><span class="dot"></span><span id="modeBadge">CLEAN MERGE MODE</span></div></div>
 <div class="panel">
 <div class="sec"><div class="ttl">① 읍·면·동 선택</div><select id="district"><option>행정구역 불러오는 중…</option></select><div class="row"><button id="go" class="primary">선택 구역 보기</button><button id="home">진주시 전체</button></div><div class="hint" style="margin-top:8px">GIS·필지 밀도를 기준으로 지역별 OSM 수집 정밀도를 자동 조절합니다.</div></div>
 <div class="sec"><div class="ttl">② 자동 GIS+OSM 완성</div><div class="modebox"><b>겹침 제거형 병합</b><div id="mergeState" class="modeState">행정구역 선택 후 자동 계산</div><div class="privacy">OSM이 GIS와 일부 겹치면 겹치는 면적을 잘라낸 뒤 실제 누락 부분만 남깁니다. OSM 높이·층수 정보가 없으면 임의 높이를 만들지 않고 2D로만 표시합니다.</div></div><div class="row"><button id="smartToggle" class="smartBtn">OSM 보완 숨기기</button><button id="mergeRefresh" class="refreshBtn">보완 다시 계산</button></div></div>
@@ -27,7 +27,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.08-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.08-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -41,7 +41,7 @@ map.on('sourcedata',e=>{if(e.sourceId==='terrain'&&currentBuildings&&terrainSour
 function openLatestVersion(){const u=new URL(location.href);u.searchParams.set('v',APP_VERSION.replace(/^v/,'').replace(/\./g,'').replace(/-/g,''));u.searchParams.set('refresh',Date.now().toString());location.href=u.toString()}
 function message(t){$('msg').textContent=t}function loading(v){$('bar').classList.toggle('on',v)}
 async function loadJson(url){const r=await fetch(url,{cache:'force-cache'});if(!r.ok)throw Error(url);return r.json()}
-async function loadGzipJson(url){const r=await fetch(url+'?v=20261008-1',{cache:'force-cache'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
+async function loadGzipJson(url){const r=await fetch(url+'?v=20261008-2',{cache:'force-cache'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
 function vectorSourceName(m){const s=m.getStyle().sources||{};if(s.openmaptiles?.type==='vector')return'openmaptiles';for(const[k,v]of Object.entries(s))if(v?.type==='vector')return k;return null}
 function hideBaseBuildings(m){for(const l of m.getStyle().layers||[]){const id=String(l.id||'').toLowerCase(),sl=String(l['source-layer']||'').toLowerCase();if(sl==='building'||sl==='building_part'||id.includes('building'))try{m.setLayoutProperty(l.id,'visibility','none')}catch(e){}}}
 function terrainSourceReady(){
@@ -57,33 +57,44 @@ function refreshTerrainBuildings(){
   }catch(e){}
 }
 const groundUpdateTokens=new Map();
+function featureGroundAnchor(f){
+  try{return turf.centroid(f).geometry.coordinates}catch(e){
+    try{return turf.pointOnFeature(f).geometry.coordinates}catch(e2){return null}
+  }
+}
 function featureGroundSamplePoints(f){
   const pts=[];
   const add=c=>{if(Array.isArray(c)&&c.length>=2&&Number.isFinite(Number(c[0]))&&Number.isFinite(Number(c[1])))pts.push([Number(c[0]),Number(c[1])])};
+  const anchor=featureGroundAnchor(f);if(anchor)add(anchor);
   try{add(turf.pointOnFeature(f).geometry.coordinates)}catch(e){}
-  try{add(turf.centroid(f).geometry.coordinates)}catch(e){}
-  try{const b=turf.bbox(f);add([(b[0]+b[2])/2,(b[1]+b[3])/2])}catch(e){}
   try{
     const g=f?.geometry;
     const ring=g?.type==='Polygon'?g.coordinates?.[0]:g?.type==='MultiPolygon'?g.coordinates?.[0]?.[0]:null;
     if(ring?.length){
-      const n=Math.min(6,Math.max(2,ring.length-1));
+      const n=Math.min(8,Math.max(3,ring.length-1));
       for(let i=0;i<n;i++)add(ring[Math.floor(i*(ring.length-1)/n)]);
     }
   }catch(e){}
   const seen=new Set();
   return pts.filter(p=>{const k=p[0].toFixed(7)+','+p[1].toFixed(7);if(seen.has(k))return false;seen.add(k);return true});
 }
-function featureTerrainElevation(f){
+function featureTerrainProfile(f){
+  const anchor=featureGroundAnchor(f);
+  let anchorZ=null;
+  if(anchor)try{anchorZ=map.queryTerrainElevation(anchor,{exaggerated:false})}catch(e){}
   const zs=[];
-  for(const c of featureGroundSamplePoints(f)){
-    let z=null;try{z=map.queryTerrainElevation(c,{exaggerated:false})}catch(e){}
+  for(const pt of featureGroundSamplePoints(f)){
+    let z=null;try{z=map.queryTerrainElevation(pt,{exaggerated:false})}catch(e){}
     if(Number.isFinite(z))zs.push(z);
   }
   if(!zs.length)return null;
   zs.sort((a,b)=>a-b);
-  // 건물이 경사지에 일부 묻히지 않도록 footprint에서 확인된 높은 지표면을 기준으로 한다.
-  return zs[zs.length-1];
+  if(!Number.isFinite(anchorZ))anchorZ=zs[Math.floor(zs.length/2)];
+  const maxZ=zs[zs.length-1],minZ=zs[0];
+  // fill-extrusion의 base=0은 terrain 지표면 기준이다.
+  // 절대 DEM 고도를 base에 더하지 않고 footprint 내부의 국지적 높이차만 상단에 보상한다.
+  const relief=Math.max(0,Math.min(12,maxZ-anchorZ));
+  return{anchorZ,maxZ,minZ,relief};
 }
 async function applyGroundElevation(fc,sourceId='buildings',maxPasses=8){
   if(!fc?.features?.length||!map.getTerrain?.())return;
@@ -95,12 +106,15 @@ async function applyGroundElevation(fc,sourceId='buildings',maxPasses=8){
     for(let i=0;i<fc.features.length;i++){
       if(groundUpdateTokens.get(sourceId)!==token)return;
       const f=fc.features[i],p=f.properties||(f.properties={});
-      const z=featureTerrainElevation(f);
-      if(!Number.isFinite(z)){unresolved++;continue}
-      const base=Math.max(0,z+0.15),bh=Number(p.render_height)||0,top=base+bh;
-      p.ground_elevation_m=Math.round(z*10)/10;
-      p.ground_elevation_source='Terrarium DEM · 건물 footprint 다중점';
-      if(Math.abs((Number(p.render_base)||0)-base)>.10||Math.abs((Number(p.render_top)||0)-top)>.10){
+      const tp=featureTerrainProfile(f);
+      if(!tp){unresolved++;continue}
+      const bh=Number(p.render_height)||0;
+      const base=0,top=bh+tp.relief;
+      p.ground_elevation_m=Math.round(tp.anchorZ*10)/10;
+      p.ground_relief_m=Math.round((tp.maxZ-tp.minZ)*10)/10;
+      p.terrain_height_compensation_m=Math.round(tp.relief*10)/10;
+      p.ground_elevation_source='Terrarium DEM · terrain 상대보정';
+      if(Math.abs((Number(p.render_base)||0)-base)>.05||Math.abs((Number(p.render_top)||bh)-top)>.05){
         p.render_base=base;p.render_top=top;changed++;
       }
       resolved++;
@@ -111,10 +125,7 @@ async function applyGroundElevation(fc,sourceId='buildings',maxPasses=8){
       try{const src=map.getSource(sourceId);if(src)src.setData(fc)}catch(e){}
     }
     if(!unresolved)break;
-    await Promise.race([
-      new Promise(resolve=>map.once('idle',resolve)),
-      sleep(900)
-    ]);
+    await Promise.race([new Promise(resolve=>map.once('idle',resolve)),sleep(900)]);
   }
   fc._groundStats={resolved,unresolved:lastUnresolved,total:fc.features.length};
 }
@@ -128,9 +139,7 @@ function scheduleGroundElevationAfterViewport(fc,sourceId='buildings'){
   let fired=false;
   const run=()=>{
     if(fired)return;fired=true;
-    const startRun=()=>scheduleGroundElevation(fc,sourceId);
-    // moveend 직후 DEM 타일이 한 박자 늦게 완성되는 경우를 고려한다.
-    setTimeout(startRun,180);
+    setTimeout(()=>scheduleGroundElevation(fc,sourceId),180);
     setTimeout(()=>scheduleGroundElevation(fc,sourceId),1200);
   };
   map.once('moveend',run);
@@ -148,12 +157,12 @@ async function loadRegister(){
   if(REGISTER_READY)return;
   if(REGISTER_LOADING)return REGISTER_LOADING;
   REGISTER_LOADING=(async()=>{
-    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261008-1');
+    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261008-2');
     REGISTER_BY_PNU.clear();REGISTER_BY_SHORT.clear();REGISTER_BY_FULL.clear();REGISTER_BY_DISTRICT.clear();
     const shards=REGISTER_INDEX.shards||[];
     for(let i=0;i<shards.length;i++){
       message(`건축물대장 실제 높이 자료 · ${i+1}/${shards.length}`);
-      const part=await loadJson(shards[i]+'?v=20261008-1');
+      const part=await loadJson(shards[i]+'?v=20261008-2');
       for(const r of part.records||[]){
         regAdd(REGISTER_BY_PNU,String(r[0]||''),r);
         regAdd(REGISTER_BY_SHORT,String(r[1]||''),r);
@@ -499,9 +508,9 @@ async function waitForMapReady(m,timeout=5000){
   try{
     message('진주시 공간정보 불러오는 중…');
     const dataPromise=Promise.all([
-      loadJson('data/jinju_districts.geojson?v=20261008-1'),
-      loadJson('data/jinju_boundary.geojson?v=20261008-1'),
-      loadJson('data/manifest.json?v=20261008-1')
+      loadJson('data/jinju_districts.geojson?v=20261008-2'),
+      loadJson('data/jinju_boundary.geojson?v=20261008-2'),
+      loadJson('data/manifest.json?v=20261008-2')
     ]);
     await waitForMapReady(map);
     [DISTRICTS,CITY,MANIFEST]=await dataPromise;
