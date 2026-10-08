@@ -1,12 +1,13 @@
 {
   "summary": {
     "near_exact_pairs": 1,
-    "safe_duplicate_pairs": 1,
-    "review_duplicate_pairs": 0,
+    "safe_duplicate_pairs": 0,
+    "review_duplicate_pairs": 1,
     "height_likely_normal": 9,
     "height_suspicious": 124
   },
-  "safe_duplicates": [
+  "safe_duplicates": [],
+  "review_duplicates": [
     {
       "district_id": "38030710",
       "a_index": 22,
@@ -33,7 +34,6 @@
       ]
     }
   ],
-  "review_duplicates": [],
   "height": {
     "likely_normal": [
       {
