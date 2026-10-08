@@ -1,0 +1,278 @@
+{
+  "pnu_filled": 2698,
+  "candidate_groups": 21181,
+  "merged_groups": 225,
+  "merged_features": 590,
+  "districts": {
+    "38030110": {
+      "name": "문산읍",
+      "before": 9094,
+      "after": 9082,
+      "pnu_filled": 187,
+      "candidate_groups": 1356,
+      "merged_groups": 5,
+      "merged_features": 12
+    },
+    "38030310": {
+      "name": "내동면",
+      "before": 3838,
+      "after": 3828,
+      "pnu_filled": 84,
+      "candidate_groups": 487,
+      "merged_groups": 5,
+      "merged_features": 10
+    },
+    "38030320": {
+      "name": "정촌면",
+      "before": 5162,
+      "after": 5151,
+      "pnu_filled": 106,
+      "candidate_groups": 746,
+      "merged_groups": 3,
+      "merged_features": 11
+    },
+    "38030330": {
+      "name": "금곡면",
+      "before": 6333,
+      "after": 6333,
+      "pnu_filled": 50,
+      "candidate_groups": 994,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030340": {
+      "name": "진성면",
+      "before": 5615,
+      "after": 5615,
+      "pnu_filled": 9,
+      "candidate_groups": 881,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030350": {
+      "name": "일반성면",
+      "before": 4150,
+      "after": 4139,
+      "pnu_filled": 0,
+      "candidate_groups": 656,
+      "merged_groups": 3,
+      "merged_features": 11
+    },
+    "38030360": {
+      "name": "이반성면",
+      "before": 5436,
+      "after": 5436,
+      "pnu_filled": 0,
+      "candidate_groups": 779,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030370": {
+      "name": "사봉면",
+      "before": 4787,
+      "after": 4787,
+      "pnu_filled": 11,
+      "candidate_groups": 701,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030380": {
+      "name": "지수면",
+      "before": 5032,
+      "after": 5032,
+      "pnu_filled": 19,
+      "candidate_groups": 709,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030390": {
+      "name": "대곡면",
+      "before": 9397,
+      "after": 9396,
+      "pnu_filled": 27,
+      "candidate_groups": 1259,
+      "merged_groups": 1,
+      "merged_features": 1
+    },
+    "38030400": {
+      "name": "금산면",
+      "before": 8246,
+      "after": 8222,
+      "pnu_filled": 282,
+      "candidate_groups": 1123,
+      "merged_groups": 12,
+      "merged_features": 24
+    },
+    "38030410": {
+      "name": "집현면",
+      "before": 6696,
+      "after": 6696,
+      "pnu_filled": 134,
+      "candidate_groups": 994,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030420": {
+      "name": "미천면",
+      "before": 4433,
+      "after": 4433,
+      "pnu_filled": 7,
+      "candidate_groups": 701,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030430": {
+      "name": "명석면",
+      "before": 6743,
+      "after": 6738,
+      "pnu_filled": 112,
+      "candidate_groups": 945,
+      "merged_groups": 2,
+      "merged_features": 5
+    },
+    "38030440": {
+      "name": "대평면",
+      "before": 1487,
+      "after": 1487,
+      "pnu_filled": 13,
+      "candidate_groups": 236,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030450": {
+      "name": "수곡면",
+      "before": 5621,
+      "after": 5621,
+      "pnu_filled": 16,
+      "candidate_groups": 730,
+      "merged_groups": 0,
+      "merged_features": 0
+    },
+    "38030650": {
+      "name": "상평동",
+      "before": 6345,
+      "after": 6278,
+      "pnu_filled": 209,
+      "candidate_groups": 994,
+      "merged_groups": 18,
+      "merged_features": 67
+    },
+    "38030660": {
+      "name": "초장동",
+      "before": 4187,
+      "after": 4168,
+      "pnu_filled": 132,
+      "candidate_groups": 469,
+      "merged_groups": 7,
+      "merged_features": 19
+    },
+    "38030670": {
+      "name": "평거동",
+      "before": 2985,
+      "after": 2929,
+      "pnu_filled": 71,
+      "candidate_groups": 371,
+      "merged_groups": 20,
+      "merged_features": 56
+    },
+    "38030680": {
+      "name": "신안동",
+      "before": 1838,
+      "after": 1831,
+      "pnu_filled": 34,
+      "candidate_groups": 265,
+      "merged_groups": 5,
+      "merged_features": 7
+    },
+    "38030690": {
+      "name": "이현동",
+      "before": 3123,
+      "after": 3118,
+      "pnu_filled": 44,
+      "candidate_groups": 433,
+      "merged_groups": 3,
+      "merged_features": 5
+    },
+    "38030700": {
+      "name": "판문동",
+      "before": 3142,
+      "after": 3122,
+      "pnu_filled": 86,
+      "candidate_groups": 373,
+      "merged_groups": 9,
+      "merged_features": 20
+    },
+    "38030710": {
+      "name": "가호동",
+      "before": 3449,
+      "after": 3387,
+      "pnu_filled": 114,
+      "candidate_groups": 328,
+      "merged_groups": 22,
+      "merged_features": 62
+    },
+    "38030720": {
+      "name": "천전동",
+      "before": 8055,
+      "after": 7979,
+      "pnu_filled": 97,
+      "candidate_groups": 1109,
+      "merged_groups": 29,
+      "merged_features": 76
+    },
+    "38030730": {
+      "name": "성북동",
+      "before": 3952,
+      "after": 3924,
+      "pnu_filled": 40,
+      "candidate_groups": 534,
+      "merged_groups": 10,
+      "merged_features": 28
+    },
+    "38030740": {
+      "name": "중앙동",
+      "before": 6598,
+      "after": 6570,
+      "pnu_filled": 91,
+      "candidate_groups": 868,
+      "merged_groups": 15,
+      "merged_features": 28
+    },
+    "38030750": {
+      "name": "상봉동",
+      "before": 4654,
+      "after": 4636,
+      "pnu_filled": 17,
+      "candidate_groups": 559,
+      "merged_groups": 5,
+      "merged_features": 18
+    },
+    "38030760": {
+      "name": "충무공동",
+      "before": 1056,
+      "after": 1028,
+      "pnu_filled": 519,
+      "candidate_groups": 47,
+      "merged_groups": 13,
+      "merged_features": 28
+    },
+    "38030770": {
+      "name": "상대동",
+      "before": 6225,
+      "after": 6170,
+      "pnu_filled": 109,
+      "candidate_groups": 913,
+      "merged_groups": 22,
+      "merged_features": 55
+    },
+    "38030780": {
+      "name": "하대동",
+      "before": 4371,
+      "after": 4324,
+      "pnu_filled": 78,
+      "candidate_groups": 621,
+      "merged_groups": 16,
+      "merged_features": 47
+    }
+  }
+}
