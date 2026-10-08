@@ -1,7 +1,7 @@
 {
   "url": "https://www.eum.go.kr/web/op/sv/svItemDet.jsp?currentPageNo=1&dataCd=004&dataTypeCd=SHP&selectType=subject",
   "status": 200,
-  "length": 34634,
+  "length": 34638,
   "matches": {
     "https?://[^\"\\']+": [],
     "[^\"\\']+\\.zip[^\"\\']*": [
@@ -79,6 +79,47 @@
       "/web/op/sv/svItemList.jsp"
     ]
   },
+  "js_length": 5753,
+  "js_status": 200,
+  "js_context": [
+    "$.fn.dataDownload = function(fileId){",
+    "$(\"#fileList\").val(fileId);",
+    "$.fn.selectFileInfo();",
+    "$.fn.dataChkDownload = function(){",
+    "var chkSize=$(\"#fileTb tbody td input[type='checkbox']:checked\").length;",
+    "var fileId=\"\";",
+    "$(\"#fileTb tbody td input[type='checkbox']:checked\").each(function(index){",
+    "fileId+=\"@\";",
+    "fileId+=$(this).val();;",
+    "$(\"#fileList\").val(fileId);",
+    "$.fn.selectFileInfo();",
+    "$(\"#fileList\").val(\"\");",
+    "closeLayer('download_layer');",
+    "$.fn.selectFileInfo = function(){",
+    "\"function\" : \"selectFileInfo\",",
+    "\"fileId\" : $(\"#fileList\").val()",
+    "var fileList = $.xml2json(data.fileList, true);",
+    "$.fn.dextDown(fileList.node);",
+    "var fileData=null;",
+    "location.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;",
+    "fileData=null;",
+    "//dx5.get(\"dext5\").download(\"AUTO\", true);",
+    "fileData=dataList[i];",
+    "//location.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;",
+    "//fileData=null;",
+    "location.href=updownUrl + \"/OpenData/opDownloader.jsp?key=\"+fileData.key[0].text+\"&filename=\"+fileData.fileNm[0].text;",
+    "fileData=null;",
+    "//dx5.get(\"dext5\").download(\"AUTO\", true);",
+    "openLayer('download_layer');",
+    "downloadButtonVisible: false",
+    "dx.setLimitMultiDownloadSize(1024 * 1024 * 300);",
+    "dx.addVirtualFile({",
+    "name: data.fileNmKr[0].text,",
+    "size: data.fileSize[0].text,",
+    "downUrl: updownUrl + \"/OpenData/opDownloader.jsp?key=\"+data.key[0].text+\"&filename=\"+data.fileNm[0].text",
+    "dx5.get(\"dext5\").download(\"AUTO\", true);",
+    "openLayer('download_layer');"
+  ],
   "snippets": [
     {
       "line": 336,
