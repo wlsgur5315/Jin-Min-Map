@@ -1,0 +1,26 @@
+name: Diagnose render overlaps
+on:
+  push:
+    paths:
+      - 'tools/diagnose_render_overlaps.py'
+      - '.github/workflows/diagnose-render-overlaps.yml'
+permissions:
+  contents: write
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install shapely
+      - run: python tools/diagnose_render_overlaps.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/render_overlap_diagnosis.json
+          git commit -m "Diagnose rendered building overlaps [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
