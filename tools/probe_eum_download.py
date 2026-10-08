@@ -22,7 +22,7 @@ patterns=[
     r'<form[^>]+action="([^"]+)"'
 ]
 out={"url":r.url,"status":r.status_code,"length":len(html),"matches":{},"js_length":len(js),"js_status":js_status}
-out["js_context"]=[line.strip()[:1500] for line in js.splitlines() if "dataDownload" in line or "download" in line.lower() or "file" in line.lower()][:300]
+out["js_text"]=js\nout["js_context"]=[line.strip()[:1500] for line in js.splitlines() if "dataDownload" in line or "download" in line.lower() or "file" in line.lower()][:300]
 for p in patterns:
     vals=[]
     for m in re.findall(p,html,re.I):
