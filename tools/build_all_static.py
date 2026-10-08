@@ -418,6 +418,45 @@ def merge_split_register_groups(features):
         out.append(replace.get(i,f))
     return out,stats
 
+def suppress_weak_register_matches(features):
+    """PNU/주소 후보만으로 매칭되고 주변 동일대장 그룹 면적도 부족한 긴급 후보는 대장 높이를 사용하지 않는다."""
+    groups={};rows=[]
+    for f in features:
+        p=f.get("properties") or {}
+        if not p.get("register_matched") or str(p.get("register_match_basis") or "")!="PNU/주소 후보":continue
+        try:g=safe_geom(shape(f.get("geometry")))
+        except:g=None
+        if g is None:continue
+        area=metric_area(g)
+        try:ra=float(p.get("register_building_area_m2") or 0)
+        except:ra=0
+        if area<=0 or ra<=0:continue
+        ratio=min(area,ra)/max(area,ra)
+        if not _urgent_register_fragment(p,area,ra):continue
+        rp=g.representative_point()
+        rec={"f":f,"p":p,"g":g,"area":area,"ra":ra,"pt":(rp.x,rp.y)}
+        key=(norm(p.get("register_name")),norm(p.get("register_dong")),round(float(p.get("render_height") or 0),1),round(float(p.get("floors_above") or 0),1),round(ra,1))
+        groups.setdefault(key,[]).append(rec)
+    changed=0
+    for items in groups.values():
+        for r in items:
+            peers=[x for x in items if _dist_m(r["pt"],x["pt"])<=120]
+            total=sum(x["area"] for x in peers)
+            gr=min(total,r["ra"])/max(total,r["ra"]) if total>0 and r["ra"]>0 else 0
+            if gr>=.35:continue
+            p=r["p"]
+            p["suppressed_register_height"]=True
+            p["suppressed_register_height_reason"]="PNU/주소 후보만으로 매칭되었고, 주변 동일대장 그룹 면적도 대장면적의 35% 미만"
+            p["suppressed_register_height_original"]=p.get("render_height")
+            p["register_matched"]=False
+            p["register_match_rejected"]=True
+            p["register_group_area_ratio_before_reject"]=round(gr,4)
+            for k in ("render_height","height_m","floors_above","floors_below"):p.pop(k,None)
+            apply_height(p,r["g"],None,"약한매칭 제외")
+            if p.get("height_confidence")=="높음":p["height_confidence"]="보통"
+            changed+=1
+    return changed
+
 def suppress_highrise_register_on_tiny_parts(features):
     """같은 PNU에서 동일 고층 대장값이 여러 폴리곤에 복제된 경우 작은 부속 조각의 높이만 차단."""
     groups={}
@@ -555,6 +594,7 @@ def build_one(did,dname,dg,manifest,by_pnu,by_loc):
     stats["register_group_candidates"]=group_stats["candidate_groups"]
     stats["register_groups_merged"]=group_stats["merged_groups"]
     stats["register_group_features_merged"]=group_stats["merged_features"]
+    stats["suppressed_weak_register_matches"]=suppress_weak_register_matches(out)
     stats["suppressed_tiny_highrise_parts"]=suppress_highrise_register_on_tiny_parts(out)
     size=save_gz(bp,{"type":"FeatureCollection","features":out})
     manifest["buildings"][did].update(count=len(out),bytes=size,static_precomputed=True,static_version="2026-10-08-01")
