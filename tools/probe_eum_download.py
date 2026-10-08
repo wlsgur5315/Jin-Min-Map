@@ -42,5 +42,5 @@ out["snippets"]=snips[:300]
 for i,line in enumerate(lines):
     if "dataDownload" in line or ("<script" in line and "src=" in line):
         out.setdefault("function_context",[]).append({"line":i+1,"text":line.strip()[:1500]})
-Path("data/eum_download_probe.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+Path("data/eum_svItemDet.js").write_text(js,encoding="utf-8")\nPath("data/eum_download_probe.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
 print(json.dumps(out,ensure_ascii=False,indent=2)[:12000])
