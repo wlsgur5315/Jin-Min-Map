@@ -1,0 +1,9 @@
+{
+  "status": 200,
+  "content_type": "text/xml;charset=euc-kr",
+  "text": "{\"fileList\":\"<?xml version='1.0' encoding='EUC-KR' ?><root><node><dataCd>004<\\/dataCd><dataNm>(도시계획)용도지역정보<\\/dataNm><dataTypeCd>SHP<\\/dataTypeCd><fileId>675<\\/fileId><fileNm>004_20260929_00000.zip<\\/fileNm><fileNmKr>(도시계획)용도지역정보_20260929_전국.zip<\\/fileNmKr><fileSize>1021948497<\\/fileSize><key>80u2d3axivV9FGTVwBXLr%2BmdYiMD%2B1O9CeZglnpaPx9TCnG7%2FbaxVcNH61diuzr8<\\/key><refDt>20260929<\\/refDt><sggCd>00000<\\/sggCd><\\/node><\\/root>\"}",
+  "cookies": {
+    "elevisor_for_j2ee_uid": "-8337832452778703913",
+    "JSESSIONID": "TDJRNgSGaaPvoVS1tDL17r11alXHTc113wECjO9aqLo1zRoUTfFihcqsdq1umMSq.luriswas_servlet_engine5"
+  }
+}
