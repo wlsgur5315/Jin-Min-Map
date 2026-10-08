@@ -1,6 +1,6 @@
 {
   "summary": {
-    "duplicates": 87,
+    "duplicates": 14,
     "height_outliers": 11,
     "tiny_highrise": 2,
     "missing_like": 2
@@ -13,13 +13,13 @@
   },
   "districts": {
     "38030110": {
-      "duplicates": 2,
+      "duplicates": 0,
       "height_outliers": 1,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030310": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
@@ -31,7 +31,7 @@
       "missing_like": 0
     },
     "38030330": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
@@ -43,19 +43,19 @@
       "missing_like": 0
     },
     "38030350": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030360": {
-      "duplicates": 2,
+      "duplicates": 1,
       "height_outliers": 3,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030370": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
@@ -67,13 +67,13 @@
       "missing_like": 0
     },
     "38030390": {
-      "duplicates": 2,
+      "duplicates": 1,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030400": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
@@ -91,13 +91,13 @@
       "missing_like": 0
     },
     "38030430": {
-      "duplicates": 4,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030440": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
@@ -109,7 +109,7 @@
       "missing_like": 0
     },
     "38030650": {
-      "duplicates": 10,
+      "duplicates": 2,
       "height_outliers": 1,
       "tiny_highrise": 0,
       "missing_like": 0
@@ -121,43 +121,43 @@
       "missing_like": 0
     },
     "38030670": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030680": {
-      "duplicates": 4,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030690": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030700": {
-      "duplicates": 1,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030710": {
-      "duplicates": 7,
+      "duplicates": 1,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030720": {
-      "duplicates": 10,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030730": {
-      "duplicates": 3,
+      "duplicates": 0,
       "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
@@ -169,7 +169,7 @@
       "missing_like": 0
     },
     "38030750": {
-      "duplicates": 4,
+      "duplicates": 0,
       "height_outliers": 1,
       "tiny_highrise": 1,
       "missing_like": 1
@@ -181,13 +181,13 @@
       "missing_like": 0
     },
     "38030770": {
-      "duplicates": 15,
+      "duplicates": 6,
       "height_outliers": 1,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030780": {
-      "duplicates": 12,
+      "duplicates": 0,
       "height_outliers": 1,
       "tiny_highrise": 1,
       "missing_like": 1
@@ -195,45 +195,6 @@
   },
   "examples": {
     "duplicates": [
-      {
-        "district_id": "38030110",
-        "a_index": 3012,
-        "b_index": 7911,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.876,
-        "area_ratio": 0.896,
-        "centroid": [
-          128.1865811,
-          35.1744094
-        ]
-      },
-      {
-        "district_id": "38030110",
-        "a_index": 3113,
-        "b_index": 7771,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.843,
-        "area_ratio": 0.908,
-        "centroid": [
-          128.1632515,
-          35.1663043
-        ]
-      },
-      {
-        "district_id": "38030310",
-        "a_index": 2057,
-        "b_index": 2826,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.877,
-        "area_ratio": 0.768,
-        "centroid": [
-          128.0412609,
-          35.1560713
-        ]
-      },
       {
         "district_id": "38030320",
         "a_index": 3737,
@@ -274,48 +235,9 @@
         ]
       },
       {
-        "district_id": "38030330",
-        "a_index": 3766,
-        "b_index": 5408,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.975,
-        "area_ratio": 0.989,
-        "centroid": [
-          128.1731148,
-          35.1246907
-        ]
-      },
-      {
-        "district_id": "38030350",
-        "a_index": 1517,
-        "b_index": 3889,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.826,
-        "area_ratio": 0.793,
-        "centroid": [
-          128.2851633,
-          35.1724743
-        ]
-      },
-      {
         "district_id": "38030360",
-        "a_index": 2285,
-        "b_index": 5410,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.829,
-        "area_ratio": 0.959,
-        "centroid": [
-          128.3189346,
-          35.1569942
-        ]
-      },
-      {
-        "district_id": "38030360",
-        "a_index": 5269,
-        "b_index": 5424,
+        "a_index": 5267,
+        "b_index": 5422,
         "a_name": "",
         "b_name": "",
         "overlap_ratio": 0.948,
@@ -326,22 +248,9 @@
         ]
       },
       {
-        "district_id": "38030370",
-        "a_index": 8,
-        "b_index": 1002,
-        "a_name": "",
-        "b_name": "가제1-106",
-        "overlap_ratio": 0.869,
-        "area_ratio": 0.923,
-        "centroid": [
-          128.2369672,
-          35.2067489
-        ]
-      },
-      {
         "district_id": "38030390",
         "a_index": 1283,
-        "b_index": 5515,
+        "b_index": 5514,
         "a_name": null,
         "b_name": "A동",
         "overlap_ratio": 0.852,
@@ -352,126 +261,9 @@
         ]
       },
       {
-        "district_id": "38030390",
-        "a_index": 3187,
-        "b_index": 7766,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.818,
-        "area_ratio": 0.833,
-        "centroid": [
-          128.1345832,
-          35.2518616
-        ]
-      },
-      {
-        "district_id": "38030400",
-        "a_index": 3496,
-        "b_index": 5769,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.811,
-        "area_ratio": 0.965,
-        "centroid": [
-          128.1509985,
-          35.2214842
-        ]
-      },
-      {
-        "district_id": "38030430",
-        "a_index": 41,
-        "b_index": 42,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.889,
-        "area_ratio": 1.0,
-        "centroid": [
-          128.0468215,
-          35.2504154
-        ]
-      },
-      {
-        "district_id": "38030430",
-        "a_index": 133,
-        "b_index": 3810,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.89,
-        "area_ratio": 0.887,
-        "centroid": [
-          128.0234223,
-          35.2349882
-        ]
-      },
-      {
-        "district_id": "38030430",
-        "a_index": 6029,
-        "b_index": 6289,
-        "a_name": null,
-        "b_name": null,
-        "overlap_ratio": 0.938,
-        "area_ratio": 1.0,
-        "centroid": [
-          128.0027137,
-          35.2569671
-        ]
-      },
-      {
-        "district_id": "38030430",
-        "a_index": 6169,
-        "b_index": 6301,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.936,
-        "area_ratio": 1.0,
-        "centroid": [
-          128.025874,
-          35.226204
-        ]
-      },
-      {
-        "district_id": "38030440",
-        "a_index": 724,
-        "b_index": 1226,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.837,
-        "area_ratio": 0.81,
-        "centroid": [
-          127.9692333,
-          35.1881897
-        ]
-      },
-      {
         "district_id": "38030650",
-        "a_index": 51,
-        "b_index": 3870,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.885,
-        "area_ratio": 0.764,
-        "centroid": [
-          128.1039639,
-          35.175193
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "a_index": 118,
-        "b_index": 119,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.838,
-        "area_ratio": 1.0,
-        "centroid": [
-          128.1056496,
-          35.1761076
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "a_index": 181,
-        "b_index": 5136,
+        "a_index": 180,
+        "b_index": 5130,
         "a_name": "",
         "b_name": "",
         "overlap_ratio": 0.979,
@@ -483,60 +275,8 @@
       },
       {
         "district_id": "38030650",
-        "a_index": 319,
-        "b_index": 4500,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.873,
-        "area_ratio": 0.938,
-        "centroid": [
-          128.1134606,
-          35.1775344
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "a_index": 1301,
-        "b_index": 2130,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.902,
-        "area_ratio": 0.948,
-        "centroid": [
-          128.1015037,
-          35.1745068
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "a_index": 3083,
-        "b_index": 3869,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.854,
-        "area_ratio": 0.862,
-        "centroid": [
-          128.1041844,
-          35.1760517
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "a_index": 4497,
-        "b_index": 5137,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.965,
-        "area_ratio": 0.936,
-        "centroid": [
-          128.116281,
-          35.1766075
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "a_index": 5475,
-        "b_index": 5591,
+        "a_index": 5469,
+        "b_index": 5584,
         "a_name": "",
         "b_name": "",
         "overlap_ratio": 0.918,
@@ -547,126 +287,9 @@
         ]
       },
       {
-        "district_id": "38030650",
-        "a_index": 5501,
-        "b_index": 5698,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.945,
-        "area_ratio": 1.0,
-        "centroid": [
-          128.1064004,
-          35.1732512
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "a_index": 5626,
-        "b_index": 5707,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.837,
-        "area_ratio": 0.983,
-        "centroid": [
-          128.1031487,
-          35.1760216
-        ]
-      },
-      {
-        "district_id": "38030670",
-        "a_index": 1308,
-        "b_index": 2475,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.841,
-        "area_ratio": 0.886,
-        "centroid": [
-          128.0659198,
-          35.1820441
-        ]
-      },
-      {
-        "district_id": "38030680",
-        "a_index": 67,
-        "b_index": 1168,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.981,
-        "area_ratio": 0.806,
-        "centroid": [
-          128.073049,
-          35.1826351
-        ]
-      },
-      {
-        "district_id": "38030680",
-        "a_index": 426,
-        "b_index": 1075,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.9,
-        "area_ratio": 0.788,
-        "centroid": [
-          128.0732584,
-          35.1856499
-        ]
-      },
-      {
-        "district_id": "38030680",
-        "a_index": 484,
-        "b_index": 998,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.892,
-        "area_ratio": 0.795,
-        "centroid": [
-          128.0680173,
-          35.1873335
-        ]
-      },
-      {
-        "district_id": "38030680",
-        "a_index": 824,
-        "b_index": 848,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.821,
-        "area_ratio": 0.876,
-        "centroid": [
-          128.0680775,
-          35.1872451
-        ]
-      },
-      {
-        "district_id": "38030690",
-        "a_index": 689,
-        "b_index": 836,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.865,
-        "area_ratio": 0.786,
-        "centroid": [
-          128.0588218,
-          35.1869654
-        ]
-      },
-      {
-        "district_id": "38030700",
-        "a_index": 47,
-        "b_index": 454,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.944,
-        "area_ratio": 0.751,
-        "centroid": [
-          128.0403416,
-          35.1730429
-        ]
-      },
-      {
         "district_id": "38030710",
         "a_index": 22,
-        "b_index": 210,
+        "b_index": 209,
         "a_name": "",
         "b_name": "",
         "overlap_ratio": 0.993,
@@ -677,49 +300,88 @@
         ]
       },
       {
-        "district_id": "38030710",
-        "a_index": 48,
-        "b_index": 172,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.986,
-        "area_ratio": 0.959,
+        "district_id": "38030770",
+        "a_index": 5465,
+        "b_index": 5466,
+        "a_name": "토비스유압(주))",
+        "b_name": "토비스유압(주)",
+        "overlap_ratio": 0.956,
+        "area_ratio": 0.999,
         "centroid": [
-          128.1096176,
-          35.1643331
+          128.1233068,
+          35.1822619
         ]
       },
       {
-        "district_id": "38030710",
-        "a_index": 292,
-        "b_index": 1959,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.84,
-        "area_ratio": 0.969,
+        "district_id": "38030770",
+        "a_index": 5465,
+        "b_index": 5467,
+        "a_name": "토비스유압(주))",
+        "b_name": "토비스유압(주))",
+        "overlap_ratio": 0.972,
+        "area_ratio": 0.999,
         "centroid": [
-          128.1018137,
-          35.1588382
+          128.1233068,
+          35.1822619
         ]
       },
       {
-        "district_id": "38030710",
-        "a_index": 1923,
-        "b_index": 2361,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 0.873,
-        "area_ratio": 0.939,
+        "district_id": "38030770",
+        "a_index": 5465,
+        "b_index": 5476,
+        "a_name": "토비스유압(주))",
+        "b_name": "토비스유압(주)",
+        "overlap_ratio": 0.885,
+        "area_ratio": 0.999,
         "centroid": [
-          128.1059437,
-          35.1598421
+          128.1233068,
+          35.1822619
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "a_index": 5466,
+        "b_index": 5467,
+        "a_name": "토비스유압(주)",
+        "b_name": "토비스유압(주))",
+        "overlap_ratio": 0.966,
+        "area_ratio": 0.997,
+        "centroid": [
+          128.1233402,
+          35.182263
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "a_index": 5466,
+        "b_index": 5476,
+        "a_name": "토비스유압(주)",
+        "b_name": "토비스유압(주)",
+        "overlap_ratio": 0.844,
+        "area_ratio": 0.998,
+        "centroid": [
+          128.1233402,
+          35.182263
+        ]
+      },
+      {
+        "district_id": "38030770",
+        "a_index": 5467,
+        "b_index": 5476,
+        "a_name": "토비스유압(주))",
+        "b_name": "토비스유압(주)",
+        "overlap_ratio": 0.875,
+        "area_ratio": 0.999,
+        "centroid": [
+          128.1233216,
+          35.1822672
         ]
       }
     ],
     "height_outliers": [
       {
         "district_id": "38030110",
-        "index": 8381,
+        "index": 8379,
         "name": null,
         "dong": null,
         "height": 10.0,
@@ -783,7 +445,7 @@
       },
       {
         "district_id": "38030360",
-        "index": 5433,
+        "index": 5431,
         "name": null,
         "dong": null,
         "height": 10.0,
@@ -799,7 +461,7 @@
       },
       {
         "district_id": "38030360",
-        "index": 5434,
+        "index": 5432,
         "name": null,
         "dong": null,
         "height": 10.0,
@@ -815,7 +477,7 @@
       },
       {
         "district_id": "38030360",
-        "index": 5435,
+        "index": 5433,
         "name": null,
         "dong": null,
         "height": 10.0,
@@ -831,7 +493,7 @@
       },
       {
         "district_id": "38030650",
-        "index": 5830,
+        "index": 5822,
         "name": null,
         "dong": null,
         "height": 10.0,
@@ -863,7 +525,7 @@
       },
       {
         "district_id": "38030770",
-        "index": 5856,
+        "index": 5846,
         "name": null,
         "dong": null,
         "height": 10.0,
