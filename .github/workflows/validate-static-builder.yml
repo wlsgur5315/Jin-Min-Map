@@ -1,4 +1,5 @@
 name: Validate static builder
+# validates latest builder scripts
 on:
   push:
     paths:
