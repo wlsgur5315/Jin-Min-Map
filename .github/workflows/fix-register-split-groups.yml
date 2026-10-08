@@ -1,0 +1,35 @@
+name: Fix register split groups
+on:
+  push:
+    paths:
+      - 'tools/fix_register_split_groups.py'
+      - '.github/workflows/fix-register-split-groups.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install shapely
+      - run: python tools/fix_register_split_groups.py
+      - run: python tools/prioritize_register_area_mismatches.py
+      - run: python tools/classify_register_mismatch_types.py
+      - name: Commit fixed static data and reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/*.geojson.gz data/manifest.json data/register_split_group_fix_report.json data/register_area_mismatch_priority.json data/register_mismatch_type_analysis.json
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Merge duplicated register footprint groups [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
