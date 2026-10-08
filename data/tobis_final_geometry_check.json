@@ -1,0 +1,86 @@
+{
+  "record_count": 8,
+  "records": [
+    {
+      "index": 1293,
+      "uid": "0000302303951875922200000000",
+      "name": null,
+      "dong": null,
+      "height": 3.2,
+      "floors": 1,
+      "area_m2": 10.2,
+      "road_overlap_ratio": 0.0
+    },
+    {
+      "index": 1362,
+      "uid": "0000302208591875382000000000",
+      "name": "토비스유압(주))",
+      "dong": "제4동",
+      "height": 3.7,
+      "floors": 1,
+      "area_m2": 18.5,
+      "road_overlap_ratio": 0.0
+    },
+    {
+      "index": 1383,
+      "uid": "1982302215971875499300000000",
+      "name": null,
+      "dong": null,
+      "height": 9.6,
+      "floors": 3,
+      "area_m2": 673.9,
+      "road_overlap_ratio": 0.0
+    },
+    {
+      "index": 1904,
+      "uid": "1982302192481875832500000000",
+      "name": null,
+      "dong": null,
+      "height": 3.2,
+      "floors": 1,
+      "area_m2": 34.1,
+      "road_overlap_ratio": 0.0
+    },
+    {
+      "index": 1909,
+      "uid": "1982302296401875700100000000",
+      "name": null,
+      "dong": null,
+      "height": 9.6,
+      "floors": 3,
+      "area_m2": 645.7,
+      "road_overlap_ratio": 0.0
+    },
+    {
+      "index": 1910,
+      "uid": "1982302282281875690200000000",
+      "name": null,
+      "dong": null,
+      "height": 7.0,
+      "floors": 1,
+      "area_m2": 678.3,
+      "road_overlap_ratio": 0.0
+    },
+    {
+      "index": 1931,
+      "uid": "0000302220851875842700000000",
+      "name": null,
+      "dong": null,
+      "height": 6.4,
+      "floors": 2,
+      "area_m2": 480.9,
+      "road_overlap_ratio": 0.0
+    },
+    {
+      "index": 5092,
+      "uid": "1982302215301875512800000000",
+      "name": "토비스유압(주))",
+      "dong": "제3동",
+      "height": 10.5,
+      "floors": 2,
+      "area_m2": 96.6,
+      "road_overlap_ratio": 0.0
+    }
+  ],
+  "pairwise_overlaps": []
+}
