@@ -6,7 +6,14 @@ s=requests.Session()
 r=s.get(url,timeout=30,headers={"User-Agent":"Mozilla/5.0"})
 r.raise_for_status()
 html=r.text
-js=s.get("https://www.eum.go.kr/web/js/op/sv/svItemDet.js",timeout=30,headers={"User-Agent":"Mozilla/5.0"}).text
+js_url="https://www.eum.go.kr/web/js/op/sv/svItemDet.js"
+try:
+    jr=s.get(js_url,timeout=30,headers={"User-Agent":"Mozilla/5.0","Referer":url})
+    js=jr.text
+    js_status=jr.status_code
+except Exception as e:
+    js=""
+    js_status=str(e)
 patterns=[
     r'https?://[^"\']+',
     r'[^"\']+\.zip[^"\']*',
@@ -14,7 +21,7 @@ patterns=[
     r'(?:download|down|file)[A-Za-z0-9_]*\([^)]*\)',
     r'<form[^>]+action="([^"]+)"'
 ]
-out={"url":r.url,"status":r.status_code,"length":len(html),"matches":{},"js_length":len(js)}
+out={"url":r.url,"status":r.status_code,"length":len(html),"matches":{},"js_length":len(js),"js_status":js_status}
 out["js_context"]=[line.strip()[:1500] for line in js.splitlines() if "dataDownload" in line or "download" in line.lower() or "file" in line.lower()][:300]
 for p in patterns:
     vals=[]
