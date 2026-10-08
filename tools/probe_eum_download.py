@@ -11,7 +11,12 @@ html=r.text
 
 js_url="https://www.eum.go.kr/web/js/op/sv/svItemDet.js"
 jr=s.get(js_url,timeout=30,headers={**headers,"Referer":url})
+jr.raise_for_status()
 js=jr.text
+
+def one(pattern):
+    m=re.search(pattern,html,re.I|re.S)
+    return m.group(1).strip() if m else None
 
 out={
   "url":r.url,
@@ -22,6 +27,11 @@ out={
   "js_text":js,
   "download_ids":re.findall(r"dataDownload\('([^']+)'\)",html),
   "zip_names":re.findall(r">([^<]+\.zip)</td>",html,re.I),
+  "refDt":one(r'id=["\']useRefDt["\'][^>]*value=["\']([^"\']*)'),
+  "dataCd":one(r'name=["\']dataCd["\'][^>]*value=["\']([^"\']*)'),
+  "dataTypeCd":one(r'name=["\']dataTypeCd["\'][^>]*value=["\']([^"\']*)'),
+  "context_var":one(r'var\s+context\s*=\s*["\']([^"\']+)'),
+  "updownUrl_var":one(r'var\s+updownUrl\s*=\s*["\']([^"\']+)'),
 }
 Path("data/eum_svItemDet.js").write_text(js,encoding="utf-8")
 Path("data/eum_download_probe.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
