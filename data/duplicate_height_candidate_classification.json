@@ -1,37 +1,12 @@
 {
   "summary": {
-    "near_exact_pairs": 2,
-    "safe_duplicate_pairs": 2,
+    "near_exact_pairs": 1,
+    "safe_duplicate_pairs": 1,
     "review_duplicate_pairs": 0,
     "height_likely_normal": 9,
     "height_suspicious": 124
   },
   "safe_duplicates": [
-    {
-      "district_id": "38030110",
-      "a_index": 7538,
-      "b_index": 7539,
-      "overlap_ratio": 1.0,
-      "area_ratio": 1.0,
-      "a_pnu": "4817025027102110005",
-      "b_pnu": "4817025027102110005",
-      "a_uid": "2016122793111847393500000000",
-      "b_uid": "2016122793111847393400000000",
-      "a_name": "",
-      "b_name": "",
-      "a_dong": "주동",
-      "b_dong": "주동",
-      "a_height": 7.78,
-      "b_height": 7.78,
-      "a_source": "GIS",
-      "b_source": "GIS",
-      "a_richness": 10,
-      "b_richness": 10,
-      "centroid": [
-        128.1532573,
-        35.1588401
-      ]
-    },
     {
       "district_id": "38030710",
       "a_index": 22,
@@ -63,7 +38,7 @@
     "likely_normal": [
       {
         "district_id": "38030110",
-        "index": 8382,
+        "index": 8381,
         "name": null,
         "dong": null,
         "use": "industrial",

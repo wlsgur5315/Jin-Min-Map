@@ -4,11 +4,11 @@
   "buildings": {
     "38030110": {
       "name": "문산읍",
-      "count": 9082,
+      "count": 9081,
       "file": "data/buildings/38030110.geojson.gz",
-      "bytes": 1169503,
+      "bytes": 1169451,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-03"
     },
     "38030310": {
       "name": "내동면",
@@ -425,7 +425,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 151460,
+  "building_count": 151459,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
@@ -439,6 +439,7 @@
     "static_precompute": "2026-10-07: 공간 PNU 우선 + 작은 부속/파편 폴리곤의 고층 대장값 복제 차단 강화 + 오매칭 의심군 별도 검증.",
     "pnu_manual_fix": "2026-10-02: 문산읍 잔여 PNU 불일치 3건을 실제 필지 100% 중첩 기준으로 보정.",
     "register_split_group_fix": "2026-10-08: 동일 PNU·동일 대장 레코드의 120m 이내 분할 footprint를 그룹 면적비>=0.35일 때 병합하고, 보완 데이터의 누락 PNU를 공간 중첩>=55% 기준으로 보완.",
-    "weak_register_match_fix": "2026-10-08: 긴급 PNU/주소 후보 매칭 중 주변 동일대장 그룹 면적비도 0.35 미만인 경우 대장 높이를 거부하고 보수적 높이로 대체."
+    "weak_register_match_fix": "2026-10-08: 긴급 PNU/주소 후보 매칭 중 주변 동일대장 그룹 면적비도 0.35 미만인 경우 대장 높이를 거부하고 보수적 높이로 대체.",
+    "exact_duplicate_fix": "2026-10-08: 동일 PNU·동명칭·높이이며 geometry 중첩>=99.5%, 면적비>=99.5%인 확정 중복만 제거."
   }
 }

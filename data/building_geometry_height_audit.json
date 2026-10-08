@@ -1,6 +1,6 @@
 {
   "summary": {
-    "duplicates": 88,
+    "duplicates": 87,
     "height_outliers": 133,
     "tiny_highrise": 2,
     "missing_like": 2
@@ -13,7 +13,7 @@
   },
   "districts": {
     "38030110": {
-      "duplicates": 3,
+      "duplicates": 2,
       "height_outliers": 1,
       "tiny_highrise": 0,
       "missing_like": 0
@@ -198,7 +198,7 @@
       {
         "district_id": "38030110",
         "a_index": 3012,
-        "b_index": 7912,
+        "b_index": 7911,
         "a_name": "",
         "b_name": "",
         "overlap_ratio": 0.876,
@@ -211,7 +211,7 @@
       {
         "district_id": "38030110",
         "a_index": 3113,
-        "b_index": 7772,
+        "b_index": 7771,
         "a_name": "",
         "b_name": "",
         "overlap_ratio": 0.843,
@@ -219,19 +219,6 @@
         "centroid": [
           128.1632515,
           35.1663043
-        ]
-      },
-      {
-        "district_id": "38030110",
-        "a_index": 7538,
-        "b_index": 7539,
-        "a_name": "",
-        "b_name": "",
-        "overlap_ratio": 1.0,
-        "area_ratio": 1.0,
-        "centroid": [
-          128.1532573,
-          35.1588401
         ]
       },
       {
@@ -714,12 +701,25 @@
           128.1018137,
           35.1588382
         ]
+      },
+      {
+        "district_id": "38030710",
+        "a_index": 1923,
+        "b_index": 2361,
+        "a_name": "",
+        "b_name": "",
+        "overlap_ratio": 0.873,
+        "area_ratio": 0.939,
+        "centroid": [
+          128.1059437,
+          35.1598421
+        ]
       }
     ],
     "height_outliers": [
       {
         "district_id": "38030110",
-        "index": 8382,
+        "index": 8381,
         "name": null,
         "dong": null,
         "height": 10.0,
