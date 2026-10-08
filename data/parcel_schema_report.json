@@ -1,0 +1,181 @@
+{
+  "files": [
+    {
+      "file": "38030110.geojson.gz",
+      "count": 23096
+    },
+    {
+      "file": "38030310.geojson.gz",
+      "count": 15096
+    },
+    {
+      "file": "38030320.geojson.gz",
+      "count": 17325
+    },
+    {
+      "file": "38030330.geojson.gz",
+      "count": 18664
+    },
+    {
+      "file": "38030340.geojson.gz",
+      "count": 16837
+    },
+    {
+      "file": "38030350.geojson.gz",
+      "count": 12192
+    },
+    {
+      "file": "38030360.geojson.gz",
+      "count": 18181
+    },
+    {
+      "file": "38030370.geojson.gz",
+      "count": 16887
+    },
+    {
+      "file": "38030380.geojson.gz",
+      "count": 14815
+    },
+    {
+      "file": "38030390.geojson.gz",
+      "count": 24716
+    },
+    {
+      "file": "38030400.geojson.gz",
+      "count": 18766
+    },
+    {
+      "file": "38030410.geojson.gz",
+      "count": 22163
+    },
+    {
+      "file": "38030420.geojson.gz",
+      "count": 17752
+    },
+    {
+      "file": "38030430.geojson.gz",
+      "count": 25822
+    },
+    {
+      "file": "38030440.geojson.gz",
+      "count": 13840
+    },
+    {
+      "file": "38030450.geojson.gz",
+      "count": 17111
+    },
+    {
+      "file": "38030650.geojson.gz",
+      "count": 3530
+    },
+    {
+      "file": "38030660.geojson.gz",
+      "count": 8524
+    },
+    {
+      "file": "38030670.geojson.gz",
+      "count": 3221
+    },
+    {
+      "file": "38030680.geojson.gz",
+      "count": 1450
+    },
+    {
+      "file": "38030690.geojson.gz",
+      "count": 5636
+    },
+    {
+      "file": "38030700.geojson.gz",
+      "count": 9010
+    },
+    {
+      "file": "38030710.geojson.gz",
+      "count": 6149
+    },
+    {
+      "file": "38030720.geojson.gz",
+      "count": 9116
+    },
+    {
+      "file": "38030730.geojson.gz",
+      "count": 4136
+    },
+    {
+      "file": "38030740.geojson.gz",
+      "count": 7480
+    },
+    {
+      "file": "38030750.geojson.gz",
+      "count": 5162
+    },
+    {
+      "file": "38030760.geojson.gz",
+      "count": 2065
+    },
+    {
+      "file": "38030770.geojson.gz",
+      "count": 5457
+    },
+    {
+      "file": "38030780.geojson.gz",
+      "count": 4381
+    }
+  ],
+  "keys": [
+    {
+      "key": "pnu",
+      "count": 6000,
+      "examples": [
+        "4817025021101810004",
+        "4817025021101810002",
+        "4817025021101810001",
+        "4817025021101800002",
+        "4817025021101800001"
+      ]
+    },
+    {
+      "key": "jibun",
+      "count": 6000,
+      "examples": [
+        "181-4 답",
+        "181-2도",
+        "181-1답",
+        "180-2도",
+        "180-1답"
+      ]
+    },
+    {
+      "key": "land_type",
+      "count": 6000,
+      "examples": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ]
+    },
+    {
+      "key": "district_id",
+      "count": 6000,
+      "examples": [
+        "38030110",
+        "38030110",
+        "38030110",
+        "38030110",
+        "38030110"
+      ]
+    },
+    {
+      "key": "district_name",
+      "count": 6000,
+      "examples": [
+        "문산읍",
+        "문산읍",
+        "문산읍",
+        "문산읍",
+        "문산읍"
+      ]
+    }
+  ]
+}
