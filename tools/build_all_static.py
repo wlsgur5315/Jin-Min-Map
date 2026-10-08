@@ -234,7 +234,7 @@ def parcel_for(g,gs,ps,tree):
 def apply_height(props,g,reg=None,source="GIS"):
     area=metric_area(g)
     if reg:
-        h=float(reg[3] or 0);fl=int(float(reg[4] or 0));use=reg[8] or prop(props,"use_name");bad=h>200 or (fl>0 and h/fl>8)
+        h=float(reg[3] or 0);fl=int(float(reg[4] or 0));use=reg[8] or prop(props,"use_name");bad=h>200 or (fl>0 and (h/fl>8 or h/fl<1.8))
         if h>0 and not bad:
             props.update(
                 render_height=round(h,3),height_m=round(h,3),
