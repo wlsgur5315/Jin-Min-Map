@@ -1,0 +1,26 @@
+name: Compare Tobis footprints to OSM
+on:
+  push:
+    paths:
+      - 'tools/compare_tobis_to_osm.py'
+      - '.github/workflows/compare-tobis-to-osm.yml'
+permissions:
+  contents: write
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install shapely requests
+      - run: python tools/compare_tobis_to_osm.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/tobis_osm_shape_compare.json
+          git commit -m "Compare Tobis footprints against OSM [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
