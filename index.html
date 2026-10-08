@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.07-01</title>
+<title>Jinju3D Local · v2026.10.08-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -15,7 +15,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>진주시 2D → 3D 공간 탐색 <span class="version">v2026.10.07-01</span></h1><p>GIS 우선 · 다중동 건축물대장 정밀매칭 · 검증된 높이만 3D</p><button id="latestBtn" class="latest-btn">최신 버전 바로 열기</button><div class="badge"><span class="dot"></span><span id="modeBadge">CLEAN MERGE MODE</span></div></div>
+<div class="top"><h1>진주시 2D → 3D 공간 탐색 <span class="version">v2026.10.08-01</span></h1><p>GIS 우선 · 다중동 건축물대장 정밀매칭 · 검증된 높이만 3D</p><button id="latestBtn" class="latest-btn">최신 버전 바로 열기</button><div class="badge"><span class="dot"></span><span id="modeBadge">CLEAN MERGE MODE</span></div></div>
 <div class="panel">
 <div class="sec"><div class="ttl">① 읍·면·동 선택</div><select id="district"><option>행정구역 불러오는 중…</option></select><div class="row"><button id="go" class="primary">선택 구역 보기</button><button id="home">진주시 전체</button></div><div class="hint" style="margin-top:8px">GIS·필지 밀도를 기준으로 지역별 OSM 수집 정밀도를 자동 조절합니다.</div></div>
 <div class="sec"><div class="ttl">② 자동 GIS+OSM 완성</div><div class="modebox"><b>겹침 제거형 병합</b><div id="mergeState" class="modeState">행정구역 선택 후 자동 계산</div><div class="privacy">OSM이 GIS와 일부 겹치면 겹치는 면적을 잘라낸 뒤 실제 누락 부분만 남깁니다. OSM 높이·층수 정보가 없으면 임의 높이를 만들지 않고 2D로만 표시합니다.</div></div><div class="row"><button id="smartToggle" class="smartBtn">OSM 보완 숨기기</button><button id="mergeRefresh" class="refreshBtn">보완 다시 계산</button></div></div>
@@ -27,7 +27,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.07-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.08-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -41,7 +41,7 @@ map.on('sourcedata',e=>{if(e.sourceId==='terrain'&&currentBuildings&&terrainSour
 function openLatestVersion(){const u=new URL(location.href);u.searchParams.set('v',APP_VERSION.replace(/^v/,'').replace(/\./g,'').replace(/-/g,''));u.searchParams.set('refresh',Date.now().toString());location.href=u.toString()}
 function message(t){$('msg').textContent=t}function loading(v){$('bar').classList.toggle('on',v)}
 async function loadJson(url){const r=await fetch(url,{cache:'force-cache'});if(!r.ok)throw Error(url);return r.json()}
-async function loadGzipJson(url){const r=await fetch(url+'?v=20261007-1',{cache:'force-cache'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
+async function loadGzipJson(url){const r=await fetch(url+'?v=20261008-1',{cache:'force-cache'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
 function vectorSourceName(m){const s=m.getStyle().sources||{};if(s.openmaptiles?.type==='vector')return'openmaptiles';for(const[k,v]of Object.entries(s))if(v?.type==='vector')return k;return null}
 function hideBaseBuildings(m){for(const l of m.getStyle().layers||[]){const id=String(l.id||'').toLowerCase(),sl=String(l['source-layer']||'').toLowerCase();if(sl==='building'||sl==='building_part'||id.includes('building'))try{m.setLayoutProperty(l.id,'visibility','none')}catch(e){}}}
 function terrainSourceReady(){
@@ -56,38 +56,86 @@ function refreshTerrainBuildings(){
     if(osm)map.triggerRepaint();
   }catch(e){}
 }
-let groundUpdateToken=0;
-function featureGroundPoint(f){
-  try{return turf.pointOnFeature(f).geometry.coordinates}catch(e){
-    try{return turf.centroid(f).geometry.coordinates}catch(e2){return null}
-  }
+const groundUpdateTokens=new Map();
+function featureGroundSamplePoints(f){
+  const pts=[];
+  const add=c=>{if(Array.isArray(c)&&c.length>=2&&Number.isFinite(Number(c[0]))&&Number.isFinite(Number(c[1])))pts.push([Number(c[0]),Number(c[1])])};
+  try{add(turf.pointOnFeature(f).geometry.coordinates)}catch(e){}
+  try{add(turf.centroid(f).geometry.coordinates)}catch(e){}
+  try{const b=turf.bbox(f);add([(b[0]+b[2])/2,(b[1]+b[3])/2])}catch(e){}
+  try{
+    const g=f?.geometry;
+    const ring=g?.type==='Polygon'?g.coordinates?.[0]:g?.type==='MultiPolygon'?g.coordinates?.[0]?.[0]:null;
+    if(ring?.length){
+      const n=Math.min(6,Math.max(2,ring.length-1));
+      for(let i=0;i<n;i++)add(ring[Math.floor(i*(ring.length-1)/n)]);
+    }
+  }catch(e){}
+  const seen=new Set();
+  return pts.filter(p=>{const k=p[0].toFixed(7)+','+p[1].toFixed(7);if(seen.has(k))return false;seen.add(k);return true});
 }
-async function applyGroundElevation(fc,maxPasses=4){
+function featureTerrainElevation(f){
+  const zs=[];
+  for(const c of featureGroundSamplePoints(f)){
+    let z=null;try{z=map.queryTerrainElevation(c,{exaggerated:false})}catch(e){}
+    if(Number.isFinite(z))zs.push(z);
+  }
+  if(!zs.length)return null;
+  zs.sort((a,b)=>a-b);
+  // 건물이 경사지에 일부 묻히지 않도록 footprint에서 확인된 높은 지표면을 기준으로 한다.
+  return zs[zs.length-1];
+}
+async function applyGroundElevation(fc,sourceId='buildings',maxPasses=8){
   if(!fc?.features?.length||!map.getTerrain?.())return;
-  const token=++groundUpdateToken;
+  const token=(groundUpdateTokens.get(sourceId)||0)+1;groundUpdateTokens.set(sourceId,token);
+  let lastUnresolved=fc.features.length,resolved=0;
   for(let pass=0;pass<maxPasses;pass++){
-    let unresolved=0,changed=0;
+    if(groundUpdateTokens.get(sourceId)!==token)return;
+    let unresolved=0,changed=0;resolved=0;
     for(let i=0;i<fc.features.length;i++){
-      if(token!==groundUpdateToken)return;
-      const f=fc.features[i],p=f.properties||(f.properties={}),c=featureGroundPoint(f);
-      if(!c){unresolved++;continue}
-      let z=null;try{z=map.queryTerrainElevation(c,{exaggerated:false})}catch(e){}
+      if(groundUpdateTokens.get(sourceId)!==token)return;
+      const f=fc.features[i],p=f.properties||(f.properties={});
+      const z=featureTerrainElevation(f);
       if(!Number.isFinite(z)){unresolved++;continue}
-      const base=Math.max(0,z),bh=Number(p.render_height)||0,top=base+bh;
-      if(Math.abs((Number(p.render_base)||0)-base)>.15||Math.abs((Number(p.render_top)||0)-top)>.15){
+      const base=Math.max(0,z+0.15),bh=Number(p.render_height)||0,top=base+bh;
+      p.ground_elevation_m=Math.round(z*10)/10;
+      p.ground_elevation_source='Terrarium DEM · 건물 footprint 다중점';
+      if(Math.abs((Number(p.render_base)||0)-base)>.10||Math.abs((Number(p.render_top)||0)-top)>.10){
         p.render_base=base;p.render_top=top;changed++;
       }
-      if(i%250===0)await new Promise(requestAnimationFrame);
+      resolved++;
+      if(i%180===0)await new Promise(requestAnimationFrame);
     }
-    if(changed&&map.getSource('buildings'))map.getSource('buildings').setData(fc);
+    lastUnresolved=unresolved;
+    if(changed){
+      try{const src=map.getSource(sourceId);if(src)src.setData(fc)}catch(e){}
+    }
     if(!unresolved)break;
-    await new Promise(resolve=>map.once('idle',resolve));
+    await Promise.race([
+      new Promise(resolve=>map.once('idle',resolve)),
+      sleep(900)
+    ]);
   }
+  fc._groundStats={resolved,unresolved:lastUnresolved,total:fc.features.length};
 }
-function scheduleGroundElevation(fc){
+function scheduleGroundElevation(fc,sourceId='buildings'){
   if(!fc?.features?.length)return;
-  const run=()=>applyGroundElevation(fc).catch(()=>{});
+  const run=()=>applyGroundElevation(fc,sourceId).catch(e=>console.warn('지형고도 보정 실패',sourceId,e));
   if(map.isStyleLoaded?.())setTimeout(run,0);else map.once('load',run);
+}
+function scheduleGroundElevationAfterViewport(fc,sourceId='buildings'){
+  if(!fc?.features?.length)return;
+  let fired=false;
+  const run=()=>{
+    if(fired)return;fired=true;
+    const startRun=()=>scheduleGroundElevation(fc,sourceId);
+    // moveend 직후 DEM 타일이 한 박자 늦게 완성되는 경우를 고려한다.
+    setTimeout(startRun,180);
+    setTimeout(()=>scheduleGroundElevation(fc,sourceId),1200);
+  };
+  map.once('moveend',run);
+  map.once('idle',run);
+  setTimeout(run,2200);
 }
 function initTerrain(){try{map.addSource('terrain',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});map.setTerrain({source:'terrain',exaggeration:1})}catch(e){}}
 function initSelect(){const s=$('district');s.innerHTML='<option value="">읍·면·동 선택</option>';for(const f of [...DISTRICTS.features].sort((a,b)=>a.properties.district_name.localeCompare(b.properties.district_name,'ko'))){const o=document.createElement('option');o.value=f.properties.district_id;o.textContent=f.properties.district_name;s.appendChild(o)}}
@@ -100,12 +148,12 @@ async function loadRegister(){
   if(REGISTER_READY)return;
   if(REGISTER_LOADING)return REGISTER_LOADING;
   REGISTER_LOADING=(async()=>{
-    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261007-1');
+    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261008-1');
     REGISTER_BY_PNU.clear();REGISTER_BY_SHORT.clear();REGISTER_BY_FULL.clear();REGISTER_BY_DISTRICT.clear();
     const shards=REGISTER_INDEX.shards||[];
     for(let i=0;i<shards.length;i++){
       message(`건축물대장 실제 높이 자료 · ${i+1}/${shards.length}`);
-      const part=await loadJson(shards[i]+'?v=20261007-1');
+      const part=await loadJson(shards[i]+'?v=20261008-1');
       for(const r of part.records||[]){
         regAdd(REGISTER_BY_PNU,String(r[0]||''),r);
         regAdd(REGISTER_BY_SHORT,String(r[1]||''),r);
@@ -311,7 +359,7 @@ function prepareStaticBuildings(fc){
   }
   fc._heightStats={high,mid,low};fc._staticRegisterMatched=reg;return fc
 }
-function addDetails(b,p){if(map.getSource('buildings'))map.getSource('buildings').setData(b);else{map.addSource('buildings',{type:'geojson',data:b});map.addLayer({id:'buildings-2d',type:'fill',source:'buildings',paint:{'fill-color':'#607991','fill-opacity':.72,'fill-outline-color':'#dbeafe'}});map.addLayer({id:'buildings-3d',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':['match',['get','height_confidence'],'높음','#438de0','보통','#6f99c9','#9aa9b8'],'fill-extrusion-base':['coalesce',['get','render_base'],0],'fill-extrusion-height':['coalesce',['get','render_top'],['get','render_height']],'fill-extrusion-opacity':.95}})}scheduleGroundElevation(b);if(map.getSource('parcels'))map.getSource('parcels').setData(p);else{map.addSource('parcels',{type:'geojson',data:p});map.addLayer({id:'parcel-fill',type:'fill',source:'parcels',paint:{'fill-color':'#f59e0b','fill-opacity':.02}});map.addLayer({id:'parcel-line',type:'line',source:'parcels',paint:{'line-color':'#ffbd52','line-width':.8,'line-opacity':.7}})}}
+function addDetails(b,p){if(map.getSource('buildings'))map.getSource('buildings').setData(b);else{map.addSource('buildings',{type:'geojson',data:b});map.addLayer({id:'buildings-2d',type:'fill',source:'buildings',paint:{'fill-color':'#607991','fill-opacity':.72,'fill-outline-color':'#dbeafe'}});map.addLayer({id:'buildings-3d',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':['match',['get','height_confidence'],'높음','#438de0','보통','#6f99c9','#9aa9b8'],'fill-extrusion-base':['coalesce',['get','render_base'],0],'fill-extrusion-height':['coalesce',['get','render_top'],['get','render_height']],'fill-extrusion-opacity':.95}})}if(map.getSource('parcels'))map.getSource('parcels').setData(p);else{map.addSource('parcels',{type:'geojson',data:p});map.addLayer({id:'parcel-fill',type:'fill',source:'parcels',paint:{'fill-color':'#f59e0b','fill-opacity':.02}});map.addLayer({id:'parcel-line',type:'line',source:'parcels',paint:{'line-color':'#ffbd52','line-width':.8,'line-opacity':.7}})}}
 function addSupplementLayers(){const e={type:'FeatureCollection',features:[]};map.addSource('smart-osm',{type:'geojson',data:e});map.addLayer({id:'smart-osm-2d',type:'fill',source:'smart-osm',filter:['!=',['get','facility'],true],paint:{'fill-color':'#2dd4bf','fill-opacity':.46,'fill-outline-color':'#99f6e4'}});map.addLayer({id:'smart-facility-2d',type:'fill',source:'smart-osm',filter:['==',['get','facility'],true],paint:{'fill-color':'#f59e0b','fill-opacity':.26,'fill-outline-color':'#fbbf24'}});map.addLayer({id:'smart-osm-3d',type:'fill-extrusion',source:'smart-osm',filter:['all',['!=',['get','facility'],true],['==',['get','has_3d'],true]],layout:{visibility:'none'},paint:{'fill-extrusion-color':'#2dd4bf','fill-extrusion-base':['coalesce',['get','render_base'],0],'fill-extrusion-height':['coalesce',['get','render_top'],['get','render_height']],'fill-extrusion-opacity':.70}})}
 const CELL=.0015;function gridKey(x,y){return x+','+y}function makeGrid(fs){const g=new Map();fs.forEach((f,i)=>{let b;try{b=turf.bbox(f)}catch(e){return}for(let x=Math.floor(b[0]/CELL);x<=Math.floor(b[2]/CELL);x++)for(let y=Math.floor(b[1]/CELL);y<=Math.floor(b[3]/CELL);y++){const k=gridKey(x,y);if(!g.has(k))g.set(k,[]);g.get(k).push(i)}});return g}function candidatesFor(f,g){const b=turf.bbox(f),s=new Set();for(let x=Math.floor(b[0]/CELL)-1;x<=Math.floor(b[2]/CELL)+1;x++)for(let y=Math.floor(b[1]/CELL)-1;y<=Math.floor(b[3]/CELL)+1;y++)for(const i of g.get(gridKey(x,y))||[])s.add(i);return[...s]}
 function intersectionArea(a,b){try{const x=turf.intersect(turf.featureCollection([a,b]));return x?turf.area(x):0}catch(e){return 0}}
@@ -382,7 +430,7 @@ async function mergeWholeDistrict(collected,gis,token){
 }
 function withTimeout(p,ms,msg='timeout'){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(Error(msg)),ms))])}
 async function buildWholeDistrictSupplement(force=false){if(isStaticFast(selectedId)){if($('mergeState'))$('mergeState').textContent='정적 빠른 모드 · 실시간 OSM 재계산 없음';return}if(!smartOsm||!detailReady||!currentBuildings||!selectedDistrict||precisionMode)return;const id=selectedId,pf=profileFor(id),cacheKey=id+'@'+pf.level+'@v9';if(!force&&districtOsmCache.has(cacheKey)){applyCachedSupplement(cacheKey);return}const token=++scanToken,btn=$('mergeRefresh');btn.disabled=true;loading(true);$('sOsmRaw').textContent='수집 중';$('sDup').textContent='-';$('sOsm').textContent='-';$('sOsm3d').textContent='-';$('sFacility').textContent='-';try{$('mergeState').textContent=`${pf.level} 자동 보완 시작 · GIS/필지 ${(pf.ratio*100).toFixed(1)}%`;const collected=await withTimeout(collectWholeDistrictOsm(selectedDistrict,token,pf),45000,'OSM 보완 시간 초과');if(token!==scanToken)return;$('sOsmRaw').textContent=collected.buildings.length.toLocaleString()+'개';const result=await mergeWholeDistrict(collected,currentBuildings.features,token);if(token!==scanToken)return;result.profile=pf;districtOsmCache.set(cacheKey,result);applyCachedSupplement(cacheKey);message(`${selectedDistrict.properties.district_name} 겹침 제거 보완 완료 · ${APP_VERSION}`)}catch(e){if(String(e.message)!=='scan cancelled'){$('mergeState').textContent=(String(e.message).includes('시간 초과')?'OSM 보완 시간 초과 · 기본 건물은 정상 사용 가능':'OSM 자동 보완 실패 · 다시 계산해 주세요');console.warn(e)}}finally{if(token===scanToken){btn.disabled=false;loading(false)}}}
-function applyCachedSupplement(key){const r=districtOsmCache.get(key);if(!r)return;map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[...r.kept,...r.facilities]});$('sOsmRaw').textContent=r.raw.toLocaleString()+'개';$('sDup').textContent=r.dup.toLocaleString()+'개';$('sOsm').textContent=r.kept.length.toLocaleString()+'개';$('sOsm3d').textContent=r.threeD.toLocaleString()+'개';$('sFacility').textContent=r.facilities.length.toLocaleString()+'개';if($('sReg'))$('sReg').textContent=(registerMatchedGis+(r.regOsm||0)).toLocaleString()+'개';$('mergeState').textContent=`완료 · ${r.profile.level} · 후보 ${r.raw.toLocaleString()} → 겹침/중복 ${r.dup.toLocaleString()} 처리 → ${r.kept.length.toLocaleString()} 보완`}
+function applyCachedSupplement(key){const r=districtOsmCache.get(key);if(!r)return;const supplementFc={type:'FeatureCollection',features:[...r.kept,...r.facilities]};map.getSource('smart-osm')?.setData(supplementFc);scheduleGroundElevationAfterViewport(supplementFc,'smart-osm');$('sOsmRaw').textContent=r.raw.toLocaleString()+'개';$('sDup').textContent=r.dup.toLocaleString()+'개';$('sOsm').textContent=r.kept.length.toLocaleString()+'개';$('sOsm3d').textContent=r.threeD.toLocaleString()+'개';$('sFacility').textContent=r.facilities.length.toLocaleString()+'개';if($('sReg'))$('sReg').textContent=(registerMatchedGis+(r.regOsm||0)).toLocaleString()+'개';$('mergeState').textContent=`완료 · ${r.profile.level} · 후보 ${r.raw.toLocaleString()} → 겹침/중복 ${r.dup.toLocaleString()} 처리 → ${r.kept.length.toLocaleString()} 보완`}
 function heightSummary(s){const t=s.high+s.mid+s.low;return t?`높음 ${Math.round(s.high/t*100)}% · 보통 ${Math.round(s.mid/t*100)}%`:'-'}
 async function selectDistrict(id){
   const f=DISTRICTS.features.find(x=>String(x.properties.district_id)===String(id));if(!f)return;
@@ -400,6 +448,7 @@ async function selectDistrict(id){
       registerMatchedGis=b._staticRegisterMatched||0;if($('sReg'))$('sReg').textContent=registerMatchedGis.toLocaleString()+'개';
       detailReady=true;$('mergeState').textContent='정적 빠른 모드 · 건물별 지형 기준점 분리 · 사전결합 완료';
       const bb=turf.bbox(f);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:650});
+      scheduleGroundElevationAfterViewport(b,'buildings');
       loading(false);message(f.properties.district_name+' 빠른 로드 완료 · '+APP_VERSION);return;
     }
     if($('sReg'))$('sReg').textContent='불러오는 중';
@@ -409,13 +458,13 @@ async function selectDistrict(id){
     applyRegisterToGis(b);normalizeBuildings(b);currentBuildings=b;addDetails(b,p);
     $('sBld').textContent=b.features.length.toLocaleString()+'개';$('sPar').textContent=p.features.length.toLocaleString()+'개';$('sHeight').textContent=heightSummary(b._heightStats);
     if($('sReg'))$('sReg').textContent=registerMatchedGis.toLocaleString()+'개';detailReady=true;
-    const bb=turf.bbox(f);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:1200});loading(false);
+    const bb=turf.bbox(f);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:{top:80,bottom:70,left:60,right:390},pitch:0,bearing:0,duration:1200});scheduleGroundElevationAfterViewport(b,'buildings');loading(false);
     const pf=profileFor(selectedId),ck=selectedId+'@'+pf.level+'@v10';
     if(districtOsmCache.has(ck)){ $('mergeState').textContent='저장된 보완 적용 중'; applyCachedSupplement(ck); }
     else $('mergeState').textContent='기본 건물 로드 완료 · 자동 보완은 일시 중지 · 필요 시 다시 계산 버튼 사용';
   }catch(e){console.error(e);loading(false);message('데이터 읽기 오류 · '+(e?.message||e)+' · '+APP_VERSION)}
 }
-function cinematic(c,l){map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({center:c,zoom:18,pitch:67,bearing:30,duration:1600});message(l+' · 3D 공간 보기')}
+function cinematic(c,l){map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({center:c,zoom:18,pitch:67,bearing:30,duration:1600});if(currentBuildings)scheduleGroundElevationAfterViewport(currentBuildings,'buildings');message(l+' · 3D 공간 보기')}
 function fmt(n){return Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:1}):'-'}
 map.on('click',e=>{if(precisionMode)return;const ls=['parcel-fill','buildings-2d'];if(smartOsm)ls.push('smart-osm-2d','smart-facility-2d');const fs=map.queryRenderedFeatures(e.point,{layers:ls}),gs=fs.filter(x=>x.layer.id==='buildings-2d'),g=gs.sort((a,b)=>{const ap=a.properties||{},bp=b.properties||{};const aq=(Number(ap.building_area)>0?4:0)+(ap.building_name?3:0)+(ap.building_dong?2:0)+(ap.register_dong||ap.register_name?1:0);const bq=(Number(bp.building_area)>0?4:0)+(bp.building_name?3:0)+(bp.building_dong?2:0)+(bp.register_dong||bp.register_name?1:0);if(aq!==bq)return bq-aq;const aa=Number(ap.building_area)||Number.MAX_SAFE_INTEGER,ba=Number(bp.building_area)||Number.MAX_SAFE_INTEGER;return aa-ba})[0],o=fs.find(x=>x.layer.id==='smart-osm-2d'),fac=fs.find(x=>x.layer.id==='smart-facility-2d'),p=fs.find(x=>x.layer.id==='parcel-fill');if(g){const a=g.properties;$('info').innerHTML=`<b>${a.building_name||a.register_dong||'GIS 건물'}</b><br>${a.legal_name||''} ${a.jibun||''}<br>지상 ${a.floors_above||'-'}층 · 높이 <b>${fmt(Number(a.render_height))}m</b><br>${a.height_confidence||'-'} · ${a.height_source||''}${a.register_matched?' · 건축물대장 매칭':''}${a.register_dong?`<br>대장 동명칭: <b>${a.register_dong}</b>`:''}${a.register_match_basis?`<br>매칭 근거: ${a.register_match_basis}`:''}${a.verified_override?`<br>검증 보정: <b>${a.verified_override}</b>`:''}${a.building_uid?`<br>UID: ${a.building_uid}`:''}`;cinematic(e.lngLat,a.building_name||'GIS 건물');return}if(o){const a=o.properties;$('info').innerHTML=`<b>${a.building_name||'OSM 보완 건물'}</b><br>${a.floors_above?('지상 '+a.floors_above+'층 · '):''}${a.height_source||'높이정보 없음'}<br>${a.register_matched?'건축물대장 매칭 완료 · ':''}${a.has_3d==='true'||a.has_3d===true?'3D 높이 적용':'높이 정보가 없어 2D만 표시'}`;if(a.has_3d==='true'||a.has_3d===true)cinematic(e.lngLat,'OSM 보완 건물');return}if(fac){$('info').innerHTML='<b>OSM 대형시설</b><br>경기장 등 시설 범위 참고용<br>임의 높이를 적용하지 않고 2D로만 표시';return}if(p){const a=turf.area(p);$('info').innerHTML=`<b>선택 대지</b><br>지번 ${p.properties.jibun||'-'}<br>면적 ${fmt(a)}㎡`;return}const d=map.queryRenderedFeatures(e.point,{layers:['district-fill']})[0];if(d)selectDistrict(String(d.properties.district_id))});
 function loadVWorldScript(k){return new Promise((r,j)=>{if(window.vw){r();return}const s=document.createElement('script');s.src='https://map.vworld.kr/js/webglMapInit.js.do?version=3.0&apiKey='+encodeURIComponent(k);s.onload=r;s.onerror=()=>j(Error());document.head.appendChild(s)})}
@@ -450,9 +499,9 @@ async function waitForMapReady(m,timeout=5000){
   try{
     message('진주시 공간정보 불러오는 중…');
     const dataPromise=Promise.all([
-      loadJson('data/jinju_districts.geojson?v=20261007-1'),
-      loadJson('data/jinju_boundary.geojson?v=20261007-1'),
-      loadJson('data/manifest.json?v=20261007-1')
+      loadJson('data/jinju_districts.geojson?v=20261008-1'),
+      loadJson('data/jinju_boundary.geojson?v=20261008-1'),
+      loadJson('data/manifest.json?v=20261008-1')
     ]);
     await waitForMapReady(map);
     [DISTRICTS,CITY,MANIFEST]=await dataPromise;
