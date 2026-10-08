@@ -325,6 +325,26 @@ def duplicate_ratio(g,geoms,tree,threshold):
         except:ov=0
         if ov>=threshold:return True
     return False
+def _urgent_register_fragment(p,area,ra):
+    ratio=min(area,ra)/max(area,ra) if area>0 and ra>0 else 0
+    try:h=float(p.get("render_height") or p.get("height_m") or 0)
+    except:h=0
+    try:fl=float(p.get("floors_above") or 0)
+    except:fl=0
+    score=0
+    if ratio<0.10:score+=6
+    elif ratio<0.20:score+=5
+    elif ratio<0.25:score+=4
+    else:score+=3
+    if h>=50:score+=4
+    elif h>=30:score+=3
+    elif h>=15:score+=2
+    if fl>=15:score+=3
+    elif fl>=8:score+=2
+    if p.get("building_name") or p.get("building_dong") or p.get("register_name") or p.get("register_dong"):score+=1
+    if p.get("height_source")=="건축물대장 실제 높이":score+=2
+    return ratio<0.35 and score>=10
+
 def _dist_m(a,b):
     x=(b[0]-a[0])*111320*math.cos(math.radians((a[1]+b[1])/2))
     y=(b[1]-a[1])*110540
@@ -360,7 +380,8 @@ def merge_split_register_groups(features):
         except:continue
         if ra<=0:continue
         rp=g.representative_point()
-        rec={"idx":idx,"f":f,"p":p,"g":g,"area":metric_area(g),"pt":(rp.x,rp.y),"ra":ra}
+        area=metric_area(g)
+        rec={"idx":idx,"f":f,"p":p,"g":g,"area":area,"pt":(rp.x,rp.y),"ra":ra,"urgent":_urgent_register_fragment(p,area,ra)}
         rows.append(rec)
         key=(pn,norm(p.get("register_name")),norm(p.get("register_dong")),h,fl,ra)
         groups.setdefault(key,[]).append(rec)
@@ -371,7 +392,7 @@ def merge_split_register_groups(features):
         stats["candidate_groups"]+=1
         for ci in _cluster_rows(items,120):
             part=[items[i] for i in ci]
-            if len(part)<2:continue
+            if len(part)<2 or not any(x["urgent"] for x in part):continue
             ug=safe_geom(unary_union([x["g"] for x in part]))
             if ug is None:continue
             group_area=metric_area(ug);ra=part[0]["ra"]
