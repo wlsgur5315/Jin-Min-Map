@@ -1,0 +1,720 @@
+{
+  "target_pnu": "4817011900100330015",
+  "target_members": [
+    {
+      "index": 1293,
+      "uid": "0000302303951875922200000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 3.2,
+      "floors": 1,
+      "centroid": [
+        128.12394521945356,
+        35.182323176437514
+      ],
+      "area_deg2": 1.0104566397865826e-09
+    },
+    {
+      "index": 1362,
+      "uid": "0000302208591875382000000000",
+      "name": "토비스유압(주))",
+      "dong": "제4동",
+      "source": null,
+      "height": 3.7,
+      "floors": 1,
+      "centroid": [
+        128.12289184626158,
+        35.18184612816673
+      ],
+      "area_deg2": 1.8355377641421506e-09
+    },
+    {
+      "index": 1383,
+      "uid": "1982302215971875499300000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 9.6,
+      "floors": 3,
+      "centroid": [
+        128.12297428576204,
+        35.18195105045879
+      ],
+      "area_deg2": 6.700518846462894e-08
+    },
+    {
+      "index": 1904,
+      "uid": "1982302192481875832500000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 3.2,
+      "floors": 1,
+      "centroid": [
+        128.12272063672026,
+        35.182253747746024
+      ],
+      "area_deg2": 3.387431965713009e-09
+    },
+    {
+      "index": 1909,
+      "uid": "1982302296401875700100000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 9.6,
+      "floors": 3,
+      "centroid": [
+        128.12385960383077,
+        35.18212384150853
+      ],
+      "area_deg2": 6.420193418187357e-08
+    },
+    {
+      "index": 1910,
+      "uid": "1982302282281875690200000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 7.0,
+      "floors": 1,
+      "centroid": [
+        128.12370449621267,
+        35.18211633508048
+      ],
+      "area_deg2": 6.744188224657564e-08
+    },
+    {
+      "index": 1931,
+      "uid": "0000302220851875842700000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 6.4,
+      "floors": 2,
+      "centroid": [
+        128.123032101044,
+        35.18226001086289
+      ],
+      "area_deg2": 4.781515311207826e-08
+    },
+    {
+      "index": 5092,
+      "uid": "1982302215301875512800000000",
+      "name": "토비스유압(주))",
+      "dong": "제3동",
+      "source": null,
+      "height": 10.5,
+      "floors": 2,
+      "centroid": [
+        128.12296715108593,
+        35.18196330217986
+      ],
+      "area_deg2": 9.601759460615392e-09
+    },
+    {
+      "index": 5441,
+      "uid": "2015120088201873547100000000",
+      "name": "토비스유압(주))",
+      "dong": "제4동",
+      "source": null,
+      "height": 5.0,
+      "floors": 1,
+      "centroid": [
+        128.12332161904817,
+        35.182212778854414
+      ],
+      "area_deg2": 3.883442263181106e-07
+    },
+    {
+      "index": 5442,
+      "uid": "2015120091181873549400000000",
+      "name": "토비스유압(주)",
+      "dong": "제2동",
+      "source": null,
+      "height": 5.0,
+      "floors": 1,
+      "centroid": [
+        128.12335425667166,
+        35.18221504296155
+      ],
+      "area_deg2": 3.8786563788930126e-07
+    },
+    {
+      "index": 5443,
+      "uid": "2015120089601873554400000000",
+      "name": "토비스유압(주))",
+      "dong": "제3동",
+      "source": null,
+      "height": 5.0,
+      "floors": 1,
+      "centroid": [
+        128.12333689753578,
+        35.18221946853862
+      ],
+      "area_deg2": 3.8886133612168426e-07
+    },
+    {
+      "index": 5452,
+      "uid": "2015120084301873581200000000",
+      "name": "토비스유압(주)",
+      "dong": "제1동",
+      "source": null,
+      "height": 5.0,
+      "floors": 1,
+      "centroid": [
+        128.1232783940548,
+        35.182243177710276
+      ],
+      "area_deg2": 3.886393125662323e-07
+    }
+  ],
+  "road_parcel_count": 2,
+  "candidates": [
+    {
+      "index": 1908,
+      "pnu": "4817011900100330005",
+      "uid": "0000302316311876126300000000",
+      "name": "",
+      "dong": "",
+      "source": null,
+      "height": 3.7,
+      "floors": 1,
+      "area_deg2": 3.3091658030674653e-09,
+      "centroid": [
+        128.12408343396478,
+        35.1825059042856
+      ],
+      "road_overlap_ratio": 0.23393219378236832,
+      "overlaps_target": []
+    },
+    {
+      "index": 5452,
+      "pnu": "4817011900100330015",
+      "uid": "2015120084301873581200000000",
+      "name": "토비스유압(주)",
+      "dong": "제1동",
+      "source": null,
+      "height": 5.0,
+      "floors": 1,
+      "area_deg2": 3.886393125662323e-07,
+      "centroid": [
+        128.1232783940548,
+        35.182243177710276
+      ],
+      "road_overlap_ratio": 0.19012100579165672,
+      "overlaps_target": [
+        {
+          "target_index": 1910,
+          "ratio_of_candidate": 0.06472454779904083,
+          "ratio_of_target": 0.37298045257413753
+        },
+        {
+          "target_index": 1931,
+          "ratio_of_candidate": 0.10006287823976301,
+          "ratio_of_target": 0.8133063617164654
+        },
+        {
+          "target_index": 5092,
+          "ratio_of_candidate": 0.011208310669336035,
+          "ratio_of_target": 0.45366582775031755
+        },
+        {
+          "target_index": 5441,
+          "ratio_of_candidate": 0.8839485590304835,
+          "ratio_of_target": 0.8846202339161641
+        },
+        {
+          "target_index": 5442,
+          "ratio_of_candidate": 0.8418401272150358,
+          "ratio_of_target": 0.8435193437395906
+        },
+        {
+          "target_index": 5443,
+          "ratio_of_candidate": 0.8746705141402029,
+          "ratio_of_target": 0.8741711138672542
+        }
+      ]
+    },
+    {
+      "index": 5443,
+      "pnu": "4817011900100330015",
+      "uid": "2015120089601873554400000000",
+      "name": "토비스유압(주))",
+      "dong": "제3동",
+      "source": null,
+      "height": 5.0,
+      "floors": 1,
+      "area_deg2": 3.8886133612168426e-07,
+      "centroid": [
+        128.12333689753578,
+        35.18221946853862
+      ],
+      "road_overlap_ratio": 0.16313869357547994,
+      "overlaps_target": [
+        {
+          "target_index": 1383,
+          "ratio_of_candidate": 0.0024669022533936676,
+          "ratio_of_target": 0.014316546648363607
+        },
+        {
+          "target_index": 1909,
+          "ratio_of_candidate": 0.007502709677981901,
+          "ratio_of_target": 0.04544276970921615
+        },
+        {
+          "target_index": 1910,
+          "ratio_of_candidate": 0.10377271208681778,
+          "ratio_of_target": 0.5983402913862141
+        },
+        {
+          "target_index": 1931,
+          "ratio_of_candidate": 0.08875362702751027,
+          "ratio_of_target": 0.7217974166194862
+        },
+        {
+          "target_index": 5092,
+          "ratio_of_candidate": 0.01139032322347469,
+          "ratio_of_target": 0.4612963202948576
+        },
+        {
+          "target_index": 5441,
+          "ratio_of_candidate": 0.9703730478242774,
+          "ratio_of_target": 0.9716651731660418
+        },
+        {
+          "target_index": 5442,
+          "ratio_of_candidate": 0.9636155282852459,
+          "ratio_of_target": 0.966089246461034
+        },
+        {
+          "target_index": 5452,
+          "ratio_of_candidate": 0.8741711138672542,
+          "ratio_of_target": 0.8746705141402029
+        }
+      ]
+    },
+    {
+      "index": 5442,
+      "pnu": "4817011900100330015",
+      "uid": "2015120091181873549400000000",
+      "name": "토비스유압(주)",
+      "dong": "제2동",
+      "source": null,
+      "height": 5.0,
+      "floors": 1,
+      "area_deg2": 3.8786563788930126e-07,
+      "centroid": [
+        128.12335425667166,
+        35.18221504296155
+      ],
+      "road_overlap_ratio": 0.15932874026029403,
+      "overlaps_target": [
+        {
+          "target_index": 1383,
+          "ratio_of_candidate": 0.0025313003448752063,
+          "ratio_of_target": 0.014652662658694115
+        },
+        {
+          "target_index": 1909,
+          "ratio_of_candidate": 0.010548083509428449,
+          "ratio_of_target": 0.06372454648023958
+        },
+        {
+          "target_index": 1910,
+          "ratio_of_candidate": 0.11606705401958384,
+          "ratio_of_target": 0.6675143167067179
+        },
+        {
+          "target_index": 1931,
+          "ratio_of_candidate": 0.08498803862209668,
+          "ratio_of_target": 0.6894036234884148
+        },
+        {
+          "target_index": 5092,
+          "ratio_of_candidate": 0.009856838310216259,
+          "ratio_of_target": 0.3981696161464454
+        },
+        {
+          "target_index": 5441,
+          "ratio_of_candidate": 0.9555793521139074,
+          "ratio_of_target": 0.9544017133343464
+        },
+        {
+          "target_index": 5443,
+          "ratio_of_candidate": 0.9660892464610339,
+          "ratio_of_target": 0.9636155282852458
+        },
+        {
+          "target_index": 5452,
+          "ratio_of_candidate": 0.8435193437395906,
+          "ratio_of_target": 0.8418401272150358
+        }
+      ]
+    },
+    {
+      "index": 5441,
+      "pnu": "4817011900100330015",
+      "uid": "2015120088201873547100000000",
+      "name": "토비스유압(주))",
+      "dong": "제4동",
+      "source": null,
+      "height": 5.0,
+      "floors": 1,
+      "area_deg2": 3.883442263181106e-07,
+      "centroid": [
+        128.12332161904817,
+        35.182212778854414
+      ],
+      "road_overlap_ratio": 0.15663088610612394,
+      "overlaps_target": [
+        {
+          "target_index": 1383,
+          "ratio_of_candidate": 0.004136444729818033,
+          "ratio_of_target": 0.02397373196191794
+        },
+        {
+          "target_index": 1909,
+          "ratio_of_candidate": 0.0030835719683868132,
+          "ratio_of_target": 0.01865188931796205
+        },
+        {
+          "target_index": 1910,
+          "ratio_of_candidate": 0.0980315095638165,
+          "ratio_of_target": 0.5644855906774425
+        },
+        {
+          "target_index": 1931,
+          "ratio_of_candidate": 0.09221258261866183,
+          "ratio_of_target": 0.7489304482597862
+        },
+        {
+          "target_index": 5092,
+          "ratio_of_candidate": 0.013551227287942341,
+          "ratio_of_target": 0.5480808906308045
+        },
+        {
+          "target_index": 5442,
+          "ratio_of_candidate": 0.9544017133343465,
+          "ratio_of_target": 0.9555793521139077
+        },
+        {
+          "target_index": 5443,
+          "ratio_of_candidate": 0.9716651731660418,
+          "ratio_of_target": 0.9703730478242774
+        },
+        {
+          "target_index": 5452,
+          "ratio_of_candidate": 0.8846202339161642,
+          "ratio_of_target": 0.8839485590304837
+        }
+      ]
+    },
+    {
+      "index": 1933,
+      "pnu": "4817011900100330005",
+      "uid": "0000302328871876137500000000",
+      "name": "",
+      "dong": "",
+      "source": null,
+      "height": 3.7,
+      "floors": 1,
+      "area_deg2": 6.229343724480181e-09,
+      "centroid": [
+        128.12422149612433,
+        35.18251469509657
+      ],
+      "road_overlap_ratio": 0.15319436996764946,
+      "overlaps_target": []
+    },
+    {
+      "index": 1771,
+      "pnu": "4817011900100330118",
+      "uid": "0000302359471876193900000000",
+      "name": "",
+      "dong": "",
+      "source": null,
+      "height": 8.85,
+      "floors": 2,
+      "area_deg2": 2.2186551966825893e-08,
+      "centroid": [
+        128.1245579878124,
+        35.182562444716474
+      ],
+      "road_overlap_ratio": 0.07228767202931681,
+      "overlaps_target": []
+    },
+    {
+      "index": 1715,
+      "pnu": "4817011900100330004",
+      "uid": "0000302197191876059000000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 3.2,
+      "floors": 1,
+      "area_deg2": 5.812686767575367e-09,
+      "centroid": [
+        128.12277510148425,
+        35.182457379669025
+      ],
+      "road_overlap_ratio": 0.031302430768317326,
+      "overlaps_target": []
+    },
+    {
+      "index": 5037,
+      "pnu": "4817011900100330016",
+      "uid": "0000302196861875333600000000",
+      "name": "",
+      "dong": "",
+      "source": null,
+      "height": 3.7,
+      "floors": 1,
+      "area_deg2": 3.918782925112078e-09,
+      "centroid": [
+        128.1227625232195,
+        35.18180363231342
+      ],
+      "road_overlap_ratio": 0.016212984323214986,
+      "overlaps_target": []
+    },
+    {
+      "index": 1385,
+      "pnu": "4817011900100330016",
+      "uid": "0000302203631874888400000000",
+      "name": "",
+      "dong": "",
+      "source": null,
+      "height": 3.7,
+      "floors": 1,
+      "area_deg2": 2.884864724367772e-08,
+      "centroid": [
+        128.1228313122105,
+        35.18140175678473
+      ],
+      "road_overlap_ratio": 0.006449498383667224,
+      "overlaps_target": []
+    },
+    {
+      "index": 1295,
+      "pnu": "4817011900100330016",
+      "uid": "0000302196441875191900000000",
+      "name": "",
+      "dong": "",
+      "source": null,
+      "height": 3.7,
+      "floors": 1,
+      "area_deg2": 3.4295661566050246e-09,
+      "centroid": [
+        128.12275613211142,
+        35.181675985779144
+      ],
+      "road_overlap_ratio": 0.006111968582519067,
+      "overlaps_target": []
+    },
+    {
+      "index": 1931,
+      "pnu": "4817011900100330015",
+      "uid": "0000302220851875842700000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 6.4,
+      "floors": 2,
+      "area_deg2": 4.781515311207826e-08,
+      "centroid": [
+        128.123032101044,
+        35.18226001086289
+      ],
+      "road_overlap_ratio": 0.0,
+      "overlaps_target": [
+        {
+          "target_index": 5441,
+          "ratio_of_candidate": 0.7489304482597862,
+          "ratio_of_target": 0.09221258261866183
+        },
+        {
+          "target_index": 5442,
+          "ratio_of_candidate": 0.6894036234884148,
+          "ratio_of_target": 0.08498803862209668
+        },
+        {
+          "target_index": 5443,
+          "ratio_of_candidate": 0.7217974166194862,
+          "ratio_of_target": 0.08875362702751027
+        },
+        {
+          "target_index": 5452,
+          "ratio_of_candidate": 0.8133063617164654,
+          "ratio_of_target": 0.10006287823976301
+        }
+      ]
+    },
+    {
+      "index": 1910,
+      "pnu": "4817011900100330015",
+      "uid": "1982302282281875690200000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 7.0,
+      "floors": 1,
+      "area_deg2": 6.744188224657564e-08,
+      "centroid": [
+        128.12370449621267,
+        35.18211633508048
+      ],
+      "road_overlap_ratio": 0.0,
+      "overlaps_target": [
+        {
+          "target_index": 5441,
+          "ratio_of_candidate": 0.5644855906774425,
+          "ratio_of_target": 0.0980315095638165
+        },
+        {
+          "target_index": 5442,
+          "ratio_of_candidate": 0.6675143167067179,
+          "ratio_of_target": 0.11606705401958384
+        },
+        {
+          "target_index": 5443,
+          "ratio_of_candidate": 0.5983402913862141,
+          "ratio_of_target": 0.10377271208681778
+        },
+        {
+          "target_index": 5452,
+          "ratio_of_candidate": 0.37298045257413753,
+          "ratio_of_target": 0.06472454779904083
+        }
+      ]
+    },
+    {
+      "index": 5092,
+      "pnu": "4817011900100330015",
+      "uid": "1982302215301875512800000000",
+      "name": "토비스유압(주))",
+      "dong": "제3동",
+      "source": null,
+      "height": 10.5,
+      "floors": 2,
+      "area_deg2": 9.601759460615392e-09,
+      "centroid": [
+        128.12296715108593,
+        35.18196330217986
+      ],
+      "road_overlap_ratio": 0.0,
+      "overlaps_target": [
+        {
+          "target_index": 5441,
+          "ratio_of_candidate": 0.5480808906308043,
+          "ratio_of_target": 0.01355122728794234
+        },
+        {
+          "target_index": 5442,
+          "ratio_of_candidate": 0.3981696161464454,
+          "ratio_of_target": 0.009856838310216259
+        },
+        {
+          "target_index": 5443,
+          "ratio_of_candidate": 0.4612963202948576,
+          "ratio_of_target": 0.01139032322347469
+        },
+        {
+          "target_index": 5452,
+          "ratio_of_candidate": 0.45366582775031755,
+          "ratio_of_target": 0.011208310669336035
+        }
+      ]
+    },
+    {
+      "index": 1909,
+      "pnu": "4817011900100330015",
+      "uid": "1982302296401875700100000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 9.6,
+      "floors": 3,
+      "area_deg2": 6.420193418187357e-08,
+      "centroid": [
+        128.12385960383077,
+        35.18212384150853
+      ],
+      "road_overlap_ratio": 0.0,
+      "overlaps_target": [
+        {
+          "target_index": 5441,
+          "ratio_of_candidate": 0.018651889317962043,
+          "ratio_of_target": 0.003083571968386812
+        },
+        {
+          "target_index": 5442,
+          "ratio_of_candidate": 0.06372454648023958,
+          "ratio_of_target": 0.010548083509428449
+        },
+        {
+          "target_index": 5443,
+          "ratio_of_candidate": 0.04544276970921615,
+          "ratio_of_target": 0.007502709677981901
+        }
+      ]
+    },
+    {
+      "index": 367,
+      "pnu": "4817011900100330004",
+      "uid": "1986302268021876185100000000",
+      "name": "C동",
+      "dong": "1동",
+      "source": null,
+      "height": 7.2,
+      "floors": 2,
+      "area_deg2": 5.577703250764218e-08,
+      "centroid": [
+        128.12355408540205,
+        35.1825638297588
+      ],
+      "road_overlap_ratio": 0.0,
+      "overlaps_target": [
+        {
+          "target_index": 5452,
+          "ratio_of_candidate": 0.025645624721258836,
+          "ratio_of_target": 0.0036806282779554616
+        }
+      ]
+    },
+    {
+      "index": 1383,
+      "pnu": "4817011900100330015",
+      "uid": "1982302215971875499300000000",
+      "name": null,
+      "dong": null,
+      "source": null,
+      "height": 9.6,
+      "floors": 3,
+      "area_deg2": 6.700518846462894e-08,
+      "centroid": [
+        128.12297428576204,
+        35.18195105045879
+      ],
+      "road_overlap_ratio": 0.0,
+      "overlaps_target": [
+        {
+          "target_index": 5441,
+          "ratio_of_candidate": 0.02397373196191794,
+          "ratio_of_target": 0.004136444729818033
+        },
+        {
+          "target_index": 5442,
+          "ratio_of_candidate": 0.014652662658694115,
+          "ratio_of_target": 0.0025313003448752063
+        },
+        {
+          "target_index": 5443,
+          "ratio_of_candidate": 0.014316546648363607,
+          "ratio_of_target": 0.0024669022533936676
+        }
+      ]
+    }
+  ]
+}

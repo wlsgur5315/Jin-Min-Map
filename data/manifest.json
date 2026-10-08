@@ -20,11 +20,11 @@
     },
     "38030320": {
       "name": "정촌면",
-      "count": 5097,
+      "count": 5099,
       "file": "data/buildings/38030320.geojson.gz",
-      "bytes": 625717,
+      "bytes": 626002,
       "static_precomputed": true,
-      "static_version": "2026-10-08-08"
+      "static_version": "2026-10-08-09"
     },
     "38030330": {
       "name": "금곡면",
@@ -180,11 +180,11 @@
     },
     "38030710": {
       "name": "가호동",
-      "count": 3303,
+      "count": 3304,
       "file": "data/buildings/38030710.geojson.gz",
-      "bytes": 540888,
+      "bytes": 541082,
       "static_precomputed": true,
-      "static_version": "2026-10-08-08"
+      "static_version": "2026-10-08-09"
     },
     "38030720": {
       "name": "천전동",
@@ -228,11 +228,11 @@
     },
     "38030770": {
       "name": "상대동",
-      "count": 6017,
+      "count": 6020,
       "file": "data/buildings/38030770.geojson.gz",
-      "bytes": 1006011,
+      "bytes": 1006536,
       "static_precomputed": true,
-      "static_version": "2026-10-08-08"
+      "static_version": "2026-10-08-09"
     },
     "38030780": {
       "name": "하대동",
@@ -425,7 +425,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 149716,
+  "building_count": 149722,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
@@ -446,6 +446,7 @@
     "visual_overlap_cleanup": "2026-10-08: Overture 보완이 GIS와 15% 이상 겹치면 제거. 같은 PNU의 구형/신형 GIS가 속성 일치하고 시각적으로 겹치면 최신 레코드 우선.",
     "osm_supplement_overlap_cleanup": "2026-10-08: OSM 정적 보완이 기존 GIS와 15% 이상 겹치거나 중심이 3m 이내이고 면적비가 유사한 경우 OSM만 제거.",
     "native_strong_duplicate_cleanup": "2026-10-08: 상평동 제외. 같은 PNU·높이·층수·동/명칭 일치성이 높고 구형/신형 UID 또는 거의 동일 형상인 강한 GIS 중복만 제거.",
-    "same_pnu_multidong_cleanup": "2026-10-08: 같은 PNU에서 서로 다른 동명이지만 footprint 80%+, 면적비 90%+, IoU 65%+, 높이/층수 일치인 거의 동일 형상 그룹은 대표 1개만 유지."
+    "same_pnu_multidong_cleanup": "2026-10-08: 같은 PNU에서 서로 다른 동명이지만 footprint 80%+, 면적비 90%+, IoU 65%+, 높이/층수 일치인 거의 동일 형상 그룹은 대표 1개만 유지.",
+    "multidong_restore": "2026-10-08: 서로 다른 동명칭 자체를 중복 근거로 삼은 제거를 되돌림."
   }
 }
