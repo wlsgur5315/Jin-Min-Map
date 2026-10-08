@@ -6,6 +6,7 @@ s=requests.Session()
 r=s.get(url,timeout=30,headers={"User-Agent":"Mozilla/5.0"})
 r.raise_for_status()
 html=r.text
+js=s.get("https://www.eum.go.kr/web/js/op/sv/svItemDet.js",timeout=30,headers={"User-Agent":"Mozilla/5.0"}).text
 patterns=[
     r'https?://[^"\']+',
     r'[^"\']+\.zip[^"\']*',
@@ -13,7 +14,8 @@ patterns=[
     r'(?:download|down|file)[A-Za-z0-9_]*\([^)]*\)',
     r'<form[^>]+action="([^"]+)"'
 ]
-out={"url":r.url,"status":r.status_code,"length":len(html),"matches":{}}
+out={"url":r.url,"status":r.status_code,"length":len(html),"matches":{},"js_length":len(js)}
+out["js_context"]=[line.strip()[:1500] for line in js.splitlines() if "dataDownload" in line or "download" in line.lower() or "file" in line.lower()][:300]
 for p in patterns:
     vals=[]
     for m in re.findall(p,html,re.I):
