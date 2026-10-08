@@ -1,0 +1,129 @@
+name: Restore multidong buildings and diagnose Tobis
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-multidong-and-diagnose-tobis.yml'
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore wrongly removed multidong records
+        run: |
+          git checkout d21142c9f811e2dcd333d7b5753913d3a09f06f7 --             data/buildings/38030320.geojson.gz             data/buildings/38030710.geojson.gz             data/buildings/38030770.geojson.gz
+      - run: pip install shapely
+      - name: Rebuild manifest counts and diagnose Tobis
+        run: |
+          python - <<'PY'
+          import gzip,json,re,math
+          from pathlib import Path
+          from shapely.geometry import shape
+          from shapely.strtree import STRtree
+          ROOT=Path('.')
+          manifest=json.loads((ROOT/'data/manifest.json').read_text(encoding='utf-8'))
+          for did in ['38030320','38030710','38030770']:
+              path=ROOT/manifest['buildings'][did]['file']
+              with gzip.open(path,'rt',encoding='utf-8') as f: fc=json.load(f)
+              manifest['buildings'][did]['count']=len(fc.get('features',[]))
+              manifest['buildings'][did]['bytes']=path.stat().st_size
+              manifest['buildings'][did]['static_version']='2026-10-08-09'
+          manifest['building_count']=sum(int(v['count']) for v in manifest['buildings'].values())
+          manifest.setdefault('notes',{})['multidong_restore']='2026-10-08: 서로 다른 동명칭 자체를 중복 근거로 삼은 제거를 되돌림.'
+          (ROOT/'data/manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+
+          def loadgz(p):
+              with gzip.open(p,'rt',encoding='utf-8') as f:return json.load(f)
+          def safe(g):
+              try:
+                  if not g.is_valid:g=g.buffer(0)
+              except:return None
+              return g if g and not g.is_empty else None
+          def pnu(p):
+              d=re.sub(r'\D','',str(p.get('pnu') or p.get('PNU') or ''))
+              return d if len(d)==19 else ''
+          bfc=loadgz(ROOT/'data/buildings/38030770.geojson.gz')
+          pfc=loadgz(ROOT/'data/parcels/38030770.geojson.gz')
+          target_pnu='4817011900100330015'
+          target=[]
+          for i,f in enumerate(bfc.get('features',[])):
+              pr=f.get('properties') or {}
+              if pnu(pr)==target_pnu or '토비스유압' in str(pr.get('building_name') or pr.get('register_name') or ''):
+                  g=safe(shape(f['geometry']))
+                  if g:
+                      target.append((i,f,g,pr))
+          # candidate nearby polygons within 80m of target group bbox
+          if target:
+              union=target[0][2]
+              for _,_,g,_ in target[1:]: union=union.union(g)
+              lat=union.centroid.y
+              dx=80/(111320*math.cos(math.radians(lat)));dy=80/110540
+              minx,miny,maxx,maxy=union.bounds
+              from shapely.geometry import box
+              qbox=box(minx-dx,miny-dy,maxx+dx,maxy+dy)
+          else:qbox=None
+          road_parcels=[]
+          for pf in pfc.get('features',[]):
+              pp=pf.get('properties') or {}
+              raw=str(pp.get('jibun') or pp.get('JIBUN') or '')
+              # 연속지적도에서 뒤쪽 '도'를 지목으로 사용
+              if re.search(r'(^|\s)도\s*$',raw) or raw.endswith('도'):
+                  try:pg=safe(shape(pf['geometry']))
+                  except:pg=None
+                  if pg and qbox and pg.intersects(qbox):road_parcels.append((pp,pg))
+          cand=[]
+          for i,f in enumerate(bfc.get('features',[])):
+              try:g=safe(shape(f['geometry']))
+              except:g=None
+              if not g or not qbox or not g.intersects(qbox):continue
+              pr=f.get('properties') or {}
+              road_overlap=0.0
+              for pp,rg in road_parcels:
+                  try:road_overlap+=g.intersection(rg).area
+                  except:pass
+              road_ratio=road_overlap/g.area if g.area>0 else 0
+              overlaps=[]
+              for ti,tf,tg,tp in target:
+                  if ti==i:continue
+                  inter=g.intersection(tg).area
+                  if inter>0:
+                      overlaps.append({'target_index':ti,'ratio_of_candidate':inter/g.area if g.area else 0,'ratio_of_target':inter/tg.area if tg.area else 0})
+              if road_ratio>0 or overlaps:
+                  c=g.centroid
+                  cand.append({
+                    'index':i,'pnu':pnu(pr),'uid':pr.get('building_uid'),
+                    'name':pr.get('building_name') or pr.get('register_name'),
+                    'dong':pr.get('building_dong') or pr.get('register_dong'),
+                    'source':pr.get('data_source') or pr.get('source'),
+                    'height':pr.get('render_height') or pr.get('height_m'),
+                    'floors':pr.get('floors_above'),
+                    'area_deg2':g.area,'centroid':[c.x,c.y],
+                    'road_overlap_ratio':road_ratio,'overlaps_target':overlaps
+                  })
+          cand.sort(key=lambda x:(-x['road_overlap_ratio'],-max([o['ratio_of_candidate'] for o in x['overlaps_target']] or [0])))
+          out={'target_pnu':target_pnu,'target_members':[{
+              'index':i,'uid':pr.get('building_uid'),'name':pr.get('building_name') or pr.get('register_name'),
+              'dong':pr.get('building_dong') or pr.get('register_dong'),'source':pr.get('data_source') or pr.get('source'),
+              'height':pr.get('render_height') or pr.get('height_m'),'floors':pr.get('floors_above'),
+              'centroid':[g.centroid.x,g.centroid.y],'area_deg2':g.area
+            } for i,_,g,pr in target],
+            'road_parcel_count':len(road_parcels),'candidates':cand[:100]}
+          (ROOT/'data/tobis_road_overlap_diagnosis.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(out,ensure_ascii=False,indent=2)[:30000])
+          PY
+      - name: Commit restore and diagnosis
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/38030320.geojson.gz data/buildings/38030710.geojson.gz data/buildings/38030770.geojson.gz data/manifest.json data/tobis_road_overlap_diagnosis.json
+          git commit -m "Restore multidong buildings and diagnose Tobis road overlap [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
