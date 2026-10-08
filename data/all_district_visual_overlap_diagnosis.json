@@ -13,9 +13,9 @@
       "cross_pnu": 0
     },
     "38030320": {
-      "meaningful": 9,
+      "meaningful": 6,
       "overture_vs_gis": 0,
-      "same_pnu_native": 9,
+      "same_pnu_native": 6,
       "cross_pnu": 0
     },
     "38030330": {
@@ -133,9 +133,9 @@
       "cross_pnu": 0
     },
     "38030710": {
-      "meaningful": 5,
+      "meaningful": 4,
       "overture_vs_gis": 0,
-      "same_pnu_native": 3,
+      "same_pnu_native": 2,
       "cross_pnu": 2
     },
     "38030720": {
@@ -169,9 +169,9 @@
       "cross_pnu": 0
     },
     "38030770": {
-      "meaningful": 22,
+      "meaningful": 16,
       "overture_vs_gis": 0,
-      "same_pnu_native": 22,
+      "same_pnu_native": 16,
       "cross_pnu": 0
     },
     "38030780": {
@@ -536,95 +536,8 @@
         }
       },
       {
-        "a_index": 3729,
-        "b_index": 3730,
-        "type": "same_pnu_native",
-        "overlap_small": 0.979,
-        "iou": 0.9559,
-        "area_ratio": 0.9968,
-        "distance_m": 0.3,
-        "a": {
-          "pnu": "4817032025112740005",
-          "uid": "2014117831621817835400000000",
-          "source": "",
-          "name": "",
-          "dong": "제2동(B동)",
-          "height": 7.2,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817032025112740005",
-          "uid": "2014117831371817838700000000",
-          "source": "",
-          "name": "",
-          "dong": "제3동(C동)",
-          "height": 7.2,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 3729,
-        "b_index": 4089,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9547,
-        "iou": 0.8969,
-        "area_ratio": 0.9813,
-        "distance_m": 0.68,
-        "a": {
-          "pnu": "4817032025112740005",
-          "uid": "2014117831621817835400000000",
-          "source": "",
-          "name": "",
-          "dong": "제2동(B동)",
-          "height": 7.2,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817032025112740005",
-          "uid": "2014117832231817840500000000",
-          "source": "",
-          "name": "",
-          "dong": "제1동(A동)",
-          "height": 7.2,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 3730,
-        "b_index": 4089,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9443,
-        "iou": 0.8812,
-        "area_ratio": 0.9844,
-        "distance_m": 0.88,
-        "a": {
-          "pnu": "4817032025112740005",
-          "uid": "2014117831371817838700000000",
-          "source": "",
-          "name": "",
-          "dong": "제3동(C동)",
-          "height": 7.2,
-          "floors": 2.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817032025112740005",
-          "uid": "2014117832231817840500000000",
-          "source": "",
-          "name": "",
-          "dong": "제1동(A동)",
-          "height": 7.2,
-          "floors": 2.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 2176,
-        "b_index": 3748,
+        "b_index": 3746,
         "type": "same_pnu_native",
         "overlap_small": 0.9082,
         "iou": 0.0214,
@@ -653,7 +566,7 @@
       },
       {
         "a_index": 2319,
-        "b_index": 4105,
+        "b_index": 4103,
         "type": "same_pnu_native",
         "overlap_small": 0.2422,
         "iou": 0.0609,
@@ -682,7 +595,7 @@
       },
       {
         "a_index": 2541,
-        "b_index": 4243,
+        "b_index": 4241,
         "type": "same_pnu_native",
         "overlap_small": 0.2165,
         "iou": 0.0763,
@@ -739,8 +652,8 @@
         }
       },
       {
-        "a_index": 3897,
-        "b_index": 4237,
+        "a_index": 3895,
+        "b_index": 4235,
         "type": "same_pnu_native",
         "overlap_small": 0.1844,
         "iou": 0.0217,
@@ -3880,37 +3793,8 @@
     ],
     "38030710": [
       {
-        "a_index": 22,
-        "b_index": 208,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9928,
-        "iou": 0.9855,
-        "area_ratio": 0.9998,
-        "distance_m": 0.01,
-        "a": {
-          "pnu": "4817013100119310003",
-          "uid": "2013118778251856077800000000",
-          "source": "",
-          "name": "",
-          "dong": "주1동",
-          "height": 4.1,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817013100119310003",
-          "uid": "2013118778261856077800000000",
-          "source": "",
-          "name": "",
-          "dong": "주2동",
-          "height": 3.8,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 532,
-        "b_index": 2431,
+        "a_index": 531,
+        "b_index": 2430,
         "type": "cross_pnu",
         "overlap_small": 0.7372,
         "iou": 0.3066,
@@ -3938,8 +3822,8 @@
         }
       },
       {
-        "a_index": 836,
-        "b_index": 2463,
+        "a_index": 835,
+        "b_index": 2462,
         "type": "same_pnu_native",
         "overlap_small": 0.575,
         "iou": 0.03,
@@ -3968,7 +3852,7 @@
       },
       {
         "a_index": 188,
-        "b_index": 800,
+        "b_index": 799,
         "type": "cross_pnu",
         "overlap_small": 0.2036,
         "iou": 0.0901,
@@ -3996,8 +3880,8 @@
         }
       },
       {
-        "a_index": 363,
-        "b_index": 806,
+        "a_index": 362,
+        "b_index": 805,
         "type": "same_pnu_native",
         "overlap_small": 0.1993,
         "iou": 0.0822,
@@ -4702,35 +4586,6 @@
         }
       },
       {
-        "a_index": 5441,
-        "b_index": 5443,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9717,
-        "iou": 0.9437,
-        "area_ratio": 0.9987,
-        "distance_m": 1.47,
-        "a": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120088201873547100000000",
-          "source": "",
-          "name": "토비스유압(주))",
-          "dong": "제4동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120089601873554400000000",
-          "source": "",
-          "name": "토비스유압(주))",
-          "dong": "제3동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 349,
         "b_index": 5217,
         "type": "same_pnu_native",
@@ -4760,37 +4615,8 @@
         }
       },
       {
-        "a_index": 5442,
-        "b_index": 5443,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9661,
-        "iou": 0.9321,
-        "area_ratio": 0.9974,
-        "distance_m": 1.76,
-        "a": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120091181873549400000000",
-          "source": "",
-          "name": "토비스유압(주)",
-          "dong": "제2동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120089601873554400000000",
-          "source": "",
-          "name": "토비스유압(주))",
-          "dong": "제3동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 442,
-        "b_index": 5619,
+        "b_index": 5616,
         "type": "same_pnu_native",
         "overlap_small": 0.9622,
         "iou": 0.239,
@@ -4818,37 +4644,8 @@
         }
       },
       {
-        "a_index": 5441,
-        "b_index": 5442,
-        "type": "same_pnu_native",
-        "overlap_small": 0.9556,
-        "iou": 0.9139,
-        "area_ratio": 0.9988,
-        "distance_m": 3.04,
-        "a": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120088201873547100000000",
-          "source": "",
-          "name": "토비스유압(주))",
-          "dong": "제4동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120091181873549400000000",
-          "source": "",
-          "name": "토비스유압(주)",
-          "dong": "제2동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
         "a_index": 442,
-        "b_index": 5622,
+        "b_index": 5619,
         "type": "same_pnu_native",
         "overlap_small": 0.9042,
         "iou": 0.1958,
@@ -4872,93 +4669,6 @@
           "dong": "",
           "height": 13.33,
           "floors": 4.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 5441,
-        "b_index": 5452,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8846,
-        "iou": 0.7926,
-        "area_ratio": 0.9992,
-        "distance_m": 5.14,
-        "a": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120088201873547100000000",
-          "source": "",
-          "name": "토비스유압(주))",
-          "dong": "제4동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120084301873581200000000",
-          "source": "",
-          "name": "토비스유압(주)",
-          "dong": "제1동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 5443,
-        "b_index": 5452,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8747,
-        "iou": 0.7769,
-        "area_ratio": 0.9994,
-        "distance_m": 5.93,
-        "a": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120089601873554400000000",
-          "source": "",
-          "name": "토비스유압(주))",
-          "dong": "제3동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120084301873581200000000",
-          "source": "",
-          "name": "토비스유압(주)",
-          "dong": "제1동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        }
-      },
-      {
-        "a_index": 5442,
-        "b_index": 5452,
-        "type": "same_pnu_native",
-        "overlap_small": 0.8435,
-        "iou": 0.7281,
-        "area_ratio": 0.998,
-        "distance_m": 7.66,
-        "a": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120091181873549400000000",
-          "source": "",
-          "name": "토비스유압(주)",
-          "dong": "제2동",
-          "height": 5.0,
-          "floors": 1.0,
-          "overture": false
-        },
-        "b": {
-          "pnu": "4817011900100330015",
-          "uid": "2015120084301873581200000000",
-          "source": "",
-          "name": "토비스유압(주)",
-          "dong": "제1동",
-          "height": 5.0,
-          "floors": 1.0,
           "overture": false
         }
       },
@@ -5109,7 +4819,7 @@
       },
       {
         "a_index": 754,
-        "b_index": 5608,
+        "b_index": 5605,
         "type": "same_pnu_native",
         "overlap_small": 0.631,
         "iou": 0.1583,
