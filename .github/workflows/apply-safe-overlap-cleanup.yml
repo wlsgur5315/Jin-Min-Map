@@ -1,0 +1,28 @@
+name: Apply safe overlap cleanup
+on:
+  push:
+    paths:
+      - 'tools/apply_safe_overlap_cleanup.py'
+      - '.github/workflows/apply-safe-overlap-cleanup.yml'
+permissions:
+  contents: write
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install shapely
+      - run: python tools/apply_safe_overlap_cleanup.py
+      - run: python tools/audit_building_geometry_height.py
+      - run: python tools/audit_overlap_identity.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/*.geojson.gz data/manifest.json data/safe_overlap_cleanup_report.json data/building_geometry_height_audit.json data/overlap_identity_audit.json
+          git commit -m "Remove verified duplicate GIS building overlaps [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
