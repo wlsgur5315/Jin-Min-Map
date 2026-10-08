@@ -1,0 +1,177 @@
+{
+  "suppressed": 35,
+  "districts": {
+    "38030110": 7,
+    "38030310": 2,
+    "38030320": 5,
+    "38030330": 0,
+    "38030340": 0,
+    "38030350": 1,
+    "38030360": 0,
+    "38030370": 0,
+    "38030380": 0,
+    "38030390": 0,
+    "38030400": 1,
+    "38030410": 0,
+    "38030420": 0,
+    "38030430": 0,
+    "38030440": 0,
+    "38030450": 0,
+    "38030650": 1,
+    "38030660": 0,
+    "38030670": 1,
+    "38030680": 0,
+    "38030690": 0,
+    "38030700": 1,
+    "38030710": 5,
+    "38030720": 2,
+    "38030730": 1,
+    "38030740": 1,
+    "38030750": 2,
+    "38030760": 1,
+    "38030770": 2,
+    "38030780": 2
+  },
+  "examples": [
+    {
+      "district_id": "38030110",
+      "register_name": "진주시민장례식장",
+      "ratio": 0.0459,
+      "group_ratio": 0.2588,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030110",
+      "register_name": "진주시민장례식장",
+      "ratio": 0.0097,
+      "group_ratio": 0.2588,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030110",
+      "register_name": "진주시민장례식장",
+      "ratio": 0.0109,
+      "group_ratio": 0.2588,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030110",
+      "register_name": "진주시민장례식장",
+      "ratio": 0.0198,
+      "group_ratio": 0.2588,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030110",
+      "register_name": "진주시민장례식장",
+      "ratio": 0.0079,
+      "group_ratio": 0.2588,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030110",
+      "register_name": "진주시민장례식장",
+      "ratio": 0.1645,
+      "group_ratio": 0.2588,
+      "new_height": 6.4
+    },
+    {
+      "district_id": "38030110",
+      "register_name": "(주)다농산물 저온창고",
+      "ratio": 0.1724,
+      "group_ratio": 0.1724,
+      "new_height": 9.6
+    },
+    {
+      "district_id": "38030310",
+      "register_name": "",
+      "ratio": 0.0141,
+      "group_ratio": 0.1123,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030310",
+      "register_name": "",
+      "ratio": 0.0982,
+      "group_ratio": 0.1123,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030320",
+      "register_name": "",
+      "ratio": 0.0438,
+      "group_ratio": 0.1633,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030320",
+      "register_name": "",
+      "ratio": 0.0386,
+      "group_ratio": 0.1633,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030320",
+      "register_name": "",
+      "ratio": 0.0269,
+      "group_ratio": 0.1633,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030320",
+      "register_name": "",
+      "ratio": 0.0272,
+      "group_ratio": 0.1633,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030320",
+      "register_name": "",
+      "ratio": 0.0268,
+      "group_ratio": 0.1633,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030350",
+      "register_name": "사봉하수종말처리장",
+      "ratio": 0.0761,
+      "group_ratio": 0.0761,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030400",
+      "register_name": "",
+      "ratio": 0.1091,
+      "group_ratio": 0.1091,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030650",
+      "register_name": "",
+      "ratio": 0.0391,
+      "group_ratio": 0.0391,
+      "new_height": 6.4
+    },
+    {
+      "district_id": "38030670",
+      "register_name": "동진빌",
+      "ratio": 0.171,
+      "group_ratio": 0.171,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030700",
+      "register_name": "",
+      "ratio": 0.0325,
+      "group_ratio": 0.0325,
+      "new_height": 3.2
+    },
+    {
+      "district_id": "38030710",
+      "register_name": "",
+      "ratio": 0.0787,
+      "group_ratio": 0.0787,
+      "new_height": 3.2
+    }
+  ]
+}
