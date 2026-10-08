@@ -28,5 +28,10 @@ for i,line in enumerate(lines):
     if any(k in line.lower() for k in ["download","downfile","filedown",".zip","fn_down","fn_downfile","down("]):
         snips.append({"line":i+1,"text":line.strip()[:1000]})
 out["snippets"]=snips[:300]
+
+# locate dataDownload function / external scripts
+for i,line in enumerate(lines):
+    if "dataDownload" in line or ("<script" in line and "src=" in line):
+        out.setdefault("function_context",[]).append({"line":i+1,"text":line.strip()[:1500]})
 Path("data/eum_download_probe.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
 print(json.dumps(out,ensure_ascii=False,indent=2)[:12000])
