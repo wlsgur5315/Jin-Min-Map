@@ -1,0 +1,528 @@
+{
+  "summary": {
+    "38030110": {
+      "pairs80": 2,
+      "pairs90": 0,
+      "same_pnu": 2,
+      "cross_source": 0,
+      "same_height_floor": 2
+    },
+    "38030310": {
+      "pairs80": 3,
+      "pairs90": 0,
+      "same_pnu": 3,
+      "cross_source": 0,
+      "same_height_floor": 3
+    },
+    "38030320": {
+      "pairs80": 3,
+      "pairs90": 3,
+      "same_pnu": 3,
+      "cross_source": 0,
+      "same_height_floor": 3
+    },
+    "38030330": {
+      "pairs80": 1,
+      "pairs90": 1,
+      "same_pnu": 1,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030340": {
+      "pairs80": 0,
+      "pairs90": 0,
+      "same_pnu": 0,
+      "cross_source": 0,
+      "same_height_floor": 0
+    },
+    "38030350": {
+      "pairs80": 1,
+      "pairs90": 0,
+      "same_pnu": 1,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030360": {
+      "pairs80": 3,
+      "pairs90": 1,
+      "same_pnu": 3,
+      "cross_source": 0,
+      "same_height_floor": 3
+    },
+    "38030370": {
+      "pairs80": 1,
+      "pairs90": 0,
+      "same_pnu": 1,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030380": {
+      "pairs80": 0,
+      "pairs90": 0,
+      "same_pnu": 0,
+      "cross_source": 0,
+      "same_height_floor": 0
+    },
+    "38030390": {
+      "pairs80": 2,
+      "pairs90": 0,
+      "same_pnu": 2,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030400": {
+      "pairs80": 2,
+      "pairs90": 0,
+      "same_pnu": 2,
+      "cross_source": 0,
+      "same_height_floor": 2
+    },
+    "38030410": {
+      "pairs80": 0,
+      "pairs90": 0,
+      "same_pnu": 0,
+      "cross_source": 0,
+      "same_height_floor": 0
+    },
+    "38030420": {
+      "pairs80": 0,
+      "pairs90": 0,
+      "same_pnu": 0,
+      "cross_source": 0,
+      "same_height_floor": 0
+    },
+    "38030430": {
+      "pairs80": 4,
+      "pairs90": 2,
+      "same_pnu": 4,
+      "cross_source": 0,
+      "same_height_floor": 4
+    },
+    "38030440": {
+      "pairs80": 1,
+      "pairs90": 0,
+      "same_pnu": 1,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030450": {
+      "pairs80": 0,
+      "pairs90": 0,
+      "same_pnu": 0,
+      "cross_source": 0,
+      "same_height_floor": 0
+    },
+    "38030650": {
+      "pairs80": 10,
+      "pairs90": 5,
+      "same_pnu": 10,
+      "cross_source": 0,
+      "same_height_floor": 8
+    },
+    "38030660": {
+      "pairs80": 0,
+      "pairs90": 0,
+      "same_pnu": 0,
+      "cross_source": 0,
+      "same_height_floor": 0
+    },
+    "38030670": {
+      "pairs80": 1,
+      "pairs90": 0,
+      "same_pnu": 1,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030680": {
+      "pairs80": 5,
+      "pairs90": 1,
+      "same_pnu": 5,
+      "cross_source": 0,
+      "same_height_floor": 5
+    },
+    "38030690": {
+      "pairs80": 1,
+      "pairs90": 0,
+      "same_pnu": 1,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030700": {
+      "pairs80": 1,
+      "pairs90": 1,
+      "same_pnu": 1,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030710": {
+      "pairs80": 9,
+      "pairs90": 4,
+      "same_pnu": 9,
+      "cross_source": 0,
+      "same_height_floor": 9
+    },
+    "38030720": {
+      "pairs80": 10,
+      "pairs90": 2,
+      "same_pnu": 10,
+      "cross_source": 0,
+      "same_height_floor": 10
+    },
+    "38030730": {
+      "pairs80": 3,
+      "pairs90": 2,
+      "same_pnu": 3,
+      "cross_source": 0,
+      "same_height_floor": 3
+    },
+    "38030740": {
+      "pairs80": 1,
+      "pairs90": 0,
+      "same_pnu": 1,
+      "cross_source": 0,
+      "same_height_floor": 1
+    },
+    "38030750": {
+      "pairs80": 4,
+      "pairs90": 1,
+      "same_pnu": 4,
+      "cross_source": 0,
+      "same_height_floor": 4
+    },
+    "38030760": {
+      "pairs80": 0,
+      "pairs90": 0,
+      "same_pnu": 0,
+      "cross_source": 0,
+      "same_height_floor": 0
+    },
+    "38030770": {
+      "pairs80": 16,
+      "pairs90": 7,
+      "same_pnu": 16,
+      "cross_source": 0,
+      "same_height_floor": 16
+    },
+    "38030780": {
+      "pairs80": 13,
+      "pairs90": 7,
+      "same_pnu": 13,
+      "cross_source": 0,
+      "same_height_floor": 13
+    }
+  },
+  "sangpyeong": [
+    {
+      "a_index": 744,
+      "b_index": 2589,
+      "overlap": 0.945,
+      "area_ratio": 0.8122,
+      "a": {
+        "pnu": "4817012000103290001",
+        "uid": "2014119777721883958000000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.2,
+        "floors": 4.0
+      },
+      "b": {
+        "pnu": "4817012000103290001",
+        "uid": "1992301915081886130300000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.2,
+        "floors": 4.0
+      }
+    },
+    {
+      "a_index": 84,
+      "b_index": 2725,
+      "overlap": 0.9379,
+      "area_ratio": 0.8045,
+      "a": {
+        "pnu": "4817012000103270027",
+        "uid": "2014119552161883666600000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 5.4,
+        "floors": 1.0
+      },
+      "b": {
+        "pnu": "4817012000103270027",
+        "uid": "1985301689581885800500000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 5.4,
+        "floors": 1.0
+      }
+    },
+    {
+      "a_index": 192,
+      "b_index": 668,
+      "overlap": 0.9329,
+      "area_ratio": 0.8083,
+      "a": {
+        "pnu": "4817012000103290038",
+        "uid": "1997301900531886115500000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.4,
+        "floors": 4.0
+      },
+      "b": {
+        "pnu": "4817012000103290038",
+        "uid": "2015119762391883945400000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.4,
+        "floors": 4.0
+      }
+    },
+    {
+      "a_index": 109,
+      "b_index": 2408,
+      "overlap": 0.9269,
+      "area_ratio": 0.8675,
+      "a": {
+        "pnu": "4817012000103380020",
+        "uid": "2014120034861883254700000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.7,
+        "floors": 4.0
+      },
+      "b": {
+        "pnu": "4817012000103380020",
+        "uid": "1988302173221885484500000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.7,
+        "floors": 4.0
+      }
+    },
+    {
+      "a_index": 629,
+      "b_index": 2701,
+      "overlap": 0.9201,
+      "area_ratio": 0.9863,
+      "a": {
+        "pnu": "4817012000106740008",
+        "uid": "2014119002941888494500000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 4.45,
+        "floors": 1.0
+      },
+      "b": {
+        "pnu": "4817012000106740008",
+        "uid": "0000301132691890520200000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 4.45,
+        "floors": 1.0
+      }
+    },
+    {
+      "a_index": 307,
+      "b_index": 2430,
+      "overlap": 0.9158,
+      "area_ratio": 0.8678,
+      "a": {
+        "pnu": "4817012000103480001",
+        "uid": "2014119886551881598400000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 10.2,
+        "floors": 3.0
+      },
+      "b": {
+        "pnu": "4817012000103480001",
+        "uid": "1984302028431883795900000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 10.2,
+        "floors": 3.0
+      }
+    },
+    {
+      "a_index": 246,
+      "b_index": 1940,
+      "overlap": 0.9141,
+      "area_ratio": 0.8686,
+      "a": {
+        "pnu": "4817012000103360042",
+        "uid": "2014119847121882796700000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 11.05,
+        "floors": 3.0
+      },
+      "b": {
+        "pnu": "4817012000103360042",
+        "uid": "1994301986561884995900000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 11.05,
+        "floors": 3.0
+      }
+    },
+    {
+      "a_index": 26,
+      "b_index": 1273,
+      "overlap": 0.8978,
+      "area_ratio": 0.8653,
+      "a": {
+        "pnu": "4817012000103290045",
+        "uid": "2014119795491883965700000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.2,
+        "floors": 4.0
+      },
+      "b": {
+        "pnu": "4817012000103290045",
+        "uid": "1994301933281886138800000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.2,
+        "floors": 4.0
+      }
+    },
+    {
+      "a_index": 61,
+      "b_index": 2061,
+      "overlap": 0.8845,
+      "area_ratio": 0.7408,
+      "a": {
+        "pnu": "4817012000101310031",
+        "uid": "2014119954461878416600000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 4.8,
+        "floors": 1.0
+      },
+      "b": {
+        "pnu": "4817012000101310031",
+        "uid": "1985302104611880637500000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 4.8,
+        "floors": 1.0
+      }
+    },
+    {
+      "a_index": 427,
+      "b_index": 2759,
+      "overlap": 0.8729,
+      "area_ratio": 0.8965,
+      "a": {
+        "pnu": "4817012000103440012",
+        "uid": "2014119751741882156400000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 11.06,
+        "floors": 3.0
+      },
+      "b": {
+        "pnu": "4817012000103440012",
+        "uid": "1990301893771884343800000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 11.06,
+        "floors": 3.0
+      }
+    },
+    {
+      "a_index": 270,
+      "b_index": 2455,
+      "overlap": 0.8554,
+      "area_ratio": 0.9652,
+      "a": {
+        "pnu": "4817012000101030013",
+        "uid": "2014120096081881685600000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 10.25,
+        "floors": 3.0
+      },
+      "b": {
+        "pnu": "4817012000101030013",
+        "uid": "1981302237911883940800000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 10.25,
+        "floors": 3.0
+      }
+    },
+    {
+      "a_index": 663,
+      "b_index": 2690,
+      "overlap": 0.8429,
+      "area_ratio": 0.7987,
+      "a": {
+        "pnu": "4817012000103360040",
+        "uid": "2014119832061882551000000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 9.9,
+        "floors": 3.0
+      },
+      "b": {
+        "pnu": "4817012000103360040",
+        "uid": "1980301972651884758900000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 9.9,
+        "floors": 3.0
+      }
+    },
+    {
+      "a_index": 280,
+      "b_index": 1856,
+      "overlap": 0.8285,
+      "area_ratio": 0.9918,
+      "a": {
+        "pnu": "4817012000103210020",
+        "uid": "2014119756661884741300000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.2,
+        "floors": 4.0
+      },
+      "b": {
+        "pnu": "4817012000103210020",
+        "uid": "1988301891721886913800000000",
+        "name": "",
+        "dong": "",
+        "source": "GIS",
+        "height": 13.2,
+        "floors": 4.0
+      }
+    }
+  ]
+}
