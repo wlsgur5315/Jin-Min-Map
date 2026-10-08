@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'index.html'
+      - '.github/workflows/validate-index-script.yml'
 permissions:
   contents: read
 jobs:
