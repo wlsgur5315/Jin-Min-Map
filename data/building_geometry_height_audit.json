@@ -1,7 +1,7 @@
 {
   "summary": {
     "duplicates": 87,
-    "height_outliers": 133,
+    "height_outliers": 11,
     "tiny_highrise": 2,
     "missing_like": 2
   },
@@ -26,13 +26,13 @@
     },
     "38030320": {
       "duplicates": 3,
-      "height_outliers": 6,
+      "height_outliers": 3,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030330": {
       "duplicates": 1,
-      "height_outliers": 4,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
@@ -44,13 +44,13 @@
     },
     "38030350": {
       "duplicates": 1,
-      "height_outliers": 2,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030360": {
       "duplicates": 2,
-      "height_outliers": 5,
+      "height_outliers": 3,
       "tiny_highrise": 0,
       "missing_like": 0
     },
@@ -68,13 +68,13 @@
     },
     "38030390": {
       "duplicates": 2,
-      "height_outliers": 6,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030400": {
       "duplicates": 1,
-      "height_outliers": 3,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
@@ -92,103 +92,103 @@
     },
     "38030430": {
       "duplicates": 4,
-      "height_outliers": 3,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030440": {
       "duplicates": 1,
-      "height_outliers": 1,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030450": {
       "duplicates": 0,
-      "height_outliers": 3,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030650": {
       "duplicates": 10,
-      "height_outliers": 6,
+      "height_outliers": 1,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030660": {
       "duplicates": 0,
-      "height_outliers": 3,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030670": {
       "duplicates": 1,
-      "height_outliers": 3,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030680": {
       "duplicates": 4,
-      "height_outliers": 4,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030690": {
       "duplicates": 1,
-      "height_outliers": 2,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030700": {
       "duplicates": 1,
-      "height_outliers": 6,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030710": {
       "duplicates": 7,
-      "height_outliers": 2,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030720": {
       "duplicates": 10,
-      "height_outliers": 8,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030730": {
       "duplicates": 3,
-      "height_outliers": 12,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030740": {
       "duplicates": 0,
-      "height_outliers": 8,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030750": {
       "duplicates": 4,
-      "height_outliers": 12,
+      "height_outliers": 1,
       "tiny_highrise": 1,
       "missing_like": 1
     },
     "38030760": {
       "duplicates": 0,
-      "height_outliers": 2,
+      "height_outliers": 0,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030770": {
       "duplicates": 15,
-      "height_outliers": 24,
+      "height_outliers": 1,
       "tiny_highrise": 0,
       "missing_like": 0
     },
     "38030780": {
       "duplicates": 12,
-      "height_outliers": 7,
+      "height_outliers": 1,
       "tiny_highrise": 1,
       "missing_like": 1
     }
@@ -735,22 +735,6 @@
       },
       {
         "district_id": "38030320",
-        "index": 3882,
-        "name": "",
-        "dong": "나동",
-        "height": 4.0,
-        "floors": 4.0,
-        "area_m2": 599.5,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1017373,
-          35.1208029
-        ]
-      },
-      {
-        "district_id": "38030320",
         "index": 4337,
         "name": null,
         "dong": null,
@@ -763,38 +747,6 @@
         "centroid": [
           128.1068992,
           35.1147747
-        ]
-      },
-      {
-        "district_id": "38030320",
-        "index": 4403,
-        "name": "진주 정촌 대경파미르 아파트",
-        "dong": "상가2동",
-        "height": 3.4,
-        "floors": 2.0,
-        "area_m2": 431.3,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1017617,
-          35.1276758
-        ]
-      },
-      {
-        "district_id": "38030320",
-        "index": 4448,
-        "name": "",
-        "dong": "",
-        "height": 3.6,
-        "floors": 4.0,
-        "area_m2": 151.1,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0996798,
-          35.1260955
         ]
       },
       {
@@ -827,134 +779,6 @@
         "centroid": [
           128.1047394,
           35.1246985
-        ]
-      },
-      {
-        "district_id": "38030330",
-        "index": 2420,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 80.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.187076,
-          35.0910037
-        ]
-      },
-      {
-        "district_id": "38030330",
-        "index": 2650,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 73.9,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1870856,
-          35.0910727
-        ]
-      },
-      {
-        "district_id": "38030330",
-        "index": 2892,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 120.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1872419,
-          35.0909355
-        ]
-      },
-      {
-        "district_id": "38030330",
-        "index": 5515,
-        "name": "",
-        "dong": "",
-        "height": 3.55,
-        "floors": 2.0,
-        "area_m2": 155.2,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1706978,
-          35.1377485
-        ]
-      },
-      {
-        "district_id": "38030350",
-        "index": 200,
-        "name": "",
-        "dong": "",
-        "height": 3.6,
-        "floors": 5.0,
-        "area_m2": 116.0,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.2814493,
-          35.1700466
-        ]
-      },
-      {
-        "district_id": "38030350",
-        "index": 239,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 141.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.2843784,
-          35.1715037
-        ]
-      },
-      {
-        "district_id": "38030360",
-        "index": 2827,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 32.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.3266946,
-          35.1701029
-        ]
-      },
-      {
-        "district_id": "38030360",
-        "index": 5343,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 87.8,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.3266766,
-          35.1700385
         ]
       },
       {
@@ -1006,342 +830,6 @@
         ]
       },
       {
-        "district_id": "38030390",
-        "index": 2341,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 18.0,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1694914,
-          35.2626152
-        ]
-      },
-      {
-        "district_id": "38030390",
-        "index": 2872,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 34.8,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1694491,
-          35.2626734
-        ]
-      },
-      {
-        "district_id": "38030390",
-        "index": 3313,
-        "name": "",
-        "dong": "",
-        "height": 3.15,
-        "floors": 2.0,
-        "area_m2": 122.3,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1443472,
-          35.253832
-        ]
-      },
-      {
-        "district_id": "38030390",
-        "index": 3550,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 108.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1361181,
-          35.2640975
-        ]
-      },
-      {
-        "district_id": "38030390",
-        "index": 3581,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 141.6,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1362036,
-          35.2641459
-        ]
-      },
-      {
-        "district_id": "38030390",
-        "index": 4057,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 373.2,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1696095,
-          35.2628124
-        ]
-      },
-      {
-        "district_id": "38030400",
-        "index": 2261,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 63.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1433788,
-          35.1875484
-        ]
-      },
-      {
-        "district_id": "38030400",
-        "index": 2262,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 68.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1433639,
-          35.1874783
-        ]
-      },
-      {
-        "district_id": "38030400",
-        "index": 2283,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 43.0,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1434434,
-          35.1873991
-        ]
-      },
-      {
-        "district_id": "38030430",
-        "index": 3141,
-        "name": "",
-        "dong": "",
-        "height": 1.0,
-        "floors": 2.0,
-        "area_m2": 87.0,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          127.9920903,
-          35.2655978
-        ]
-      },
-      {
-        "district_id": "38030430",
-        "index": 5774,
-        "name": "",
-        "dong": "주건축물",
-        "height": 2.9,
-        "floors": 2.0,
-        "area_m2": 69.1,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0271814,
-          35.2171103
-        ]
-      },
-      {
-        "district_id": "38030430",
-        "index": 6057,
-        "name": "",
-        "dong": "주건축물",
-        "height": 2.9,
-        "floors": 2.0,
-        "area_m2": 54.6,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0272671,
-          35.2170097
-        ]
-      },
-      {
-        "district_id": "38030440",
-        "index": 1143,
-        "name": "",
-        "dong": "",
-        "height": 3.2,
-        "floors": 2.0,
-        "area_m2": 157.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          127.9593785,
-          35.2315602
-        ]
-      },
-      {
-        "district_id": "38030450",
-        "index": 4792,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 199.4,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          127.9599553,
-          35.1654356
-        ]
-      },
-      {
-        "district_id": "38030450",
-        "index": 5081,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 461.6,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          127.9601643,
-          35.165478
-        ]
-      },
-      {
-        "district_id": "38030450",
-        "index": 5082,
-        "name": "",
-        "dong": "",
-        "height": 3.5,
-        "floors": 2.0,
-        "area_m2": 58.6,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          127.9601121,
-          35.1655971
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "index": 884,
-        "name": "",
-        "dong": "",
-        "height": 4.6,
-        "floors": 3.0,
-        "area_m2": 51.3,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1096955,
-          35.1686759
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "index": 885,
-        "name": "",
-        "dong": "",
-        "height": 4.6,
-        "floors": 3.0,
-        "area_m2": 59.6,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1097554,
-          35.1686713
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "index": 1300,
-        "name": "",
-        "dong": "",
-        "height": 6.2,
-        "floors": 5.0,
-        "area_m2": 153.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1100746,
-          35.1692832
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "index": 1533,
-        "name": "",
-        "dong": "",
-        "height": 4.6,
-        "floors": 3.0,
-        "area_m2": 59.5,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1096566,
-          35.16877
-        ]
-      },
-      {
-        "district_id": "38030650",
-        "index": 5065,
-        "name": "",
-        "dong": "",
-        "height": 4.6,
-        "floors": 3.0,
-        "area_m2": 100.8,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1097342,
-          35.1687605
-        ]
-      },
-      {
         "district_id": "38030650",
         "index": 5830,
         "name": null,
@@ -1358,323 +846,51 @@
         ]
       },
       {
-        "district_id": "38030660",
-        "index": 323,
-        "name": "",
-        "dong": "청과물도매시장",
-        "height": 2.8,
-        "floors": 2.0,
-        "area_m2": 13346.8,
+        "district_id": "38030750",
+        "index": 1267,
+        "name": "상봉한주타운",
+        "dong": "1동",
+        "height": 55.1,
+        "floors": 19.0,
+        "area_m2": 9.9,
         "reason": [
-          "층당높이<1.8m"
+          "작은 footprint 고층"
         ],
         "centroid": [
-          128.1230266,
-          35.2113797
+          128.0715932,
+          35.1960548
         ]
       },
       {
-        "district_id": "38030660",
-        "index": 1031,
-        "name": "",
-        "dong": "",
-        "height": 3.3,
-        "floors": 3.0,
-        "area_m2": 124.5,
+        "district_id": "38030770",
+        "index": 5856,
+        "name": null,
+        "dong": null,
+        "height": 10.0,
+        "floors": 1.0,
+        "area_m2": 2573.1,
         "reason": [
-          "층당높이<1.8m"
+          "층당높이>8m"
         ],
         "centroid": [
-          128.1132654,
-          35.2100141
+          128.1192188,
+          35.1836163
         ]
       },
       {
-        "district_id": "38030660",
-        "index": 1582,
-        "name": "",
-        "dong": "",
-        "height": 3.4,
-        "floors": 2.0,
-        "area_m2": 90.1,
+        "district_id": "38030780",
+        "index": 21,
+        "name": "하대 한보아파트",
+        "dong": "1동",
+        "height": 55.1,
+        "floors": 20.0,
+        "area_m2": 28.1,
         "reason": [
-          "층당높이<1.8m"
+          "작은 footprint 고층"
         ],
         "centroid": [
-          128.1153411,
-          35.2031154
-        ]
-      },
-      {
-        "district_id": "38030670",
-        "index": 125,
-        "name": "",
-        "dong": "",
-        "height": 3.2,
-        "floors": 2.0,
-        "area_m2": 118.2,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0664999,
-          35.1720302
-        ]
-      },
-      {
-        "district_id": "38030670",
-        "index": 195,
-        "name": "",
-        "dong": "",
-        "height": 2.7,
-        "floors": 2.0,
-        "area_m2": 100.2,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.062812,
-          35.1824485
-        ]
-      },
-      {
-        "district_id": "38030670",
-        "index": 2567,
-        "name": "",
-        "dong": "",
-        "height": 7.85,
-        "floors": 5.0,
-        "area_m2": 172.4,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0583947,
-          35.1733177
-        ]
-      },
-      {
-        "district_id": "38030680",
-        "index": 239,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 244.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0691046,
-          35.1886554
-        ]
-      },
-      {
-        "district_id": "38030680",
-        "index": 814,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 28.6,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0691879,
-          35.188688
-        ]
-      },
-      {
-        "district_id": "38030680",
-        "index": 1007,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 6.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.069657,
-          35.1887438
-        ]
-      },
-      {
-        "district_id": "38030680",
-        "index": 1212,
-        "name": "",
-        "dong": "",
-        "height": 3.0,
-        "floors": 2.0,
-        "area_m2": 106.6,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0695958,
-          35.1886738
-        ]
-      },
-      {
-        "district_id": "38030690",
-        "index": 541,
-        "name": "",
-        "dong": "",
-        "height": 2.4,
-        "floors": 2.0,
-        "area_m2": 135.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0572261,
-          35.1910322
-        ]
-      },
-      {
-        "district_id": "38030690",
-        "index": 922,
-        "name": "이현동 13-46",
-        "dong": "주건축물제1동",
-        "height": 1.1,
-        "floors": 2.0,
-        "area_m2": 132.4,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0628824,
-          35.1920167
-        ]
-      },
-      {
-        "district_id": "38030700",
-        "index": 221,
-        "name": "",
-        "dong": "",
-        "height": 3.2,
-        "floors": 2.0,
-        "area_m2": 145.2,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0500066,
-          35.1687462
-        ]
-      },
-      {
-        "district_id": "38030700",
-        "index": 733,
-        "name": "",
-        "dong": "",
-        "height": 2.3,
-        "floors": 2.0,
-        "area_m2": 83.9,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0447506,
-          35.167758
-        ]
-      },
-      {
-        "district_id": "38030700",
-        "index": 1251,
-        "name": "",
-        "dong": "주건축물제1동",
-        "height": 3.7,
-        "floors": 4.0,
-        "area_m2": 47.4,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0514596,
-          35.1691194
-        ]
-      },
-      {
-        "district_id": "38030700",
-        "index": 1914,
-        "name": "",
-        "dong": "판문동사무소",
-        "height": 3.4,
-        "floors": 5.0,
-        "area_m2": 165.1,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0522299,
-          35.1681784
-        ]
-      },
-      {
-        "district_id": "38030700",
-        "index": 1917,
-        "name": "",
-        "dong": "",
-        "height": 4.2,
-        "floors": 3.0,
-        "area_m2": 339.8,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0385996,
-          35.1883155
-        ]
-      },
-      {
-        "district_id": "38030700",
-        "index": 3103,
-        "name": "",
-        "dong": "주건축물제1동",
-        "height": 3.7,
-        "floors": 4.0,
-        "area_m2": 12.0,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.0514964,
-          35.1690759
-        ]
-      },
-      {
-        "district_id": "38030710",
-        "index": 1989,
-        "name": "",
-        "dong": "",
-        "height": 4.2,
-        "floors": 3.0,
-        "area_m2": 177.7,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1062794,
-          35.1584608
-        ]
-      },
-      {
-        "district_id": "38030710",
-        "index": 2035,
-        "name": "",
-        "dong": "",
-        "height": 4.15,
-        "floors": 3.0,
-        "area_m2": 163.8,
-        "reason": [
-          "층당높이<1.8m"
-        ],
-        "centroid": [
-          128.1061871,
-          35.1577179
+          128.1282302,
+          35.1859628
         ]
       }
     ],

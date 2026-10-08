@@ -1,0 +1,437 @@
+{
+  "corrected": 122,
+  "districts": {
+    "38030110": 0,
+    "38030310": 0,
+    "38030320": 3,
+    "38030330": 4,
+    "38030340": 0,
+    "38030350": 2,
+    "38030360": 2,
+    "38030370": 0,
+    "38030380": 0,
+    "38030390": 6,
+    "38030400": 3,
+    "38030410": 0,
+    "38030420": 0,
+    "38030430": 3,
+    "38030440": 1,
+    "38030450": 3,
+    "38030650": 5,
+    "38030660": 3,
+    "38030670": 3,
+    "38030680": 4,
+    "38030690": 2,
+    "38030700": 6,
+    "38030710": 2,
+    "38030720": 8,
+    "38030730": 12,
+    "38030740": 8,
+    "38030750": 11,
+    "38030760": 2,
+    "38030770": 23,
+    "38030780": 6
+  },
+  "examples": [
+    {
+      "district_id": "38030320",
+      "index": 3882,
+      "name": "",
+      "dong": "나동",
+      "use": "공장",
+      "floors": 4.0,
+      "old_height": 4.0,
+      "new_height": 20.0
+    },
+    {
+      "district_id": "38030320",
+      "index": 4403,
+      "name": "진주 정촌 대경파미르 아파트",
+      "dong": "상가2동",
+      "use": "근린생활시설,목욕장",
+      "floors": 2.0,
+      "old_height": 3.4,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030320",
+      "index": 4448,
+      "name": "",
+      "dong": "",
+      "use": "단독주택(다가구주택),일반음식점",
+      "floors": 4.0,
+      "old_height": 3.6,
+      "new_height": 11.6
+    },
+    {
+      "district_id": "38030330",
+      "index": 2420,
+      "name": "",
+      "dong": "",
+      "use": "주택, 근린생활",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030330",
+      "index": 2650,
+      "name": "",
+      "dong": "",
+      "use": "주택, 근린생활",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030330",
+      "index": 2892,
+      "name": "",
+      "dong": "",
+      "use": "주택, 근린생활",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030330",
+      "index": 5515,
+      "name": "",
+      "dong": "",
+      "use": "단독주택,창고, 근생",
+      "floors": 2.0,
+      "old_height": 3.55,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030350",
+      "index": 200,
+      "name": "",
+      "dong": "",
+      "use": "제2종근린생활시설",
+      "floors": 5.0,
+      "old_height": 3.6,
+      "new_height": 20.0
+    },
+    {
+      "district_id": "38030350",
+      "index": 239,
+      "name": "",
+      "dong": "",
+      "use": "주택",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 6.6
+    },
+    {
+      "district_id": "38030360",
+      "index": 2827,
+      "name": "",
+      "dong": "",
+      "use": "단독주택, 제1종근린생활시설",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030360",
+      "index": 5343,
+      "name": "",
+      "dong": "",
+      "use": "단독주택, 제1종근린생활시설",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030390",
+      "index": 2341,
+      "name": "",
+      "dong": "",
+      "use": "제2종근린생활시설",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030390",
+      "index": 2872,
+      "name": "",
+      "dong": "",
+      "use": "제2종근린생활시설",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030390",
+      "index": 3313,
+      "name": "",
+      "dong": "",
+      "use": "단독주택, 창고",
+      "floors": 2.0,
+      "old_height": 3.15,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030390",
+      "index": 3550,
+      "name": "",
+      "dong": "",
+      "use": "제2종근린생활시설",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030390",
+      "index": 3581,
+      "name": "",
+      "dong": "",
+      "use": "제2종근린생활시설",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030390",
+      "index": 4057,
+      "name": "",
+      "dong": "",
+      "use": "제2종근린생활시설",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030400",
+      "index": 2261,
+      "name": "",
+      "dong": "",
+      "use": "단독주택",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030400",
+      "index": 2262,
+      "name": "",
+      "dong": "",
+      "use": "단독주택",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030400",
+      "index": 2283,
+      "name": "",
+      "dong": "",
+      "use": "단독주택",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030430",
+      "index": 3141,
+      "name": "",
+      "dong": "",
+      "use": "단독주택",
+      "floors": 2.0,
+      "old_height": 1.0,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030430",
+      "index": 5774,
+      "name": "",
+      "dong": "주건축물",
+      "use": "단독주택",
+      "floors": 2.0,
+      "old_height": 2.9,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030430",
+      "index": 6057,
+      "name": "",
+      "dong": "주건축물",
+      "use": "단독주택",
+      "floors": 2.0,
+      "old_height": 2.9,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030440",
+      "index": 1143,
+      "name": "",
+      "dong": "",
+      "use": "주택, 창고",
+      "floors": 2.0,
+      "old_height": 3.2,
+      "new_height": 10.0
+    },
+    {
+      "district_id": "38030450",
+      "index": 4792,
+      "name": "",
+      "dong": "",
+      "use": "창고시설",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 10.0
+    },
+    {
+      "district_id": "38030450",
+      "index": 5081,
+      "name": "",
+      "dong": "",
+      "use": "창고시설",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 10.0
+    },
+    {
+      "district_id": "38030450",
+      "index": 5082,
+      "name": "",
+      "dong": "",
+      "use": "창고시설",
+      "floors": 2.0,
+      "old_height": 3.5,
+      "new_height": 10.0
+    },
+    {
+      "district_id": "38030650",
+      "index": 884,
+      "name": "",
+      "dong": "",
+      "use": "근린생활시설, 주택",
+      "floors": 3.0,
+      "old_height": 4.6,
+      "new_height": 12.0
+    },
+    {
+      "district_id": "38030650",
+      "index": 885,
+      "name": "",
+      "dong": "",
+      "use": "근린생활시설, 주택",
+      "floors": 3.0,
+      "old_height": 4.6,
+      "new_height": 12.0
+    },
+    {
+      "district_id": "38030650",
+      "index": 1300,
+      "name": "",
+      "dong": "",
+      "use": "근린생활시설",
+      "floors": 5.0,
+      "old_height": 6.2,
+      "new_height": 20.0
+    },
+    {
+      "district_id": "38030650",
+      "index": 1533,
+      "name": "",
+      "dong": "",
+      "use": "근린생활시설, 주택",
+      "floors": 3.0,
+      "old_height": 4.6,
+      "new_height": 12.0
+    },
+    {
+      "district_id": "38030650",
+      "index": 5065,
+      "name": "",
+      "dong": "",
+      "use": "근린생활시설, 주택",
+      "floors": 3.0,
+      "old_height": 4.6,
+      "new_height": 12.0
+    },
+    {
+      "district_id": "38030660",
+      "index": 323,
+      "name": "",
+      "dong": "청과물도매시장",
+      "use": "판매및영업시설",
+      "floors": 2.0,
+      "old_height": 2.8,
+      "new_height": 8.0
+    },
+    {
+      "district_id": "38030660",
+      "index": 1031,
+      "name": "",
+      "dong": "",
+      "use": "단독주택(다가구주택),제1종근린생활시설",
+      "floors": 3.0,
+      "old_height": 3.3,
+      "new_height": 8.7
+    },
+    {
+      "district_id": "38030660",
+      "index": 1582,
+      "name": "",
+      "dong": "",
+      "use": "단독주택",
+      "floors": 2.0,
+      "old_height": 3.4,
+      "new_height": 6.2
+    },
+    {
+      "district_id": "38030670",
+      "index": 125,
+      "name": "",
+      "dong": "",
+      "use": "다가구주택, 제2종근린생활시설(일반음식점)",
+      "floors": 2.0,
+      "old_height": 3.2,
+      "new_height": 5.8
+    },
+    {
+      "district_id": "38030670",
+      "index": 195,
+      "name": "",
+      "dong": "",
+      "use": "주택",
+      "floors": 2.0,
+      "old_height": 2.7,
+      "new_height": 6.6
+    },
+    {
+      "district_id": "38030670",
+      "index": 2567,
+      "name": "",
+      "dong": "",
+      "use": "근린생활시설",
+      "floors": 5.0,
+      "old_height": 7.85,
+      "new_height": 20.0
+    },
+    {
+      "district_id": "38030680",
+      "index": 239,
+      "name": "",
+      "dong": "",
+      "use": "사무실",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 7.4
+    },
+    {
+      "district_id": "38030680",
+      "index": 814,
+      "name": "",
+      "dong": "",
+      "use": "사무실",
+      "floors": 2.0,
+      "old_height": 3.0,
+      "new_height": 7.4
+    }
+  ]
+}

@@ -22,17 +22,17 @@
       "name": "정촌면",
       "count": 5151,
       "file": "data/buildings/38030320.geojson.gz",
-      "bytes": 629967,
+      "bytes": 630267,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030330": {
       "name": "금곡면",
       "count": 6333,
       "file": "data/buildings/38030330.geojson.gz",
-      "bytes": 748159,
+      "bytes": 748603,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030340": {
       "name": "진성면",
@@ -46,17 +46,17 @@
       "name": "일반성면",
       "count": 4139,
       "file": "data/buildings/38030350.geojson.gz",
-      "bytes": 546215,
+      "bytes": 546412,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030360": {
       "name": "이반성면",
       "count": 5436,
       "file": "data/buildings/38030360.geojson.gz",
-      "bytes": 690605,
+      "bytes": 690810,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030370": {
       "name": "사봉면",
@@ -78,17 +78,17 @@
       "name": "대곡면",
       "count": 9396,
       "file": "data/buildings/38030390.geojson.gz",
-      "bytes": 1079367,
+      "bytes": 1080038,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030400": {
       "name": "금산면",
       "count": 8222,
       "file": "data/buildings/38030400.geojson.gz",
-      "bytes": 1009367,
+      "bytes": 1009532,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030410": {
       "name": "집현면",
@@ -110,137 +110,137 @@
       "name": "명석면",
       "count": 6738,
       "file": "data/buildings/38030430.geojson.gz",
-      "bytes": 854261,
+      "bytes": 854576,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030440": {
       "name": "대평면",
       "count": 1487,
       "file": "data/buildings/38030440.geojson.gz",
-      "bytes": 202957,
+      "bytes": 203080,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030450": {
       "name": "수곡면",
       "count": 5621,
       "file": "data/buildings/38030450.geojson.gz",
-      "bytes": 663255,
+      "bytes": 663457,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030650": {
       "name": "상평동",
       "count": 6278,
       "file": "data/buildings/38030650.geojson.gz",
-      "bytes": 925905,
+      "bytes": 926328,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030660": {
       "name": "초장동",
       "count": 4168,
       "file": "data/buildings/38030660.geojson.gz",
-      "bytes": 560565,
+      "bytes": 560882,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030670": {
       "name": "평거동",
       "count": 2929,
       "file": "data/buildings/38030670.geojson.gz",
-      "bytes": 533483,
+      "bytes": 533793,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030680": {
       "name": "신안동",
       "count": 1831,
       "file": "data/buildings/38030680.geojson.gz",
-      "bytes": 336398,
+      "bytes": 336844,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030690": {
       "name": "이현동",
       "count": 3118,
       "file": "data/buildings/38030690.geojson.gz",
-      "bytes": 502335,
+      "bytes": 502517,
       "static_precomputed": true,
-      "static_version": "2026-10-08-01"
+      "static_version": "2026-10-08-04"
     },
     "38030700": {
       "name": "판문동",
       "count": 3122,
       "file": "data/buildings/38030700.geojson.gz",
-      "bytes": 463557,
+      "bytes": 464093,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030710": {
       "name": "가호동",
       "count": 3387,
       "file": "data/buildings/38030710.geojson.gz",
-      "bytes": 550215,
+      "bytes": 550433,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030720": {
       "name": "천전동",
       "count": 7979,
       "file": "data/buildings/38030720.geojson.gz",
-      "bytes": 1336346,
+      "bytes": 1337195,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030730": {
       "name": "성북동",
       "count": 3924,
       "file": "data/buildings/38030730.geojson.gz",
-      "bytes": 686687,
+      "bytes": 687737,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030740": {
       "name": "중앙동",
       "count": 6570,
       "file": "data/buildings/38030740.geojson.gz",
-      "bytes": 1052554,
+      "bytes": 1053394,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030750": {
       "name": "상봉동",
       "count": 4636,
       "file": "data/buildings/38030750.geojson.gz",
-      "bytes": 743985,
+      "bytes": 745101,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030760": {
       "name": "충무공동",
       "count": 1028,
       "file": "data/buildings/38030760.geojson.gz",
-      "bytes": 127283,
+      "bytes": 127505,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030770": {
       "name": "상대동",
       "count": 6170,
       "file": "data/buildings/38030770.geojson.gz",
-      "bytes": 1020472,
+      "bytes": 1022117,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     },
     "38030780": {
       "name": "하대동",
       "count": 4324,
       "file": "data/buildings/38030780.geojson.gz",
-      "bytes": 754874,
+      "bytes": 755529,
       "static_precomputed": true,
-      "static_version": "2026-10-08-02"
+      "static_version": "2026-10-08-04"
     }
   },
   "parcels": {
@@ -440,6 +440,7 @@
     "pnu_manual_fix": "2026-10-02: 문산읍 잔여 PNU 불일치 3건을 실제 필지 100% 중첩 기준으로 보정.",
     "register_split_group_fix": "2026-10-08: 동일 PNU·동일 대장 레코드의 120m 이내 분할 footprint를 그룹 면적비>=0.35일 때 병합하고, 보완 데이터의 누락 PNU를 공간 중첩>=55% 기준으로 보완.",
     "weak_register_match_fix": "2026-10-08: 긴급 PNU/주소 후보 매칭 중 주변 동일대장 그룹 면적비도 0.35 미만인 경우 대장 높이를 거부하고 보수적 높이로 대체.",
-    "exact_duplicate_fix": "2026-10-08: 동일 PNU·동명칭·높이이며 geometry 중첩>=99.5%, 면적비>=99.5%인 확정 중복만 제거."
+    "exact_duplicate_fix": "2026-10-08: 동일 PNU·동명칭·높이이며 geometry 중첩>=99.5%, 면적비>=99.5%인 확정 중복만 제거.",
+    "impossible_low_height_fix": "2026-10-08: 2층 이상인데 총높이/층수<1.8m인 비정상 저높이는 용도별 층고×층수로 보정. verified_override 제외."
   }
 }
