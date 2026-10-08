@@ -103,6 +103,25 @@ def spatial_fill_pnu(features,parcel_fc):
         changed+=1
     return changed
 
+def is_urgent_fragment(p,ratio):
+    try:h=float(p.get("render_height") or p.get("height_m") or 0)
+    except:h=0
+    try:fl=float(p.get("floors_above") or 0)
+    except:fl=0
+    score=0
+    if ratio<0.10:score+=6
+    elif ratio<0.20:score+=5
+    elif ratio<0.25:score+=4
+    else:score+=3
+    if h>=50:score+=4
+    elif h>=30:score+=3
+    elif h>=15:score+=2
+    if fl>=15:score+=3
+    elif fl>=8:score+=2
+    if p.get("building_name") or p.get("building_dong") or p.get("register_name") or p.get("register_dong"):score+=1
+    if p.get("height_source")=="건축물대장 실제 높이":score+=2
+    return ratio<0.35 and score>=10
+
 def cluster_indices(rows,max_dist=120):
     left=set(range(len(rows)));clusters=[]
     while left:
@@ -132,7 +151,9 @@ def merge_groups(features):
         except:continue
         if ra<=0:continue
         rp=g.representative_point()
-        rec={"idx":idx,"f":f,"p":p,"g":g,"area":metric_area(g),"pt":(rp.x,rp.y),"ra":ra}
+        area=metric_area(g)
+        ratio=min(area,ra)/max(area,ra) if area>0 and ra>0 else 0
+        rec={"idx":idx,"f":f,"p":p,"g":g,"area":area,"pt":(rp.x,rp.y),"ra":ra,"urgent":is_urgent_fragment(p,ratio)}
         rows.append(rec)
         key=(pn,norm(p.get("register_name")),norm(p.get("register_dong")),h,fl,ra)
         groups[key].append(rec)
@@ -143,7 +164,7 @@ def merge_groups(features):
         stats["candidate_groups"]+=1
         for ci in cluster_indices(items,120):
             part=[items[i] for i in ci]
-            if len(part)<2:continue
+            if len(part)<2 or not any(x["urgent"] for x in part):continue
             ug=safe_geom(unary_union([x["g"] for x in part]))
             if ug is None:continue
             group_area=metric_area(ug);ra=part[0]["ra"]
