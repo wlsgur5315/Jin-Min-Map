@@ -1,0 +1,26 @@
+name: Plan OSM supplement overlap cleanup
+on:
+  push:
+    paths:
+      - 'tools/plan_osm_supplement_cleanup.py'
+      - '.github/workflows/plan-osm-supplement-cleanup.yml'
+permissions:
+  contents: write
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install shapely
+      - run: python tools/plan_osm_supplement_cleanup.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/osm_supplement_overlap_plan.json
+          git commit -m "Plan OSM supplement overlap cleanup [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
