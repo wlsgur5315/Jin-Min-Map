@@ -1,0 +1,278 @@
+{
+  "source": "토지이음 (도시계획)용도지역정보 SHP",
+  "ref_date": "20260929",
+  "source_file": "(도시계획)용도지역정보_20260929_전국.zip",
+  "inner_file": "KLIP_004_20260901_48000.zip",
+  "districts": {
+    "38030110": {
+      "name": "문산읍",
+      "file": "data/zoning/38030110.geojson.gz",
+      "count": 395,
+      "bytes": 683970,
+      "zoning": 395,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030310": {
+      "name": "내동면",
+      "file": "data/zoning/38030310.geojson.gz",
+      "count": 151,
+      "bytes": 347261,
+      "zoning": 151,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030320": {
+      "name": "정촌면",
+      "file": "data/zoning/38030320.geojson.gz",
+      "count": 125,
+      "bytes": 354143,
+      "zoning": 125,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030330": {
+      "name": "금곡면",
+      "file": "data/zoning/38030330.geojson.gz",
+      "count": 828,
+      "bytes": 959933,
+      "zoning": 828,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030340": {
+      "name": "진성면",
+      "file": "data/zoning/38030340.geojson.gz",
+      "count": 612,
+      "bytes": 870381,
+      "zoning": 612,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030350": {
+      "name": "일반성면",
+      "file": "data/zoning/38030350.geojson.gz",
+      "count": 408,
+      "bytes": 474076,
+      "zoning": 408,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030360": {
+      "name": "이반성면",
+      "file": "data/zoning/38030360.geojson.gz",
+      "count": 649,
+      "bytes": 805807,
+      "zoning": 649,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030370": {
+      "name": "사봉면",
+      "file": "data/zoning/38030370.geojson.gz",
+      "count": 565,
+      "bytes": 663673,
+      "zoning": 565,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030380": {
+      "name": "지수면",
+      "file": "data/zoning/38030380.geojson.gz",
+      "count": 369,
+      "bytes": 544287,
+      "zoning": 369,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030390": {
+      "name": "대곡면",
+      "file": "data/zoning/38030390.geojson.gz",
+      "count": 913,
+      "bytes": 1448126,
+      "zoning": 913,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030400": {
+      "name": "금산면",
+      "file": "data/zoning/38030400.geojson.gz",
+      "count": 50,
+      "bytes": 196572,
+      "zoning": 50,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030410": {
+      "name": "집현면",
+      "file": "data/zoning/38030410.geojson.gz",
+      "count": 472,
+      "bytes": 762524,
+      "zoning": 472,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030420": {
+      "name": "미천면",
+      "file": "data/zoning/38030420.geojson.gz",
+      "count": 1417,
+      "bytes": 1976778,
+      "zoning": 1417,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030430": {
+      "name": "명석면",
+      "file": "data/zoning/38030430.geojson.gz",
+      "count": 1118,
+      "bytes": 1475464,
+      "zoning": 1118,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030440": {
+      "name": "대평면",
+      "file": "data/zoning/38030440.geojson.gz",
+      "count": 331,
+      "bytes": 361156,
+      "zoning": 331,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030450": {
+      "name": "수곡면",
+      "file": "data/zoning/38030450.geojson.gz",
+      "count": 1071,
+      "bytes": 1061933,
+      "zoning": 1071,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030650": {
+      "name": "상평동",
+      "file": "data/zoning/38030650.geojson.gz",
+      "count": 12,
+      "bytes": 30157,
+      "zoning": 9,
+      "landscape": 3,
+      "height_district": 0
+    },
+    "38030660": {
+      "name": "초장동",
+      "file": "data/zoning/38030660.geojson.gz",
+      "count": 59,
+      "bytes": 170101,
+      "zoning": 53,
+      "landscape": 6,
+      "height_district": 0
+    },
+    "38030670": {
+      "name": "평거동",
+      "file": "data/zoning/38030670.geojson.gz",
+      "count": 25,
+      "bytes": 33070,
+      "zoning": 21,
+      "landscape": 4,
+      "height_district": 0
+    },
+    "38030680": {
+      "name": "신안동",
+      "file": "data/zoning/38030680.geojson.gz",
+      "count": 19,
+      "bytes": 14376,
+      "zoning": 14,
+      "landscape": 5,
+      "height_district": 0
+    },
+    "38030690": {
+      "name": "이현동",
+      "file": "data/zoning/38030690.geojson.gz",
+      "count": 27,
+      "bytes": 83566,
+      "zoning": 22,
+      "landscape": 4,
+      "height_district": 1
+    },
+    "38030700": {
+      "name": "판문동",
+      "file": "data/zoning/38030700.geojson.gz",
+      "count": 42,
+      "bytes": 102218,
+      "zoning": 39,
+      "landscape": 3,
+      "height_district": 0
+    },
+    "38030710": {
+      "name": "가호동",
+      "file": "data/zoning/38030710.geojson.gz",
+      "count": 60,
+      "bytes": 123231,
+      "zoning": 58,
+      "landscape": 1,
+      "height_district": 1
+    },
+    "38030720": {
+      "name": "천전동",
+      "file": "data/zoning/38030720.geojson.gz",
+      "count": 21,
+      "bytes": 72780,
+      "zoning": 17,
+      "landscape": 4,
+      "height_district": 0
+    },
+    "38030730": {
+      "name": "성북동",
+      "file": "data/zoning/38030730.geojson.gz",
+      "count": 11,
+      "bytes": 18138,
+      "zoning": 7,
+      "landscape": 4,
+      "height_district": 0
+    },
+    "38030740": {
+      "name": "중앙동",
+      "file": "data/zoning/38030740.geojson.gz",
+      "count": 27,
+      "bytes": 46615,
+      "zoning": 19,
+      "landscape": 6,
+      "height_district": 2
+    },
+    "38030750": {
+      "name": "상봉동",
+      "file": "data/zoning/38030750.geojson.gz",
+      "count": 26,
+      "bytes": 48885,
+      "zoning": 22,
+      "landscape": 3,
+      "height_district": 1
+    },
+    "38030760": {
+      "name": "충무공동",
+      "file": "data/zoning/38030760.geojson.gz",
+      "count": 54,
+      "bytes": 183253,
+      "zoning": 54,
+      "landscape": 0,
+      "height_district": 0
+    },
+    "38030770": {
+      "name": "상대동",
+      "file": "data/zoning/38030770.geojson.gz",
+      "count": 18,
+      "bytes": 47694,
+      "zoning": 14,
+      "landscape": 4,
+      "height_district": 0
+    },
+    "38030780": {
+      "name": "하대동",
+      "file": "data/zoning/38030780.geojson.gz",
+      "count": 28,
+      "bytes": 41346,
+      "zoning": 25,
+      "landscape": 3,
+      "height_district": 0
+    }
+  }
+}
