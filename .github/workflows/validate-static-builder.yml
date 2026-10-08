@@ -4,6 +4,10 @@ on:
   push:
     paths:
       - '.github/workflows/validate-static-builder.yml'
+      - 'tools/build_all_static.py'
+      - 'tools/fix_register_split_groups.py'
+      - 'tools/suppress_weak_register_matches.py'
+      - 'tools/classify_register_mismatch_types.py'
 permissions:
   contents: read
 jobs:
