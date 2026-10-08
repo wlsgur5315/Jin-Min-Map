@@ -88,7 +88,7 @@ for path in sorted(BUILD.glob("*.geojson.gz")):
                   "a_source":pa.get("data_source") or "GIS","b_source":pb.get("data_source") or "GIS",
                   "a_richness":richness(pa),"b_richness":richness(pb),
                   "centroid":[round(r["c"][0],7),round(r["c"][1],7)]}
-            if height_close and (same_pnu or same_uid or same_named):
+            if height_close and (same_uid or same_named or (same_pnu and ia[3] and ia[3]==ib[3])):
                 summary["safe_duplicate_pairs"]+=1;safe_dups.append(item)
             else:
                 summary["review_duplicate_pairs"]+=1;review_dups.append(item)
