@@ -228,11 +228,11 @@
     },
     "38030770": {
       "name": "상대동",
-      "count": 6020,
+      "count": 6016,
       "file": "data/buildings/38030770.geojson.gz",
-      "bytes": 1006536,
+      "bytes": 1005768,
       "static_precomputed": true,
-      "static_version": "2026-10-08-09"
+      "static_version": "2026-10-08-10"
     },
     "38030780": {
       "name": "하대동",
@@ -425,7 +425,7 @@
       "bytes": 420180
     }
   },
-  "building_count": 149722,
+  "building_count": 149718,
   "parcel_count": 368580,
   "notes": {
     "building_source": "GIS건물통합정보 2026-09-09, 진주시 코드 48170",
@@ -447,6 +447,7 @@
     "osm_supplement_overlap_cleanup": "2026-10-08: OSM 정적 보완이 기존 GIS와 15% 이상 겹치거나 중심이 3m 이내이고 면적비가 유사한 경우 OSM만 제거.",
     "native_strong_duplicate_cleanup": "2026-10-08: 상평동 제외. 같은 PNU·높이·층수·동/명칭 일치성이 높고 구형/신형 UID 또는 거의 동일 형상인 강한 GIS 중복만 제거.",
     "same_pnu_multidong_cleanup": "2026-10-08: 같은 PNU에서 서로 다른 동명이지만 footprint 80%+, 면적비 90%+, IoU 65%+, 높이/층수 일치인 거의 동일 형상 그룹은 대표 1개만 유지.",
-    "multidong_restore": "2026-10-08: 서로 다른 동명칭 자체를 중복 근거로 삼은 제거를 되돌림."
+    "multidong_restore": "2026-10-08: 서로 다른 동명칭 자체를 중복 근거로 삼은 제거를 되돌림.",
+    "tobis_bad_footprint_cleanup": "2026-10-08: 상대동 토비스유압 부지 중앙에 중첩되고 도로 필지를 침범하던 2015년 대형 오류 footprint 4개 제거. 실제 소형 제1~4동 건물은 유지."
   }
 }
