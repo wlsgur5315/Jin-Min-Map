@@ -28,8 +28,15 @@ q=f"""[out:json][timeout:60];
  way["highway"](around:250,{lat},{lon});
 );
 out geom;"""
-r=requests.post("https://overpass-api.de/api/interpreter",data=q.encode("utf-8"),headers={"Content-Type":"application/x-www-form-urlencoded"},timeout=90)
-r.raise_for_status(); data=r.json()
+urls=["https://overpass.kumi.systems/api/interpreter","https://overpass-api.de/api/interpreter"]
+last=None
+for u in urls:
+    try:
+        r=requests.get(u,params={"data":q},headers={"User-Agent":"Jin-Min-Map/1.0"},timeout=90)
+        r.raise_for_status(); data=r.json(); last=None; break
+    except Exception as e:
+        last=e
+if last: raise last
 
 osm_buildings=[];roads=[]
 for el in data.get("elements",[]):
