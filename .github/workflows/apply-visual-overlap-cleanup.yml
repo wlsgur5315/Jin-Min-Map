@@ -1,0 +1,28 @@
+name: Apply visual overlap cleanup
+on:
+  push:
+    paths:
+      - 'tools/apply_visual_overlap_cleanup.py'
+      - '.github/workflows/apply-visual-overlap-cleanup.yml'
+permissions:
+  contents: write
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install shapely
+      - run: python tools/apply_visual_overlap_cleanup.py
+      - run: python tools/audit_overlap_identity.py
+      - run: python tools/diagnose_sangpyeong_visual_overlaps.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/buildings/*.geojson.gz data/manifest.json data/visual_overlap_cleanup_report.json data/overlap_identity_audit.json data/sangpyeong_visual_overlap_diagnosis.json
+          git commit -m "Remove visual duplicate GIS and Overture buildings [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
