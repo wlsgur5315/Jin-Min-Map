@@ -850,7 +850,7 @@ function parcelHeightReview(){
   ['정북일조',daylight,'건축법 제61조, 시행령 제86조, 진주시 건축조례 제41조'],
   ['지구단위계획',ADV_PLAN_RESULT?'구역 중첩: '+ADV_PLAN_RESULT.name+' · 최고높이/최고층수 결정도서 미연결':'구역 판정 및 높이 세부기준 확인 필요','지구단위계획 결정도서']
  ];
- const confirmed=autoLand&&selectedLand&&LANDSCAPE_HEIGHT[selectedLand]&&selectedLand!=='중심시가지경관';
+ const confirmed=!!(zone&&AUTO_LANDSCAPE_NAME&&selectedLand===landscapeRuleKey(AUTO_LANDSCAPE_NAME)&&LANDSCAPE_HEIGHT[selectedLand]);
  const numeric=confirmed?(isNonUrban&&['자연경관','특화경관'].includes(selectedLand)?12:LANDSCAPE_HEIGHT[selectedLand]):null;
  return {rows,numeric,summary:numeric!==null?'경관지구 기본 높이 '+numeric+'m 이하 확인 · 다른 제한 미검증 (최종 높이 아님)':'확정 최고높이 산정 불가 · 관련 제한자료 추가 확인 필요'};
 }
