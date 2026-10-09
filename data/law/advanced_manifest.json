@@ -1,0 +1,11 @@
+{
+  "version": "2026-09-29",
+  "ready": false,
+  "district_plan": null,
+  "facilities": null,
+  "source": {
+    "district_plan": "국토교통부 토지이음 지구단위계획구역_20260929_전국.zip",
+    "facilities": "국토교통부 토지이음 (도시계획)시설정보_20260929_전국.zip"
+  },
+  "note": "진주시 추출 파일 생성 전. 앱은 이 manifest를 읽어 데이터가 준비되면 자동 판정하도록 구성."
+}
