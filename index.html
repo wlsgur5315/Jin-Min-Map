@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.09-02</title>
+<title>Jinju3D Local · v2026.10.09-03</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.09-02</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.09-03</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -155,7 +155,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.09-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.09-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -291,12 +291,12 @@ async function loadRegister(){
   if(REGISTER_READY)return;
   if(REGISTER_LOADING)return REGISTER_LOADING;
   REGISTER_LOADING=(async()=>{
-    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261009-02');
+    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261009-03');
     REGISTER_BY_PNU.clear();REGISTER_BY_SHORT.clear();REGISTER_BY_FULL.clear();REGISTER_BY_DISTRICT.clear();
     const shards=REGISTER_INDEX.shards||[];
     for(let i=0;i<shards.length;i++){
       message(`건축물대장 실제 높이 자료 · ${i+1}/${shards.length}`);
-      const part=await loadJson(shards[i]+'?v=20261009-02');
+      const part=await loadJson(shards[i]+'?v=20261009-03');
       for(const r of part.records||[]){
         regAdd(REGISTER_BY_PNU,String(r[0]||''),r);
         regAdd(REGISTER_BY_SHORT,String(r[1]||''),r);
@@ -852,7 +852,7 @@ const ZONING_RULES={
 '보전관리':{bcr:20,far:60},'생산관리':{bcr:20,far:60},'계획관리':{bcr:40,far:100},'농림':{bcr:20,far:60},'자연환경보전':{bcr:20,far:50}
 };
 const LANDSCAPE_HEIGHT={'자연경관':20,'특화경관':20,'전통경관':12,'일반시가지경관':33,'조망권경관':24};
-let lawMode=false,SELECTED_PARCEL=null,AUTO_ZONE_SOURCE='',AUTO_LANDSCAPE_NAME='',AUTO_HEIGHT_DISTRICT='',ZONING_MANIFEST=null,CURRENT_PLANNING=null,CURRENT_PLANNING_ID='',AUTO_ZONE_SHARES=[],PNU_LEGAL_NAMES={},ROAD_ADDRESS_DB=null,ROAD_ADDRESS='',ROAD_ADDRESS_SOURCE='',ADDRESS_SEARCH_INDEX=null,ADDRESS_SEARCH_LOADING=null,ADDRESS_SEARCH_TIMER=null;
+let lawMode=false,SELECTED_PARCEL=null,AUTO_ZONE_SOURCE='',AUTO_LANDSCAPE_NAME='',AUTO_HEIGHT_DISTRICT='',ZONING_MANIFEST=null,CURRENT_PLANNING=null,CURRENT_PLANNING_ID='',AUTO_ZONE_SHARES=[],PNU_LEGAL_NAMES={},ROAD_ADDRESS_DB=null,ROAD_ADDRESS='',ROAD_ADDRESS_SOURCE='',ADDRESS_SEARCH_INDEX=null,ADDRESS_SEARCH_LOADING=null,ADDRESS_SEARCH_TIMER=null,ADV_LAW_MANIFEST=null,ADV_DISTRICT_PLAN=null,ADV_FACILITIES=null,ADV_PLAN_RESULT=null,ADV_FACILITY_RESULT=[];
 
 
 function normalizeAddressQuery(v){return String(v||'').toLowerCase().replace(/경상남도|경남|진주시/g,'').replace(/\s+/g,'').trim()}
@@ -1083,6 +1083,7 @@ function selectParcelForLaw(f){
   renderLawReview();
   lookupRoadAddress(SELECTED_PARCEL).then(()=>refreshSelectedParcelAddressUI()).catch(e=>console.warn('도로명주소 자동조회 실패',e));
   autoDetectPlanning(SELECTED_PARCEL).catch(e=>console.warn('용도지역 자동조회 실패',e));
+  detectAdvancedLaw(SELECTED_PARCEL).catch(e=>console.warn('지구단위계획/도시계획시설 자동조회 실패',e));
 }
 
 function planningName(props){
@@ -1244,6 +1245,39 @@ async function autoDetectPlanning(parcel){
     console.warn(e);AUTO_ZONE_SOURCE='토지이음 SHP/VWorld 자동조회 실패 · 수동 선택 가능';renderLawReview();
   }
 }
+
+async function ensureAdvancedLawData(){
+  if(!ADV_LAW_MANIFEST)return false;
+  if(!ADV_LAW_MANIFEST.ready)return false;
+  try{
+    if(!ADV_DISTRICT_PLAN&&ADV_LAW_MANIFEST.district_plan)ADV_DISTRICT_PLAN=await loadGzipJson(ADV_LAW_MANIFEST.district_plan);
+    if(!ADV_FACILITIES&&ADV_LAW_MANIFEST.facilities)ADV_FACILITIES=await loadGzipJson(ADV_LAW_MANIFEST.facilities);
+    return true;
+  }catch(e){console.warn('고급 법규 공간데이터 로드 실패',e);return false}
+}
+function advancedFeatureName(p){
+  if(!p)return'';
+  for(const k of ['name','dgm_nm','uname','zone_name','facility_name','fclty_nm','remark','alias']){
+    const v=p[k];if(v!==undefined&&v!==null&&String(v).trim())return String(v).trim();
+  }
+  return'명칭 미상';
+}
+function overlapRatioOf(parcel,f){
+  try{return intersectionArea(parcel,f)/Math.max(turf.area(parcel),1)}catch(e){return 0}
+}
+async function detectAdvancedLaw(parcel){
+  ADV_PLAN_RESULT=null;ADV_FACILITY_RESULT=[];
+  const ok=await ensureAdvancedLawData();if(!ok){renderLawReview();return}
+  try{
+    const plans=(ADV_DISTRICT_PLAN?.features||[]).map(f=>({f,ratio:overlapRatioOf(parcel,f)})).filter(x=>x.ratio>0).sort((a,b)=>b.ratio-a.ratio);
+    if(plans.length)ADV_PLAN_RESULT={name:advancedFeatureName(plans[0].f.properties||{}),ratio:plans[0].ratio,properties:plans[0].f.properties||{}};
+    ADV_FACILITY_RESULT=(ADV_FACILITIES?.features||[]).map(f=>({f,ratio:overlapRatioOf(parcel,f)})).filter(x=>x.ratio>0).sort((a,b)=>b.ratio-a.ratio).slice(0,8).map(x=>({
+      name:advancedFeatureName(x.f.properties||{}),ratio:x.ratio,properties:x.f.properties||{}
+    }));
+  }catch(e){console.warn('고급 법규 공간중첩 판정 실패',e)}
+  renderLawReview();
+}
+
 function renderLawReview(){
   if(!$('lawResult'))return;
   if(!SELECTED_PARCEL){$('lawResult').innerHTML='<span class="lawdim">먼저 지도에서 필지를 선택하세요.</span>';return}
@@ -1263,7 +1297,9 @@ function renderLawReview(){
     '용적률 <b>'+r.far+'%</b> → 이 필지 기준 연면적 약 <b>'+fmt(maxFloor)+'㎡</b> 이하<br>'+
     '경관/높이 <b>'+hText+'</b>'+(AUTO_LANDSCAPE_NAME?'<br>경관지구 자동조회: <b>'+AUTO_LANDSCAPE_NAME+'</b>':'')+(AUTO_HEIGHT_DISTRICT?'<br>고도지구 자동조회: <b>'+AUTO_HEIGHT_DISTRICT+'</b>':'')+'<br>'+
     '정북일조 <span class="lawwarn">'+daylight+'</span><br>'+
-    '<span class="lawdim">건축선·접도·대지 안의 공지·지구단위계획·문화재/교육환경 등은 아직 별도 확인 필요</span><br>'+
+    '지구단위계획 <b>'+(ADV_PLAN_RESULT?ADV_PLAN_RESULT.name:'해당 없음 / 데이터 확인 중')+'</b>'+(ADV_PLAN_RESULT?'<br><span class="lawok">필지 중첩 '+(ADV_PLAN_RESULT.ratio*100).toFixed(1)+'% · 결정도서 세부기준 추가 확인</span>':'')+'<br>'+
+    '도시계획시설 <b>'+(ADV_FACILITY_RESULT.length?ADV_FACILITY_RESULT.map(x=>x.name).join(', '):'저촉 없음 / 데이터 확인 중')+'</b>'+(ADV_FACILITY_RESULT.length?'<br><span class="lawwarn">'+ADV_FACILITY_RESULT.map(x=>x.name+' '+(x.ratio*100).toFixed(1)+'%').join(' / ')+'</span>':'')+'<br>'+
+    '<span class="lawdim">건축선·접도·대지 안의 공지·문화재/교육환경 등은 아직 별도 확인 필요</span><br>'+
     '<span class="lawdim">근거: 국토계획법·시행령, 건축법 제44·46·58·60·61조 및 시행령 제80조의2·제86조, 진주시 도시계획조례·건축조례. 본 결과는 허가판정이 아닌 자동 사전검토입니다.</span>';
 }
 $('lawMode').onclick=async()=>{if(lawMode)setLawMode(false);else await enterLawWorkspace()};
@@ -1300,15 +1336,16 @@ async function waitForMapReady(m,timeout=5000){
   try{
     message('진주시 공간정보 불러오는 중…');
     const dataPromise=Promise.all([
-      loadJson('data/jinju_districts.geojson?v=20261009-02'),
-      loadJson('data/jinju_boundary.geojson?v=20261009-02'),
-      loadJson('data/manifest.json?v=20261009-02'),
-      loadJson('data/zoning/manifest.json?v=20261009-02'),
-      loadJson('data/pnu_legal_names.json?v=20261009-02'),
-      loadGzipJson('data/jinju_road_addresses.json.gz')
+      loadJson('data/jinju_districts.geojson?v=20261009-03'),
+      loadJson('data/jinju_boundary.geojson?v=20261009-03'),
+      loadJson('data/manifest.json?v=20261009-03'),
+      loadJson('data/zoning/manifest.json?v=20261009-03'),
+      loadJson('data/pnu_legal_names.json?v=20261009-03'),
+      loadGzipJson('data/jinju_road_addresses.json.gz'),
+      loadJson('data/law/advanced_manifest.json?v=20261009-03')
     ]);
     await waitForMapReady(map);
-    [DISTRICTS,CITY,MANIFEST,ZONING_MANIFEST,PNU_LEGAL_NAMES_DATA,ROAD_ADDRESS_DATA]=await dataPromise;
+    [DISTRICTS,CITY,MANIFEST,ZONING_MANIFEST,PNU_LEGAL_NAMES_DATA,ROAD_ADDRESS_DATA,ADV_LAW_MANIFEST]=await dataPromise;
     PNU_LEGAL_NAMES=PNU_LEGAL_NAMES_DATA?.names||{};
     ROAD_ADDRESS_DB=ROAD_ADDRESS_DATA?.addresses||{};
     hideBaseBuildings(map);
