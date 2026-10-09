@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.08-27</title>
+<title>Jinju3D Local · v2026.10.09-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -36,10 +36,32 @@
 .message{bottom:18px}
 @media(max-width:760px){.drawer{width:min(320px,86vw)}.drawer-toggle.open{right:min(320px,86vw)}.top{max-width:230px}.map-info{left:14px;bottom:164px;max-width:74vw}.info-fab{bottom:118px}.message{bottom:18px}.panel{display:none!important}}
 
+
+.address-search{position:relative;margin-top:7px;width:min(320px,74vw)}
+.address-search input{width:100%;box-sizing:border-box;background:rgba(8,18,34,.92);border:1px solid rgba(255,255,255,.2);color:#f8fafc;border-radius:9px;padding:9px 31px 9px 10px;font-size:11px;outline:none}
+.address-search input:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.14)}
+.address-search input::placeholder{color:#8090a6}
+.address-search-clear{position:absolute;right:5px;top:5px;width:25px;height:25px;border:0;background:transparent;color:#94a3b8;padding:0;font-size:16px}
+.address-results{position:absolute;left:0;right:0;top:39px;display:none;max-height:310px;overflow:auto;background:rgba(7,15,29,.97);border:1px solid #334155;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.35);padding:4px;z-index:60}
+.address-results.show{display:block}
+.address-result{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:7px;padding:8px;color:#e5e7eb}
+.address-result:hover,.address-result:focus{background:#17243a}
+.address-result .main{font-size:10.5px;font-weight:750;line-height:1.4}.address-result .sub{font-size:8.5px;color:#94a3b8;line-height:1.35;margin-top:2px}
+.address-search-state{font-size:8px;color:#94a3b8;margin-top:3px;padding-left:2px;display:none}
+.top{overflow:visible}
+@media(max-width:760px){.address-search{width:min(270px,72vw)}}
+
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.08-27</span></h1></div>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.09-01</span></h1>
+  <div class="address-search">
+    <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
+    <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
+    <div id="addressResults" class="address-results"></div>
+    <div id="addressSearchState" class="address-search-state"></div>
+  </div>
+</div>
 <button id="drawerToggle" class="drawer-toggle" aria-label="기능 메뉴 열기">‹</button>
 <div id="drawer" class="drawer">
   <div class="drawer-head"><div class="drawer-title">Jin-Min-Map 도구</div><div class="drawer-sub">지도는 그대로 두고 필요한 기능만 열어 사용합니다.</div></div>
@@ -127,7 +149,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.08-27',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.09-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -263,12 +285,12 @@ async function loadRegister(){
   if(REGISTER_READY)return;
   if(REGISTER_LOADING)return REGISTER_LOADING;
   REGISTER_LOADING=(async()=>{
-    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261008-27');
+    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261009-01');
     REGISTER_BY_PNU.clear();REGISTER_BY_SHORT.clear();REGISTER_BY_FULL.clear();REGISTER_BY_DISTRICT.clear();
     const shards=REGISTER_INDEX.shards||[];
     for(let i=0;i<shards.length;i++){
       message(`건축물대장 실제 높이 자료 · ${i+1}/${shards.length}`);
-      const part=await loadJson(shards[i]+'?v=20261008-27');
+      const part=await loadJson(shards[i]+'?v=20261009-01');
       for(const r of part.records||[]){
         regAdd(REGISTER_BY_PNU,String(r[0]||''),r);
         regAdd(REGISTER_BY_SHORT,String(r[1]||''),r);
@@ -824,7 +846,89 @@ const ZONING_RULES={
 '보전관리':{bcr:20,far:60},'생산관리':{bcr:20,far:60},'계획관리':{bcr:40,far:100},'농림':{bcr:20,far:60},'자연환경보전':{bcr:20,far:50}
 };
 const LANDSCAPE_HEIGHT={'자연경관':20,'특화경관':20,'전통경관':12,'일반시가지경관':33,'조망권경관':24};
-let lawMode=false,SELECTED_PARCEL=null,AUTO_ZONE_SOURCE='',AUTO_LANDSCAPE_NAME='',AUTO_HEIGHT_DISTRICT='',ZONING_MANIFEST=null,CURRENT_PLANNING=null,CURRENT_PLANNING_ID='',AUTO_ZONE_SHARES=[],PNU_LEGAL_NAMES={},ROAD_ADDRESS_DB=null,ROAD_ADDRESS='',ROAD_ADDRESS_SOURCE='';
+let lawMode=false,SELECTED_PARCEL=null,AUTO_ZONE_SOURCE='',AUTO_LANDSCAPE_NAME='',AUTO_HEIGHT_DISTRICT='',ZONING_MANIFEST=null,CURRENT_PLANNING=null,CURRENT_PLANNING_ID='',AUTO_ZONE_SHARES=[],PNU_LEGAL_NAMES={},ROAD_ADDRESS_DB=null,ROAD_ADDRESS='',ROAD_ADDRESS_SOURCE='',ADDRESS_SEARCH_INDEX=null,ADDRESS_SEARCH_LOADING=null,ADDRESS_SEARCH_TIMER=null;
+
+
+function normalizeAddressQuery(v){return String(v||'').toLowerCase().replace(/경상남도|경남|진주시/g,'').replace(/\s+/g,'').trim()}
+async function ensureAddressSearchIndex(){
+  if(ADDRESS_SEARCH_INDEX)return ADDRESS_SEARCH_INDEX;
+  if(ADDRESS_SEARCH_LOADING)return ADDRESS_SEARCH_LOADING;
+  $('addressSearchState').style.display='block';$('addressSearchState').textContent='오프라인 주소 검색 DB 불러오는 중…';
+  ADDRESS_SEARCH_LOADING=loadGzipJson('data/jinju_address_search_index.json.gz').then(j=>{
+    ADDRESS_SEARCH_INDEX=j?.entries||[];
+    $('addressSearchState').textContent='오프라인 주소 '+ADDRESS_SEARCH_INDEX.length.toLocaleString()+'개 준비 완료';
+    setTimeout(()=>{if($('addressSearchState'))$('addressSearchState').style.display='none'},1400);
+    return ADDRESS_SEARCH_INDEX;
+  }).catch(e=>{
+    console.warn('주소 검색 DB 로드 실패',e);ADDRESS_SEARCH_INDEX=[];
+    $('addressSearchState').textContent='주소 검색 DB를 불러오지 못했습니다';return ADDRESS_SEARCH_INDEX;
+  }).finally(()=>ADDRESS_SEARCH_LOADING=null);
+  return ADDRESS_SEARCH_LOADING;
+}
+function closeAddressResults(){$('addressResults').classList.remove('show');$('addressResults').innerHTML=''}
+function renderAddressResults(rows){
+  const box=$('addressResults');box.innerHTML='';
+  if(!rows.length){box.innerHTML='<div style="padding:9px;font-size:9px;color:#94a3b8">검색 결과가 없습니다.</div>';box.classList.add('show');return}
+  for(const e of rows){
+    const b=document.createElement('button');b.className='address-result';b.type='button';
+    const main=e[5]||e[4]||e[0], sub=[e[4]&&e[5]?e[4]:'',e[0]].filter(Boolean).join(' · ');
+    b.innerHTML='<div class="main">'+escapeHtml(main)+'</div><div class="sub">'+escapeHtml(sub)+'</div>';
+    b.onclick=()=>goToAddressResult(e);
+    box.appendChild(b);
+  }
+  box.classList.add('show');
+}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+async function searchAddressNow(){
+  const raw=$('addressSearch').value.trim(),q=normalizeAddressQuery(raw);
+  if(q.length<2){closeAddressResults();return}
+  const arr=await ensureAddressSearchIndex();if(!q||!arr.length)return;
+  const scored=[];
+  for(const e of arr){
+    const aliases=String(e[6]||'');
+    if(!aliases.includes(q))continue;
+    let score=0;
+    const j=normalizeAddressQuery(e[4]),r=normalizeAddressQuery(e[5]),p=String(e[0]||'');
+    if(r===q||j===q||p===q)score=100;
+    else if(r.startsWith(q)||j.startsWith(q)||p.startsWith(q))score=80;
+    else if(r.includes(q))score=65;
+    else if(j.includes(q))score=60;
+    else score=40;
+    scored.push([score,e]);
+  }
+  scored.sort((a,b)=>b[0]-a[0]||(a[1][5]||a[1][4]).localeCompare(b[1][5]||b[1][4],'ko'));
+  renderAddressResults(scored.slice(0,10).map(x=>x[1]));
+}
+async function goToAddressResult(e){
+  closeAddressResults();
+  const [pnu,did,lon,lat,jibun,road]=e;
+  $('addressSearch').value=road||jibun||pnu;
+  message('주소 위치로 이동 중…');
+  try{
+    if(String(selectedId)!==String(did))await selectDistrict(String(did));
+    map.easeTo({center:[Number(lon),Number(lat)],zoom:18,pitch:0,bearing:0,duration:900});
+    if(!map.getSource('address-search-point')){
+      map.addSource('address-search-point',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+      map.addLayer({id:'address-search-halo',type:'circle',source:'address-search-point',paint:{'circle-radius':10,'circle-color':'rgba(96,165,250,.18)','circle-stroke-color':'#60a5fa','circle-stroke-width':2}});
+      map.addLayer({id:'address-search-dot',type:'circle',source:'address-search-point',paint:{'circle-radius':3.5,'circle-color':'#f8fafc'}});
+    }
+    map.getSource('address-search-point').setData({type:'FeatureCollection',features:[{type:'Feature',geometry:{type:'Point',coordinates:[Number(lon),Number(lat)]},properties:{}}]});
+    if(lawMode){
+      await ensureParcelData(true);
+      const pf=(currentParcels?.features||[]).find(f=>String(parcelPnu(f.properties||'')).replace(/\D/g,'')===String(pnu));
+      if(pf)selectParcelForLaw(pf);
+    }
+    message((road||jibun)+' 위치로 이동했습니다');
+  }catch(err){console.error(err);message('주소 위치 이동 실패')}
+}
+function initAddressSearch(){
+  const input=$('addressSearch');
+  input.addEventListener('focus',()=>ensureAddressSearchIndex());
+  input.addEventListener('input',()=>{clearTimeout(ADDRESS_SEARCH_TIMER);ADDRESS_SEARCH_TIMER=setTimeout(searchAddressNow,220)});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();clearTimeout(ADDRESS_SEARCH_TIMER);searchAddressNow()}else if(e.key==='Escape')closeAddressResults()});
+  $('addressSearchClear').onclick=()=>{input.value='';closeAddressResults();input.focus()};
+  document.addEventListener('pointerdown',e=>{if(!e.target.closest('.address-search'))closeAddressResults()});
+}
 
 function initLawControls(){
   const z=$('lawZone');
@@ -1163,11 +1267,11 @@ async function waitForMapReady(m,timeout=5000){
   try{
     message('진주시 공간정보 불러오는 중…');
     const dataPromise=Promise.all([
-      loadJson('data/jinju_districts.geojson?v=20261008-27'),
-      loadJson('data/jinju_boundary.geojson?v=20261008-27'),
-      loadJson('data/manifest.json?v=20261008-27'),
-      loadJson('data/zoning/manifest.json?v=20261008-27'),
-      loadJson('data/pnu_legal_names.json?v=20261008-27'),
+      loadJson('data/jinju_districts.geojson?v=20261009-01'),
+      loadJson('data/jinju_boundary.geojson?v=20261009-01'),
+      loadJson('data/manifest.json?v=20261009-01'),
+      loadJson('data/zoning/manifest.json?v=20261009-01'),
+      loadJson('data/pnu_legal_names.json?v=20261009-01'),
       loadGzipJson('data/jinju_road_addresses.json.gz')
     ]);
     await waitForMapReady(map);
@@ -1177,7 +1281,7 @@ async function waitForMapReady(m,timeout=5000){
     hideBaseBuildings(map);
     try{if(scanMap.loaded?.()||scanMap.isStyleLoaded?.()){hideBaseBuildings(scanMap);scanSourceName=vectorSourceName(scanMap)}}catch(e){}
     initTerrain();
-    initAdminLayers();initSelect();initLawControls();addSupplementLayers();
+    initAdminLayers();initSelect();initLawControls();initAddressSearch();addSupplementLayers();
     message(`준비 완료 · GIS ${MANIFEST.building_count.toLocaleString()}개 · ${APP_VERSION}`);
   }catch(e){
     console.error(e);
