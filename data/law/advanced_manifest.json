@@ -1,11 +1,11 @@
 {
-  "version": "2026-09-29",
-  "ready": false,
-  "district_plan": null,
-  "facilities": null,
+  "version": "2026-10-09",
+  "ready": true,
+  "district_plan": "data/law/jinju_district_plan.geojson.gz",
+  "facilities": "data/law/jinju_urban_facilities.geojson.gz",
   "source": {
     "district_plan": "국토교통부 토지이음 지구단위계획구역_20260929_전국.zip",
     "facilities": "국토교통부 토지이음 (도시계획)시설정보_20260929_전국.zip"
   },
-  "note": "진주시 추출 파일 생성 전. 앱은 이 manifest를 읽어 데이터가 준비되면 자동 판정하도록 구성."
+  "note": "진주시 KLIP 005/003 EPSG:4326 원본 압축 파일 연결 완료. 자동 사전검토용이며 법적 결정도서 확인 필요."
 }
