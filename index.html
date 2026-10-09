@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.09-04</title>
+<title>Jinju3D Local · v2026.10.09-05</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.09-04</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.09-05</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -155,7 +155,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.09-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.09-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -291,12 +291,12 @@ async function loadRegister(){
   if(REGISTER_READY)return;
   if(REGISTER_LOADING)return REGISTER_LOADING;
   REGISTER_LOADING=(async()=>{
-    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261009-04');
+    REGISTER_INDEX=await loadJson('data/register/index.json?v=20261009-05');
     REGISTER_BY_PNU.clear();REGISTER_BY_SHORT.clear();REGISTER_BY_FULL.clear();REGISTER_BY_DISTRICT.clear();
     const shards=REGISTER_INDEX.shards||[];
     for(let i=0;i<shards.length;i++){
       message(`건축물대장 실제 높이 자료 · ${i+1}/${shards.length}`);
-      const part=await loadJson(shards[i]+'?v=20261009-04');
+      const part=await loadJson(shards[i]+'?v=20261009-05');
       for(const r of part.records||[]){
         regAdd(REGISTER_BY_PNU,String(r[0]||''),r);
         regAdd(REGISTER_BY_SHORT,String(r[1]||''),r);
@@ -1291,6 +1291,7 @@ async function detectAdvancedLaw(parcel){
       .map(x=>({
         name:advancedFeatureName(x.f.properties||{},'facility'),
         ratio:x.ratio,
+        overlapAreaSqm:x.ratio*Math.max(turf.area(parcel),1),
         properties:x.f.properties||{}
       }));
   }catch(e){console.warn('고급 법규 공간중첩 판정 실패',e)}
@@ -1316,7 +1317,7 @@ function renderLawReview(){
     '경관/높이 <b>'+hText+'</b>'+(AUTO_LANDSCAPE_NAME?'<br>경관지구 자동조회: <b>'+AUTO_LANDSCAPE_NAME+'</b>':'')+(AUTO_HEIGHT_DISTRICT?'<br>고도지구 자동조회: <b>'+AUTO_HEIGHT_DISTRICT+'</b>':'')+'<br>'+
     '정북일조 <span class="lawwarn">'+daylight+'</span><br>'+
     '지구단위계획 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_PLAN_RESULT?ADV_PLAN_RESULT.name:'해당 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_PLAN_RESULT?'<br><span class="lawok">필지 중첩 '+(ADV_PLAN_RESULT.ratio*100).toFixed(1)+'% · '+(ADV_PLAN_RESULT.properties?.present_sn||ADV_PLAN_RESULT.properties?.mnum||'관리번호 미상')+' · 결정도서 세부기준 추가 확인</span>':'')+'<br>'+
-    '도시계획시설 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_FACILITY_RESULT.length?ADV_FACILITY_RESULT.map(x=>x.name).join(', '):'저촉 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_FACILITY_RESULT.length?'<br><span class="lawwarn">'+ADV_FACILITY_RESULT.map(x=>x.name+' '+(x.ratio*100).toFixed(1)+'%').join(' / ')+'</span>':'')+'<br>'+
+    '도시계획시설 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_FACILITY_RESULT.length?ADV_FACILITY_RESULT.map(x=>x.name).join(', '):'저촉 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_FACILITY_RESULT.length?'<br><span class="lawwarn">'+ADV_FACILITY_RESULT.map(x=>x.name+' 약 '+fmt(x.overlapAreaSqm)+'㎡ ('+(x.ratio*100).toFixed(1)+'%)').join(' / ')+'</span>':'')+'<br>'+
     '<span class="lawdim">건축선·접도·대지 안의 공지·문화재/교육환경 등은 아직 별도 확인 필요</span><br>'+
     '<span class="lawdim">근거: 국토계획법·시행령, 건축법 제44·46·58·60·61조 및 시행령 제80조의2·제86조, 진주시 도시계획조례·건축조례. 본 결과는 허가판정이 아닌 자동 사전검토입니다.</span>';
 }
@@ -1354,13 +1355,13 @@ async function waitForMapReady(m,timeout=5000){
   try{
     message('진주시 공간정보 불러오는 중…');
     const dataPromise=Promise.all([
-      loadJson('data/jinju_districts.geojson?v=20261009-04'),
-      loadJson('data/jinju_boundary.geojson?v=20261009-04'),
-      loadJson('data/manifest.json?v=20261009-04'),
-      loadJson('data/zoning/manifest.json?v=20261009-04'),
-      loadJson('data/pnu_legal_names.json?v=20261009-04'),
+      loadJson('data/jinju_districts.geojson?v=20261009-05'),
+      loadJson('data/jinju_boundary.geojson?v=20261009-05'),
+      loadJson('data/manifest.json?v=20261009-05'),
+      loadJson('data/zoning/manifest.json?v=20261009-05'),
+      loadJson('data/pnu_legal_names.json?v=20261009-05'),
       loadGzipJson('data/jinju_road_addresses.json.gz'),
-      loadJson('data/law/advanced_manifest.json?v=20261009-04')
+      loadJson('data/law/advanced_manifest.json?v=20261009-05')
     ]);
     await waitForMapReady(map);
     [DISTRICTS,CITY,MANIFEST,ZONING_MANIFEST,PNU_LEGAL_NAMES_DATA,ROAD_ADDRESS_DATA,ADV_LAW_MANIFEST]=await dataPromise;
