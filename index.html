@@ -1331,7 +1331,7 @@ function renderLawReview(){
     '용도지역 <b>'+zone+'</b>'+(AUTO_ZONE_SOURCE?'<br><span class="lawok">'+AUTO_ZONE_SOURCE+'</span>':'')+'<br>'+
     '건폐율 <b>'+r.bcr+'%</b> → 이 필지 기준 건축면적 약 <b>'+fmt(maxFoot)+'㎡</b> 이하<br>'+
     '용적률 <b>'+r.far+'%</b> → 이 필지 기준 연면적 약 <b>'+fmt(maxFloor)+'㎡</b> 이하<br>'+
-    '높이 제한 종합 <b>'+parcelHeightReview().map(x=>x[0]+': '+x[1]).join('<br>')+'</b><br>경관/높이 참고 <b>'+hText+'</b>'+(AUTO_LANDSCAPE_NAME?'<br>경관지구 자동조회: <b>'+AUTO_LANDSCAPE_NAME+'</b>':'')+(AUTO_HEIGHT_DISTRICT?'<br>고도지구 자동조회: <b>'+AUTO_HEIGHT_DISTRICT+'</b>':'')+'<br>'+
+    '높이 제한 종합 <b>'+parcelHeightReview().map(x=>x[0]+': '+x[1]).join('<br>')+'</b>'+(AUTO_LANDSCAPE_NAME?'<br>경관지구 자동조회: <b>'+AUTO_LANDSCAPE_NAME+'</b>':'')+(AUTO_HEIGHT_DISTRICT?'<br>고도지구 자동조회: <b>'+AUTO_HEIGHT_DISTRICT+'</b>':'')+'<br>'+
     '정북일조 <span class="lawwarn">'+daylight+'</span><br>'+
     '지구단위계획 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_PLAN_RESULT?ADV_PLAN_RESULT.name:'해당 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_PLAN_RESULT?'<br><span class="lawok">필지 중첩 '+(ADV_PLAN_RESULT.ratio*100).toFixed(1)+'% · '+(ADV_PLAN_RESULT.properties?.present_sn||ADV_PLAN_RESULT.properties?.mnum||'관리번호 미상')+' · 결정도서 세부기준 추가 확인</span>':'')+'<br>'+
     '도시계획시설 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_FACILITY_RESULT.length?ADV_FACILITY_RESULT.map(x=>x.name).join(', '):'저촉 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_FACILITY_RESULT.length?'<br><span class="lawwarn">'+ADV_FACILITY_RESULT.map(x=>x.name+' 약 '+fmt(x.overlapAreaSqm)+'㎡ ('+(x.ratio*100).toFixed(1)+'%)').join(' / ')+'</span>':'')+'<br>'+
