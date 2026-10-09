@@ -1,0 +1,29 @@
+name: Inspect Jinju height district metadata
+on:
+  push:
+    paths:
+      - '.github/workflows/inspect-height-district-metadata.yml'
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print height district features
+        shell: python
+        run: |
+          import json,gzip
+          from pathlib import Path
+          def geo_bbox(g):
+              coords=[]
+              def walk(z):
+                  if isinstance(z,list) and z and isinstance(z[0],(int,float)) and len(z)>1: coords.append(z[:2])
+                  elif isinstance(z,list):
+                      for q in z: walk(q)
+              walk(g.get('coordinates',[]))
+              return [min(x[0] for x in coords),min(x[1] for x in coords),max(x[0] for x in coords),max(x[1] for x in coords)] if coords else None
+          for area in ['38030690','38030710','38030740','38030750']:
+              path=Path('data/zoning')/(area+'.geojson.gz')
+              with gzip.open(path,'rt',encoding='utf-8') as fp: obj=json.load(fp)
+              hits=[f for f in obj['features'] if f.get('properties',{}).get('kind')=='height_district']
+              print('AUDIT '+json.dumps({'area_code':area,'count':len(hits),'features':[{'properties':f.get('properties',{}),'geometry_type':f.get('geometry',{}).get('type'),'bbox':geo_bbox(f.get('geometry',{}))} for f in hits]},ensure_ascii=False))
