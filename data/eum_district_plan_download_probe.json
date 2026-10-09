@@ -1,0 +1,393 @@
+{
+  "status": 200,
+  "length": 34570,
+  "found": true,
+  "snippet": "geYear: true,\r\n\t\tshowButtonPanel: true,\r\n\t\tyearRange: 'c-99:c+99',\r\n\t};\r\n\t\r\n\t$.datepicker.setDefaults($.datepicker.regional['ko']);\t  \r\n\t\r\n\t$(\"#startDate, #endDate\").datepicker({\r\n\t   showOn: \"focus\",\r\n\t   buttonImage: \"/web/images/gs/cal.png\",\r\n\t   buttonImageOnly: false,\r\n\t   buttonText: \"고시일 선택 달력\" //2017.02.07 수정\r\n\t});\r\n\t\r\n});\r\n\r\n//dx5.create({\r\n//\tmode: \"multi\", id: \"dext5\", parentId: \"dext5-container\"\r\n//});\r\n\r\n//setTimeout(function() {\r\n//\t$(\"div.download_layer\").hide();\r\n//\t$(\"div.layer_content\").css(\"left\",\"\");\r\n//}, 1000);\r\n\r\n</script>\r\n<form id=\"detailForm\" method=\"post\" action=\"/web/op/sv/svItemDet.jsp\">\r\n\t<input type=\"hidden\" name=\"currentPageNo\" value=\"1\">\r\n\t<input type=\"hidden\" name=\"selectType\" value=\"subject\">\r\n\t<input type=\"hidden\" name=\"keyword\" value=\"\">\r\n\r\n\t<input type=\"hidden\" name=\"dataCd\" value=\"005\">\r\n\t<input type=\"hidden\" name=\"dataTypeCd\" value=\"SHP\">\r\n\t<input type=\"hidden\" name=\"dataStartDate\" value=\"\">\r\n\t<input type=\"hidden\" name=\"dataEndDate\" value=\"2026-10-09\">\r\n\t<input type=\"hidden\" name=\"subCurrentPageNo\" value=\"1\">\r\n</form>\r\n\r\n<form id=\"listForm\" method=\"post\" action=\"/web/op/sv/svItemList.jsp\">\r\n\t<input type=\"hidden\" name=\"currentPageNo\" value=\"1\">\r\n\t<input type=\"hidden\" name=\"selectType\" value=\"subject\">\r\n\t<input type=\"hidden\" name=\"keyword\" value=\"\">\r\n</form>\r\n<div class=\"container\" id=\"m_conts\">\r\n\t<div class=\"bread_crumb\">\r\n\t\t<ol>\r\n\t\t\t<li class=\"home\"><a href=\"/web/am/amMain.jsp\">홈</a></li>\r\n\t\t\t<li><img src=\"/web/images/ac/arw.png\" alt=\"하위메뉴\"/><a href=\"/web/in/al/alBoardList.jsp\">정보마당</a></li>\r\n\t\t\t<li><div class=\"on\"><img src=\"/web/images/ac/arw.png\" alt=\"하위메뉴\"/><a href=\"/web/op/sv/svItemList.jsp\">데이터개방</a></div></li>\r\n\t\t</ol>\r\n\t</div>\r\n\t<h3 class=\"title\">데이터개방</h3>\t\t\t\r\n\t<div class=\"subcont\">\r\n\t\t<div class=\"dt_top\" style=\"background: #fff url(/web/images/op/sv_ico05.png) 0 50% no-repeat;\"> <!-- 클래스 추가 sv_ico01 ~ sv_ico09 -->\r\n\t\t\t<div class=\"svtit\">\r\n\t\t\t\t<p>\r\n\t\t\t\t\t<strong>지구단위계획구역</strong>\r\n\t\t\t\t\t\r\n\t\t\t\t\t\t<span class=\"shp\" onclick=\"$.fn.changeType('shp');\">SHP</span>\r\n\t\t\t\t\t\r\n\t\t\t\t\t\t<span class=\"csv\" onclick=\"$.fn.changeType('csv');\">CSV</span>\r\n\t\t\t\t\t\r\n\t\t\t\t</p>\r\n\t\t\t\t<p>도시ㆍ군 관리계획으로 결정된 지구단위계획구역의 현황 도형/속성정보 및 토지이용, 건축인허가 등의 상세 규제정보</p>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\r\n\t\t\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t\t<div class=\"dtypearea\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<label for=\"dataType\" class=\"mb\">자료유형</label>\r\n\t\t\t\t\t\t<select id=\"dataType\">\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<option value=\"SHP\" selected >\r\n\t\t\t\t\t\t\t\t\tSHP\r\n\t\t\t\t\t\t\t\t</option>\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<option value=\"CSV\"  >\r\n\t\t\t\t\t\t\t\t\tCSV\r\n\t\t\t\t\t\t\t\t</option>\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</select>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t\t<div class=\"al_search\">\r\n\t\t\t\t\t\t<span>\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<a href=\"/web/op/sv/manualDownload.jsp?fileNm=005-SHP.zip&fileNmKr=지구단위계획구역_SHP.zip\" >매뉴얼</a>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</span>\r\n\t\t\t\t\t\t<label for=\"startDate\" class=\"mb\">기준일자</label>\r\n\t\t\t\t\t\t<input type=\"text\" id=\"startDate\" readonly value=\"\"/> <label for=\"endDate\" class=\"mb\">-</label><input type=\"text\" id=\"endDate\" value=\"2026-10-09\" readonly/>\r\n\t\t\t\t\t\t\t<!-- <span><a class=\"search\" href=\"javascript:void(0);\" onclick=\"$.fn.search();\">검색</a></span>  -->\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\r\n\t\t\t\t\r\n\t\t\r\n\t\t\t\t<div class=\"tbl02 tbl_svitem\">\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t<table id=\"fileTb\">\r\n\t\t\t\t\t\t<caption>기준일자별 파일 다운로드</caption>\r\n\t\t\t\t\t\t<colgroup>\r\n\t\t\t\t\t\t\t<col style=\"width: 100px;\" class=\"mb\">\r\n\t\t\t\t\t\t\t<col style=\"width: 120px;\">\r\n\t\t\t\t\t\t\t<col >\r\n\t\t\t\t\t\t\t<col style=\"width: 200px;\" class=\"mb\">\r\n\t\t\t\t\t\t\t<col style=\"width: 10%;\">\r\n\t\t\t\t\t\t</colgroup>\r\n\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<th scope=\"col\" class=\"mb\">번호</th>\r\n\t\t\t\t\t\t\t\t<th scope=\"col\" class=\"\">기준일자</th>\r\n\t\t\t\t\t\t\t\t<th scope=\"col\">파일명</th>\r\n\t\t\t\t\t\t\t\t<th scope=\"col\" class=\"mb\">용량</th>\r\n\t\t\t\t\t\t\t\t<th scope=\"col\"><span class=\"mb\">내려받기</span><span class=\"pc\">다운</span></th>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t<tbody>\t\t\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">35</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-09-29</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260929_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">156.37MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('672');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">34</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-08-19</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260819_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">162.74MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('662');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">33</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-07-23</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260723_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">163.12MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('649');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">32</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-06-22</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260622_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">158.91MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('636');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">31</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-05-13</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260513_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">155.75MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('614');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">30</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-04-09</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260409_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">281.74MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('605');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">29</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-02-23</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260223_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">279.89MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('573');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">28</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-02-20</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260220_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">129.13MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('552');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">27</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-01-15</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260115_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">276.74MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('539');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">26</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2026-01-12</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20260112_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">233.06MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('529');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">25</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2025-12-08</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20251208_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">230.89MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('511');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">24</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2025-11-19</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20251119_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">128.56MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('498');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">23</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"\">2025-10-27</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"left\">지구단위계획구역_20251027_전국.zip</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\" title=\"\">233.03MB</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td><span class=\"ico_svdw\"><a href=\"javascript:void(0);\" onclick=\"$.fn.dataDownload('478');\"><em class=\"mb\">내려받기</em></a></span></td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr class=\"center\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"mb\">22</td>\r",
+  "forms": [
+    {
+      "action": "/web/op/sv/svItemDet.jsp",
+      "method": "post",
+      "id": "detailForm",
+      "name": null,
+      "inputs": [
+        {
+          "name": "currentPageNo",
+          "value": "1",
+          "type": "hidden"
+        },
+        {
+          "name": "selectType",
+          "value": "subject",
+          "type": "hidden"
+        },
+        {
+          "name": "keyword",
+          "value": "",
+          "type": "hidden"
+        },
+        {
+          "name": "dataCd",
+          "value": "005",
+          "type": "hidden"
+        },
+        {
+          "name": "dataTypeCd",
+          "value": "SHP",
+          "type": "hidden"
+        },
+        {
+          "name": "dataStartDate",
+          "value": "",
+          "type": "hidden"
+        },
+        {
+          "name": "dataEndDate",
+          "value": "2026-10-09",
+          "type": "hidden"
+        },
+        {
+          "name": "subCurrentPageNo",
+          "value": "1",
+          "type": "hidden"
+        }
+      ]
+    },
+    {
+      "action": "/web/op/sv/svItemList.jsp",
+      "method": "post",
+      "id": "listForm",
+      "name": null,
+      "inputs": [
+        {
+          "name": "currentPageNo",
+          "value": "1",
+          "type": "hidden"
+        },
+        {
+          "name": "selectType",
+          "value": "subject",
+          "type": "hidden"
+        },
+        {
+          "name": "keyword",
+          "value": "",
+          "type": "hidden"
+        }
+      ]
+    },
+    {
+      "action": "/web/ac/grade.jsp",
+      "method": "post",
+      "id": null,
+      "name": "grade_frm",
+      "inputs": [
+        {
+          "name": "mode",
+          "value": "createGrade",
+          "type": "hidden"
+        },
+        {
+          "name": "SA_CD",
+          "value": "",
+          "type": "hidden"
+        },
+        {
+          "name": "SA_CD2",
+          "value": "",
+          "type": "hidden"
+        },
+        {
+          "name": "SA_CD3",
+          "value": "",
+          "type": "hidden"
+        },
+        {
+          "name": "SA_DIV",
+          "value": "O1",
+          "type": "hidden"
+        },
+        {
+          "name": "ipaddr",
+          "value": "20.161.67.211",
+          "type": "hidden"
+        },
+        {
+          "name": "gradeDesc",
+          "value": "",
+          "type": "hidden"
+        }
+      ]
+    }
+  ],
+  "hits": [
+    {
+      "tag": "html",
+      "id": null,
+      "class": null,
+      "href": null,
+      "onclick": null,
+      "text": "정보마당 > 데이터개방 다운로드 목록정보 | 토지이음 본문 바로가기 주메뉴 바로가기 토지이음 모바일 처음오셨나요? 토지이용계획 토지이용계획 열람 규제법령집 도시계획 도시계획 열람 주민의견청취 공람 인터넷 주민의견 청취 도시·군관리계획 입안 제안 도시계획통계 규제안내서 쉬운 규제안내서 쉬운 인허가사례 고시정보 고시정보 정보마당 공지사항 질의회신사례 용어사전 자료실 데이터개방 관련사이트 개인정보처리방침 저작권 정책 의견수렴 문의처 우)30103 세종특별자치시 도움6로 11 국토교통부 국토도시실 도시정책관 도시정책과 이메일: luris@"
+    },
+    {
+      "tag": "body",
+      "id": null,
+      "class": [
+        "ebbody"
+      ],
+      "href": null,
+      "onclick": null,
+      "text": "본문 바로가기 주메뉴 바로가기 토지이음 모바일 처음오셨나요? 토지이용계획 토지이용계획 열람 규제법령집 도시계획 도시계획 열람 주민의견청취 공람 인터넷 주민의견 청취 도시·군관리계획 입안 제안 도시계획통계 규제안내서 쉬운 규제안내서 쉬운 인허가사례 고시정보 고시정보 정보마당 공지사항 질의회신사례 용어사전 자료실 데이터개방 관련사이트 개인정보처리방침 저작권 정책 의견수렴 문의처 우)30103 세종특별자치시 도움6로 11 국토교통부 국토도시실 도시정책관 도시정책과 이메일: luris@korea.kr 02-838-4405 이 누리집은 대한"
+    },
+    {
+      "tag": "script",
+      "id": null,
+      "class": null,
+      "href": null,
+      "onclick": null,
+      "text": "var updownUrl = \"https://map.eum.go.kr:8002\";"
+    },
+    {
+      "tag": "script",
+      "id": null,
+      "class": null,
+      "href": null,
+      "onclick": null,
+      "text": "<!--\r\nvar context = \"/web\";\r\n$(document).ready(function(){\r\n\t$.datepicker.regional['ko'] = {\r\n\t\tcloseText: '닫기',\r\n\t\tprevText: '이전달',\r\n\t\tnextText: '다음달',\r\n\t\tcurrentText: '오늘',\r\n\t\tmonthNames: ['1월(JAN)','2월(FEB)','3월(MAR)','4월(APR)','5월(MAY)','6월(JUN)',\r\n\t\t'7월(JUL)','8월(AUG)','9월(SEP)','10월(OCT)','11월"
+    },
+    {
+      "tag": "div",
+      "id": "m_conts",
+      "class": [
+        "container"
+      ],
+      "href": null,
+      "onclick": null,
+      "text": "홈 정보마당 데이터개방 데이터개방 지구단위계획구역 SHP CSV 도시ㆍ군 관리계획으로 결정된 지구단위계획구역의 현황 도형/속성정보 및 토지이용, 건축인허가 등의 상세 규제정보 자료유형 SHP CSV 매뉴얼 기준일자 - 기준일자별 파일 다운로드 번호 기준일자 파일명 용량 내려받기 다운 35 2026-09-29 지구단위계획구역_20260929_전국.zip 156.37MB 내려받기 34 2026-08-19 지구단위계획구역_20260819_전국.zip 162.74MB 내려받기 33 2026-07-23 지구단위계획구역_20260723_전국."
+    },
+    {
+      "tag": "div",
+      "id": null,
+      "class": [
+        "subcont"
+      ],
+      "href": null,
+      "onclick": null,
+      "text": "지구단위계획구역 SHP CSV 도시ㆍ군 관리계획으로 결정된 지구단위계획구역의 현황 도형/속성정보 및 토지이용, 건축인허가 등의 상세 규제정보 자료유형 SHP CSV 매뉴얼 기준일자 - 기준일자별 파일 다운로드 번호 기준일자 파일명 용량 내려받기 다운 35 2026-09-29 지구단위계획구역_20260929_전국.zip 156.37MB 내려받기 34 2026-08-19 지구단위계획구역_20260819_전국.zip 162.74MB 내려받기 33 2026-07-23 지구단위계획구역_20260723_전국.zip 163.12MB 내려받기 3"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "/web/op/sv/manualDownload.jsp?fileNm=005-SHP.zip&fileNmKr=지구단위계획구역_SHP.zip",
+      "onclick": null,
+      "text": "매뉴얼"
+    },
+    {
+      "tag": "div",
+      "id": null,
+      "class": [
+        "tbl02",
+        "tbl_svitem"
+      ],
+      "href": null,
+      "onclick": null,
+      "text": "기준일자별 파일 다운로드 번호 기준일자 파일명 용량 내려받기 다운 35 2026-09-29 지구단위계획구역_20260929_전국.zip 156.37MB 내려받기 34 2026-08-19 지구단위계획구역_20260819_전국.zip 162.74MB 내려받기 33 2026-07-23 지구단위계획구역_20260723_전국.zip 163.12MB 내려받기 32 2026-06-22 지구단위계획구역_20260622_전국.zip 158.91MB 내려받기 31 2026-05-13 지구단위계획구역_20260513_전국.zip 155.75MB 내려받"
+    },
+    {
+      "tag": "table",
+      "id": "fileTb",
+      "class": null,
+      "href": null,
+      "onclick": null,
+      "text": "기준일자별 파일 다운로드 번호 기준일자 파일명 용량 내려받기 다운 35 2026-09-29 지구단위계획구역_20260929_전국.zip 156.37MB 내려받기 34 2026-08-19 지구단위계획구역_20260819_전국.zip 162.74MB 내려받기 33 2026-07-23 지구단위계획구역_20260723_전국.zip 163.12MB 내려받기 32 2026-06-22 지구단위계획구역_20260622_전국.zip 158.91MB 내려받기 31 2026-05-13 지구단위계획구역_20260513_전국.zip 155.75MB 내려받"
+    },
+    {
+      "tag": "tbody",
+      "id": null,
+      "class": null,
+      "href": null,
+      "onclick": null,
+      "text": "35 2026-09-29 지구단위계획구역_20260929_전국.zip 156.37MB 내려받기 34 2026-08-19 지구단위계획구역_20260819_전국.zip 162.74MB 내려받기 33 2026-07-23 지구단위계획구역_20260723_전국.zip 163.12MB 내려받기 32 2026-06-22 지구단위계획구역_20260622_전국.zip 158.91MB 내려받기 31 2026-05-13 지구단위계획구역_20260513_전국.zip 155.75MB 내려받기 30 2026-04-09 지구단위계획구역_20260409_전국."
+    },
+    {
+      "tag": "tr",
+      "id": null,
+      "class": [
+        "center"
+      ],
+      "href": null,
+      "onclick": null,
+      "text": "35 2026-09-29 지구단위계획구역_20260929_전국.zip 156.37MB 내려받기"
+    },
+    {
+      "tag": "td",
+      "id": null,
+      "class": [
+        "left"
+      ],
+      "href": null,
+      "onclick": null,
+      "text": "지구단위계획구역_20260929_전국.zip"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('672');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('662');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('649');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('636');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('614');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('605');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('573');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('552');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('539');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('529');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('511');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('498');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('478');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('441');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('426');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('420');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('410');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('379');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('370');",
+      "text": "내려받기"
+    },
+    {
+      "tag": "a",
+      "id": null,
+      "class": null,
+      "href": "javascript:void(0);",
+      "onclick": "$.fn.dataDownload('361');",
+      "text": "내려받기"
+    }
+  ]
+}
