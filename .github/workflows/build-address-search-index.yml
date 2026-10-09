@@ -1,0 +1,26 @@
+name: Build offline address search index
+on:
+  push:
+    paths:
+      - 'tools/build_address_search_index.py'
+      - '.github/workflows/build-address-search-index.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install shapely
+      - run: python tools/build_address_search_index.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/jinju_address_search_index.json.gz
+          git commit -m "Build offline Jinju address search index [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
