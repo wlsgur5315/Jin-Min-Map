@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.11-03</title>
+<title>Jinju3D Local · v2026.10.11-04</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.11-03</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.11-04</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -155,7 +155,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.11-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.11-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -827,6 +827,26 @@ function planningEvidence(){
   height:AUTO_HEIGHT_DISTRICT?'중첩 검출 · '+AUTO_HEIGHT_DISTRICT+(matched?.height?.length?' ('+(matched.height[0].ratio*100).toFixed(1)+'%)':'')+' · '+(matched?.height?.length?'읍면동 토지이음 SHP':'VWorld 보조자료'):local?'자료 기준 중첩 미검출 · 최종 결정고시 확인 필요':'자료 미로드/미확인'
  };
 }
+function northDaylightSimulation(parcel,zone){
+ if(!/전용주거|일반주거/.test(zone||''))return '정북일조 일반 주거지역 모델 비대상 · 기타 채광기준 확인';
+ try{
+  const b=turf.bbox(parcel),dx=b[2]-b[0],dy=b[3]-b[1];
+  if(dx<=0||dy<=0)return '필지 형상 오류 · 계산 불가';
+  const boundary=turf.polygonToLine(parcel),samples=[];
+  for(let row=1;row<=5;row++)for(let col=1;col<=5;col++){
+   const x=b[0]+dx*col/6,y=b[1]+dy*row/6,pt=turf.point([x,y]);
+   if(!turf.booleanPointInPolygon(pt,parcel))continue;
+   const ray=turf.lineString([[x,y],[x,b[3]+Math.max(dy,.001)]]);
+   const north=turf.lineIntersect(ray,boundary).features.map(f=>f.geometry.coordinates[1]-y).filter(v=>v>1e-9);
+   if(!north.length)continue;
+   const d=turf.distance(pt,turf.point([x,y+Math.min(...north)]),{units:'kilometers'})*1000;
+   samples.push({d,h:d<1.5?null:d<=5?10:2*d});
+  }
+  if(!samples.length)return '필지 내부 시험점 없음 · 계산 불가';
+  const hs=samples.filter(v=>v.h!==null).map(v=>v.h);
+  return '북측 필지경계 가정 5×5 표본 '+samples.length+'점 · 높이 모델 '+(hs.length?Math.min(...hs).toFixed(1)+'~'+Math.max(...hs).toFixed(1)+'m ('+hs.length+'점)':'이격 1.5m 충족 표본 없음')+' · 도로·공지 특례/실제 건물배치/법정 기준선 미검증 (허용높이 아님)';
+ }catch(e){console.warn('정북일조 모형 오류',e);return '시뮬레이션 계산 실패 · 별도 확인'}
+}
 function parcelHeightReview(){
  const zone=$('lawZone')?.value||'', land=$('lawLandscape')?.value||'';
  const local=!!(CURRENT_PLANNING?.features?.length&&CURRENT_PLANNING_ID===selectedId);
@@ -840,6 +860,7 @@ function parcelHeightReview(){
    const n=isNonUrban&&['자연경관','특화경관'].includes(selectedLand)?12:LANDSCAPE_HEIGHT[selectedLand];
    landscape=n+'m 이하 · 진주시 도시계획조례 제40조 기본기준'+(autoLand?' [공간 중첩 검출]':' [사용자 선택 / 공간 미확인]');
  }else if(local)landscape='읍면동 SHP 중첩 미검출 · 지구 적용 여부 및 자료 완전성 확인 필요';
+ const model=SELECTED_PARCEL?northDaylightSimulation(SELECTED_PARCEL,zone):'필지 미선택';
  const daylight=/전용주거|일반주거/.test(zone)
   ?'높이 10m 이하 부분: 북측 경계에서 1.5m 이상; 10m 초과 부분: 높이의 1/2 이상 이격(역산 H≤2D). 실제 배치·예외·기준 높이 확인 필요'
   :'전용·일반주거지역 정북일조 직접 적용 여부 및 다른 채광 규정 검토 필요';
@@ -847,7 +868,7 @@ function parcelHeightReview(){
   ['경관지구',landscape,'진주시 도시계획조례 제40조'],
   ['고도지구',AUTO_HEIGHT_DISTRICT?'지구 중첩 검출: '+AUTO_HEIGHT_DISTRICT+' · 최고높이(m)/층수는 결정고시 미연결':'최고고도지구 공간판정 또는 결정고시 미확인','도시관리계획 결정고시·지형도면'],
   ['가로구역별 최고높이','지정·공고 자료 미연결 · 숫자 산정 불가','건축법 제60조'],
-  ['정북일조',daylight,'건축법 제61조, 시행령 제86조, 진주시 건축조례 제41조'],
+  ['정북일조',daylight+' · '+model,'건축법 제61조, 시행령 제86조, 진주시 건축조례 제41조'],
   ['지구단위계획',ADV_PLAN_RESULT?'구역 중첩: '+ADV_PLAN_RESULT.name+' · 최고높이/최고층수 결정도서 미연결':'구역 판정 및 높이 세부기준 확인 필요','지구단위계획 결정도서']
  ];
  const confirmed=!!(zone&&AUTO_LANDSCAPE_NAME&&selectedLand===landscapeRuleKey(AUTO_LANDSCAPE_NAME)&&LANDSCAPE_HEIGHT[selectedLand]);
@@ -867,7 +888,7 @@ function printLawReport(){
   w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>Jin-Min-Map 자동 사전검토 결과</title><style>
   body{font-family:Arial,"Noto Sans KR",sans-serif;color:#111827;margin:36px;line-height:1.55}h1{font-size:22px;margin-bottom:4px}.sub{color:#6b7280;font-size:11px;margin-bottom:24px}.box{border:1px solid #d1d5db;border-radius:10px;padding:14px;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left}th{width:34%;background:#f9fafb}.note{font-size:10px;color:#6b7280;margin-top:16px}@media print{body{margin:18mm}.no-print{display:none}}</style></head><body>
   <h1>Jin-Min-Map 자동 사전검토 결과</h1><div class="sub">${esc(district)} · ${new Date().toLocaleString('ko-KR')} · ${APP_VERSION}</div>
-  <div class="box"><table><tr><th>지번주소</th><td>${esc(ap.address)}</td></tr><tr><th>도로명주소</th><td>${esc(ROAD_ADDRESS||'해당 필지 도로명주소 없음 / 미확인')}${ROAD_ADDRESS_SOURCE?' · '+esc(ROAD_ADDRESS_SOURCE):''}</td></tr><tr><th>지번</th><td>${esc(ap.lot)}</td></tr><tr><th>지목</th><td>${esc(ap.landClass)}</td></tr><tr><th>PNU</th><td>${esc(ap.pnu)}</td></tr><tr><th>대지면적</th><td>${fmt(area)}㎡</td></tr><tr><th>용도지역</th><td>${esc(zone)}</td></tr><tr><th>용도지역 판정</th><td>${esc(zoneShares)}</td></tr><tr><th>건폐율</th><td>${rule?rule.bcr+'%':'확인 필요'}${rule?' · 최대 건축면적 약 '+fmt(maxFoot)+'㎡':''}</td></tr><tr><th>용적률</th><td>${rule?rule.far+'%':'확인 필요'}${rule?' · 최대 연면적 약 '+fmt(maxFloor)+'㎡':''}</td></tr><tr><th>용도지역 판정 근거</th><td>${esc(evidence.zone)}</td></tr><tr><th>경관지구 판정</th><td>${esc(evidence.landscape)}</td></tr><tr><th>고도지구 판정</th><td>${esc(evidence.height)}</td></tr><tr><th>건축물 높이 제한 종합</th><td>${esc(parcelHeightReview().summary)}<hr>${parcelHeightReview().rows.map(x=>'<strong>'+esc(x[0])+'</strong>: '+esc(x[1])+' <small>['+esc(x[2])+']</small>').join('<br>')}</td></tr><tr><th>인접 도시계획도로(참고)</th><td>${esc(plannedRoadDetail(SELECTED_PARCEL))}</td></tr><tr><th>정북일조</th><td>${/주거/.test(zone)?'10m 이하 북측 1.5m 이상, 10m 초과 부분 H≤2D 기준 사전검토 필요':'건축물 용도 및 지역에 따른 적용 여부 추가 확인'}</td></tr></table></div>
+  <div class="box"><table><tr><th>지번주소</th><td>${esc(ap.address)}</td></tr><tr><th>도로명주소</th><td>${esc(ROAD_ADDRESS||'해당 필지 도로명주소 없음 / 미확인')}${ROAD_ADDRESS_SOURCE?' · '+esc(ROAD_ADDRESS_SOURCE):''}</td></tr><tr><th>지번</th><td>${esc(ap.lot)}</td></tr><tr><th>지목</th><td>${esc(ap.landClass)}</td></tr><tr><th>PNU</th><td>${esc(ap.pnu)}</td></tr><tr><th>대지면적</th><td>${fmt(area)}㎡</td></tr><tr><th>용도지역</th><td>${esc(zone)}</td></tr><tr><th>용도지역 판정</th><td>${esc(zoneShares)}</td></tr><tr><th>건폐율</th><td>${rule?rule.bcr+'%':'확인 필요'}${rule?' · 최대 건축면적 약 '+fmt(maxFoot)+'㎡':''}</td></tr><tr><th>용적률</th><td>${rule?rule.far+'%':'확인 필요'}${rule?' · 최대 연면적 약 '+fmt(maxFloor)+'㎡':''}</td></tr><tr><th>용도지역 판정 근거</th><td>${esc(evidence.zone)}</td></tr><tr><th>경관지구 판정</th><td>${esc(evidence.landscape)}</td></tr><tr><th>고도지구 판정</th><td>${esc(evidence.height)}</td></tr><tr><th>건축물 높이 제한 종합</th><td>${esc(parcelHeightReview().summary)}<hr>${parcelHeightReview().rows.map(x=>'<strong>'+esc(x[0])+'</strong>: '+esc(x[1])+' <small>['+esc(x[2])+']</small>').join('<br>')}</td></tr><tr><th>인접 도시계획도로(참고)</th><td>${esc(plannedRoadDetail(SELECTED_PARCEL))}</td></tr><tr><th>정북일조 표본 시뮬레이션</th><td>${esc(northDaylightSimulation(SELECTED_PARCEL,zone))}</td></tr><tr><th>정북일조</th><td>${/주거/.test(zone)?'10m 이하 북측 1.5m 이상, 10m 초과 부분 H≤2D 기준 사전검토 필요':'건축물 용도 및 지역에 따른 적용 여부 추가 확인'}</td></tr></table></div>
   <div class="note">본 결과는 건축허가 가능 여부를 확정하는 문서가 아니라 초기설계를 위한 자동 사전검토 자료입니다. 건축선·접도·대지 안의 공지·지구단위계획·문화재·교육환경 등 개별 규제는 별도 확인이 필요합니다.<br>주요 자료: GIS건물통합정보, 건축물대장, 연속지적도/PNU, 국토교통부 토지이음 용도지역정보, OpenStreetMap, Overture, Terrarium DEM.</div>
   <button class="no-print" onclick="window.print()" style="margin-top:20px;padding:10px 18px">인쇄 / PDF 저장</button></body></html>`);
   w.document.close();
@@ -1454,7 +1475,7 @@ function renderLawReview(){
     '용적률 <b>'+r.far+'%</b> → 이 필지 기준 연면적 약 <b>'+fmt(maxFloor)+'㎡</b> 이하<br>'+
     '<b>건축물 높이 제한 종합</b><br><span class="lawwarn">'+parcelHeightReview().summary+'</span><br>'+parcelHeightReview().rows.map(x=>'<b>'+x[0]+'</b>: '+x[1]+' <span class="lawdim">('+x[2]+')</span>').join('<br>')+(AUTO_LANDSCAPE_NAME?'<br>경관지구 자동조회: <b>'+AUTO_LANDSCAPE_NAME+'</b>':'')+(AUTO_HEIGHT_DISTRICT?'<br>고도지구 자동조회: <b>'+AUTO_HEIGHT_DISTRICT+'</b>':'')+'<br>'+
     '도로·높이 검토 <span class="lawdim">'+plannedRoadDetail(SELECTED_PARCEL)+'</span><br>'+ 
-    '정북일조 <span class="lawwarn">'+daylight+'</span><br>'+
+    '정북일조 <span class="lawwarn">'+daylight+'</span><br>'+ '정북일조 표본 시뮬레이션 <span class="lawdim">'+northDaylightSimulation(SELECTED_PARCEL,zone)+'</span><br>'+
     '지구단위계획 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_PLAN_RESULT?ADV_PLAN_RESULT.name:'해당 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_PLAN_RESULT?'<br><span class="lawok">필지 중첩 '+(ADV_PLAN_RESULT.ratio*100).toFixed(1)+'% · '+(ADV_PLAN_RESULT.properties?.present_sn||ADV_PLAN_RESULT.properties?.mnum||'관리번호 미상')+' · 결정도서 세부기준 추가 확인</span>':'')+'<br>'+
     '도시계획시설 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_FACILITY_RESULT.length?ADV_FACILITY_RESULT.map(x=>x.name).join(', '):'저촉 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_FACILITY_RESULT.length?'<br><span class="lawwarn">'+ADV_FACILITY_RESULT.map(x=>x.name+' 약 '+fmt(x.overlapAreaSqm)+'㎡ ('+(x.ratio*100).toFixed(1)+'%)').join(' / ')+'</span>':'')+'<br>'+
     '<span class="lawdim">건축선·접도·대지 안의 공지·문화재/교육환경 등은 아직 별도 확인 필요</span><br>'+
