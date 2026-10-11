@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "status": "reference_only_not_automatically_applied",
+  "plan": "진주 평거3지구 지구단위계획",
+  "source": {
+    "notice": "진주시 고시 제2025-178호",
+    "notice_date": "2025-09-25",
+    "source_document": "진주시고시제2025-178호.pdf",
+    "supporting_maps": [
+      "도시관리계획(평거3지구 지구단위계획) 결정(변경) 및 지형도면고시도.pdf",
+      "평거3지구 건축물 등에 관한 결정도.pdf (2023년, 최신성 대조 필요)"
+    ]
+  },
+  "warning": "개별 획지와 PNU 사이의 위치·지번 검증 전에는 필지 선택 자동판정 및 허용높이 계산에 사용하지 말 것. 최고층수와 법정 높이(m)는 별개임.",
+  "rules": [
+    {
+      "lots": [
+        "A1-2",
+        "A2-2"
+      ],
+      "max_floors": 15,
+      "source_pdf_page": 15
+    },
+    {
+      "lots": [
+        "A2-4",
+        "A2-5"
+      ],
+      "max_floors": 5,
+      "source_pdf_pages": [
+        15,
+        16
+      ]
+    },
+    {
+      "lots": [
+        "A3-1",
+        "A4-2"
+      ],
+      "max_floors": 15,
+      "conditional_max_floors": 10,
+      "condition": "단독주택경계로부터 40m 이내",
+      "source_pdf_pages": [
+        16,
+        17
+      ]
+    },
+    {
+      "lots": [
+        "A2-6",
+        "B16"
+      ],
+      "max_floors": 6,
+      "source_pdf_pages": [
+        17,
+        19
+      ]
+    },
+    {
+      "lot_group": "B구역 지정 단독주택용지",
+      "max_floors": 2,
+      "condition": "원문에 기재된 해당 세부 획지 범위에 한정; 개별 PNU 매칭 미검증",
+      "source_pdf_page": 18
+    },
+    {
+      "lot_group": "C구역 일부 상업용지",
+      "min_floors": 5,
+      "condition": "해당 세부 획지에 한정; 최고층수 아님",
+      "source_pdf_pages": [
+        20,
+        21
+      ]
+    }
+  ],
+  "geospatial_pnu_mapping_ready": false,
+  "applicable_to_height_district_5_features": false,
+  "followups": [
+    "획지별 구분과 현행 지번/PNU 대조",
+    "2023 결정도와 2025 변경고시 사이의 최신성 대조",
+    "최고층수 조건의 공간범위 검증",
+    "고도지구 5개 Feature와 혼용 금지"
+  ]
+}
