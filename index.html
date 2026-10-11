@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.11-02</title>
+<title>Jinju3D Local · v2026.10.11-03</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.11-02</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.11-03</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -155,7 +155,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.11-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.11-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1355,25 +1355,60 @@ async function loadPlannedRoads(){
  }).catch(e=>{PLANNED_ROADS_LOAD=null;console.warn('도로 데이터 로드 실패',e);return false});
  return PLANNED_ROADS_LOAD;
 }
+function roadParcelSamples(parcel){
+ // Sample exterior parcel edges at roughly 2m intervals, with an explicit budget.
+ const g=parcel.geometry,polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];
+ const segments=[];
+ for(const poly of polys){const ring=poly[0]||[];for(let i=1;i<ring.length;i++){const a=ring[i-1],b=ring[i];const d=turf.distance(turf.point(a),turf.point(b),{units:'meters'});if(d>0.01)segments.push({a,b,d})}}
+ const total=segments.reduce((n,v)=>n+v.d,0),step=Math.max(2,total/600),samples=[];
+ for(const v of segments){const n=Math.max(1,Math.ceil(v.d/step));for(let i=0;i<n;i++){const t=(i+.5)/n; samples.push({pt:[v.a[0]+t*(v.b[0]-v.a[0]),v.a[1]+t*(v.b[1]-v.a[1])],a:v.a,b:v.b,meters:v.d/n})}}
+ return samples;
+}
+function localRoadWidth(road,sample){
+ // Cross the road along the normal to the selected parcel-edge segment.
+ const p=sample.pt,lat=p[1]*Math.PI/180,scaleX=111320*Math.cos(lat),scaleY=111320;
+ const vx=(sample.b[0]-sample.a[0])*scaleX,vy=(sample.b[1]-sample.a[1])*scaleY,len=Math.hypot(vx,vy);
+ if(len<.01)return null;
+ const nx=-vy/len,ny=vx/len,range=40;
+ const line=turf.lineString([[p[0]-nx*range/scaleX,p[1]-ny*range/scaleY],[p[0]+nx*range/scaleX,p[1]+ny*range/scaleY]]);
+ const crossings=turf.lineIntersect(line,turf.polygonToLine(road));
+ const pos=crossings.features.map(f=>( (f.geometry.coordinates[0]-p[0])*scaleX*nx+(f.geometry.coordinates[1]-p[1])*scaleY*ny )).filter(Number.isFinite).sort((a,b)=>a-b);
+ // The interval adjacent to the parcel boundary must actually lie inside the road.
+ let best=null,dist=Infinity;
+ for(let i=1;i<pos.length;i++){
+  const a=pos[i-1],b=pos[i],w=b-a;
+  if(w<2||w>65)continue;
+  const mid=(a+b)/2,pt=turf.point([p[0]+nx*mid/scaleX,p[1]+ny*mid/scaleY]);
+  if(!turf.booleanPointInPolygon(pt,road))continue;
+  const gap=a>0?a:b<0?-b:0;
+  if(gap<dist){best=w;dist=gap}
+ }
+ return dist<=3?best:null;
+}
 function plannedRoadDetail(parcel){
  if(!PLANNED_ROADS)return '진주시 도시계획도로 원본 미로드 · 판정 보류';
  try{
-  const q=turf.buffer(parcel,2,{units:'meters'}),b=turf.bbox(q),seen=new Set(),hits=[];
-  const c=turf.centroid(parcel).geometry.coordinates;
+  const q=turf.buffer(parcel,2,{units:'meters'}),b=turf.bbox(q),seen=new Set(),hits=[],samples=roadParcelSamples(parcel);
+  const center=turf.centroid(parcel).geometry.coordinates,scaleX=Math.cos(center[1]*Math.PI/180);
   for(let x=Math.floor(b[0]*100);x<=Math.floor(b[2]*100);x++)for(let y=Math.floor(b[1]*100);y<=Math.floor(b[3]*100);y++){
    for(const f of ROAD_GRID.get(x+':'+y)||[]){
     if(seen.has(f))continue;seen.add(f);
-    const r=f._bb;if(r[0]>b[2]||r[2]<b[0]||r[1]>b[3]||r[3]<b[1])continue;
-    if(!turf.booleanIntersects(q,f))continue;
-    const p=f.properties||{},n=turf.centroid(f).geometry.coordinates;
-    const dx=(n[0]-c[0])*Math.cos(c[1]*Math.PI/180),dy=n[1]-c[1];
-    const side=Math.abs(dx)>Math.abs(dy)?(dx>0?'동측':'서측'):(dy>0?'북측':'남측');
-    const width=Number(p.DGM_AR)>0&&Number(p.DGM_LT)>0?Number(p.DGM_AR)/Number(p.DGM_LT):null;
-    hits.push({side,width,label:[p.DGM_NM,p.ROAD_TY,p.ROAD_NO].filter(Boolean).join(' ')||'도시계획도로'});
+    const r=f._bb;if(r[0]>b[2]||r[2]<b[0]||r[1]>b[3]||r[3]<b[1]||!turf.booleanIntersects(q,f))continue;
+    const near=turf.buffer(f,1.2,{units:'meters'}),matched=samples.filter(v=>turf.booleanPointInPolygon(turf.point(v.pt),near));
+    if(!matched.length)continue;
+    const contact=matched.reduce((n,v)=>n+v.meters,0);
+    let vx=0,vy=0;
+    for(const v of matched){vx+=(v.pt[0]-center[0])*scaleX*v.meters;vy+=(v.pt[1]-center[1])*v.meters}
+    const side=Math.abs(vx)>Math.abs(vy)?(vx>0?'동측':'서측'):(vy>0?'북측':'남측');
+    const widths=[];for(const ix of [0,Math.floor(matched.length/2),matched.length-1]){const w=localRoadWidth(f,matched[ix]);if(w!==null)widths.push(w)}
+    widths.sort((a,b)=>a-b);const local=widths.length?widths[Math.floor(widths.length/2)]:null;
+    const p=f.properties||{},label=[p.DGM_NM,p.ROAD_TY,p.ROAD_NO].filter(Boolean).join(' ')||'도시계획도로';
+    hits.push({side,contact,local,label});
    }
   }
-  if(!hits.length)return '필지 경계 2m 내 계획도로 미검출 · 실제 도로 없음으로 확정 불가';
-  return hits.slice(0,6).map(h=>h.side+' '+h.label+(h.width?' · 평균폭원 참고 약 '+h.width.toFixed(1)+'m':' · 폭원 미상')).join(' / ')+(hits.length>6?' 외 '+(hits.length-6)+'건':'')+' · 방향은 도로 전체 중심 기준, 평균폭원은 면적÷연장 추정값(법정·실측 폭원 아님), 접도 여부 미확정';
+  if(!hits.length)return '필지 경계 2m 내 계획도로 미검출 · 현황도로 없음으로 확정 불가';
+  hits.sort((a,b)=>b.contact-a.contact);
+  return hits.slice(0,5).map(h=>h.side+' '+h.label+' · 인접구간 약 '+h.contact.toFixed(1)+'m'+(h.local!==null?' · 인근 도로폭 추정 약 '+h.local.toFixed(1)+'m':' · 국부 폭원 추정 불가')).join(' / ')+(hits.length>5?' 외 '+(hits.length-5)+'건':'')+' · GIS 경계 표본(약 2m 간격·1.2m 허용오차), 접도/법정 폭원·도로 방향 법적 판정 아님';
  }catch(e){console.warn('도로 공간분석 실패',e);return '도로 분석 실패 · 별도 확인'}
 }
 
