@@ -1,0 +1,38 @@
+name: Find amended lot GIS neighbors
+on:
+  push:
+    paths:
+      - .github/workflows/find-amended-lot-neighbors.yml
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Find nearest GIS restriction polygons to drawing labels
+        run: |
+          python - <<'PY'
+          import glob,gzip,json,math
+          from shapely.geometry import shape
+          from shapely.ops import transform
+          from shapely.strtree import STRtree
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as z: fs=json.load(z)['features']
+          res=[]
+          for file in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(file,'rt') as z: parcels=json.load(z)['features']
+           for p in parcels:
+            a=p.get('properties') or {};j=str(a.get('jibun') or '').replace(' ','');di=str(a.get('district_name') or '')
+            if not ((j.startswith('996-3') and '가호' in di) or (j.startswith('281-') and '금산' in di) or (j.startswith('464-') and '가호' in di) or (j.startswith('911') and '가호' in di)):continue
+            g=shape(p['geometry']);center=g.centroid
+            near=[]
+            for f in fs:
+             q=f.get('properties') or {}
+             if q.get('source_layer')!='KLIP_C_UQ162':continue
+             fg=shape(f['geometry']);dist=center.distance(fg)
+             if dist<.002:near.append({'distance_degrees':round(dist,7),'id':q.get('restrict_n'),'plan':q.get('present_sn'),'rule':q.get('build_des'),'overlap':round(g.intersection(fg).area/g.area,4) if fg.intersects(g) and g.area>0 else 0})
+            near.sort(key=lambda x:x['distance_degrees'])
+            res.append({'jibun':j,'district':di,'pnu':a.get('pnu'),'center':[round(center.x,7),round(center.y,7)],'nearest':near[:8]})
+          for x in res[:35]:print('NEARBY='+json.dumps(x,ensure_ascii=False))
+          print('COUNT',len(res))
+          PY
