@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.12-13</title>
+<title>Jinju3D Local · v2026.10.12-14</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-13</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-14</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -82,7 +82,13 @@
         <div class="hint">현재 보고 있는 위치를 기준으로 2D 필지 지도로 전환합니다. 원하는 필지를 클릭하면 법규가 자동으로 정리됩니다.</div>
         <button id="lawMode" class="primary" style="margin-top:8px">필지·법규 모드 켜기</button><div id="lawModeState" class="modeState" style="margin-top:6px">현재 꺼짐</div>
       </div>
-      <div id="lawPanel" class="lawbox">
+      <div class="drawer-sec" style="border:1px solid #64748b55;border-radius:9px;padding:10px;margin:9px 0">
+ <h3>지구단위계획 검증 레이어</h3>
+ <div class="hint">2022년 결정도 참고용 다각형입니다. 지도 윤곽선만 변경하며 법적 높이 산정에는 영향을 주지 않습니다.</div>
+ <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerLikely" checked> 위치·지번 대조 유력 (평거2 및 변경 획지 후보)</label>
+ <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerGisOnly" checked> GIS 중첩만 확인 (가좌·가좌2·금산 기타 후보)</label>
+ </div>
+ <div id="lawPanel" class="lawbox">
         <div class="drawer-sec">
           <h3>선택 필지</h3>
           <div id="lawParcel" class="mini">아직 선택한 필지가 없습니다.</div>
@@ -155,7 +161,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.12-13',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.12-14',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -548,6 +554,22 @@ function prepareStaticBuildings(fc){
   fc._heightStats={high,mid,low};fc._staticRegisterMatched=reg;return fc
 }
 function addDetails(b,p){if(map.getSource('buildings'))map.getSource('buildings').setData(b);else{map.addSource('buildings',{type:'geojson',data:b});map.addLayer({id:'buildings-2d',type:'fill',source:'buildings',paint:{'fill-color':'#607991','fill-opacity':.72,'fill-outline-color':'#dbeafe'}});map.addLayer({id:'buildings-foundation',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':'#475569','fill-extrusion-base':0,'fill-extrusion-height':['coalesce',['get','terrain_foundation_height'],0],'fill-extrusion-opacity':.98}});map.addLayer({id:'buildings-3d',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':['match',['get','height_confidence'],'높음','#438de0','보통','#6f99c9','#9aa9b8'],'fill-extrusion-base':['coalesce',['get','render_base'],0],'fill-extrusion-height':['coalesce',['get','render_top'],['get','render_height']],'fill-extrusion-opacity':.95}})}if(map.getSource('parcels'))map.getSource('parcels').setData(p);else{map.addSource('parcels',{type:'geojson',data:p});map.addLayer({id:'parcel-fill',type:'fill',source:'parcels',paint:{'fill-color':'#f59e0b','fill-opacity':.02}});map.addLayer({id:'parcel-line',type:'line',source:'parcels',paint:{'line-color':'#ffbd52','line-width':.8,'line-opacity':.7}});map.addSource('selected-parcel',{type:'geojson',data:{type:'FeatureCollection',features:[]}});map.addLayer({id:'selected-parcel-fill',type:'fill',source:'selected-parcel',paint:{'fill-color':'#fbbf24','fill-opacity':.18}});map.addLayer({id:'selected-parcel-line',type:'line',source:'selected-parcel',paint:{'line-color':'#fbbf24','line-width':3}})}}
+const VERIFIED_REFERENCE_IDS=new Set(['48170UQ162HJ201001140396','48170UQ162HJ201001140428','48170UQ162HJ201312130379']);
+function updateLawReviewLayerVisibility(){
+ if(!map?.getLayer)return;
+ const likely=$('lawLayerLikely')?.checked!==false,gisOnly=$('lawLayerGisOnly')?.checked!==false;
+ for(const id of ['pyeonggeo2-reference-fill','pyeonggeo2-reference-line']){
+  if(map.getLayer(id))map.setLayoutProperty(id,'visibility',likely?'visible':'none');
+ }
+ if(map.getLayer('gajwa-geumsan-reference-line')){
+  const values=[...VERIFIED_REFERENCE_IDS];
+  const filter=likely&&gisOnly?null:likely?['in',['get','restrict_n'],['literal',values]]:gisOnly?['!', ['in',['get','restrict_n'],['literal',values]]]:['==',1,0];
+  map.setFilter('gajwa-geumsan-reference-line',filter);
+ }
+}
+for(const id of ['lawLayerLikely','lawLayerGisOnly']){
+ $(id)?.addEventListener('change',updateLawReviewLayerVisibility);
+}
 function addSupplementLayers(){
  if(!map.getSource('gajwa-geumsan-reference')){
   map.addSource('gajwa-geumsan-reference',{type:'geojson',data:'data/law/gajwa_geumsan_reference_polygons.geojson'});
@@ -558,6 +580,7 @@ function addSupplementLayers(){
   map.addLayer({id:'pyeonggeo2-reference-fill',type:'fill',source:'pyeonggeo2-reference',paint:{'fill-color':'#c084fc','fill-opacity':0.12}});
   map.addLayer({id:'pyeonggeo2-reference-line',type:'line',source:'pyeonggeo2-reference',paint:{'line-color':'#a855f7','line-width':2,'line-dasharray':[3,2]}});
  }
+ updateLawReviewLayerVisibility();
  const e={type:'FeatureCollection',features:[]};map.addSource('smart-osm',{type:'geojson',data:e});map.addLayer({id:'smart-osm-2d',type:'fill',source:'smart-osm',filter:['!=',['get','facility'],true],paint:{'fill-color':'#2dd4bf','fill-opacity':.46,'fill-outline-color':'#99f6e4'}});map.addLayer({id:'smart-facility-2d',type:'fill',source:'smart-osm',filter:['==',['get','facility'],true],paint:{'fill-color':'#f59e0b','fill-opacity':.26,'fill-outline-color':'#fbbf24'}});map.addLayer({id:'smart-osm-foundation',type:'fill-extrusion',source:'smart-osm',filter:['all',['!=',['get','facility'],true],['==',['get','has_3d'],true]],layout:{visibility:'none'},paint:{'fill-extrusion-color':'#0f766e','fill-extrusion-base':0,'fill-extrusion-height':['coalesce',['get','terrain_foundation_height'],0],'fill-extrusion-opacity':.9}});map.addLayer({id:'smart-osm-3d',type:'fill-extrusion',source:'smart-osm',filter:['all',['!=',['get','facility'],true],['==',['get','has_3d'],true]],layout:{visibility:'none'},paint:{'fill-extrusion-color':'#2dd4bf','fill-extrusion-base':['coalesce',['get','render_base'],0],'fill-extrusion-height':['coalesce',['get','render_top'],['get','render_height']],'fill-extrusion-opacity':.70}})}
 const CELL=.0015;function gridKey(x,y){return x+','+y}function makeGrid(fs){const g=new Map();fs.forEach((f,i)=>{let b;try{b=turf.bbox(f)}catch(e){return}for(let x=Math.floor(b[0]/CELL);x<=Math.floor(b[2]/CELL);x++)for(let y=Math.floor(b[1]/CELL);y<=Math.floor(b[3]/CELL);y++){const k=gridKey(x,y);if(!g.has(k))g.set(k,[]);g.get(k).push(i)}});return g}function candidatesFor(f,g){const b=turf.bbox(f),s=new Set();for(let x=Math.floor(b[0]/CELL)-1;x<=Math.floor(b[2]/CELL)+1;x++)for(let y=Math.floor(b[1]/CELL)-1;y<=Math.floor(b[3]/CELL)+1;y++)for(const i of g.get(gridKey(x,y))||[])s.add(i);return[...s]}
 function intersectionArea(a,b){try{const x=turf.intersect(turf.featureCollection([a,b]));return x?turf.area(x):0}catch(e){return 0}}
