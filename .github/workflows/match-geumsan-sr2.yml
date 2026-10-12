@@ -1,0 +1,37 @@
+name: Match Geumsan SR2 lot 294 cadastral polygons
+on:
+  push:
+    paths:
+      - .github/workflows/match-geumsan-sr2.yml
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Match Geumsan 294 and 285 cadastral series
+        run: |
+          python - <<'PY'
+          import glob,gzip,json,collections
+          from shapely.geometry import shape
+          sn='48170UQ161PS201312130026'
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as f: allf=json.load(f)['features']
+          polys=[f for f in allf if f.get('properties',{}).get('source_layer')=='KLIP_C_UQ162' and f.get('properties',{}).get('present_sn')==sn]
+          print('POLYGONS',len(polys))
+          for fn in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(fn,'rt') as f: pp=json.load(f)['features']
+           for item in pp:
+            p=item.get('properties') or {};j=str(p.get('jibun') or '').replace(' ','')
+            if p.get('district_name')!='금산면' or not (j.startswith('294-') or j.startswith('285-')):continue
+            geom=shape(item['geometry'])
+            overlaps=[]
+            for f in polys:
+             g=shape(f['geometry'])
+             if not geom.intersects(g):continue
+             v=geom.intersection(g).area/geom.area if geom.area else 0
+             if v<0.5:continue
+             q=f['properties']
+             overlaps.append({'ratio':round(v,6),'restrict_n':q.get('restrict_n'),'build_des':q.get('build_des')})
+            if overlaps:print('LOT='+json.dumps({'pnu':p.get('pnu'),'jibun':j,'district':p.get('district_name'),'overlaps':overlaps},ensure_ascii=False,separators=(',',':')))
+          PY
