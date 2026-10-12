@@ -1,0 +1,69 @@
+{
+  "review_date": "2026-10-12",
+  "notice": "진주시 고시 제2022-8호 도면 참고",
+  "reference_only": true,
+  "legal_height_auto_apply": false,
+  "records": [
+    {
+      "zone": "가좌2",
+      "changed_site": "G2 파출소→근린생활시설",
+      "drawing_lot": "G2",
+      "drawing_cadastral_label": "448-2 대",
+      "pnu_candidate": "4817013100104480002",
+      "district": "가호동",
+      "restriction_id": "48170UQ162HJ201001140396",
+      "present_sn": "48170UQ161PS200101040035",
+      "gis_rule": "200%이하;-;-;최고고도 5층;-;60%이하",
+      "parcel_overlap_ratio": 0.99999,
+      "drawing_before": {
+        "floors": 5,
+        "far_pct": 200,
+        "bcr_pct": 60,
+        "use": "파출소 및 부설용도"
+      },
+      "drawing_after": {
+        "floors": 5,
+        "far_pct": 200,
+        "bcr_pct": 60,
+        "use": "근린생활시설용지"
+      },
+      "status": "strong_drawing_label_and_gis_cadastral_match_pending_georeference_and_later_notice",
+      "caveats": [
+        "PDF 전체 도면의 정량 좌표 정합 오차 미측정",
+        "지번 표기가 실제 변경대상 경계와 일치하는지 최종 지리참조 필요",
+        "2022년 이후 고시 효력 미확인"
+      ]
+    },
+    {
+      "zone": "가좌2",
+      "changed_site": "주유소→근린생활시설",
+      "status": "neighboring_911_and_492_552_only_exact_changed_PNU_unknown",
+      "drawing_before": {
+        "floors": 3,
+        "far_pct": 200,
+        "bcr_pct": 60
+      },
+      "drawing_after": {
+        "floors": 3,
+        "far_pct": 200,
+        "bcr_pct": 60
+      }
+    },
+    {
+      "zone": "금산",
+      "changed_site": "근린생활시설에 노유자시설 추가",
+      "status": "281_series_neighbor_only_exact_changed_PNU_unknown",
+      "drawing_before": {
+        "floors": 4,
+        "far_pct": 230,
+        "bcr_pct": 60
+      },
+      "drawing_after": {
+        "floors": 4,
+        "far_pct": 230,
+        "bcr_pct": 60
+      }
+    }
+  ],
+  "audit_url": "https://github.com/wlsgur5315/Jin-Min-Map/actions/runs/38217010374"
+}
