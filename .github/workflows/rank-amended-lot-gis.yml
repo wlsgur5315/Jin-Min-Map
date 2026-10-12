@@ -53,6 +53,6 @@ jobs:
             else:match=bool('230%이하' in txt and '4층' in txt and '60%이하' in txt)
             scored.append((dist,match,p.get('restrict_n'),txt,gg.area,tuple(round(x,2) for x in gg.centroid.coords[0])))
            scored.sort(key=lambda r:(not r[1],r[0]))
-           print('CANDIDATES',label,json.dumps([{'distance_m':round(x[0],2),'numeric_match':x[1],'restrict_n':x[2],'gis_rule':x[3],'area_m2':round(x[4],1],'centroid_epsg5179':x[5]} for x in scored[:20]],ensure_ascii=False))
+           print('CANDIDATES',label,json.dumps([{'distance_m':round(x[0],2),'numeric_match':x[1],'restrict_n':x[2],'gis_rule':x[3],'area_m2':round(x[4],1),'centroid_epsg5179':x[5]} for x in scored[:20]],ensure_ascii=False))
            print('SUMMARY',label,'num_total',len(scored),'num_numeric_match',sum(x[1] for x in scored),'closest_match_m',round(min((x[0] for x in scored if x[1]),default=float('nan')),2))
           PY
