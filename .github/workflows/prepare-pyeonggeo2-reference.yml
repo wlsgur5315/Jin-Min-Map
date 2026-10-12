@@ -1,0 +1,40 @@
+name: Prepare Pyeonggeo2 reference polygons
+on:
+  push:
+    paths:
+      - .github/workflows/prepare-pyeonggeo2-reference.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate annotated geometry from KLIP dataset
+        run: |
+          python - <<'PY'
+          import gzip,json,os
+          src='data/law/jinju_district_plan.geojson.gz'
+          ids={'026':('C2',None,None),'028':('C3',20,20),'027':('C4',10,20),'034':('C5',10,20),'035':('C6',10,20),'032':('C7',10,20),'029':('C8',10,20),'030':('C9',20,20),'031':('C10',15,20)}
+          with gzip.open(src,'rt',encoding='utf-8') as stream: fc=json.load(stream)
+          out=[]
+          for f in fc['features']:
+           p=f.get('properties') or {}
+           sid=str(p.get('restrict_n') or '')
+           if 'UQ162' not in sid or sid[-3:] not in ids:continue
+           if str(p.get('present_sn') or '')!='48170UQ161PS198912290001':continue
+           code,old,new=ids[sid[-3:]]
+           f['properties']={'lot_candidate':code,'restrict_n':sid,'gis_legacy_description':str(p.get('build_des') or ''),'drawing_2022_height_m':new,'drawing_previous_height_m':old,'status':'candidate_visual_and_parcel_checked_not_legal_cap','source':'진주시 고시 제2022-8호','auto_apply':False}
+           out.append(f)
+          assert len(out)==9, f'Expected 9 validated location candidates, got {len(out)}'
+          os.makedirs('data/law',exist_ok=True)
+          with open('data/law/pyeonggeo2_reference_candidates.geojson','w',encoding='utf-8') as o:json.dump({'type':'FeatureCollection','features':out},o,ensure_ascii=False,separators=(',',':'))
+          print('PYEONGGEO2_REFERENCE_FEATURES',len(out))
+          PY
+      - name: Commit extracted reference polygons
+        run: |
+          git config user.name github-actions
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add data/law/pyeonggeo2_reference_candidates.geojson
+          git diff --cached --quiet || (git commit -m "Add Pyeonggeo2 reference polygons for map review" && git push)
