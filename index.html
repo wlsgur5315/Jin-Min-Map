@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.12-01</title>
+<title>Jinju3D Local · v2026.10.12-02</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-01</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-02</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -155,7 +155,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.12-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.12-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -871,9 +871,8 @@ function parcelHeightReview(){
   ['정북일조',daylight+' · '+model,'건축법 제61조, 시행령 제86조, 진주시 건축조례 제41조'],
   ['지구단위계획',ADV_PLAN_RESULT?'구역 중첩: '+ADV_PLAN_RESULT.name+' · 최고높이/최고층수 결정도서 미연결':'구역 판정 및 높이 세부기준 확인 필요','지구단위계획 결정도서']
  ];
- const confirmed=!!(zone&&AUTO_LANDSCAPE_NAME&&selectedLand===landscapeRuleKey(AUTO_LANDSCAPE_NAME)&&LANDSCAPE_HEIGHT[selectedLand]);
- const numeric=confirmed?(isNonUrban&&['자연경관','특화경관'].includes(selectedLand)?12:LANDSCAPE_HEIGHT[selectedLand]):null;
- return {rows,numeric,summary:numeric!==null?'경관지구 기본 높이 '+numeric+'m 이하 확인 · 다른 제한 미검증 (최종 높이 아님)':'확정 최고높이 산정 불가 · 관련 제한자료 추가 확인 필요'};
+ const result=landscapeScreening();
+ return {rows,numeric:result.numeric,summary:result.numeric!==null?'경관지구 기본 높이 '+result.numeric+'m 확인 · 기타 제한 미검증 (최종 높이 아님)':result.detail};
 }
 function printLawReport(){
   if(!SELECTED_PARCEL){message('먼저 필지를 선택해 주세요');return}
@@ -1167,14 +1166,46 @@ function zoneRuleKey(name){
   return aliases[n]||'';
 }
 function landscapeRuleKey(name){
-  const n=String(name||'').replace(/\s+/g,'');
+  const n=String(name||'').replace(/\\s+/g,'');
   if(n.includes('자연경관'))return'자연경관';
   if(n.includes('특화경관'))return'특화경관';
   if(n.includes('전통경관'))return'전통경관';
   if(n.includes('조망권'))return'조망권경관';
+  if(n.includes('수변경관'))return'수변경관';
   if(n.includes('중심')&&n.includes('시가지'))return'중심시가지경관';
-  if(n.includes('시가지경관'))return'일반시가지경관';
+  if(n.includes('일반시가지경관'))return'일반시가지경관';
+  if(n.includes('시가지경관'))return'시가지경관_세부미확인';
   return'';
+}
+function landscapeNameFromProps(p){
+  if(!p)return'';
+  const name=String(p.name||p.dgm_nm||p.alias||'').trim();
+  const remark=String(p.remark||'').trim();
+  if((!name||name==='기타')&&remark&&landscapeRuleKey(remark))return remark;
+  if(name==='시가지경관지구'&&remark&&landscapeRuleKey(remark)&&landscapeRuleKey(remark)!=='시가지경관_세부미확인')return remark;
+  return name||remark;
+}
+function landscapeScreening(){
+ const zone=$('lawZone')?.value||'',manual=$('lawLandscape')?.value||'';
+ const loaded=!!(CURRENT_PLANNING?.features?.length&&CURRENT_PLANNING_ID===selectedId);
+ const matches=loaded&&SELECTED_PARCEL?localPlanningMatches(SELECTED_PARCEL):null;
+ const autoName=AUTO_LANDSCAPE_NAME||'';
+ const key=manual||landscapeRuleKey(autoName);
+ const source=autoName?'공간자료 자동 판정':manual?'사용자 수동 선택':'';
+ if(!autoName&&!manual){
+  if(!loaded)return{value:'자료 확인 필요',detail:'경관지구 공간자료 미로드 · 적용 여부 미확인',numeric:null};
+  return{value:'해당 없음(자료 기준)',detail:'해당 읍면동 SHP에서 경관지구 중첩 미검출 · 최신 결정고시 별도 확인',numeric:null};
+ }
+ if(!key||key==='시가지경관_세부미확인'||key==='수변경관'){
+  return{value:'세부기준 확인 필요',detail:(autoName||manual)+' · '+source+' · 해당 유형에 다른 지구 높이 상한 임의 적용 안 함',numeric:null};
+ }
+ if(key==='중심시가지경관')return{value:'최고높이 별도 확인',detail:'중심시가지경관지구 · 층수 하한 조건은 최고높이와 다름 · '+source,numeric:null};
+ const base=LANDSCAPE_HEIGHT[key];
+ if(base===undefined)return{value:'세부기준 확인 필요',detail:(autoName||key)+' · '+source,numeric:null};
+ if(!zone)return{value:'용도지역 확인 필요',detail:key+' · '+source+' · 지역별 조건 판단 보류',numeric:null};
+ const nonUrban=!/주거|상업|공업/.test(zone);
+ const value=nonUrban&&['자연경관','특화경관'].includes(key)?12:base;
+ return{value:value+'m',detail:key+' · '+source+(autoName&&manual&&manual!==landscapeRuleKey(autoName)?' · 수동값/자동값 불일치':'')+' · 기본기준(완화·최신 고시 미검증)',numeric:autoName&&(!manual||manual===landscapeRuleKey(autoName))?value:null};
 }
 
 async function ensurePlanningData(){
@@ -1207,7 +1238,7 @@ function localPlanningMatches(parcel){
       try{if(turf.booleanPointInPolygon(turf.pointOnFeature(parcel),f))r=.000001}catch(e){}
     }
     if(r<=0)continue;
-    const item={f,ratio:r,name:planningName(f.properties||{})};
+    const item={f,ratio:r,name:kind==='landscape'?landscapeNameFromProps(f.properties||{}):planningName(f.properties||{})};
     if(kind==='zoning')zones.push(item);
     else if(kind==='landscape')land.push(item);
     else if(kind==='height_district')height.push(item);
@@ -1295,7 +1326,7 @@ async function autoDetectPlanning(parcel){
     ]);
     const lf=bestPlanningFeature(landFs,parcel),hf=bestPlanningFeature(heightFs,parcel);
     if(lf){
-      AUTO_LANDSCAPE_NAME=planningName(lf.properties||{});
+      AUTO_LANDSCAPE_NAME=landscapeNameFromProps(lf.properties||{});
       const lk=landscapeRuleKey(AUTO_LANDSCAPE_NAME);if(lk)$('lawLandscape').value=lk;
     }
     if(hf)AUTO_HEIGHT_DISTRICT=planningName(hf.properties||{})+(hf.properties?.remark?' · '+hf.properties.remark:'');
@@ -1459,11 +1490,12 @@ function heightResultOverview(parcel,zone){
  const review=parcelHeightReview();
  const model=northDaylightSimulation(parcel,zone);
  const m=model.match(/높이 모델 ([0-9]+(?:[.][0-9]+)?~[0-9]+(?:[.][0-9]+)?)m/);
- const land=review.numeric!==null?review.numeric+'m':'미확인';
+ const landscapeResult=landscapeScreening();
+ const land=landscapeResult.value;
  const sun=m?m[1]+'m':'계산 불가/비대상';
  const box=(title,value,note)=>'<div style="flex:1 1 130px;min-width:0;border:1px solid #64748b55;border-radius:9px;padding:12px;background:#4755690d"><div style="font-size:11px;opacity:.8">'+title+'</div><div style="font-size:23px;font-weight:800;margin:4px 0">'+value+'</div><div style="font-size:11px;line-height:1.5;opacity:.8">'+note+'</div></div>';
  return '<div style="border:1px solid #64748b77;border-radius:12px;padding:13px;margin:12px 0"><b>높이제한 한눈에 보기</b><div style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0">'+
- box('경관지구 기본 높이 상한',land,'현행 적용·완화 별도 검증')+
+ box('경관지구 기본 높이 상한',land,landscapeResult.detail)+
  box('정북일조 시험점 모델',sun,'5×5 위치별 추정 · 법정 값 아님')+
  '</div><div style="font-size:16px;font-weight:800">최종 법적 허용높이: 미확정</div><div class="lawdim" style="margin-top:5px">고도지구·지구단위계획 상세 수치 및 법적 일조 기준선 검증 전입니다. 표시 수치를 최종 허용높이로 사용하지 마세요.</div></div>';
 }
