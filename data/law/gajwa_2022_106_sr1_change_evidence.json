@@ -22,7 +22,7 @@
   },
   "distinct_from_2022_8_kindergarten_to_neighborhood": true,
   "candidate_pnu": null,
-  "candidate_restrict_n": null,
+  "candidate_restrict_n": "48170UQ162HJ201803290325",
   "spatial_review": {
     "status": "revised_after_pdf_text_coordinate_and_cadastral_recheck",
     "pdf_labels": "SR1 text markers near 639 and 1436/1437 and 1432 series; original 625/630 proximity hypothesis superseded",
@@ -54,14 +54,49 @@
         "assessment": "numeric match only"
       }
     ],
-    "candidate_pnu_status": "not uniquely determined; multiple 4-floor areas and two SR1 labels",
-    "georeferencing_rmse_m": null
+    "candidate_pnu_status": "No unique PNU: GIS polygon 0325 encompasses multiple cadastral parcels of 639- and 1436-series.",
+    "georeferencing_rmse_m": null,
+    "restriction_consistency": "Both mapped SR1 text centers lie inside restriction 325, recorded as 230% 60% 6층 in GIS, while supplied 2022 change table states 230% 60% 4층. DO NOT apply either automatically.",
+    "updated_result": "Most defensible spatial match is 0325, NOT neighboring 4-floor parcels 0322/0324/0326. Legal layer conflict unresolved."
   },
-  "status": "drawing_change_confirmed_individual_pnu_unresolved",
+  "status": "two_SR1_label_points_georeferenced_inside_UQ162_0325_parcel_level_use_not_final",
   "automatic_apply": false,
   "notes": [
     "도면의 SR1 영역은 복수 후보를 포함할 수 있음",
     "현행 법적 적용 및 후속 변경고시 미확인",
     "기존 2022-8호 유치원→근린생활시설 변경과는 별개로 보존"
-  ]
+  ],
+  "georeferencing": {
+    "method": "affine least-squares of 28 pairs of extracted drawing cadastral text centers against current cadastral centroids EPSG:5179",
+    "n_controls": 28,
+    "rmse_m": 1.24,
+    "median_residual_m": 0.61,
+    "max_residual_m": 3.41,
+    "drawn_SR1_labels": [
+      {
+        "pdf_xy": [
+          796.084,
+          1050.514
+        ],
+        "lonlat": [
+          128.1068365557,
+          35.1593691215
+        ],
+        "within_restrict_n": "48170UQ162HJ201803290325"
+      },
+      {
+        "pdf_xy": [
+          836.884,
+          978.514
+        ],
+        "lonlat": [
+          128.1062769654,
+          35.1596216162
+        ],
+        "within_restrict_n": "48170UQ162HJ201803290325"
+      }
+    ],
+    "other_pdf_SR1_word_not_in_map": "Legend item near pdf x680 y2256 excluded",
+    "caveat": "Label center registration identifies GIS polygon, not exact amended lot geometry"
+  }
 }
