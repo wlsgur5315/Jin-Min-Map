@@ -1,0 +1,53 @@
+name: Audit Jinju landscape district data
+on:
+  push:
+    paths:
+      - '.github/workflows/audit-landscape-districts.yml'
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect all landscape features
+        shell: python
+        run: |
+          import json,gzip,collections,hashlib
+          from pathlib import Path
+          root=Path("data/zoning")
+          manifest=json.loads((root/"manifest.json").read_text(encoding="utf-8"))
+          per_area=[]
+          records=[]
+          errors=[]
+          def bbox(g):
+              pts=[]
+              def visit(x):
+                  if isinstance(x,list) and len(x)>=2 and isinstance(x[0],(int,float)) and isinstance(x[1],(int,float)):
+                      pts.append((x[0],x[1]))
+                  elif isinstance(x,list):
+                      for child in x:visit(child)
+              visit(g.get("coordinates",[]))
+              return [round(min(p[0] for p in pts),7),round(min(p[1] for p in pts),7),round(max(p[0] for p in pts),7),round(max(p[1] for p in pts),7)] if pts else None
+          for code,meta in manifest["districts"].items():
+              try:
+                  with gzip.open(meta["file"],"rt",encoding="utf-8") as fp: fc=json.load(fp)
+                  fs=[f for f in fc["features"] if f.get("properties",{}).get("kind")=="landscape"]
+                  per_area.append({"name":meta["name"],"code":code,"manifest":meta["landscape"],"actual":len(fs)})
+                  if len(fs)!=meta["landscape"]:errors.append({"code":code,"issue":"manifest_count_mismatch"})
+                  for f in fs:
+                      p=f.get("properties") or {}
+                      g=f.get("geometry") or {}
+                      records.append({"district":meta["name"],"code":code,"properties":p,"type":g.get("type"),"bbox":bbox(g),"geometry_hash":hashlib.sha256(json.dumps(g,sort_keys=True).encode()).hexdigest()[:16]})
+              except Exception as e:errors.append({"code":code,"issue":str(e)})
+          fingerprints=collections.Counter(r["geometry_hash"] for r in records)
+          summary={"total":len(records),"manifest_total":sum(v["landscape"] for v in manifest["districts"].values()),"areas":per_area,"kind_counts":dict(collections.Counter(str(r["properties"].get("kind")) for r in records)),"names":dict(collections.Counter(str(r["properties"].get("name")) for r in records)),"codes":dict(collections.Counter(str(r["properties"].get("code")) for r in records)),"geometry_types":dict(collections.Counter(str(r["type"]) for r in records)),"identical_geom_duplicates":{k:v for k,v in fingerprints.items() if v>1},"errors":errors}
+          report={"summary":summary,"records":records,"conclusion":"GIS inventory only; does not prove completeness against current legal decisions"}
+          out=Path("landscape_audit_report.json")
+          out.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("LANDSCAPE_AUDIT_SUMMARY="+json.dumps(summary,ensure_ascii=False))
+          for rec in records:print("LANDSCAPE_AUDIT_RECORD="+json.dumps(rec,ensure_ascii=False))
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jinju-landscape-audit
+          path: landscape_audit_report.json
