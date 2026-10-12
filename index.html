@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.12-11</title>
+<title>Jinju3D Local · v2026.10.12-12</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-11</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-12</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -155,7 +155,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.12-11',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.12-12',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1527,12 +1527,27 @@ async function ensureGajwaGeumsanReference(){
  if(!GAJWA_GEUMSAN_LOADING)GAJWA_GEUMSAN_LOADING=fetch('data/law/gajwa_geumsan_reference_polygons.geojson').then(r=>{if(!r.ok)throw Error('가좌/금산 GIS HTTP '+r.status);return r.json()}).then(fc=>{GAJWA_GEUMSAN_REFERENCE=fc;return fc}).catch(e=>{console.warn('가좌/금산 참고 GIS 로드 실패',e);GAJWA_GEUMSAN_LOADING=null;return null});
  return GAJWA_GEUMSAN_LOADING;
 }
+function verifiedAmendedLotEvidenceCard(parcel){
+ const pnu=String(parcel?.properties?.pnu||'');
+ let label='',evidence='',detail='';
+ if(pnu==='4817013100105520004'){
+  label='가좌2 변경 획지 · 가호동 552-4';
+  evidence='결정도 변경표 화살표가 552-4 획지를 지시하며 UQ162 ...428의 3층·60%·200% 기록과 일치';
+  detail='주유소 및 부대시설 → 근린생활시설용지 (층수·건폐율·용적률 유지)';
+ }else if(pnu.startsWith('481704102610294')&&[1,2,3,5,6,7,8,9,10,11,12].some(n=>pnu==='481704102610294'+String(n).padStart(4,'0'))){
+  label='금산 변경 획지 SR2 · 294번대';
+  evidence='결정도 화살표가 SR2를 지시, UQ162 ...379 건축제한 영역과 현 지적 필지가 99.999% 이상 중첩';
+  detail='제1·2종 근린생활시설 → 노유자시설 추가 (4층·60%·230% 유지)';
+ }else return'';
+ return '<div style="margin:12px 0;padding:12px;border:1px dashed #14b8a6;border-radius:10px"><b>'+escapeHtml(label)+' · 변경 대상 유력</b><br>'+
+ escapeHtml(evidence)+'<br>'+escapeHtml(detail)+'<br><span class="lawwarn">2022년 결정도 참고. 전체 PDF 좌표 정합 오차 및 후속 변경고시 미검증이므로 최종 법적 허용높이·층수 자동계산에 반영하지 않습니다.</span></div>';
+}
 function drawingParcelMismatchCard(parcel){
  const pnu=String(parcel?.properties?.pnu||'');
  const cases={
   '4817013100104920008':['가좌2 F1 인접 필지(492-8)','GIS: 3층·건폐율 60%·용적률 180%','주유소 변경표: 3층·60%·200%','용적률 불일치'],
   '4817013100105520002':['가좌2 D2 인접 필지(552-2)','GIS: 5층·건폐율 60%·용적률 200%','주유소 변경표: 3층·60%·200%','층수 불일치'],
-  '4817013100105520004':['가좌2 인접 필지(552-4)','GIS: 3층·건폐율 60%·용적률 200%','주유소 변경표: 3층·60%·200%','수치는 일치하지만 변경 획지 경계 미확인']
+  '4817013100105520004':['가좌2 인접 필지(552-4)','GIS: 3층·건폐율 60%·용적률 200%','주유소 변경표: 3층·60%·200%','결정도 리더선으로 552-4 획지 지시 확인 · 법적 최종 적용 미검증']
  };
  const v=cases[pnu];if(!v)return'';
  return '<div style="margin:12px 0;padding:12px;border:1px dashed #f59e0b;border-radius:10px"><b>'+escapeHtml(v[0])+' · 변경 획지 검증 중</b><br>'+
@@ -1609,7 +1624,7 @@ function renderLawReview(){
     '<span class="lawdim">용도지역 근거: '+evidence.zone+'<br>경관지구: '+evidence.landscape+'<br>고도지구: '+evidence.height+'</span><br>'+ 
     '건폐율 <b>'+r.bcr+'%</b> → 이 필지 기준 건축면적 약 <b>'+fmt(maxFoot)+'㎡</b> 이하<br>'+
     '용적률 <b>'+r.far+'%</b> → 이 필지 기준 연면적 약 <b>'+fmt(maxFloor)+'㎡</b> 이하<br>'+
-    '<b>건축물 높이 제한 종합</b><br>'+heightResultOverview(SELECTED_PARCEL,zone)+pyeonggeo2ReferenceCard(SELECTED_PARCEL)+gajwa2G2VerificationCard(SELECTED_PARCEL)+drawingParcelMismatchCard(SELECTED_PARCEL)+gajwaGeumsanReferenceCard(SELECTED_PARCEL)+otherDistrictPlanEvidenceCard()+'<span class="lawwarn">'+parcelHeightReview().summary+'</span><br>'+parcelHeightReview().rows.map(x=>'<b>'+x[0]+'</b>: '+x[1]+' <span class="lawdim">('+x[2]+')</span>').join('<br>')+(AUTO_LANDSCAPE_NAME?'<br>경관지구 자동조회: <b>'+AUTO_LANDSCAPE_NAME+'</b>':'')+(AUTO_HEIGHT_DISTRICT?'<br>고도지구 자동조회: <b>'+AUTO_HEIGHT_DISTRICT+'</b>':'')+'<br>'+
+    '<b>건축물 높이 제한 종합</b><br>'+heightResultOverview(SELECTED_PARCEL,zone)+pyeonggeo2ReferenceCard(SELECTED_PARCEL)+gajwa2G2VerificationCard(SELECTED_PARCEL)+verifiedAmendedLotEvidenceCard(SELECTED_PARCEL)+drawingParcelMismatchCard(SELECTED_PARCEL)+gajwaGeumsanReferenceCard(SELECTED_PARCEL)+otherDistrictPlanEvidenceCard()+'<span class="lawwarn">'+parcelHeightReview().summary+'</span><br>'+parcelHeightReview().rows.map(x=>'<b>'+x[0]+'</b>: '+x[1]+' <span class="lawdim">('+x[2]+')</span>').join('<br>')+(AUTO_LANDSCAPE_NAME?'<br>경관지구 자동조회: <b>'+AUTO_LANDSCAPE_NAME+'</b>':'')+(AUTO_HEIGHT_DISTRICT?'<br>고도지구 자동조회: <b>'+AUTO_HEIGHT_DISTRICT+'</b>':'')+'<br>'+
     '도로·높이 검토 <span class="lawdim">'+plannedRoadDetail(SELECTED_PARCEL)+'</span><br>'+ 
     '정북일조 <span class="lawwarn">'+daylight+'</span><br>'+ '정북일조 표본 시뮬레이션 <span class="lawdim">'+northDaylightSimulation(SELECTED_PARCEL,zone)+'</span><br>'+
     '지구단위계획 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_PLAN_RESULT?ADV_PLAN_RESULT.name:'해당 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_PLAN_RESULT?'<br><span class="lawok">필지 중첩 '+(ADV_PLAN_RESULT.ratio*100).toFixed(1)+'% · '+(ADV_PLAN_RESULT.properties?.present_sn||ADV_PLAN_RESULT.properties?.mnum||'관리번호 미상')+' · 결정도서 세부기준 추가 확인</span>':'')+'<br>'+
