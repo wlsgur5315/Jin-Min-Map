@@ -23,7 +23,7 @@ jobs:
            if p.get('source_layer')=='KLIP_C_UQ162' and x.get('geometry'):
             lots.append((shape(x['geometry']),p))
           tree=STRtree([z[0] for z in lots]);samples=collections.defaultdict(list)
-          prefixes=['911','1440','1441','1442','443','652','464','1430','1431','1433']
+          prefixes=['911','1440','1441','1442','443','652','464','1430','1431','1433','448','492','552']
           for fn in glob.glob('data/parcels/*.geojson.gz'):
            with gzip.open(fn,'rt') as q: parts=json.load(q)['features']
            for feat in parts:
