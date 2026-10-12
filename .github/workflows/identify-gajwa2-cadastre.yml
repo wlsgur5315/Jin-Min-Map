@@ -1,0 +1,39 @@
+name: Identify Gajwa2 GIS using cadastral addresses
+on:
+  push:
+    paths:
+      - .github/workflows/identify-gajwa2-cadastre.yml
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Compare cadastral lots printed in Gajwa2 decision drawing
+        run: |
+          python - <<'PY'
+          import gzip,json,glob,collections
+          from shapely.geometry import shape
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as f: fs=json.load(f)['features']
+          targets=['48170UQ161PS200101040035','48170UQ161PS201312130022','48170UQ161PS200903010060']
+          polys={s:[] for s in targets}
+          for f in fs:
+           p=f.get('properties') or {}
+           if p.get('source_layer')=='KLIP_C_UQ162' and p.get('present_sn') in polys:polys[p['present_sn']].append((shape(f['geometry']),p))
+          print('PLAN_GROUPS',[(k,len(v)) for k,v in polys.items()])
+          for fn in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(fn,'rt') as z: parcels=json.load(z)['features']
+           for x in parcels:
+            p=x.get('properties') or {}
+            jibun=str(p.get('jibun','')).replace(' ','')
+            if not any(jibun.startswith(t) for t in ['1441-','1440-','1415-']):continue
+            g=shape(x['geometry'])
+            hits=[]
+            for sn,arr in polys.items():
+             for gg,p2 in arr:
+              if not g.intersects(gg):continue
+              ratio=g.intersection(gg).area/g.area if g.area else 0
+              if ratio>.1:hits.append((sn,p2.get('restrict_n'),round(ratio,4),p2.get('build_des')))
+            if hits: print('GAJWA2_PARCEL='+json.dumps({'jibun':jibun,'district':p.get('district_name'),'pnu':p.get('pnu'),'hits':hits[:4]},ensure_ascii=False))
+          PY
