@@ -1,0 +1,46 @@
+name: Audit Pyeonggeo2 parcel overlaps
+on:
+  push:
+    paths:
+      - .github/workflows/audit-pyeonggeo2-parcels.yml
+  workflow_dispatch:
+jobs:
+  match:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Check GIS candidate intersections with repository cadastral parcels
+        shell: bash
+        run: |
+          import glob,gzip,json,collections
+          from shapely.geometry import shape
+          from shapely.strtree import STRtree
+          candidates={
+          'C4-C8':['027','029','032','034','035'],
+          'C10':['003','026','031'],
+          'C3-C9':['030','028']}
+          wanted={s for a in candidates.values() for s in a}
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as f: planning=json.load(f)
+          matches={}
+          for feat in planning['features']:
+           p=feat['properties']; ident=str(p.get('restrict_n',''))
+           if ident[-3:] in wanted and 'UQ162' in ident: matches[ident[-3:]]=(shape(feat['geometry']),p)
+          print('CANDIDATE_COUNT',len(matches))
+          output={}
+          for file in sorted(glob.glob('data/parcels/*.geojson.gz')):
+           with gzip.open(file,'rt') as f: data=json.load(f)
+           features=data.get('features',[])
+           for f in features:
+            try: g=shape(f['geometry'])
+            except: continue
+            for cid,(poly,props) in matches.items():
+             if not poly.intersects(g): continue
+             area=poly.intersection(g).area
+             if area<=0: continue
+             entry={'file':file.rsplit('/',1)[-1],'intersection_ratio':round(area/poly.area,6),'parcel_share':round(area/g.area,6),'properties':f.get('properties',{})}
+             output.setdefault(cid,[]).append(entry)
+          for cid in sorted(output):
+           sorted_items=sorted(output[cid],key=lambda p:p['intersection_ratio'],reverse=True)
+           print('RESULT_'+cid+'='+json.dumps({'hits':len(sorted_items),'top':sorted_items[:8]},ensure_ascii=False,separators=(',',':')))
+          print('SUMMARY='+json.dumps({'candidate_polygon_count':len(matches),'intersecting_polygon_count':len(output),'total_intersections':sum(len(v) for v in output.values())}))
