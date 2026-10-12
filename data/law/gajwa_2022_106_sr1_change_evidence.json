@@ -7,7 +7,7 @@
   "review_date": "2026-10-12",
   "drawing_name": "가좌 주택지조성사업 지구단위계획 재정비",
   "site_label": "SR1",
-  "site_context": "도면 북측 분홍색 획지(625·630 지번 표시 인근), 변경표 연결선으로 표시",
+  "site_context": "SR1 labels near 639,1436,1437 cadastral series; 625/630 previous interpretation not sufficiently supported",
   "before": {
     "use": "공공청사",
     "far_pct": 230,
@@ -24,10 +24,38 @@
   "candidate_pnu": null,
   "candidate_restrict_n": null,
   "spatial_review": {
-    "checked": "가호동 620~631 번대 지적과 UQ162 중첩",
-    "result": "no matching intersections in initial filtered audit",
-    "workflow": "https://github.com/wlsgur5315/Jin-Min-Map/actions/runs/38220722317",
-    "georeferencing_rmse": null
+    "status": "revised_after_pdf_text_coordinate_and_cadastral_recheck",
+    "pdf_labels": "SR1 text markers near 639 and 1436/1437 and 1432 series; original 625/630 proximity hypothesis superseded",
+    "cadastral_audit": "https://github.com/wlsgur5315/Jin-Min-Map/actions/runs/38221113614",
+    "plan_sn": "48170UQ161PS201312130022",
+    "restrictions": [
+      {
+        "restrict_n": "48170UQ162HJ201803290325",
+        "nearby": "가호동 639번대 / 1436-1~7",
+        "gis_rule": "230%,60%,6층",
+        "assessment": "does not match 4-floor drawing table"
+      },
+      {
+        "restrict_n": "48170UQ162HJ201803290322",
+        "nearby": "가호동 1432-2~7,9~10",
+        "gis_rule": "230%,60%,4층",
+        "assessment": "numeric match only"
+      },
+      {
+        "restrict_n": "48170UQ162HJ201803290324",
+        "nearby": "가호동 1436-9~10",
+        "gis_rule": "230%,60%,4층",
+        "assessment": "numeric match only"
+      },
+      {
+        "restrict_n": "48170UQ162HJ201803290326",
+        "nearby": "가호동 1437-1~26 (some missing parcels)",
+        "gis_rule": "230%,60%,4층",
+        "assessment": "numeric match only"
+      }
+    ],
+    "candidate_pnu_status": "not uniquely determined; multiple 4-floor areas and two SR1 labels",
+    "georeferencing_rmse_m": null
   },
   "status": "drawing_change_confirmed_individual_pnu_unresolved",
   "automatic_apply": false,
