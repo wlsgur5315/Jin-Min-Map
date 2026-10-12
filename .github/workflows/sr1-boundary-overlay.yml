@@ -4,6 +4,8 @@ on:
     paths:
       - .github/workflows/sr1-boundary-overlay.yml
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -56,4 +58,18 @@ jobs:
            out.append({'jibun':name,'pnu':prop.get('pnu'),'overlap_sqm':round(ov,1),'parcel_coverage_pct':round(100*ov/g.area,1),'polygon_coverage_pct':round(100*ov/area.area,1)})
           out.sort(key=lambda z:-z['overlap_sqm'])
           print('LOT_OVERLAPS',json.dumps(out,ensure_ascii=False))
+          from shapely.ops import transform as shapely_transform
+          import os
+          back=Transformer.from_crs('EPSG:5179','EPSG:4326',always_xy=True).transform
+          geom=shapely_transform(back,area)
+          fc={'type':'FeatureCollection','features':[{'type':'Feature','geometry':geom.__geo_interface__,'properties':{'zone':'가좌 SR1 결정도 색상 경계','status':'image_trace_approximate_not_legal_boundary','source':'2022-106 provided drawing','pdf_control_count':int(good.sum()),'rmse_m':round(float(np.sqrt(np.mean(errs[good]**2))),3),'area_m2':round(area.area,1),'automatic_limit':False}}]}
+          os.makedirs('data/law',exist_ok=True)
+          with open('data/law/gajwa_sr1_traced_boundary_reference.geojson','w',encoding='utf-8') as f: json.dump(fc,f,ensure_ascii=False,separators=(',',':'))
+
           PY
+      - name: Commit approximate PDF traced geometry
+        run: |
+          git config user.name github-actions
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add data/law/gajwa_sr1_traced_boundary_reference.geojson
+          (git diff --cached --quiet || (git commit -m "Publish approximate Gajwa SR1 traced PDF polygon" && git pull --rebase origin main && git push))
