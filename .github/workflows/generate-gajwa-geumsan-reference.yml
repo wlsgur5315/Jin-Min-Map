@@ -15,7 +15,7 @@ jobs:
         run: |
           python - <<'PY'
           import gzip,json,os
-          groups={'48170UQ161PS201312130022':('가좌·가좌2 위치대조 후보',18),'48170UQ161PS201312130026':('금산지구',49)}
+          groups={'48170UQ161PS201312130022':('가좌지구 후보',18),'48170UQ161PS201312130026':('금산지구',49),'48170UQ161PS200101040035':('가좌2지구 후보',51)}
           with gzip.open('data/law/jinju_district_plan.geojson.gz','rt',encoding='utf-8') as f: fc=json.load(f)
           features=[]
           for feat in fc['features']:
