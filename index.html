@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.12-20</title>
+<title>Jinju3D Local · v2026.10.12-21</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-20</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-21</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -161,7 +161,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.12-20',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.12-21',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1670,6 +1670,28 @@ function heightResultOverview(parcel,zone){
  box('정북일조 시험점 모델',sun,'5×5 위치별 추정 · 법정 값 아님')+
  '</div><div style="font-size:16px;font-weight:800">최종 법적 허용높이: 미확정</div><div class="lawdim" style="margin-top:5px">고도지구·지구단위계획 상세 수치 및 법적 일조 기준선 검증 전입니다. 표시 수치를 최종 허용높이로 사용하지 마세요.</div></div>';
 }
+let NORTH_TEST_DISTANCE=3;
+function extraHeightStatus(zone){
+ const p=ADV_PLAN_RESULT;
+ const plan=p?.ratio>.01?escapeHtml(p.name||'대상 구역')+' (세부 최고높이 미검증)':'해당 구역 미확인';
+ const residential=/전용주거|일반주거/.test(zone||'');
+ return '<div style="margin-top:10px"><b>지구단위계획 높이</b><br>'+plan+
+ '<br><b>가로구역별 높이</b><br><span class="lawwarn">지정·공고 자료 미확인</span>'+
+ '<br><b>정북일조 이격거리 시험</b><br>'+
+ (residential?'<input id="northTestDistance" type="number" min="0" max="100" step="0.5" value="'+NORTH_TEST_DISTANCE+'" style="width:85px"> m <button type="button" id="northTestButton">계산</button><div id="northTestResult">'+northTestText()+'</div>':'일반 주거지역 시험모형 비대상')+
+ '<div class="lawdim">참고 시험값이며 건축물의 법적 최고높이가 아닙니다. 배치·조례·예외 검토 필요.</div></div>';
+}
+function northTestText(){
+ const d=NORTH_TEST_DISTANCE;
+ if(d<1.5)return '기본 1.5m 이격 미달';
+ if(d<=5)return '10m 이하 부분의 기본 이격 충족 가능. 10m 초과 부분은 별도 계산';
+ return '10m 초과 부분 조건부 시험: 높이 ≤ '+(d*2).toFixed(1)+'m';
+}
+function wireNorthTest(){
+ const b=$('northTestButton'),i=$('northTestDistance');
+ if(!b||!i)return;
+ b.onclick=()=>{const n=Number(i.value);if(!Number.isFinite(n)||n<0||n>100)return;NORTH_TEST_DISTANCE=n;$('northTestResult').textContent=northTestText()};
+}
 function planningReviewBrief(){
  const p=ADV_PLAN_RESULT;
  if(!p||p.ratio<=.01)return '<div class="lawdim">지구단위계획: 중첩 자료 없음 또는 조회 중</div>';
@@ -1698,7 +1720,7 @@ function renderLawReview(){
    '<b>높이·층수 검토</b><br>'+heightResultOverview(SELECTED_PARCEL,zone)+
    '<span class="lawwarn">'+height.summary+'</span><br>'+
    '<hr style="border:0;border-top:1px solid #64748b44;margin:10px 0">'+
-   planningReviewBrief()+
+   planningReviewBrief()+extraHeightStatus(zone)+
    '<div style="margin-top:8px"><b>도시계획시설</b>: '+(ADV_FACILITY_RESULT.length?ADV_FACILITY_RESULT.map(x=>escapeHtml(x.name)).join(', '):'확인된 저촉 없음')+'</div>'+
    '<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">상세 검토 펼치기</summary><div style="padding-top:8px">'+
    '<b>높이 제한 근거</b><br>'+height.rows.map(x=>escapeHtml(x[0])+': '+escapeHtml(x[1])).join('<br>')+'<br>'+
@@ -1706,6 +1728,7 @@ function renderLawReview(){
    '<b>도로·높이</b><br>'+plannedRoadDetail(SELECTED_PARCEL)+'<br>'+
    '<b>지구단위계획 참고</b><br>'+otherDistrictPlanEvidenceCard()+
    '<span class="lawdim">이 결과는 건축허가 판정이 아닌 자동 사전검토입니다.</span></div></details>';
+  wireNorthTest();
 
 }
 $('lawMode').onclick=async()=>{if(lawMode)setLawMode(false);else await enterLawWorkspace()};
