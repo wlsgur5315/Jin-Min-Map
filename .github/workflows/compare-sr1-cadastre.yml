@@ -1,0 +1,32 @@
+name: Compare SR1 639 and 1436 cadastral groups
+on:
+  push:
+    paths:
+      - .github/workflows/compare-sr1-cadastre.yml
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Compare SR1-labeled 2022 drawing neighborhoods against UQ162
+        run: |
+          python - <<'PY'
+          import gzip,json,glob,collections
+          from shapely.geometry import shape
+          prefixes=('639-','1436-','1437-','1432-','640-')
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as z:plan=json.load(z)['features']
+          a=[(shape(x['geometry']),x['properties']) for x in plan if (x.get('properties') or {}).get('source_layer')=='KLIP_C_UQ162']
+          for fn in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(fn,'rt') as z:ps=json.load(z)['features']
+           for f in ps:
+            p=f.get('properties') or {};j=str(p.get('jibun') or '').replace(' ','')
+            if p.get('district_name')!='가호동' or not j.startswith(prefixes):continue
+            g=shape(f['geometry']);res=[]
+            for gg,q in a:
+             if not g.intersects(gg):continue
+             ratio=g.intersection(gg).area/g.area if g.area else 0
+             if ratio>.5:res.append({'ratio':round(ratio,5),'restrict_n':q.get('restrict_n'),'present_sn':q.get('present_sn'),'build_des':q.get('build_des')})
+            if res: print('SR1_MATCH='+json.dumps({'jibun':j,'pnu':p.get('pnu'),'matches':res},ensure_ascii=False,separators=(',',':')))
+          PY
