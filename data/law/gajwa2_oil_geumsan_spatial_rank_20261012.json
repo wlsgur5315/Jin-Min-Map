@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-12",
+  "method": "EPSG:5179 projected nearest polygon distance from known cadastral landmarks and numeric rule agreement",
+  "source_notice": "진주시 고시 제2022-8호",
+  "legal_application": false,
+  "pdf_georeferenced": false,
+  "cases": [
+    {
+      "site": "가좌2 주유소 용도변경",
+      "anchor_pnus": [
+        "4817013100109110000",
+        "4817013100109110003"
+      ],
+      "drawing_numeric": {
+        "floors": 3,
+        "bcr_pct": 60,
+        "far_pct": 200
+      },
+      "candidate": {
+        "restrict_n": "48170UQ162HJ201001140428",
+        "distance_m": 37.3,
+        "polygon_area_sqm": 1258.6,
+        "gis_rule": "200%이하;-;-;최고고도 3층;-;60%이하",
+        "centroid_epsg5179": [
+          1055006.41,
+          1684121.69
+        ]
+      },
+      "numeric_matching_candidates_in_plan": 1,
+      "total_plan_restriction_polygons": 51,
+      "status": "single_numeric_match_and_nearby_not_proven_amended_site",
+      "confirmed_pnu": null
+    },
+    {
+      "site": "금산 노유자시설 허용 추가",
+      "anchor_pnus": [
+        "4817041024102810003",
+        "4817041026102810037",
+        "4817041026102810036",
+        "4817041026102810003"
+      ],
+      "drawing_numeric": {
+        "floors": 4,
+        "bcr_pct": 60,
+        "far_pct": 230
+      },
+      "candidates": [
+        {
+          "restrict_n": "48170UQ162HJ201312130359",
+          "distance_m": 1.85,
+          "polygon_area_sqm": 4782.2
+        },
+        {
+          "restrict_n": "48170UQ162HJ201312130379",
+          "distance_m": 11.79,
+          "polygon_area_sqm": 2932.1
+        },
+        {
+          "restrict_n": "48170UQ162HJ201312130375",
+          "distance_m": 29.06,
+          "polygon_area_sqm": 17552.1
+        },
+        {
+          "restrict_n": "48170UQ162HJ201312130378",
+          "distance_m": 44.13,
+          "polygon_area_sqm": 4343.7
+        }
+      ],
+      "matching_candidates": 4,
+      "status": "four_numeric_matches_near_school_not_proven_amended_site",
+      "confirmed_pnu": null
+    }
+  ],
+  "limitations": [
+    "Distances are from neighboring cadastral parcels, not georeferenced changed-lot polygon",
+    "Numeric match is not proof of designation, land use or effective date",
+    "Do not automatically use values for height or floor caps"
+  ],
+  "workflow": "https://github.com/wlsgur5315/Jin-Min-Map/actions/runs/38218591676"
+}
