@@ -332,6 +332,14 @@
     "date": "2026-10-12",
     "status": "incomplete",
     "result": "공개 웹 검색에서 2022-8호 이후 평거2지구를 특정해 이 높이 결정을 갱신한 고시는 확인하지 못함. 미발견은 변경 부재의 증명이 아님.",
-    "distinguish": "2023-132호 및 2026-139호는 평거1, 2023-131호는 평거3으로 평거2와 다름"
+    "distinguish": "2023-132호 및 2026-139호는 평거1, 2023-131호는 평거3으로 평거2와 다름",
+    "gajwa": {
+      "notice": "진주시 고시 제2022-106호",
+      "date": "2022-06-27",
+      "title": "진주도시관리계획[가좌(일단의주택지조성사업) 지구단위계획] 결정(변경) 및 지형도면 고시",
+      "source_url": "https://www.eum.go.kr/web/gs/gv/gvGosiDet.jsp?seq=526038",
+      "status": "official_notice_found_full_drawing_not_yet_compared",
+      "consequence": "2022-8 가좌 결정도를 현행 최종 규제 기준으로 사용 불가. 제2022-106호의 변경도 및 이후 고시 비교 필요."
+    }
   }
 }
