@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "dataset": "jinju_district_unit_plan_2022_8_drawing_evidence",
   "status": "reference_only_not_automatically_applied",
   "effective_date": "unverified_against_later_amendments",
@@ -31,26 +31,66 @@
       "evidence": [
         {
           "lot_label": "C4~C8",
-          "raw_text": "획지번호:C4~C8; [기정] 400%이하 / 80%이하 / 20m이하; [변경] 400%이하 / 80%이하 / 20m이하",
-          "status": "drawing_table_alignment_requires_visual_confirmation"
-        },
-        {
-          "lot_label": "C10",
-          "raw_text": "획지번호:C10 인근: [변경] 300%이하 / 60%이하 / 15m이하",
-          "status": "drawing_table_alignment_requires_visual_confirmation"
+          "before": {
+            "far_pct": 210,
+            "bcr_pct": 70,
+            "height_m": 10
+          },
+          "after": {
+            "far_pct": 400,
+            "bcr_pct": 80,
+            "height_m": 20
+          },
+          "status": "visually_verified_on_2022_drawing",
+          "method": "색상 표시된 변경 표의 위치와 화살표를 도면 영상에서 직접 확인"
         },
         {
           "lot_label": "C3,C9",
-          "raw_text": "획지번호:C3,C9 인근: [기정] 400%이하 / 60%이하 / 20m이하; [변경] 400%이하 / 80%이하 / 20m이하",
-          "status": "drawing_table_alignment_requires_visual_confirmation"
+          "before": {
+            "far_pct": 400,
+            "bcr_pct": 60,
+            "height_m": 20
+          },
+          "after": {
+            "far_pct": 400,
+            "bcr_pct": 80,
+            "height_m": 20
+          },
+          "status": "visually_verified_on_2022_drawing",
+          "method": "좌측 표에서 기정 검정 / 변경 적색 표기 확인"
+        },
+        {
+          "lot_label": "C10",
+          "before": {
+            "far_pct": 300,
+            "bcr_pct": 60,
+            "height_m": 15
+          },
+          "after": {
+            "far_pct": 400,
+            "bcr_pct": 80,
+            "height_m": 20
+          },
+          "status": "visually_verified_on_2022_drawing",
+          "method": "하단 표에서 기정 검정 / 변경 적색 표기 확인"
         },
         {
           "lot_label": "C1,C2",
-          "raw_text": "획지번호:C1,C2 인근: [변경] 300%이하 / 60%이하 / 15m이하; [기정] 1300%이하 / 80%이하 / 높이 '-' ",
-          "status": "drawing_table_alignment_requires_visual_confirmation"
+          "before": {
+            "far_pct": 1300,
+            "bcr_pct": 80,
+            "height_m": null
+          },
+          "after": {
+            "far_pct": 1300,
+            "bcr_pct": 80,
+            "height_m": null
+          },
+          "status": "visually_verified_unchanged_2022_drawing",
+          "method": "기정변경없음 명시, '-'는 높이 무제한이라는 의미로 해석하지 않음"
         }
       ],
-      "remarks": "10m 표시는 도면에서 확인되나 대상 획지명은 이 추출만으로 미확정."
+      "remarks": "도면 중앙·좌측·하단의 획지번호별 변경 표를 영상으로 검토. 기정→변경 값은 2022년 해당 도면 기준이며 현재 법적 확정값은 아니다. C1,C2 높이 '-'를 무제한으로 해석할 수 없다."
     },
     {
       "zone": "가좌",
@@ -142,9 +182,20 @@
     }
   ],
   "next_steps": [
-    "도면 표의 시각적 열 정렬 검토",
-    "지구단위계획 획지번호와 지도 GIS 도형 연결",
-    "2022년 이후 변경고시 대조",
-    "검증된 획지만 수치 자동 적용"
-  ]
+    "2022년 이후 평거2 변경고시 최신본 확인",
+    "C 획지 경계를 도면에서 지리참조하거나 공식 지구단위계획 GIS 데이터 확보",
+    "지적 필지와 C 획지 polygon 교차면적 검사",
+    "명확히 일치하는 필지만 높이 계산에 연결"
+  ],
+  "review_date": "2026-10-12",
+  "spatial_matching": {
+    "status": "not_yet_verified",
+    "reason": "KLIP_005 진주 지구단위계획 GeoJSON.gz에는 지구단위계획구역과 관련 선형/시설 레이어가 포함되나 C1~C10 획지번호별 경계와 최고높이 속성은 확인되지 않음. 필지 도형과 C번호를 직접 연결할 공식 좌표/획지 레이어가 아직 없음.",
+    "data_check": {
+      "features": 4266,
+      "plan_boundary_layer": "KLIP_C_UQ161",
+      "parcel_mapping": "unavailable_in_current_plan_geometry"
+    },
+    "consequence": "자동 높이 계산 미연결"
+  }
 }
