@@ -1,0 +1,31 @@
+name: Audit Gajwa 2022-106 SR1 change parcel
+on:
+  push:
+    paths:
+      - .github/workflows/audit-gajwa-2022-106-sr1.yml
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Check nearby cadastral parcels against KLIP construction limits
+        run: |
+          python - <<'PY'
+          import gzip,json,glob
+          from shapely.geometry import shape
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as q:fs=json.load(q)['features']
+          polys=[(shape(f['geometry']),f['properties']) for f in fs if f.get('properties',{}).get('source_layer')=='KLIP_C_UQ162']
+          for fn in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(fn,'rt') as q:items=json.load(q)['features']
+           for x in items:
+            p=x.get('properties') or {};j=str(p.get('jibun') or '').replace(' ','')
+            if str(p.get('district_name'))!='가호동' or not any(j.startswith(v+'-') or j.startswith(v+'대') for v in ['625','630','620','622','624','626','627','628','629','631']):continue
+            geom=shape(x['geometry']);hits=[]
+            for gg,pp in polys:
+             if not geom.intersects(gg):continue
+             ratio=geom.intersection(gg).area/geom.area if geom.area else 0
+             if ratio>.45:hits.append({'ratio':round(ratio,5),'restrict':pp.get('restrict_n'),'plan':pp.get('present_sn'),'rule':pp.get('build_des')})
+            if hits:print('SR1_NEARBY='+json.dumps({'jibun':j,'pnu':p.get('pnu'),'hits':hits},ensure_ascii=False,separators=(',',':')))
+          PY
