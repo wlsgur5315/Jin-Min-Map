@@ -1582,9 +1582,9 @@ function gajwaSR1GeoreferenceCard(parcel){
  const f=GAJWA_GEUMSAN_REFERENCE.features.find(x=>x.properties?.restrict_n==='48170UQ162HJ201803290325');
  if(!f)return'';
  const ratio=planningOverlap(parcel,f);
- if(!(ratio>.01))return'';
  const parcelCandidate=SR1_GIS_0325_PNU_CANDIDATES.has(String(parcel.properties?.pnu||''));
  const tracedOverlapExtra=['4817013100114360009','4817013100114360010'].includes(String(parcel.properties?.pnu||''));
+ if(!(ratio>.01)&&!tracedOverlapExtra)return'';
  return '<div style="border:1px dashed #f97316;border-radius:10px;padding:12px;margin:12px 0"><b>가좌 SR1 · 정량 좌표정합 위치확인</b><br>'+
  'PDF SR1 표기 2곳은 GIS ...325 내부. 별도 분홍색 외곽 경계 추출(약 5,862㎡, 12개 기준점 RMSE 1.02m)은 1436-9·10(다른 GIS 객체 ...324)까지 포함.<br>'+
  '<b>층수 불일치:</b> 후속 결정도 변경표 4층 / 기존 GIS 건축제한 기록 6층.<br>'+
