@@ -1,0 +1,32 @@
+name: Verify Gajwa drawing 453-series parcels
+on:
+  push:
+    paths:
+      - .github/workflows/verify-gajwa-453.yml
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Audit exact cadastral overlaps for drawing-adjacent 453 lots
+        run: |
+          python - <<'PY'
+          import gzip,json,glob
+          from shapely.geometry import shape
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as f: fs=json.load(f)['features']
+          restr=[(shape(f['geometry']),f['properties']) for f in fs if f.get('properties',{}).get('source_layer')=='KLIP_C_UQ162']
+          for fn in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(fn,'rt') as z: parcels=json.load(z)['features']
+           for item in parcels:
+            p=item.get('properties') or {};j=str(p.get('jibun') or '').replace(' ','')
+            if not j.startswith('453-'):continue
+            if str(p.get('district_name')) not in ('가호동','신안동'):continue
+            g=shape(item['geometry']);hit=[]
+            for poly,q in restr:
+             if not poly.intersects(g):continue
+             ratio=poly.intersection(g).area/g.area if g.area else 0
+             if ratio>.9:hit.append({'restrict':q.get('restrict_n'),'plan':q.get('present_sn'),'rule':q.get('build_des'),'share':round(ratio,5)})
+            if hit:print('LOT_MATCH='+json.dumps({'jibun':j,'district':p.get('district_name'),'pnu':p.get('pnu'),'hits':hit},ensure_ascii=False))
+          PY
