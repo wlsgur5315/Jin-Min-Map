@@ -13,6 +13,7 @@ jobs:
       - name: Check GIS candidate intersections with repository cadastral parcels
         shell: bash
         run: |
+          python - <<'PY'
           import glob,gzip,json,collections
           from shapely.geometry import shape
           from shapely.strtree import STRtree
@@ -44,3 +45,4 @@ jobs:
            sorted_items=sorted(output[cid],key=lambda p:p['intersection_ratio'],reverse=True)
            print('RESULT_'+cid+'='+json.dumps({'hits':len(sorted_items),'top':sorted_items[:8]},ensure_ascii=False,separators=(',',':')))
           print('SUMMARY='+json.dumps({'candidate_polygon_count':len(matches),'intersecting_polygon_count':len(output),'total_intersections':sum(len(v) for v in output.values())}))
+          PY
