@@ -132,14 +132,41 @@
       },
       "evidence": [
         {
-          "raw_text": "[기정] 200%이하 / 60%이하 / 3층 / 주유소 및 부대시설; [변경] 200%이하 / 60%이하 / 3층 / 근린생활시설용지",
-          "status": "single_changed_location_not_all_zones"
+          "site": "주유소 부지",
+          "drawing_locator": "가좌2 결정도, [기정]/[변경] 주유소 표, 도로 표기 911답 인근",
+          "before": {
+            "far_pct": 200,
+            "bcr_pct": 60,
+            "floors": 3,
+            "use": "주유소 및 부대시설"
+          },
+          "after": {
+            "far_pct": 200,
+            "bcr_pct": 60,
+            "floors": 3,
+            "use": "근린생활시설용지"
+          },
+          "status": "table_visually_verified_parcel_polygon_unmatched"
         },
         {
-          "raw_text": "[기정] 200%이하 / 60%이하 / 높이 '-' / 파출소; [변경] 60%이하 / 5층 / 근린생활시설용지 (인접 텍스트, 표 배치 판독 필요)",
-          "status": "drawing_table_alignment_requires_visual_confirmation"
+          "site": "파출소 부지",
+          "drawing_locator": "가좌2 결정도, [기정]/[변경] 파출소 표, G2 표기 및 996-3 도로 인근",
+          "before": {
+            "far_pct": 200,
+            "bcr_pct": 60,
+            "floors": 5,
+            "use": "파출소 및 그 부설용도"
+          },
+          "after": {
+            "far_pct": 200,
+            "bcr_pct": 60,
+            "floors": 5,
+            "use": "근린생활시설용지"
+          },
+          "status": "table_visually_verified_parcel_polygon_unmatched"
         }
-      ]
+      ],
+      "remarks": "2026-10-12 PDF 원본 표 영역을 이미지로 직접 검토. 두 사례 모두 최고층수 자체는 기정=변경이며 용도만 바뀜. G2 등의 도면 획지와 GIS UQ162 개별 객체 대응은 미검증."
     },
     {
       "zone": "금산",
