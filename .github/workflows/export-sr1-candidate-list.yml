@@ -1,0 +1,49 @@
+name: Export SR1 candidate parcel inventory
+on:
+  push:
+    paths:
+      - .github/workflows/export-sr1-candidate-list.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Export parcel list inside georeferenced candidate GIS polygon
+        run: |
+          python - <<'PY'
+          import gzip,json,glob,os
+          from shapely.geometry import shape
+          rid='48170UQ162HJ201803290325'
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as f:features=json.load(f)['features']
+          item=next(f for f in features if (f.get('properties') or {}).get('restrict_n')==rid)
+          zone=shape(item['geometry'])
+          rows=[]
+          for fn in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(fn,'rt') as f: parcels=json.load(f)['features']
+           for ft in parcels:
+            p=ft.get('properties') or {}
+            if str(p.get('district_name'))!='가호동':continue
+            j=str(p.get('jibun') or '').replace(' ','')
+            if not (j.startswith('639-') or j.startswith('1436-')):continue
+            g=shape(ft['geometry'])
+            if not g.intersects(zone) or not g.area:continue
+            ratio=g.intersection(zone).area/g.area
+            if ratio<.50:continue
+            rows.append({'jibun':j,'pnu':str(p.get('pnu') or ''),'overlap_ratio':round(ratio,6),'kind':'CADASTRAL_CANDIDATE_ONLY'})
+          rows.sort(key=lambda x:x['jibun'])
+          result={'title':'SR1 2022-106 PDF-to-GIS candidate parcel inventory','status':'boundary_unverified','source_restriction_id':rid,'gis_rule':item['properties'].get('build_des'),'drawing_rule':'4층 60% 230%','gis_drawing_conflict':True,'sr1_label_points_in_restriction':2,'georeference_controls':28,'georeference_rmse_m':1.24,'warning':'Restriction polygon overlap is NOT proof the individual parcel belongs to changed SR1 site. No legal floor calculation.','candidates':rows}
+          os.makedirs('data/law',exist_ok=True)
+          with open('data/law/gajwa_sr1_0325_parcel_candidates_20261012.json','w') as f:json.dump(result,f,ensure_ascii=False,indent=2)
+          print('CANDIDATE_COUNT',len(rows))
+          print('CANDIDATES',json.dumps(rows,ensure_ascii=False))
+          PY
+      - name: Commit candidate inventory
+        run: |
+          git config user.name github-actions
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add data/law/gajwa_sr1_0325_parcel_candidates_20261012.json
+          (git diff --cached --quiet || (git commit -m "Publish SR1 unverified cadastral candidates" && git pull --rebase origin main && git push))
