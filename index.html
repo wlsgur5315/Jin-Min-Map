@@ -1458,7 +1458,7 @@ function plannedRoadReview(parcel){
 function heightResultOverview(parcel,zone){
  const review=parcelHeightReview();
  const model=northDaylightSimulation(parcel,zone);
- const m=model.match(/높이 모델 (\\d+(?:\\.\\d+)?~\\d+(?:\\.\\d+)?)m/);
+ const m=model.match(/높이 모델 ([0-9]+(?:[.][0-9]+)?~[0-9]+(?:[.][0-9]+)?)m/);
  const land=review.numeric!==null?review.numeric+'m':'미확인';
  const sun=m?m[1]+'m':'계산 불가/비대상';
  const box=(title,value,note)=>'<div style="flex:1 1 130px;min-width:0;border:1px solid #64748b55;border-radius:9px;padding:12px;background:#4755690d"><div style="font-size:11px;opacity:.8">'+title+'</div><div style="font-size:23px;font-weight:800;margin:4px 0">'+value+'</div><div style="font-size:11px;line-height:1.5;opacity:.8">'+note+'</div></div>';
