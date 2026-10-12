@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.12-17</title>
+<title>Jinju3D Local · v2026.10.12-18</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-17</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-18</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -161,7 +161,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.12-17',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.12-18',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1576,16 +1576,19 @@ function districtPlanVerificationDashboard(parcel){
  ' · 중첩 '+(x.ratio*100).toFixed(1)+'%<br><span class="lawdim">'+escapeHtml(x.status)+' · '+escapeHtml(x.note)+'</span></div>').join('')+
  '<div class="lawdim" style="margin-top:8px">검증 상태는 자료 대조를 위한 구분이며 건축허가 적합 여부가 아닙니다. 최고높이 자동계산에는 미반영합니다.</div></section>';
 }
+const SR1_GIS_0325_PNU_CANDIDATES=new Set(['4817013100114360001','4817013100114360002','4817013100114360003','4817013100114360004','4817013100114360005','4817013100114360006','4817013100114360007','4817013100106390011','4817013100106390013','4817013100106390014','4817013100106390015','4817013100106390001','4817013100106390025','4817013100106390030','4817013100106390036','4817013100106390037','4817013100106390040','4817013100106390043','4817013100106390006']);
 function gajwaSR1GeoreferenceCard(parcel){
  if(!parcel||!GAJWA_GEUMSAN_REFERENCE?.features?.length)return'';
  const f=GAJWA_GEUMSAN_REFERENCE.features.find(x=>x.properties?.restrict_n==='48170UQ162HJ201803290325');
  if(!f)return'';
  const ratio=planningOverlap(parcel,f);
  if(!(ratio>.01))return'';
+ const parcelCandidate=SR1_GIS_0325_PNU_CANDIDATES.has(String(parcel.properties?.pnu||''));
  return '<div style="border:1px dashed #f97316;border-radius:10px;padding:12px;margin:12px 0"><b>가좌 SR1 · 정량 좌표정합 위치확인</b><br>'+
  'PDF의 SR1 표기 두 곳 모두 이 GIS 다각형(...325) 내부에 있음. 지번 기준점 28개·RMSE 1.24m.<br>'+
  '<b>층수 불일치:</b> 후속 결정도 변경표 4층 / 기존 GIS 건축제한 기록 6층.<br>'+
  '선택 필지와 SR1 위치후보 다각형 중첩 '+(ratio*100).toFixed(1)+'%.<br>'+
+ (parcelCandidate?'<b>GIS 0325 내부 19개 지적 후보 중 하나 (639번대 12 / 1436번대 7)</b><br>':'이 필지는 19개 지적 후보 목록에 포함되지 않음.<br>')+
  '<span class="lawwarn">SR1 글자 위치와 GIS 다각형의 대응만 검증되었습니다. 선택 필지의 변경 대상 여부·현행 허용층수는 미확정이며 자동 산정하지 않습니다.</span></div>';
 }
 function verifiedAmendedLotEvidenceCard(parcel){
