@@ -1,0 +1,58 @@
+name: Rank amended lot GIS candidates by distance
+on:
+  push:
+    paths:
+      - .github/workflows/rank-amended-lot-gis.yml
+  workflow_dispatch:
+jobs:
+  rank:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely pyproj
+      - name: Calculate projected distances from cadastral landmarks
+        run: |
+          python - <<'PY'
+          import gzip,json,glob,math
+          from shapely.geometry import shape
+          from shapely.ops import transform
+          from pyproj import Transformer
+          from collections import defaultdict
+          to_m=Transformer.from_crs('EPSG:4326','EPSG:5179',always_xy=True).transform
+          plan_ids={'gajwa2':'48170UQ161PS200101040035','geumsan':'48170UQ161PS201312130026'}
+          anchors={'gajwa2':('가호동','911'), 'geumsan':('금산면','281-3')}
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as z: fs=json.load(z)['features']
+          restrictions=defaultdict(list)
+          for f in fs:
+           p=f.get('properties') or {};sn=p.get('present_sn')
+           if p.get('source_layer')=='KLIP_C_UQ162' and sn in plan_ids.values():
+            try: g=transform(to_m,shape(f['geometry']))
+            except Exception:continue
+            restrictions[sn].append((g,p))
+          parcel_anchors={}
+          for file in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(file,'rt') as z: parcels=json.load(z)['features']
+           for f in parcels:
+            p=f.get('properties') or {};nm=str(p.get('jibun') or '').replace(' ','')
+            for label,(district,jibun) in anchors.items():
+             if str(p.get('district_name'))==district and nm.startswith(jibun):
+              try:g=transform(to_m,shape(f['geometry']))
+              except Exception:continue
+              parcel_anchors.setdefault(label,[]).append((g,p))
+          print('ANCHORS', {k:len(v) for k,v in parcel_anchors.items()})
+          for label,sn in plan_ids.items():
+           items=parcel_anchors.get(label,[])
+           if not items:
+            print('NO_ANCHOR',label);continue
+           for g,p in items[:8]: print('ANCHOR_DETAIL',label,p.get('jibun'),p.get('pnu'))
+           scored=[]
+           for gg,p in restrictions[sn]:
+            dist=min(gg.distance(g) for g,_ in items)
+            txt=str(p.get('build_des') or '')
+            if label=='gajwa2': match=bool('200%이하' in txt and '3층' in txt and '60%이하' in txt)
+            else:match=bool('230%이하' in txt and '4층' in txt and '60%이하' in txt)
+            scored.append((dist,match,p.get('restrict_n'),txt,gg.area,tuple(round(x,2) for x in gg.centroid.coords[0])))
+           scored.sort(key=lambda r:(not r[1],r[0]))
+           print('CANDIDATES',label,json.dumps([{'distance_m':round(x[0],2),'numeric_match':x[1],'restrict_n':x[2],'gis_rule':x[3],'area_m2':round(x[4],1],'centroid_epsg5179':x[5]} for x in scored[:20]],ensure_ascii=False))
+           print('SUMMARY',label,'num_total',len(scored),'num_numeric_match',sum(x[1] for x in scored),'closest_match_m',round(min((x[0] for x in scored if x[1]),default=float('nan')),2))
+          PY
