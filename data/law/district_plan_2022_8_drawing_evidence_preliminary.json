@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "dataset": "jinju_district_unit_plan_2022_8_drawing_evidence",
+  "status": "reference_only_not_automatically_applied",
+  "effective_date": "unverified_against_later_amendments",
+  "source": "사용자 제공 진주시 고시 제2022-8호 관련 7개 결정도 PDF (도면 1장씩)",
+  "caution": "PDF 도면의 기정/변경 표시는 도면 배치·획지 위치와 함께 판독해야 한다. 범례의 예시 수치는 규제가 아니다. 지적 필지/획지 공간 매칭 및 후속 변경고시 확인 전 지도 계산에 쓰지 않는다.",
+  "zones": [
+    {
+      "zone": "평거2",
+      "source_file": "평거2지구_가구및획지, 건축물 등에 관한 결정도.pdf",
+      "source_type": "building_and_lot_plan",
+      "observed_numeric_limits": {
+        "height_m": [
+          10,
+          15,
+          20
+        ],
+        "far_percent": [
+          210,
+          300,
+          400,
+          1300
+        ],
+        "bcr_percent": [
+          60,
+          70,
+          80
+        ]
+      },
+      "evidence": [
+        {
+          "lot_label": "C4~C8",
+          "raw_text": "획지번호:C4~C8; [기정] 400%이하 / 80%이하 / 20m이하; [변경] 400%이하 / 80%이하 / 20m이하",
+          "status": "drawing_table_alignment_requires_visual_confirmation"
+        },
+        {
+          "lot_label": "C10",
+          "raw_text": "획지번호:C10 인근: [변경] 300%이하 / 60%이하 / 15m이하",
+          "status": "drawing_table_alignment_requires_visual_confirmation"
+        },
+        {
+          "lot_label": "C3,C9",
+          "raw_text": "획지번호:C3,C9 인근: [기정] 400%이하 / 60%이하 / 20m이하; [변경] 400%이하 / 80%이하 / 20m이하",
+          "status": "drawing_table_alignment_requires_visual_confirmation"
+        },
+        {
+          "lot_label": "C1,C2",
+          "raw_text": "획지번호:C1,C2 인근: [변경] 300%이하 / 60%이하 / 15m이하; [기정] 1300%이하 / 80%이하 / 높이 '-' ",
+          "status": "drawing_table_alignment_requires_visual_confirmation"
+        }
+      ],
+      "remarks": "10m 표시는 도면에서 확인되나 대상 획지명은 이 추출만으로 미확정."
+    },
+    {
+      "zone": "가좌",
+      "source_file": "가좌지구_가구및획지, 건축물 등에 관한 결정도.pdf",
+      "source_type": "building_and_lot_plan",
+      "observed_numeric_limits": {
+        "floors": [
+          4
+        ],
+        "far_percent": [
+          230
+        ],
+        "bcr_percent": [
+          60
+        ]
+      },
+      "evidence": [
+        {
+          "raw_text": "[기정] 230%이하 / 60%이하 / 4층 / 허용용도:유치원; [변경] 230%이하 / 60%이하 / 4층 / 허용용도:근린생활시설용지",
+          "status": "single_changed_location_not_all_zones"
+        }
+      ]
+    },
+    {
+      "zone": "가좌2",
+      "source_file": "가좌2지구_가구및획지, 건축물 등에 관한 결정도.pdf",
+      "source_type": "building_and_lot_plan",
+      "observed_numeric_limits": {
+        "floors": [
+          3,
+          5
+        ],
+        "far_percent": [
+          200
+        ],
+        "bcr_percent": [
+          60
+        ]
+      },
+      "evidence": [
+        {
+          "raw_text": "[기정] 200%이하 / 60%이하 / 3층 / 주유소 및 부대시설; [변경] 200%이하 / 60%이하 / 3층 / 근린생활시설용지",
+          "status": "single_changed_location_not_all_zones"
+        },
+        {
+          "raw_text": "[기정] 200%이하 / 60%이하 / 높이 '-' / 파출소; [변경] 60%이하 / 5층 / 근린생활시설용지 (인접 텍스트, 표 배치 판독 필요)",
+          "status": "drawing_table_alignment_requires_visual_confirmation"
+        }
+      ]
+    },
+    {
+      "zone": "금산",
+      "source_file": "금산지구_가구및획지, 건축물 등에 관한 결정도.pdf",
+      "source_type": "building_and_lot_plan",
+      "observed_numeric_limits": {
+        "floors": [
+          4
+        ],
+        "far_percent": [
+          230
+        ],
+        "bcr_percent": [
+          60
+        ]
+      },
+      "evidence": [
+        {
+          "raw_text": "[기정] 230%이하 / 60%이하 / 4층 / 제1,2종 근린생활시설; [변경] 230%이하 / 60%이하 / 4층 / 제1,2종 근린생활시설·노유자시설",
+          "status": "single_changed_location_not_all_zones"
+        }
+      ]
+    }
+  ],
+  "supplementary_files": [
+    {
+      "source_file": "가좌지구_도시기반시설에관한결정도.pdf",
+      "type": "infrastructure_plan",
+      "height_evidence": false
+    },
+    {
+      "source_file": "가좌2지구_도시기반시설에관한결정도.pdf",
+      "type": "infrastructure_plan",
+      "height_evidence": false
+    },
+    {
+      "source_file": "도시관리계획 결정(변경)도.pdf",
+      "type": "general_zoning_change_map",
+      "height_evidence": false
+    }
+  ],
+  "next_steps": [
+    "도면 표의 시각적 열 정렬 검토",
+    "지구단위계획 획지번호와 지도 GIS 도형 연결",
+    "2022년 이후 변경고시 대조",
+    "검증된 획지만 수치 자동 적용"
+  ]
+}
