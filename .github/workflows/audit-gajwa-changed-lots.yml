@@ -42,5 +42,5 @@ jobs:
           for key in prefixes:
            a=samples[key]
            groups=collections.Counter((i['present_sn'],i['restrict_n'],i['gis_rule']) for i in a)
-           print('MATCH_'+key+'='+json.dumps({'total':len(a),'representative':a[:5],'groups':[{'plan':k[0],'restrict':k[1],'rule':k[2],'count':c} for k,c in groups.most_common(8)]},ensure_ascii=False))
+           print('MATCH_'+key+'='+json.dumps({'total':len(a),'representative':a[:25],'groups':[{'plan':k[0],'restrict':k[1],'rule':k[2],'count':c} for k,c in groups.most_common(8)]},ensure_ascii=False))
           PY
