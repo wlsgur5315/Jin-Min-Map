@@ -15,7 +15,7 @@ jobs:
         run: |
           python - <<'PY'
           import gzip,json,os
-          groups={'48170UQ161PS201312130022':('가좌지구',18),'48170UQ161PS201312130026':('금산지구',49)}
+          groups={'48170UQ161PS201312130022':('가좌·가좌2 위치대조 후보',18),'48170UQ161PS201312130026':('금산지구',49)}
           with gzip.open('data/law/jinju_district_plan.geojson.gz','rt',encoding='utf-8') as f: fc=json.load(f)
           features=[]
           for feat in fc['features']:
@@ -23,7 +23,7 @@ jobs:
            sn=p.get('present_sn')
            if p.get('source_layer')!='KLIP_C_UQ162' or sn not in groups:continue
            name,_=groups[sn]
-           features.append({'type':'Feature','geometry':feat['geometry'],'properties':{'zone':name,'present_sn':sn,'restrict_n':p.get('restrict_n'),'gis_build_des':p.get('build_des'),'source_layer':'KLIP_C_UQ162','review_status':'gis_polygon_present_lot_number_unverified','automatic_limit':False}})
+           features.append({'type':'Feature','geometry':feat['geometry'],'properties':{'zone':name,'present_sn':sn,'restrict_n':p.get('restrict_n'),'gis_build_des':p.get('build_des'),'source_layer':'KLIP_C_UQ162','review_status':'gis_polygon_present_lot_number_and_gajwa_zone_unverified','automatic_limit':False}})
           counts={k:sum(1 for f in features if f['properties']['present_sn']==k) for k in groups}
           assert all(counts[k]==groups[k][1] for k in groups),(len(features),counts)
           os.makedirs('data/law',exist_ok=True)
