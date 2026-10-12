@@ -221,6 +221,90 @@
       }
     ],
     "mapping_to_current_parcels": "not_verified",
-    "numeric_auto_application": false
+    "numeric_auto_application": false,
+    "pdf_to_gis_visual_matches": [
+      {
+        "lot": "C1",
+        "id_suffix": "003",
+        "drawing_parcel": "193번대",
+        "gis_parcel": "가호동 662번대",
+        "status": "ambiguous_mismatched_cadastre",
+        "note": "도면상 C1 위치와 형태는 유력하지만 현재 지적필지 명칭 불일치. 1:1 확정 금지"
+      },
+      {
+        "lot": "C2",
+        "id_suffix": "026",
+        "drawing_parcel": "194번대",
+        "gis_parcel": "평거동 194번대",
+        "status": "strong_visual_parcel_match"
+      },
+      {
+        "lot": "C3",
+        "id_suffix": "028",
+        "drawing_parcel": "195번대",
+        "gis_parcel": "평거동 195번대",
+        "status": "strong_visual_parcel_match"
+      },
+      {
+        "lot": "C4",
+        "id_suffix": "027",
+        "drawing_parcel": "196~197번대",
+        "gis_parcel": "평거동 196~197번대",
+        "status": "strong_visual_parcel_match"
+      },
+      {
+        "lot": "C5",
+        "id_suffix": "034",
+        "drawing_parcel": "198~199번대",
+        "gis_parcel": "평거동 198~199번대",
+        "status": "strong_visual_parcel_match"
+      },
+      {
+        "lot": "C6",
+        "id_suffix": "035",
+        "drawing_parcel": "200~201번대",
+        "gis_parcel": "평거동 200~201번대",
+        "status": "strong_visual_parcel_match"
+      },
+      {
+        "lot": "C7",
+        "id_suffix": "032",
+        "drawing_parcel": "202번대",
+        "gis_parcel": "평거동 202번대",
+        "status": "strong_visual_parcel_match"
+      },
+      {
+        "lot": "C8",
+        "id_suffix": "029",
+        "drawing_parcel": "203번대",
+        "gis_parcel": "평거동 203번대",
+        "status": "strong_visual_parcel_match"
+      },
+      {
+        "lot": "C9",
+        "id_suffix": "030",
+        "drawing_parcel": "204번대",
+        "gis_parcel": "평거동 204번대",
+        "status": "strong_visual_parcel_match"
+      },
+      {
+        "lot": "C10",
+        "id_suffix": "031",
+        "drawing_parcel": "205번대",
+        "gis_parcel": "평거동 205번대",
+        "status": "strong_visual_parcel_match"
+      }
+    ],
+    "review_method": "2022년 공식 지형도면의 C번호와 지번 문자, UQ162 GIS 다각형의 지적 필지 교차 결과를 시각적으로 결합; 정량 지리참조 오차는 측정하지 않음",
+    "parcel_intersection_verified": true,
+    "lot_number_verified": false,
+    "auto_apply": false,
+    "important_correction": "003은 가호동 662번대와 겹치므로 기존 제외 판단은 유지하되 도면상 C1 모양과 위치가 비슷해 C1 후보 가능성은 남김. C10은 031과 평거동 205번대의 대응이 강함. 026은 C2에 해당하는 것으로 관찰됨."
+  },
+  "subsequent_notices_check": {
+    "date": "2026-10-12",
+    "status": "incomplete",
+    "result": "공개 웹 검색에서 2022-8호 이후 평거2지구를 특정해 이 높이 결정을 갱신한 고시는 확인하지 못함. 미발견은 변경 부재의 증명이 아님.",
+    "distinguish": "2023-132호 및 2026-139호는 평거1, 2023-131호는 평거3으로 평거2와 다름"
   }
 }
