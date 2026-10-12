@@ -1,0 +1,39 @@
+{
+  "notice": "진주시 고시 제2022-106호 관련 첨부 도면(사용자 제공, 공고 번호와 원본 연결은 별도 확인 필요)",
+  "source_files": [
+    "03-가구및획지, 건축물 등에 관한 결정도.pdf",
+    "02_도시기반시설에관한결정도.pdf"
+  ],
+  "review_date": "2026-10-12",
+  "drawing_name": "가좌 주택지조성사업 지구단위계획 재정비",
+  "site_label": "SR1",
+  "site_context": "도면 북측 분홍색 획지(625·630 지번 표시 인근), 변경표 연결선으로 표시",
+  "before": {
+    "use": "공공청사",
+    "far_pct": 230,
+    "bcr_pct": 60,
+    "floors": 4
+  },
+  "after": {
+    "use": "단독주택용지",
+    "far_pct": 230,
+    "bcr_pct": 60,
+    "floors": 4
+  },
+  "distinct_from_2022_8_kindergarten_to_neighborhood": true,
+  "candidate_pnu": null,
+  "candidate_restrict_n": null,
+  "spatial_review": {
+    "checked": "가호동 620~631 번대 지적과 UQ162 중첩",
+    "result": "no matching intersections in initial filtered audit",
+    "workflow": "https://github.com/wlsgur5315/Jin-Min-Map/actions/runs/38220722317",
+    "georeferencing_rmse": null
+  },
+  "status": "drawing_change_confirmed_individual_pnu_unresolved",
+  "automatic_apply": false,
+  "notes": [
+    "도면의 SR1 영역은 복수 후보를 포함할 수 있음",
+    "현행 법적 적용 및 후속 변경고시 미확인",
+    "기존 2022-8호 유치원→근린생활시설 변경과는 별개로 보존"
+  ]
+}
