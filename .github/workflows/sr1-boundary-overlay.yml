@@ -1,0 +1,59 @@
+name: Compare SR1 traced PDF boundary to cadastral polygons
+on:
+  push:
+    paths:
+      - .github/workflows/sr1-boundary-overlay.yml
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely pyproj numpy
+      - name: Affine PDF to GIS overlay with cadastral intersection
+        run: |
+          python - <<'PY'
+          import gzip,json,glob,numpy as np
+          from shapely.geometry import Polygon,shape
+          from shapely.ops import transform
+          from pyproj import Transformer
+          drawing=np.array([[900,934.706],[851.176,920],[844.118,922.353],[781.765,1000.588],[782.353,1009.412],[773.529,1011.176],[738.824,1054.706],[737.647,1062.941],[742.353,1065.882],[809.412,1072.353],[827.647,1048.824],[827.647,1044.118],[833.529,1041.765],[885.882,974.118],[904.706,957.647]])
+          controls={"639-1":[865.914,966.621],"1436-2":[874.04,939.679],"1436-3":[852.991,935.376],"1436-4":[840.803,950.429],"639-15":[826.455,1008.552],"1436-5":[828.921,964.903],"1436-6":[814.917,977.774],"639-6":[808.933,1056.881],"1436-7":[795.648,997.839],"1436-9":[771.56,1030.759],"1436-10":[756.693,1056.78],"1436-1":[892.616,946.259],"639-11":[847.163,999.869]}
+          to_m=Transformer.from_crs('EPSG:4326','EPSG:5179',always_xy=True).transform
+          parcels=[]
+          for fn in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(fn,'rt') as f: fs=json.load(f)['features']
+           for feat in fs:
+            prop=feat.get('properties') or {}
+            if prop.get('district_name')!='가호동':continue
+            jibun=str(prop.get('jibun') or '').replace(' ','').rstrip('대')
+            if not (jibun.startswith('639-') or jibun.startswith('1436-')):continue
+            parcels.append((jibun,prop,transform(to_m,shape(feat['geometry']))))
+          pairs=[]
+          for name,xy in controls.items():
+           opts=[v for v in parcels if v[0]==name]
+           if len(opts)!=1:continue
+           c=opts[0][2].centroid
+           pairs.append((np.array([xy[0],xy[1],1.]),np.array([c.x,c.y]),name))
+          X=np.array([p[0] for p in pairs]);Y=np.array([p[1] for p in pairs])
+          coefs=np.linalg.lstsq(X,Y,rcond=None)[0]
+          errs=np.linalg.norm(X@coefs-Y,axis=1)
+          # robust remove bad text control positions (e.g. printed label not geometrical center)
+          for k in range(3):
+           good=errs<max(5.,np.percentile(errs,75))
+           if good.sum()<6:break
+           coefs=np.linalg.lstsq(X[good],Y[good],rcond=None)[0]
+           errs=np.linalg.norm(X@coefs-Y,axis=1)
+          print('CONTROL_FIT',json.dumps({'used':int(good.sum()),'total':len(pairs),'rmse_m':round(float(np.sqrt(np.mean(errs[good]**2))),3),'median_m':round(float(np.median(errs[good])),3),'excluded':[pairs[i][2] for i in range(len(pairs)) if not good[i]]},ensure_ascii=False))
+          mapped=np.c_[drawing,np.ones(len(drawing))]@coefs
+          area=Polygon(mapped).buffer(0)
+          print('PDF_POLYGON_AREA_SQM',round(area.area,2),'valid',area.is_valid)
+          out=[]
+          for name,prop,g in parcels:
+           if not area.intersects(g):continue
+           ov=area.intersection(g).area
+           if ov<1:continue
+           out.append({'jibun':name,'pnu':prop.get('pnu'),'overlap_sqm':round(ov,1),'parcel_coverage_pct':round(100*ov/g.area,1),'polygon_coverage_pct':round(100*ov/area.area,1)})
+          out.sort(key=lambda z:-z['overlap_sqm'])
+          print('LOT_OVERLAPS',json.dumps(out,ensure_ascii=False))
+          PY
