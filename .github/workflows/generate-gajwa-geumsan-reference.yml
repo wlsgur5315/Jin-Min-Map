@@ -35,4 +35,4 @@ jobs:
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add data/law/gajwa_geumsan_reference_polygons.geojson
-          git diff --cached --quiet || (git commit -m "Extract Gajwa and Geumsan GIS lot review polygons" && git push)
+          git diff --cached --quiet || (git commit -m "Extract Gajwa and Geumsan GIS lot review polygons" && git pull --rebase origin main && git push)
