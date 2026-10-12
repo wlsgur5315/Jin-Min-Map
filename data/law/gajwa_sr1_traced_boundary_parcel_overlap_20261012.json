@@ -1,0 +1,184 @@
+{
+  "study": "Gajwa 2022-106 drawing SR1 traced magenta boundary versus cadastral parcels",
+  "method": "Threshold pink image fill, external contour Douglas-Peucker simplified, 12 PDF word to cadastral center affine controls, project EPSG5179 and Shapely intersections",
+  "source_pdf": "03-가구및획지, 건축물 등에 관한 결정도.pdf",
+  "notice_association": "2022-106 presumed pending metadata verification",
+  "drawing_polygon_area_m2": 5861.61,
+  "fit": {
+    "used": 12,
+    "total": 12,
+    "rmse_m": 1.019,
+    "median_m": 0.632,
+    "excluded": []
+  },
+  "parcel_overlaps": [
+    {
+      "jibun": "639-1",
+      "pnu": "4817013100106390001",
+      "overlap_sqm": 794.6,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 13.6
+    },
+    {
+      "jibun": "639-15",
+      "pnu": "4817013100106390015",
+      "overlap_sqm": 533.5,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 9.1
+    },
+    {
+      "jibun": "1436-9",
+      "pnu": "4817013100114360009",
+      "overlap_sqm": 397.6,
+      "parcel_coverage_pct": 99.8,
+      "polygon_coverage_pct": 6.8
+    },
+    {
+      "jibun": "1436-10",
+      "pnu": "4817013100114360010",
+      "overlap_sqm": 349.3,
+      "parcel_coverage_pct": 95.6,
+      "polygon_coverage_pct": 6
+    },
+    {
+      "jibun": "639-13",
+      "pnu": "4817013100106390013",
+      "overlap_sqm": 341.7,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 5.8
+    },
+    {
+      "jibun": "639-30",
+      "pnu": "4817013100106390030",
+      "overlap_sqm": 310.3,
+      "parcel_coverage_pct": 91.5,
+      "polygon_coverage_pct": 5.3
+    },
+    {
+      "jibun": "1436-3",
+      "pnu": "4817013100114360003",
+      "overlap_sqm": 294.5,
+      "parcel_coverage_pct": 99.8,
+      "polygon_coverage_pct": 5
+    },
+    {
+      "jibun": "639-14",
+      "pnu": "4817013100106390014",
+      "overlap_sqm": 262.6,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 4.5
+    },
+    {
+      "jibun": "1436-4",
+      "pnu": "4817013100114360004",
+      "overlap_sqm": 256,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 4.4
+    },
+    {
+      "jibun": "1436-2",
+      "pnu": "4817013100114360002",
+      "overlap_sqm": 251.7,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 4.3
+    },
+    {
+      "jibun": "1436-7",
+      "pnu": "4817013100114360007",
+      "overlap_sqm": 250.5,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 4.3
+    },
+    {
+      "jibun": "1436-6",
+      "pnu": "4817013100114360006",
+      "overlap_sqm": 247.7,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 4.2
+    },
+    {
+      "jibun": "1436-5",
+      "pnu": "4817013100114360005",
+      "overlap_sqm": 244,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 4.2
+    },
+    {
+      "jibun": "639-6",
+      "pnu": "4817013100106390006",
+      "overlap_sqm": 215.8,
+      "parcel_coverage_pct": 95.9,
+      "polygon_coverage_pct": 3.7
+    },
+    {
+      "jibun": "1436-1",
+      "pnu": "4817013100114360001",
+      "overlap_sqm": 207.5,
+      "parcel_coverage_pct": 99.9,
+      "polygon_coverage_pct": 3.5
+    },
+    {
+      "jibun": "639-11",
+      "pnu": "4817013100106390011",
+      "overlap_sqm": 183.8,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 3.1
+    },
+    {
+      "jibun": "639-25",
+      "pnu": "4817013100106390025",
+      "overlap_sqm": 77.2,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 1.3
+    },
+    {
+      "jibun": "639-35",
+      "pnu": "4817013100106390035",
+      "overlap_sqm": 59.3,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 1
+    },
+    {
+      "jibun": "639-40도",
+      "pnu": "4817013100106390040",
+      "overlap_sqm": 46.5,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 0.8
+    },
+    {
+      "jibun": "1436-8도",
+      "pnu": "4817013100114360008",
+      "overlap_sqm": 39.8,
+      "parcel_coverage_pct": 74.9,
+      "polygon_coverage_pct": 0.7
+    },
+    {
+      "jibun": "639-37",
+      "pnu": "4817013100106390037",
+      "overlap_sqm": 38.9,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 0.7
+    },
+    {
+      "jibun": "639-36",
+      "pnu": "4817013100106390036",
+      "overlap_sqm": 16.7,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 0.3
+    },
+    {
+      "jibun": "639-43",
+      "pnu": "4817013100106390043",
+      "overlap_sqm": 15.5,
+      "parcel_coverage_pct": 100,
+      "polygon_coverage_pct": 0.3
+    }
+  ],
+  "counts": {
+    "all_intersections": 23,
+    "near_full_overlaps": 22
+  },
+  "warning": "SR1 magenta legend block visually traced; map outline is approximate and may cover multiple intended lots; cadastral and legacy GIS mismatch. Use as review overlay only. Do not apply 4 or 6 floors automatically.",
+  "gis_conflict": "Earlier 0325 polygon covers most but 1436-9 and 1436-10 intersect the traced pink polygon while their legacy restrictions are 0324, indicating SR1 drawn land-use extent and historical restriction boundaries differ.",
+  "audit": "https://github.com/wlsgur5315/Jin-Min-Map/actions/runs/38223361195"
+}
