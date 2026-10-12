@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-12",
+  "status": "drawing_leader_and_GIS_cadastral_match_pending_quantified_georeference_and_later_notice",
+  "auto_apply": false,
+  "source": "2022 decision drawing PDFs, KLIP UQ162, cadastral parcels",
+  "matches": [
+    {
+      "zone": "가좌2",
+      "drawing_site": "주유소 부지 허용용도 변경",
+      "drawing_arrow_target": "552-4 대",
+      "pnu": "4817013100105520004",
+      "restrict_n": "48170UQ162HJ201001140428",
+      "gis_rule": "200%이하;-;-;최고고도 3층;-;60%이하",
+      "before": {
+        "floors": 3,
+        "far": 200,
+        "bcr": 60,
+        "use": "주유소 및 부대시설"
+      },
+      "after": {
+        "floors": 3,
+        "far": 200,
+        "bcr": 60,
+        "use": "근린생활시설용지"
+      },
+      "confidence": "strong_visual_arrow_label_and_numeric_match",
+      "georeferencing_rmse_m": null
+    },
+    {
+      "zone": "금산",
+      "drawing_site": "근린생활시설에 노유자시설 허용 추가",
+      "drawing_arrow_target": "SR2 / 294번대",
+      "pnu_candidates": [
+        "4817041026102940001",
+        "4817041026102940002",
+        "4817041026102940003",
+        "4817041026102940005",
+        "4817041026102940006",
+        "4817041026102940007",
+        "4817041026102940008",
+        "4817041026102940009",
+        "4817041026102940010",
+        "4817041026102940011",
+        "4817041026102940012"
+      ],
+      "restrict_n": "48170UQ162HJ201312130379",
+      "gis_rule": "230%이하;-;-;4층이하;-;60%이하",
+      "parcel_overlap_share_range": [
+        0.999992,
+        1
+      ],
+      "before": {
+        "floors": 4,
+        "far": 230,
+        "bcr": 60,
+        "use": "제1,2종 근린생활시설"
+      },
+      "after": {
+        "floors": 4,
+        "far": 230,
+        "bcr": 60,
+        "use": "제1,2종 근린생활시설·노유자시설"
+      },
+      "confidence": "strong_visual_arrow_label_and_cadastral_polygon_match",
+      "georeferencing_rmse_m": null
+    }
+  ],
+  "limitations": [
+    "Drawing label/leader visually verified, full-sheet coordinate registration with measured RMSE not completed",
+    "Subsequent legal amendments/effective current regulation unverified",
+    "Do not auto-apply to building permit height/floor limits"
+  ],
+  "audit": "https://github.com/wlsgur5315/Jin-Min-Map/actions/runs/38219175429"
+}
