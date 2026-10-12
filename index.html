@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.12-19</title>
+<title>Jinju3D Local · v2026.10.12-20</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-19</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-20</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -82,12 +82,6 @@
         <div class="hint">현재 보고 있는 위치를 기준으로 2D 필지 지도로 전환합니다. 원하는 필지를 클릭하면 법규가 자동으로 정리됩니다.</div>
         <button id="lawMode" class="primary" style="margin-top:8px">필지·법규 모드 켜기</button><div id="lawModeState" class="modeState" style="margin-top:6px">현재 꺼짐</div>
       </div>
-      <div class="drawer-sec" style="border:1px solid #64748b55;border-radius:9px;padding:10px;margin:9px 0">
- <h3>지구단위계획 검증 레이어</h3>
- <div class="hint">2022년 결정도 참고용 다각형입니다. 지도 윤곽선만 변경하며 법적 높이 산정에는 영향을 주지 않습니다.</div>
- <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerLikely" checked> 위치·지번 대조 유력 (평거2 및 변경 획지 후보)</label>
- <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerGisOnly" checked> GIS 중첩만 확인 (가좌·가좌2·금산 기타 후보)</label>
- </div>
  <div id="lawPanel" class="lawbox">
         <div class="drawer-sec">
           <h3>선택 필지</h3>
@@ -116,7 +110,13 @@
         <select id="district"><option>행정구역 불러오는 중…</option></select>
         <div class="row"><button id="go" class="primary">선택 지역 보기</button><button id="home">진주시 전체</button></div>
       </div>
-      <div class="drawer-sec">
+            <div class="drawer-sec" style="border:1px solid #64748b55;border-radius:9px;padding:10px;margin:9px 0">
+ <h3>지구단위계획 검증 레이어</h3>
+ <div class="hint">2022년 결정도 참고용 다각형입니다. 지도 윤곽선만 변경하며 법적 높이 산정에는 영향을 주지 않습니다.</div>
+ <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerLikely" checked> 위치·지번 대조 유력 (평거2 및 변경 획지 후보)</label>
+ <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerGisOnly" checked> GIS 중첩만 확인 (가좌·가좌2·금산 기타 후보)</label>
+ </div>
+<div class="drawer-sec">
         <h3>지도 보기</h3>
         <div class="row"><button id="view2d">2D</button><button id="view3d">3D</button></div>
         <button id="latestBtn" class="secondary-btn" style="margin-top:7px">최신 버전 다시 열기</button>
@@ -161,7 +161,7 @@
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
 <script>
-const APP_VERSION='v2026.10.12-19',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.12-20',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1670,11 +1670,17 @@ function heightResultOverview(parcel,zone){
  box('정북일조 시험점 모델',sun,'5×5 위치별 추정 · 법정 값 아님')+
  '</div><div style="font-size:16px;font-weight:800">최종 법적 허용높이: 미확정</div><div class="lawdim" style="margin-top:5px">고도지구·지구단위계획 상세 수치 및 법적 일조 기준선 검증 전입니다. 표시 수치를 최종 허용높이로 사용하지 마세요.</div></div>';
 }
+function planningReviewBrief(){
+ const p=ADV_PLAN_RESULT;
+ if(!p||p.ratio<=.01)return '<div class="lawdim">지구단위계획: 중첩 자료 없음 또는 조회 중</div>';
+ return '<div><b>지구단위계획</b>: '+escapeHtml(String(p.name||'구역 확인 필요'))+
+ ' <span class="lawdim">(중첩 '+(p.ratio*100).toFixed(1)+'%, 세부기준 별도 확인)</span></div>';
+}
 function renderLawReview(){
   if(!$('lawResult'))return;
   if(!SELECTED_PARCEL){$('lawResult').innerHTML='<span class="lawdim">먼저 지도에서 필지를 선택하세요.</span>';return}
   const zone=$('lawZone').value,land=$('lawLandscape').value;
-  if(!zone){$('lawResult').innerHTML='<b>자동 사전검토 결과</b><br><span class="lawwarn">용도지역 확인 필요</span><br><span class="lawdim">'+(AUTO_ZONE_SOURCE||'토지이음 SHP가 자동판정하고, 실패 시 VWorld 또는 직접 선택으로 보완합니다.')+'</span>'+districtPlanVerificationDashboard(SELECTED_PARCEL)+pyeonggeo2ReferenceCard(SELECTED_PARCEL)+gajwa2G2VerificationCard(SELECTED_PARCEL)+verifiedAmendedLotEvidenceCard(SELECTED_PARCEL)+gajwaSR1GeoreferenceCard(SELECTED_PARCEL)+drawingParcelMismatchCard(SELECTED_PARCEL)+gajwaGeumsanReferenceCard(SELECTED_PARCEL)+otherDistrictPlanEvidenceCard();return}
+  if(!zone){$('lawResult').innerHTML='<b>용도지역 확인 필요</b><br><span class="lawdim">자동조회 결과가 없으면 위에서 용도지역을 선택하세요.</span>'+planningReviewBrief();return}
   const r=ZONING_RULES[zone],area=turf.area(SELECTED_PARCEL),evidence=planningEvidence();
   const maxFoot=area*r.bcr/100,maxFloor=area*r.far/100;
   let hText='별도 절대높이 없음 · 다른 규제와 함께 검토',hLimit=null;
@@ -1682,19 +1688,25 @@ function renderLawReview(){
   else if(land==='중심시가지경관')hText='3층 이상 조건 · 상한은 다른 규제 검토';
   const multi=/주거/.test(zone);
   const daylight=multi?'정북일조 검토 필요 · 10m 이하 북측 1.5m 이상, 10m 초과 부분 H≤2D':'용도·건축물 종류에 따라 정북일조 적용 여부 추가 확인';
+  const height=parcelHeightReview();
   $('lawResult').innerHTML=
-    '<b>자동 사전검토 결과</b><br>'+
-    '용도지역 <b>'+zone+'</b>'+(AUTO_ZONE_SOURCE?'<br><span class="lawok">'+AUTO_ZONE_SOURCE+'</span>':'')+'<br>'+
-    '<span class="lawdim">용도지역 근거: '+evidence.zone+'<br>경관지구: '+evidence.landscape+'<br>고도지구: '+evidence.height+'</span><br>'+ 
-    '건폐율 <b>'+r.bcr+'%</b> → 이 필지 기준 건축면적 약 <b>'+fmt(maxFoot)+'㎡</b> 이하<br>'+
-    '용적률 <b>'+r.far+'%</b> → 이 필지 기준 연면적 약 <b>'+fmt(maxFloor)+'㎡</b> 이하<br>'+
-    '<b>건축물 높이 제한 종합</b><br>'+heightResultOverview(SELECTED_PARCEL,zone)+districtPlanVerificationDashboard(SELECTED_PARCEL)+pyeonggeo2ReferenceCard(SELECTED_PARCEL)+gajwa2G2VerificationCard(SELECTED_PARCEL)+verifiedAmendedLotEvidenceCard(SELECTED_PARCEL)+gajwaSR1GeoreferenceCard(SELECTED_PARCEL)+drawingParcelMismatchCard(SELECTED_PARCEL)+gajwaGeumsanReferenceCard(SELECTED_PARCEL)+otherDistrictPlanEvidenceCard()+'<span class="lawwarn">'+parcelHeightReview().summary+'</span><br>'+parcelHeightReview().rows.map(x=>'<b>'+x[0]+'</b>: '+x[1]+' <span class="lawdim">('+x[2]+')</span>').join('<br>')+(AUTO_LANDSCAPE_NAME?'<br>경관지구 자동조회: <b>'+AUTO_LANDSCAPE_NAME+'</b>':'')+(AUTO_HEIGHT_DISTRICT?'<br>고도지구 자동조회: <b>'+AUTO_HEIGHT_DISTRICT+'</b>':'')+'<br>'+
-    '도로·높이 검토 <span class="lawdim">'+plannedRoadDetail(SELECTED_PARCEL)+'</span><br>'+ 
-    '정북일조 <span class="lawwarn">'+daylight+'</span><br>'+ '정북일조 표본 시뮬레이션 <span class="lawdim">'+northDaylightSimulation(SELECTED_PARCEL,zone)+'</span><br>'+
-    '지구단위계획 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_PLAN_RESULT?ADV_PLAN_RESULT.name:'해당 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_PLAN_RESULT?'<br><span class="lawok">필지 중첩 '+(ADV_PLAN_RESULT.ratio*100).toFixed(1)+'% · '+(ADV_PLAN_RESULT.properties?.present_sn||ADV_PLAN_RESULT.properties?.mnum||'관리번호 미상')+' · 결정도서 세부기준 추가 확인</span>':'')+'<br>'+
-    '도시계획시설 <b>'+(ADV_LAW_MANIFEST?.ready?(ADV_FACILITY_RESULT.length?ADV_FACILITY_RESULT.map(x=>x.name).join(', '):'저촉 없음'):'진주시 SHP 연결 준비 중')+'</b>'+(ADV_FACILITY_RESULT.length?'<br><span class="lawwarn">'+ADV_FACILITY_RESULT.map(x=>x.name+' 약 '+fmt(x.overlapAreaSqm)+'㎡ ('+(x.ratio*100).toFixed(1)+'%)').join(' / ')+'</span>':'')+'<br>'+
-    '<span class="lawdim">건축선·접도·대지 안의 공지·문화재/교육환경 등은 아직 별도 확인 필요</span><br>'+
-    '<span class="lawdim">근거: 국토계획법·시행령, 건축법 제44·46·58·60·61조 및 시행령 제80조의2·제86조, 진주시 도시계획조례·건축조례. 본 결과는 허가판정이 아닌 자동 사전검토입니다.</span>';
+   '<b>기본 건축기준</b><br>'+
+   '용도지역 <b>'+escapeHtml(zone)+'</b><br>'+
+   '건폐율 <b>'+r.bcr+'%</b> · 건축면적 약 <b>'+fmt(maxFoot)+'㎡</b><br>'+
+   '용적률 <b>'+r.far+'%</b> · 연면적 약 <b>'+fmt(maxFloor)+'㎡</b><br>'+
+   '<hr style="border:0;border-top:1px solid #64748b44;margin:10px 0">'+
+   '<b>높이·층수 검토</b><br>'+heightResultOverview(SELECTED_PARCEL,zone)+
+   '<span class="lawwarn">'+height.summary+'</span><br>'+
+   '<hr style="border:0;border-top:1px solid #64748b44;margin:10px 0">'+
+   planningReviewBrief()+
+   '<div style="margin-top:8px"><b>도시계획시설</b>: '+(ADV_FACILITY_RESULT.length?ADV_FACILITY_RESULT.map(x=>escapeHtml(x.name)).join(', '):'확인된 저촉 없음')+'</div>'+
+   '<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">상세 검토 펼치기</summary><div style="padding-top:8px">'+
+   '<b>높이 제한 근거</b><br>'+height.rows.map(x=>escapeHtml(x[0])+': '+escapeHtml(x[1])).join('<br>')+'<br>'+
+   '<b>정북일조</b><br>'+daylight+'<br>'+
+   '<b>도로·높이</b><br>'+plannedRoadDetail(SELECTED_PARCEL)+'<br>'+
+   '<b>지구단위계획 참고</b><br>'+otherDistrictPlanEvidenceCard()+
+   '<span class="lawdim">이 결과는 건축허가 판정이 아닌 자동 사전검토입니다.</span></div></details>';
+
 }
 $('lawMode').onclick=async()=>{if(lawMode)setLawMode(false);else await enterLawWorkspace()};
 
