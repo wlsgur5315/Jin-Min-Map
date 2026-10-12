@@ -1166,7 +1166,7 @@ function zoneRuleKey(name){
   return aliases[n]||'';
 }
 function landscapeRuleKey(name){
-  const n=String(name||'').replace(/\\s+/g,'');
+  const n=String(name||'').replace(/\s+/g,'');
   if(n.includes('자연경관'))return'자연경관';
   if(n.includes('특화경관'))return'특화경관';
   if(n.includes('전통경관'))return'전통경관';
