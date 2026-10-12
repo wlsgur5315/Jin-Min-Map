@@ -1,0 +1,91 @@
+{
+  "review_date": "2026-10-12",
+  "status": "candidates_only_no_changed_site_pnu_confirmed",
+  "basis": [
+    "user_provided_2022_decision_drawings",
+    "KLIP_C_UQ162",
+    "data/parcels cadastral intersection"
+  ],
+  "gajwa2_oil": {
+    "drawing_change": {
+      "before": {
+        "floors": 3,
+        "far_pct": 200,
+        "bcr_pct": 60,
+        "use": "주유소 및 부대시설"
+      },
+      "after": {
+        "floors": 3,
+        "far_pct": 200,
+        "bcr_pct": 60,
+        "use": "근린생활시설용지"
+      }
+    },
+    "adjacent_features": [
+      {
+        "label": "F1",
+        "jibun": "492-8",
+        "pnu": "4817013100104920008",
+        "restrict_n": "48170UQ162HJ201001140425",
+        "gis_rule": "180%이하;-;-;최고고도 3층;-;60%이하",
+        "matching": "mismatch_far_180_vs_drawing_200",
+        "changed_site": false
+      },
+      {
+        "label": "D2",
+        "jibun": "552-2",
+        "pnu": "4817013100105520002",
+        "restrict_n": "48170UQ162HJ201001140426",
+        "gis_rule": "200%이하;-;-;최고고도 5층;-;60%이하",
+        "matching": "mismatch_floors_5_vs_drawing_3",
+        "changed_site": false
+      },
+      {
+        "label": "nearby",
+        "jibun": "552-4",
+        "pnu": "4817013100105520004",
+        "restrict_n": "48170UQ162HJ201001140428",
+        "gis_rule": "200%이하;-;-;최고고도 3층;-;60%이하",
+        "matching": "numeric_match_only_no_drawing_boundary_match",
+        "changed_site": null
+      }
+    ],
+    "confirmed_pnu": null,
+    "notes": "911답은 인접 지적 표기이며 변경부지 PNU 아님; 변경도 표 지도 리더선/경계 지리참조 필요"
+  },
+  "geumsan": {
+    "drawing_change": {
+      "before": {
+        "floors": 4,
+        "far_pct": 230,
+        "bcr_pct": 60,
+        "use": "제1,2종 근린생활시설"
+      },
+      "after": {
+        "floors": 4,
+        "far_pct": 230,
+        "bcr_pct": 60,
+        "use": "제1,2종 근린생활시설 및 노유자시설"
+      }
+    },
+    "adjacent_parcels": [
+      {
+        "jibun": "281-37 임",
+        "pnu": "4817041026102810037",
+        "role": "adjacent_only",
+        "intersect_changed_restriction": false
+      },
+      {
+        "jibun": "281-3 학",
+        "pnu": "4817041026102810003",
+        "role": "adjacent_only",
+        "intersect_changed_restriction": false
+      }
+    ],
+    "plan_sn": "48170UQ161PS201312130026",
+    "confirmed_pnu": null,
+    "notes": "결정도 강조획지 경계와 281번대 학교주변 지번은 별개일 수 있음"
+  },
+  "next_action": "변경대상 강조획지와 리더선 PDF 내부 위치를 벡터 경계로 추출하고 지적도 공통 기준점을 사용하여 좌표 정합; 이후 PNU 공간 검증",
+  "auto_apply": false
+}
