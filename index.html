@@ -1518,7 +1518,7 @@ function pyeonggeo2ReferenceCard(parcel){
 }
 function otherDistrictPlanEvidenceCard(){
  const p=ADV_PLAN_RESULT;if(!p||p.ratio<=.01)return'';
- const n=String(p.name||'').replace(/\\s+/g,'');
+ const n=String(p.name||'').replace(/\s+/g,'');
  let title='',detail='';
  if(/가좌2지구|가좌제2지구/.test(n)){
   title='가좌2지구';detail='2022년 결정도에서 일부 변경 대상의 3층·5층 표기가 확인됨. 대상 획지의 정확한 위치 및 변경표 정렬 미검증';
