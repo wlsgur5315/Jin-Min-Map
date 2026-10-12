@@ -1,0 +1,46 @@
+name: Audit Gajwa changed lot cadastral overlap
+on:
+  push:
+    paths:
+      - .github/workflows/audit-gajwa-changed-lots.yml
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install shapely
+      - name: Intersect drawing lot addresses against all construction restriction GIS
+        run: |
+          python - <<'PY'
+          import gzip,json,glob,collections
+          from shapely.geometry import shape
+          from shapely.strtree import STRtree
+          with gzip.open('data/law/jinju_district_plan.geojson.gz','rt') as q: features=json.load(q)['features']
+          lots=[]
+          for x in features:
+           p=x.get('properties') or {}
+           if p.get('source_layer')=='KLIP_C_UQ162' and x.get('geometry'):
+            lots.append((shape(x['geometry']),p))
+          tree=STRtree([z[0] for z in lots]);samples=collections.defaultdict(list)
+          prefixes=['911','1440','1441','1442','443','652','464','1430','1431','1433']
+          for fn in glob.glob('data/parcels/*.geojson.gz'):
+           with gzip.open(fn,'rt') as q: parts=json.load(q)['features']
+           for feat in parts:
+            p=feat.get('properties') or {};jn=str(p.get('jibun') or '').replace(' ','')
+            prefix=jn.split('-')[0].replace('산','')
+            if prefix not in prefixes:continue
+            try:g=shape(feat['geometry'])
+            except:continue
+            for ix in tree.query(g):
+             gg,pp=lots[int(ix)]
+             if not gg.intersects(g):continue
+             ratio=gg.intersection(g).area/g.area if g.area>0 else 0
+             if ratio<.7:continue
+             item={'jibun':jn,'district':p.get('district_name'),'pnu':p.get('pnu'),'restrict_n':pp.get('restrict_n'),'present_sn':pp.get('present_sn'),'gis_rule':pp.get('build_des'),'parcel_overlap':round(ratio,5)}
+             samples[prefix].append(item)
+          for key in prefixes:
+           a=samples[key]
+           groups=collections.Counter((i['present_sn'],i['restrict_n'],i['gis_rule']) for i in a)
+           print('MATCH_'+key+'='+json.dumps({'total':len(a),'representative':a[:5],'groups':[{'plan':k[0],'restrict':k[1],'rule':k[2],'count':c} for k,c in groups.most_common(8)]},ensure_ascii=False))
+          PY
