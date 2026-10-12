@@ -27,7 +27,7 @@ jobs:
            for x in parcels:
             p=x.get('properties') or {}
             jibun=str(p.get('jibun','')).replace(' ','')
-            if not any(jibun.startswith(t) for t in ['1441-','1440-','1415-']):continue
+            if not any(jibun.startswith(t) for t in ['1441-','1440-','1415-','652-','268-']):continue
             g=shape(x['geometry'])
             hits=[]
             for sn,arr in polys.items():
@@ -35,5 +35,5 @@ jobs:
               if not g.intersects(gg):continue
               ratio=g.intersection(gg).area/g.area if g.area else 0
               if ratio>.1:hits.append((sn,p2.get('restrict_n'),round(ratio,4),p2.get('build_des')))
-            if hits: print('GAJWA2_PARCEL='+json.dumps({'jibun':jibun,'district':p.get('district_name'),'pnu':p.get('pnu'),'hits':hits[:4]},ensure_ascii=False))
+            if hits and (jibun.endswith('-1대') or jibun.endswith('-2대') or jibun.startswith('652-') or jibun.startswith('268-')): print('GAJWA2_PARCEL='+json.dumps({'jibun':jibun,'district':p.get('district_name'),'pnu':p.get('pnu'),'hits':hits[:4]},ensure_ascii=False))
           PY
