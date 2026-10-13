@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-15</title>
+<title>Jinju3D Local · v2026.10.13-16</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-15</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-16</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -84,7 +84,7 @@
     <section id="tab-law" class="tab-pane active">
       <details class="drawer-sec work-fold" open><summary>① 필지 선택</summary>
         <div class="hint">필지를 한 번 선택하면 아래 법규 검토와 건물 편집에 함께 적용됩니다.</div>
-        <button id="lawMode" class="primary" style="margin-top:8px">필지 선택 모드 켜기</button><div id="lawModeState" class="modeState" style="margin-top:6px">현재 꺼짐</div>
+        <button id="lawMode" class="primary" style="margin-top:8px">필지 선택 모드 켜기</button><div id="lawModeState" class="modeState" style="margin-top:6px">현재 꺼짐</div><div class="settings-label" style="margin-top:12px">지도 보기</div><div class="row"><button id="view2d">2D 보기</button><button id="view3d">3D 보기</button></div>
       </details>
  <div id="lawPanel" class="lawbox">
         <div class="drawer-sec">
@@ -155,8 +155,6 @@
  <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerGisOnly" checked> GIS 중첩만 확인 (가좌·가좌2·금산 기타 후보)</label>
  </div>
 <div class="drawer-sec">
-        <h3>지도 보기</h3>
-        <div class="row"><button id="view2d">2D</button><button id="view3d">3D</button></div>
         <button id="latestBtn" class="secondary-btn" style="margin-top:7px">최신 버전 다시 열기</button>
       </div>
       <div class="drawer-sec">
@@ -213,7 +211,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-15',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-16',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
