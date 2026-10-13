@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-03</title>
+<title>Jinju3D Local · v2026.10.13-04</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-03</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-04</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -114,7 +114,7 @@
  <label>세로 길이 (m) <input id="editLength" type="number" min="1" max="500" step="0.5" value="10"></label>
  <div class="row"><button id="editOpenDraw" class="primary">직사각형 그리기</button><button id="editCreateSize">길이 입력으로 생성</button></div>
  <button id="editClearCustom" style="margin-top:8px">사용자 건물 삭제</button>
- <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div>
+ <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div><div id="editModelDetails" style="padding:8px;margin-top:8px;border:1px solid #334155;border-radius:8px;font-size:12px">생성된 사용자 건물이 없습니다.</div>
  </div></section>
  <section id="tab-settings" class="tab-pane">
       <div class="drawer-sec">
@@ -172,16 +172,22 @@
   </div>
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
-<div id="editDrawModal" style="display:none;position:fixed;z-index:200;inset:0;background:#030712ee;padding:14px;align-items:center;justify-content:center">
- <div style="width:min(650px,100%);background:#101f33;border:1px solid #64748b;border-radius:14px;padding:14px;color:#e2e8f0">
+<div id="editDrawModal" style="display:none;position:fixed;z-index:200;inset:0;background:#030712ee;padding:8px;align-items:center;justify-content:center;overflow-y:auto">
+ <div style="width:min(540px,100%);max-height:calc(100dvh - 16px);overflow-y:auto;background:#101f33;border:1px solid #64748b;border-radius:14px;padding:10px;color:#e2e8f0">
  <div class="row" style="justify-content:space-between"><b>직사각형 건물 그리기</b><button id="editCloseDraw">닫기</button></div>
  <p style="font-size:12px">필지 안에서 드래그해 건물 바닥 면적을 그립니다. 입력 길이로도 다시 그릴 수 있습니다.</p>
- <canvas id="editDrawCanvas" width="580" height="440" style="width:100%;background:#071527;touch-action:none;cursor:crosshair;border:1px solid #475569;border-radius:8px"></canvas>
+ <canvas id="editDrawCanvas" width="580" height="400" style="width:100%;height:auto;max-height:min(44dvh,360px);background:#071527;touch-action:none;cursor:crosshair;border:1px solid #475569;border-radius:8px"></canvas>
  <div id="editDrawDims" style="font-size:13px;margin:8px 0">마우스 또는 터치로 드래그하세요.</div>
- <div class="row"><button id="editSizeInCanvas">입력한 가로·세로로 배치</button><button id="editConfirmDraw" class="primary">3D 건물 생성</button></div>
+ <div class="row"><button id="editSizeInCanvas">입력한 가로·세로로 배치</button><button id="editConfirmDraw" class="primary">치수 확인 · 다음</button></div>
+ </div></div>
+<div id="editHeightModal" style="display:none;position:fixed;z-index:210;inset:0;background:#030712eF;padding:12px;align-items:center;justify-content:center">
+ <div style="width:min(360px,100%);background:#101f33;border:1px solid #64748b;border-radius:14px;padding:16px;color:#e2e8f0">
+ <h3 style="margin:0 0 8px">3D 건물 높이 설정</h3><div id="editConfirmDimensions" style="font-size:12px;line-height:1.7;margin-bottom:12px"></div>
+ <label>건물 높이 (m)<input id="editHeightConfirm" type="number" min="1" max="500" step="0.5" value="12" style="width:100%;margin:6px 0 12px"></label>
+ <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -639,26 +645,43 @@ function editOpenDraw(){
  if(!EDIT_PARCEL){editNotice('먼저 지도에서 필지를 선택하세요.');return}
  EDIT_BOX=editCanvasBounds();EDIT_RECT=null;$('editDrawModal').style.display='flex';editRenderCanvas();
 }
+function editModelSummary(){
+ const el=$('editModelDetails');if(!el)return;
+ if(!EDIT_CUSTOM){el.textContent='생성된 사용자 건물이 없습니다.';return}
+ const dims=editRectMeters(EDIT_CUSTOM),h=Number(EDIT_CUSTOM.properties.model_height);
+ el.textContent='사용자 건물 · 가로 '+dims[0].toFixed(2)+'m · 세로 '+dims[1].toFixed(2)+'m · 높이 '+h.toFixed(2)+'m · 바닥면적 약 '+(dims[0]*dims[1]).toFixed(1)+'㎡';
+}
+function editNextHeight(){
+ if(!EDIT_PARCEL||!EDIT_RECT){editNotice('직사각형을 먼저 그리세요.');return}
+ const dims=editRectMeters(EDIT_RECT);
+ if(dims[0]<0.5||dims[1]<0.5){$('editDrawDims').textContent='가로와 세로를 0.5m 이상 그리세요.';return}
+ if(!turf.booleanWithin(EDIT_RECT,EDIT_PARCEL)){$('editDrawDims').textContent='필지 경계 밖입니다. 직사각형을 다시 그려 주세요.';return}
+ $('editConfirmDimensions').textContent='가로 '+dims[0].toFixed(2)+'m · 세로 '+dims[1].toFixed(2)+'m · 면적 '+(dims[0]*dims[1]).toFixed(1)+'㎡';
+ $('editHeightConfirm').value=$('editHeight').value;
+ $('editDrawModal').style.display='none';$('editHeightModal').style.display='flex';
+}
 function editCommitModel(){
  if(!EDIT_PARCEL||!EDIT_RECT){editNotice('직사각형을 먼저 그리세요.');return}
- const height=Number($('editHeight').value);
- if(!(height>0&&height<=500)){editNotice('높이는 1~500m로 입력하세요.');return}
+ const height=Number($('editHeightConfirm').value);
+ if(!(height>0&&height<=500)){$('editConfirmDimensions').textContent='높이는 1~500m로 입력하세요.';return}
  if(!turf.booleanWithin(EDIT_RECT,EDIT_PARCEL)){editNotice('직사각형이 필지 바깥으로 나갑니다. 위치나 길이를 조정하세요.');return}
  EDIT_CUSTOM={...EDIT_RECT,properties:{model_height:height,editor_generated:true}};
- editUpdateModel();$('editDrawModal').style.display='none';EDIT_PICKING=false;
+ $('editHeight').value=height;editUpdateModel();editModelSummary();$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';EDIT_PICKING=false;
  map.easeTo({center:turf.centroid(EDIT_RECT).geometry.coordinates,zoom:Math.max(map.getZoom(),18),pitch:65,duration:650});
  editNotice('새 건물 '+height+'m 생성 완료. 원본 데이터는 보존됩니다.');
 }
 function setupBuildingEditor(){
  $('editPickParcel').onclick=async()=>{if(lawMode)setLawMode(false);EDIT_PICKING=true;await enterLawWorkspace();if(lawMode)setLawMode(false);EDIT_PICKING=true;editNotice('지도에서 원하는 필지를 클릭하세요.')};
  $('editHideBuildings').onclick=()=>{if(!EDIT_PARCEL){editNotice('먼저 필지를 선택하세요.');return}EDIT_HIDDEN_PARCEL=EDIT_PARCEL;editRefreshOriginal();editNotice('선택한 필지의 GIS 건물을 임시로 숨겼습니다.')};
- $('editRestore').onclick=()=>{EDIT_HIDDEN_PARCEL=null;EDIT_CUSTOM=null;EDIT_RECT=null;editRefreshOriginal();editUpdateModel();editNotice('원래 건물을 복구하고 사용자 건물을 삭제했습니다.')};
- $('editClearCustom').onclick=()=>{EDIT_CUSTOM=null;EDIT_RECT=null;editUpdateModel();editNotice('사용자 건물만 삭제했습니다.')};
+ $('editRestore').onclick=()=>{EDIT_HIDDEN_PARCEL=null;EDIT_CUSTOM=null;EDIT_RECT=null;editRefreshOriginal();editUpdateModel();editModelSummary();editNotice('원래 건물을 복구하고 사용자 건물을 삭제했습니다.')};
+ $('editClearCustom').onclick=()=>{EDIT_CUSTOM=null;EDIT_RECT=null;editUpdateModel();editModelSummary();editNotice('사용자 건물만 삭제했습니다.')};
  $('editOpenDraw').onclick=editOpenDraw;
- $('editCreateSize').onclick=()=>{if(!EDIT_PARCEL){editNotice('필지를 선택하세요.');return}EDIT_BOX=editCanvasBounds();editSizedRectangle();if(EDIT_RECT)editCommitModel()};
+ $('editCreateSize').onclick=()=>{if(!EDIT_PARCEL){editNotice('필지를 선택하세요.');return}EDIT_BOX=editCanvasBounds();editSizedRectangle();if(EDIT_RECT)editNextHeight()};
  $('editCloseDraw').onclick=()=>$('editDrawModal').style.display='none';
  $('editSizeInCanvas').onclick=editSizedRectangle;
- $('editConfirmDraw').onclick=editCommitModel;
+ $('editConfirmDraw').onclick=editNextHeight;
+ $('editHeightBack').onclick=()=>{$('editHeightModal').style.display='none';$('editDrawModal').style.display='flex';editRenderCanvas()};
+ $('editHeightCreate').onclick=editCommitModel;
  const canvas=$('editDrawCanvas');
  function pos(e){const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height]}
  canvas.addEventListener('pointerdown',e=>{e.preventDefault();canvas.setPointerCapture(e.pointerId);EDIT_DRAG_START=editXYToLngLat(...pos(e));EDIT_RECT=null});
