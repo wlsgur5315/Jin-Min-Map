@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-17</title>
+<title>Jinju3D Local · v2026.10.13-18</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-17</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-18</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -138,7 +138,7 @@
  </div>
  <div id="solarReadout" class="mini" style="margin-top:10px">태양 위치 계산 대기</div>
  <button type="button" id="solarShadowToggle" aria-pressed="false" style="margin-top:10px;background:#14532d;border:1px solid #22c55e;font-size:12px;padding:12px">그림자 보기 켜기</button>
- <div id="solarShadowSummary" class="mini" style="margin-top:8px">주변 건물 데이터를 확인 중입니다.</div><div class="hint" style="margin-top:7px">주변 약 180m 안의 건물 중 높이 정보가 있는 최대 180개를 경량 근사 투영합니다. 겹쳐도 진해지지 않는 불투명 음영을 사용하고 복잡한 다각형 병합을 생략하여 조작 속도를 개선했습니다. 그림자는 지형·DEM 고도 및 건물 상호차폐를 반영하지 않으며, 비정형 건물은 볼록 외피로 단순화됩니다. 법정 일조시간·일사량 결과가 아닙니다.</div>
+ <div id="solarShadowSummary" class="mini" style="margin-top:8px">주변 건물 데이터를 확인 중입니다.</div><div class="hint" style="margin-top:7px">주변 약 180m 안의 건물 중 높이 정보가 있는 최대 180개를 경량 근사 투영합니다. 겹쳐도 진해지지 않는 연한 회청색 음영을 사용합니다. 태양 고도 5° 미만은 표시하지 않고, 지도 미리보기 길이는 최대 250m로 제한합니다(실제 그림자 길이 아님). 그림자는 지형·DEM 고도 및 건물 상호차폐를 반영하지 않으며, 비정형 건물은 볼록 외피로 단순화됩니다. 법정 일조시간·일사량 결과가 아닙니다.</div>
 </details>
     </section>
 
@@ -211,7 +211,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-17',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-18',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -662,7 +662,7 @@ function solarAngles(){
 // 빠른 면 투영: 불필요한 반복 union 없이 건물 외곽과 외벽 면을 MultiPolygon으로 구성.
 function solarShadowFootprint(footprint,height,alt,az){
  if(alt<=.5||!(height>0)||!['Polygon','MultiPolygon'].includes(footprint.geometry?.type))return null;
- const distance=Math.min(1500,height/Math.tan(alt*Math.PI/180));
+ const distance=Math.min(250,height/Math.tan(alt*Math.PI/180)); // 지도 미리보기 최대 250m, 실제 길이와 다를 수 있음
  const moved=turf.transformTranslate(footprint,distance/1000,(az+180)%360,{units:'kilometers'});
  const polys=footprint.geometry.type==='Polygon'?[footprint.geometry.coordinates]:footprint.geometry.coordinates;
  const displaced=moved.geometry.type==='Polygon'?[moved.geometry.coordinates]:moved.geometry.coordinates;
@@ -709,12 +709,12 @@ function refreshSolarPreview(){
  $('solarTimeLabel').textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
  $('solarManualAltLabel').textContent=$('solarManualAlt').value+'°';
  $('solarManualAzLabel').textContent=$('solarManualAz').value+'°';
- const a=solarAngles(),daylight=a.alt>.5;
+ const a=solarAngles(),daylight=a.alt>=5;
  $('solarReadout').textContent=(mode==='manual'?'가상 태양 조건':'계절 대표일 · 2026년 한국표준시')+' | 고도 '+a.alt.toFixed(1)+'° · 방위각 '+a.az.toFixed(1)+'°'+(daylight?'':' · 태양이 지평선 아래 또는 근처');
  if(!map?.isStyleLoaded?.())return;
  if(!map.getSource('solar-shadow-preview')){
   map.addSource('solar-shadow-preview',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-  map.addLayer({id:'solar-shadow-preview-fill',type:'fill',source:'solar-shadow-preview',paint:{'fill-color':'#263445','fill-opacity':1}});
+  map.addLayer({id:'solar-shadow-preview-fill',type:'fill',source:'solar-shadow-preview',paint:{'fill-color':'#8391a2','fill-opacity':1}});
   // 실선 테두리는 실제 그림자에 없는 CAD 윤곽처럼 보여 생략한다.
  }
  if(!map.getSource('solar-sun-direction')){
@@ -745,7 +745,7 @@ function refreshSolarPreview(){
   try{ray=[turf.lineString([center,turf.destination(center,.055,a.az,{units:'kilometers'}).geometry.coordinates])]}catch(e){}
  }
  map.getSource('solar-sun-direction').setData({type:'FeatureCollection',features:ray});
- $('solarShadowSummary').textContent=!center?'먼저 필지를 선택하세요.':!enabled?'그림자 표시 꺼짐':!daylight?'태양 고도 0.5° 이하: 그림자 계산 중단':('그림자 '+shadows.length+'개 (주변 '+nearby.features.length+'개 후보 · 높이 미상 '+nearby.unknown+'개 제외'+(nearby.more?' · 거리순 '+nearby.more+'개 제외':'')+(failed?' · 계산 실패 '+failed+'개':'')+') · 회청색: 건물 그림자 · 노란 선: 태양 방향');
+ $('solarShadowSummary').textContent=!center?'먼저 필지를 선택하세요.':!enabled?'그림자 표시 꺼짐':!daylight?'태양 고도 5° 미만: 수평선 근처 초장거리 그림자 미표시':('그림자 '+shadows.length+'개 (주변 '+nearby.features.length+'개 후보 · 높이 미상 '+nearby.unknown+'개 제외'+(nearby.more?' · 거리순 '+nearby.more+'개 제외':'')+(failed?' · 계산 실패 '+failed+'개':'')+') · 밝은 회청색 그림자 · 최대 표시길이 250m(초과 부분 잘림) · 노란 선: 태양 방향');
 }
 let SOLAR_PREVIEW_FRAME=0;
 function scheduleSolarPreview(){if(SOLAR_PREVIEW_FRAME)return;SOLAR_PREVIEW_FRAME=requestAnimationFrame(()=>{SOLAR_PREVIEW_FRAME=0;refreshSolarPreview()});}
