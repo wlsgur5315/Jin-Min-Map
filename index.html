@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.12-22</title>
+<title>Jinju3D Local · v2026.10.13-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -23,7 +23,7 @@
 .drawer{position:absolute;z-index:31;right:0;top:0;height:100%;width:min(340px,82vw);background:rgba(7,15,29,.94);border-left:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);transform:translateX(100%);transition:transform .24s ease;display:flex;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.24)}
 .drawer.open{transform:translateX(0)}
 .drawer-head{padding:15px 14px 8px}.drawer-title{font-size:14px;font-weight:850}.drawer-sub{font-size:9px;color:#8fa0b6;margin-top:3px}
-.drawer-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px 10px}.drawer-tab{padding:9px 8px;background:#0d1a2d;border-color:#263952}.drawer-tab.active{background:#1d4ed8;border-color:#60a5fa}
+.drawer-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 12px 10px}.drawer-tab{padding:9px 8px;background:#0d1a2d;border-color:#263952}.drawer-tab.active{background:#1d4ed8;border-color:#60a5fa}
 .drawer-body{overflow:auto;padding:0 12px 18px;flex:1}.tab-pane{display:none}.tab-pane.active{display:block}
 .drawer-sec{background:#ffffff08;border:1px solid #ffffff12;border-radius:12px;padding:11px;margin-bottom:9px}.drawer-sec h3{font-size:10.5px;margin:0 0 8px}.drawer-sec .hint{font-size:9.5px}
 .lawbox{margin:0;border:0;background:transparent;padding:0}.lawresult{font-size:10px;line-height:1.65;background:#06101e}
@@ -60,7 +60,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.12-22</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-01</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -73,7 +73,7 @@
   <div class="drawer-head"><div class="drawer-title">Jin-Min-Map 도구</div><div class="drawer-sub">지도는 그대로 두고 필요한 기능만 열어 사용합니다.</div></div>
   <div class="drawer-tabs">
     <button class="drawer-tab active" data-tab="law">필지·법규</button>
-    <button class="drawer-tab" data-tab="settings">설정</button>
+    <button class="drawer-tab" data-tab="edit">건물 편집</button><button class="drawer-tab" data-tab="settings">설정</button>
   </div>
   <div class="drawer-body">
     <section id="tab-law" class="tab-pane active">
@@ -104,7 +104,19 @@
       </div>
     </section>
 
-    <section id="tab-settings" class="tab-pane">
+    <section id="tab-edit" class="tab-pane">
+ <div class="drawer-sec"><h3>건물 편집</h3><div class="hint">필지를 선택하고 원래 건물을 숨긴 뒤 새 건물을 배치합니다. 실제 GIS 원본은 변경하지 않습니다.</div>
+ <button id="editPickParcel" class="primary">지도에서 필지 선택</button><div id="editParcelInfo" class="mini" style="margin-top:8px">선택된 필지가 없습니다.</div></div>
+ <div class="drawer-sec"><h3>원래 건물</h3><div class="row"><button id="editHideBuildings">선택 필지 건물 숨기기</button><button id="editRestore">원래 건물 복구</button></div><div id="editHideStatus" class="hint" style="margin-top:6px"></div></div>
+ <div class="drawer-sec"><h3>새 건물 모델</h3>
+ <label>건물 높이 (m) <input id="editHeight" type="number" min="1" max="500" step="0.5" value="12"></label>
+ <label>가로 길이 (m) <input id="editWidth" type="number" min="1" max="500" step="0.5" value="12"></label>
+ <label>세로 길이 (m) <input id="editLength" type="number" min="1" max="500" step="0.5" value="10"></label>
+ <div class="row"><button id="editOpenDraw" class="primary">직사각형 그리기</button><button id="editCreateSize">길이 입력으로 생성</button></div>
+ <button id="editClearCustom" style="margin-top:8px">사용자 건물 삭제</button>
+ <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div>
+ </div></section>
+ <section id="tab-settings" class="tab-pane">
       <div class="drawer-sec">
         <h3>지역 이동</h3>
         <select id="district"><option>행정구역 불러오는 중…</option></select>
@@ -160,8 +172,16 @@
   </div>
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
+<div id="editDrawModal" style="display:none;position:fixed;z-index:200;inset:0;background:#030712ee;padding:14px;align-items:center;justify-content:center">
+ <div style="width:min(650px,100%);background:#101f33;border:1px solid #64748b;border-radius:14px;padding:14px;color:#e2e8f0">
+ <div class="row" style="justify-content:space-between"><b>직사각형 건물 그리기</b><button id="editCloseDraw">닫기</button></div>
+ <p style="font-size:12px">필지 안에서 드래그해 건물 바닥 면적을 그립니다. 입력 길이로도 다시 그릴 수 있습니다.</p>
+ <canvas id="editDrawCanvas" width="580" height="440" style="width:100%;background:#071527;touch-action:none;cursor:crosshair;border:1px solid #475569;border-radius:8px"></canvas>
+ <div id="editDrawDims" style="font-size:13px;margin:8px 0">마우스 또는 터치로 드래그하세요.</div>
+ <div class="row"><button id="editSizeInCanvas">입력한 가로·세로로 배치</button><button id="editConfirmDraw" class="primary">3D 건물 생성</button></div>
+ </div></div>
 <script>
-const APP_VERSION='v2026.10.12-22',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -553,7 +573,11 @@ function prepareStaticBuildings(fc){
   }
   fc._heightStats={high,mid,low};fc._staticRegisterMatched=reg;return fc
 }
-function addDetails(b,p){if(map.getSource('buildings'))map.getSource('buildings').setData(b);else{map.addSource('buildings',{type:'geojson',data:b});map.addLayer({id:'buildings-2d',type:'fill',source:'buildings',paint:{'fill-color':'#607991','fill-opacity':.72,'fill-outline-color':'#dbeafe'}});map.addLayer({id:'buildings-foundation',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':'#475569','fill-extrusion-base':0,'fill-extrusion-height':['coalesce',['get','terrain_foundation_height'],0],'fill-extrusion-opacity':.98}});map.addLayer({id:'buildings-3d',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':['match',['get','height_confidence'],'높음','#438de0','보통','#6f99c9','#9aa9b8'],'fill-extrusion-base':['coalesce',['get','render_base'],0],'fill-extrusion-height':['coalesce',['get','render_top'],['get','render_height']],'fill-extrusion-opacity':.95}})}if(map.getSource('parcels'))map.getSource('parcels').setData(p);else{map.addSource('parcels',{type:'geojson',data:p});map.addLayer({id:'parcel-fill',type:'fill',source:'parcels',paint:{'fill-color':'#f59e0b','fill-opacity':.02}});map.addLayer({id:'parcel-line',type:'line',source:'parcels',paint:{'line-color':'#ffbd52','line-width':.8,'line-opacity':.7}});map.addSource('selected-parcel',{type:'geojson',data:{type:'FeatureCollection',features:[]}});map.addLayer({id:'selected-parcel-fill',type:'fill',source:'selected-parcel',paint:{'fill-color':'#fbbf24','fill-opacity':.18}});map.addLayer({id:'selected-parcel-line',type:'line',source:'selected-parcel',paint:{'line-color':'#fbbf24','line-width':3}})}}
+function editedBuildingCollection(original){
+ if(!EDIT_HIDDEN_PARCEL||!original?.features)return original;
+ return {...original,features:original.features.filter(ft=>{try{return !turf.booleanIntersects(ft,EDIT_HIDDEN_PARCEL)}catch(e){return true}})};
+}
+function addDetails(b,p){const displayBuildings=editedBuildingCollection(b);if(map.getSource('buildings'))map.getSource('buildings').setData(displayBuildings);else{map.addSource('buildings',{type:'geojson',data:displayBuildings});map.addLayer({id:'buildings-2d',type:'fill',source:'buildings',paint:{'fill-color':'#607991','fill-opacity':.72,'fill-outline-color':'#dbeafe'}});map.addLayer({id:'buildings-foundation',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':'#475569','fill-extrusion-base':0,'fill-extrusion-height':['coalesce',['get','terrain_foundation_height'],0],'fill-extrusion-opacity':.98}});map.addLayer({id:'buildings-3d',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':['match',['get','height_confidence'],'높음','#438de0','보통','#6f99c9','#9aa9b8'],'fill-extrusion-base':['coalesce',['get','render_base'],0],'fill-extrusion-height':['coalesce',['get','render_top'],['get','render_height']],'fill-extrusion-opacity':.95}})}if(map.getSource('parcels'))map.getSource('parcels').setData(p);else{map.addSource('parcels',{type:'geojson',data:p});map.addLayer({id:'parcel-fill',type:'fill',source:'parcels',paint:{'fill-color':'#f59e0b','fill-opacity':.02}});map.addLayer({id:'parcel-line',type:'line',source:'parcels',paint:{'line-color':'#ffbd52','line-width':.8,'line-opacity':.7}});map.addSource('selected-parcel',{type:'geojson',data:{type:'FeatureCollection',features:[]}});map.addLayer({id:'selected-parcel-fill',type:'fill',source:'selected-parcel',paint:{'fill-color':'#fbbf24','fill-opacity':.18}});map.addLayer({id:'selected-parcel-line',type:'line',source:'selected-parcel',paint:{'line-color':'#fbbf24','line-width':3}})}}
 const VERIFIED_REFERENCE_IDS=new Set(['48170UQ162HJ201001140396','48170UQ162HJ201001140428','48170UQ162HJ201312130379']);
 function updateLawReviewLayerVisibility(){
  if(!map?.getLayer)return;
