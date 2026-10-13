@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-16</title>
+<title>Jinju3D Local · v2026.10.13-17</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-16</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-17</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -138,7 +138,7 @@
  </div>
  <div id="solarReadout" class="mini" style="margin-top:10px">태양 위치 계산 대기</div>
  <button type="button" id="solarShadowToggle" aria-pressed="false" style="margin-top:10px;background:#14532d;border:1px solid #22c55e;font-size:12px;padding:12px">그림자 보기 켜기</button>
- <div id="solarShadowSummary" class="mini" style="margin-top:8px">주변 건물 데이터를 확인 중입니다.</div><div class="hint" style="margin-top:7px">주변 약 180m 안의 건물 중 높이 정보가 있는 최대 180개를 근사 투영합니다. 겹친 그림자를 합성해 색 농도를 일정하게 유지하고, 외곽 테두리를 생략한 자연스러운 음영으로 표시합니다. 그림자는 지형·DEM 고도 및 건물 상호차폐를 반영하지 않으며, 비정형 건물은 볼록 외피로 단순화됩니다. 법정 일조시간·일사량 결과가 아닙니다.</div>
+ <div id="solarShadowSummary" class="mini" style="margin-top:8px">주변 건물 데이터를 확인 중입니다.</div><div class="hint" style="margin-top:7px">주변 약 180m 안의 건물 중 높이 정보가 있는 최대 180개를 경량 근사 투영합니다. 겹쳐도 진해지지 않는 불투명 음영을 사용하고 복잡한 다각형 병합을 생략하여 조작 속도를 개선했습니다. 그림자는 지형·DEM 고도 및 건물 상호차폐를 반영하지 않으며, 비정형 건물은 볼록 외피로 단순화됩니다. 법정 일조시간·일사량 결과가 아닙니다.</div>
 </details>
     </section>
 
@@ -211,7 +211,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-16',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-17',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -659,28 +659,22 @@ function solarAngles(){
  return solarPosition(center[1],center[0],date[0],date[1],Number($('solarTime').value));
 }
 // 그림자 모델은 평탄 지면의 2D 투영 근사값: 실제 지형·지붕·벽면의 광선추적 아님.
+// 빠른 면 투영: 불필요한 반복 union 없이 건물 외곽과 외벽 면을 MultiPolygon으로 구성.
 function solarShadowFootprint(footprint,height,alt,az){
  if(alt<=.5||!(height>0)||!['Polygon','MultiPolygon'].includes(footprint.geometry?.type))return null;
  const distance=Math.min(1500,height/Math.tan(alt*Math.PI/180));
  const moved=turf.transformTranslate(footprint,distance/1000,(az+180)%360,{units:'kilometers'});
- // 각 외벽 모서리를 지면으로 쓸어내려 연결한다. 볼록껍질 방식과 달리 ㄱ자형의 오목한 부분을 보존한다.
- const pieces=[footprint,moved];
  const polys=footprint.geometry.type==='Polygon'?[footprint.geometry.coordinates]:footprint.geometry.coordinates;
  const displaced=moved.geometry.type==='Polygon'?[moved.geometry.coordinates]:moved.geometry.coordinates;
+ const regions=[...polys,...displaced];
  for(let k=0;k<polys.length;k++){
-  for(let j=0;j<polys[k].length;j++){
-   const ring=polys[k][j],other=displaced[k]?.[j];if(!other)continue;
-   for(let i=0;i<ring.length-1;i++){
-    const p=[ring[i],ring[i+1],other[i+1],other[i],ring[i]];
-    try{const strip=turf.polygon([p]);if(turf.area(strip)>.02)pieces.push(strip)}catch(e){}
-   }
+  const exterior=polys[k][0],other=displaced[k]?.[0];if(!other)continue;
+  for(let i=0;i<exterior.length-1;i++){
+   const ring=[exterior[i],exterior[i+1],other[i+1],other[i],exterior[i]];
+   regions.push([ring]);
   }
  }
- // 동일 건물의 면들을 하나의 비중첩 폴리곤으로 합쳐 내부의 이중 페인팅을 막는다.
- try{return turf.union(turf.featureCollection(pieces))||turf.convex(turf.featureCollection(pieces.flatMap(f=>turf.coordAll(f).map(c=>turf.point(c)))))}catch(e){
-  const coords=[];for(const geom of [footprint,moved]){const g=geom.geometry;if(g.type==='Polygon')coords.push(...g.coordinates[0]);else for(const p of g.coordinates)coords.push(...p[0]);}
-  return turf.convex(turf.featureCollection(coords.map(c=>turf.point(c))));
- }
+ return turf.multiPolygon(regions);
 }
 let SOLAR_NEAR_CACHE={key:'',features:[],unknown:0};
 function solarNearbyBuildings(center){
@@ -720,7 +714,7 @@ function refreshSolarPreview(){
  if(!map?.isStyleLoaded?.())return;
  if(!map.getSource('solar-shadow-preview')){
   map.addSource('solar-shadow-preview',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-  map.addLayer({id:'solar-shadow-preview-fill',type:'fill',source:'solar-shadow-preview',paint:{'fill-color':'#263445','fill-opacity':.68}});
+  map.addLayer({id:'solar-shadow-preview-fill',type:'fill',source:'solar-shadow-preview',paint:{'fill-color':'#263445','fill-opacity':1}});
   // 실선 테두리는 실제 그림자에 없는 CAD 윤곽처럼 보여 생략한다.
  }
  if(!map.getSource('solar-sun-direction')){
@@ -744,7 +738,7 @@ function refreshSolarPreview(){
  }
  // 주변 그림자를 한 번 합성해 겹치는 곳도 동일한 음영으로 렌더링한다.
  let resultFeatures=shadows;
- if(shadows.length>1){try{const merged=turf.union(turf.featureCollection(shadows));if(merged)resultFeatures=[merged]}catch(e){console.warn('그림자 합성 실패: 개별 그림자 표시',e)}}
+ // 불투명 단색 합성: 여러 그림자가 겹쳐도 진해지지 않으며 대형 union 계산을 피한다.
  map.getSource('solar-shadow-preview').setData({type:'FeatureCollection',features:resultFeatures});
  let ray=[];
  if(center&&daylight&&enabled){
@@ -753,9 +747,11 @@ function refreshSolarPreview(){
  map.getSource('solar-sun-direction').setData({type:'FeatureCollection',features:ray});
  $('solarShadowSummary').textContent=!center?'먼저 필지를 선택하세요.':!enabled?'그림자 표시 꺼짐':!daylight?'태양 고도 0.5° 이하: 그림자 계산 중단':('그림자 '+shadows.length+'개 (주변 '+nearby.features.length+'개 후보 · 높이 미상 '+nearby.unknown+'개 제외'+(nearby.more?' · 거리순 '+nearby.more+'개 제외':'')+(failed?' · 계산 실패 '+failed+'개':'')+') · 회청색: 건물 그림자 · 노란 선: 태양 방향');
 }
+let SOLAR_PREVIEW_FRAME=0;
+function scheduleSolarPreview(){if(SOLAR_PREVIEW_FRAME)return;SOLAR_PREVIEW_FRAME=requestAnimationFrame(()=>{SOLAR_PREVIEW_FRAME=0;refreshSolarPreview()});}
 function setupSolarControls(){
  $('solarShadowToggle').addEventListener('click',()=>{SOLAR_SHADOW_ON=!SOLAR_SHADOW_ON;refreshSolarPreview();});
- for(const id of ['solarMode','solarSeason','solarTime','solarManualAlt','solarManualAz'])$(id)?.addEventListener('input',refreshSolarPreview);
+ for(const id of ['solarMode','solarSeason','solarTime','solarManualAlt','solarManualAz'])$(id)?.addEventListener('input',scheduleSolarPreview);
  document.querySelectorAll('input[name="solarStep"]').forEach(el=>el.addEventListener('change',()=>{
   const step=Number(document.querySelector('input[name="solarStep"]:checked').value),slider=$('solarTime');
   slider.step=step;slider.value=Math.min(1140,Math.max(360,Math.round(Number(slider.value)/step)*step));refreshSolarPreview();
