@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-09</title>
+<title>Jinju3D Local · v2026.10.13-10</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-09</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-10</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -188,7 +188,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-09',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-10',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -289,7 +289,7 @@ async function applyGroundElevation(fc,sourceId='buildings',maxPasses=8){
     }
     lastUnresolved=unresolved;
     if(changed){
-      try{const src=map.getSource(sourceId);if(src)src.setData(fc)}catch(e){}
+      try{const src=map.getSource(sourceId);if(src)src.setData(sourceId==='buildings'||sourceId==='smart-osm'?editedBuildingCollection(fc):fc)}catch(e){}
     }
     if(!unresolved)break;
     await Promise.race([new Promise(resolve=>map.once('idle',resolve)),sleep(900)]);
@@ -600,7 +600,7 @@ function editRefreshOriginal(){
 function editModelSource(){
  if(!map.getSource('edit-custom-model')){
   map.addSource('edit-custom-model',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-  map.addLayer({id:'edit-custom-model-3d',type:'fill-extrusion',source:'edit-custom-model',paint:{'fill-extrusion-color':'#f97316','fill-extrusion-height':['get','model_height'],'fill-extrusion-base':0,'fill-extrusion-opacity':.85}});
+  map.addLayer({id:'edit-custom-model-3d',type:'fill-extrusion',source:'edit-custom-model',paint:{'fill-extrusion-color':'#f97316','fill-extrusion-height':['get','model_height'],'fill-extrusion-base':0.2,'fill-extrusion-opacity':.97}});
   map.addLayer({id:'edit-custom-model-outline',type:'line',source:'edit-custom-model',paint:{'line-color':'#fdba74','line-width':2}});
  }
  return map.getSource('edit-custom-model');
@@ -608,6 +608,13 @@ function editModelSource(){
 function editUpdateModel(){
  const source=editModelSource();
  source.setData({type:'FeatureCollection',features:EDIT_CUSTOM?[EDIT_CUSTOM]:[]});
+ if(EDIT_CUSTOM){
+  map.setLayoutProperty('edit-custom-model-3d','visibility','visible');
+  map.setLayoutProperty('edit-custom-model-outline','visibility','visible');
+  for(const id of ['buildings-foundation','buildings-3d','smart-osm-foundation','smart-osm-3d'])if(map.getLayer(id))map.setLayoutProperty(id,'visibility','visible');
+  if(map.getLayer('buildings-2d'))map.setPaintProperty('buildings-2d','fill-opacity',.06);
+  if(map.getLayer('smart-osm-2d'))map.setPaintProperty('smart-osm-2d','fill-opacity',.06);
+ }
 }
 function editBoxFromCoords(a,b){
  const x1=Math.min(a[0],b[0]),x2=Math.max(a[0],b[0]),y1=Math.min(a[1],b[1]),y2=Math.max(a[1],b[1]);
@@ -683,7 +690,7 @@ function editCommitModel(){
  if(!turf.booleanWithin(EDIT_RECT,EDIT_PARCEL)){editNotice('직사각형이 필지 바깥으로 나갑니다. 위치나 길이를 조정하세요.');return}
  EDIT_CUSTOM={...EDIT_RECT,properties:{model_height:height,editor_generated:true}};
  $('editHeight').value=height;editUpdateModel();editModelSummary();$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';EDIT_PICKING=false;
- map.easeTo({center:turf.centroid(EDIT_RECT).geometry.coordinates,zoom:Math.max(map.getZoom(),18),pitch:65,duration:650});
+ map.easeTo({center:turf.centroid(EDIT_RECT).geometry.coordinates,zoom:Math.max(map.getZoom(),18),pitch:70,duration:650});
  editNotice('새 건물 '+height+'m 생성 완료. 원본 데이터는 보존됩니다.');
 }
 function setupBuildingEditor(){
