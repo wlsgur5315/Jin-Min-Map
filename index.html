@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-10</title>
+<title>Jinju3D Local · v2026.10.13-11</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-10</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-11</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -188,7 +188,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-10',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-11',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -592,7 +592,26 @@ function editSetParcel(ft){
  map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[EDIT_PARCEL]});
  editNotice('필지 선택 완료. 건물을 숨기거나 새 건물을 그리세요.');
 }
+const EDIT_BASEMAP_BUILDING_VIS=new Map();
+function editBasemapBuildingFootprints(hide){
+ if(!map?.getStyle()?.layers)return;
+ const ours=new Set(['buildings-2d','buildings-3d','buildings-foundation','smart-osm-2d','smart-osm-3d','smart-osm-foundation','edit-custom-model-3d','edit-custom-model-outline']);
+ for(const layer of map.getStyle().layers){
+  if(ours.has(layer.id))continue;
+  if(!['fill','line','fill-extrusion'].includes(layer.type))continue;
+  if(!/building|건물/i.test(layer.id+' '+(layer['source-layer']||'')))continue;
+  if(!map.getLayer(layer.id))continue;
+  if(hide){
+   if(!EDIT_BASEMAP_BUILDING_VIS.has(layer.id))EDIT_BASEMAP_BUILDING_VIS.set(layer.id,map.getLayoutProperty(layer.id,'visibility')||'visible');
+   map.setLayoutProperty(layer.id,'visibility','none');
+  }else if(EDIT_BASEMAP_BUILDING_VIS.has(layer.id)){
+   map.setLayoutProperty(layer.id,'visibility',EDIT_BASEMAP_BUILDING_VIS.get(layer.id));
+   EDIT_BASEMAP_BUILDING_VIS.delete(layer.id);
+  }
+ }
+}
 function editRefreshOriginal(){
+ editBasemapBuildingFootprints(!!EDIT_HIDDEN_PARCEL);
  if(currentBuildings&&map.getSource('buildings'))map.getSource('buildings').setData(editedBuildingCollection(currentBuildings));
  const osm=districtOsmCache.get(selectedId);if(osm&&map.getSource('smart-osm'))map.getSource('smart-osm').setData(editedBuildingCollection({type:'FeatureCollection',features:[...osm.kept,...osm.facilities]}));
  $('editHideStatus').textContent=EDIT_HIDDEN_PARCEL?'원래 GIS 건물 숨김 · 복구 가능':'원래 GIS 건물 표시 중';
