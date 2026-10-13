@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-06</title>
+<title>Jinju3D Local · v2026.10.13-07</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -25,7 +25,12 @@
 .drawer-head{padding:15px 14px 8px}.drawer-title{font-size:14px;font-weight:850}.drawer-sub{font-size:9px;color:#8fa0b6;margin-top:3px}
 .drawer-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:0 12px 10px}.drawer-tab{padding:9px 8px;background:#0d1a2d;border-color:#263952}.drawer-tab.active{background:#1d4ed8;border-color:#60a5fa}
 .drawer-body{overflow:auto;padding:0 12px 18px;flex:1}.tab-pane{display:none}.tab-pane.active{display:block}
-.drawer-sec{background:#ffffff08;border:1px solid #ffffff12;border-radius:12px;padding:11px;margin-bottom:9px}.drawer-sec h3{font-size:10.5px;margin:0 0 8px}.drawer-sec .hint{font-size:9.5px}
+.drawer-sec{background:#ffffff08;border:1px solid #ffffff12;border-radius:12px;padding:11px;margin-bottom:9px}.drawer-sec h3{font-size:10.5px;margin:0 0 8px}
+.work-fold>summary{cursor:pointer;font-weight:750;font-size:13px;list-style:none;padding:5px 3px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.work-fold>summary::-webkit-details-marker{display:none}
+.work-fold>summary::after{content:'＋';font-size:17px;color:#93c5fd}
+.work-fold[open]>summary::after{content:'－'}
+.work-fold[open]>summary{margin-bottom:10px;border-bottom:1px solid #ffffff22;padding-bottom:10px}.drawer-sec .hint{font-size:9.5px}
 .lawbox{margin:0;border:0;background:transparent;padding:0}.lawresult{font-size:10px;line-height:1.65;background:#06101e}
 .print-btn{margin-top:9px;background:#e2e8f0;color:#0f172a;border-color:#f8fafc}.secondary-btn{background:#13233a}
 .info-fab{position:absolute;z-index:28;left:14px;bottom:118px;width:36px;height:36px;border-radius:50%;padding:0;font-size:18px;background:rgba(7,15,29,.88);border:1px solid rgba(255,255,255,.22);box-shadow:0 4px 15px rgba(0,0,0,.25)}
@@ -60,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-06</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-07</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -77,18 +82,16 @@
   </div>
   <div class="drawer-body">
     <section id="tab-law" class="tab-pane active">
-      <div class="drawer-sec">
-        <h3>① 필지 선택</h3>
+      <details class="drawer-sec work-fold" open><summary>① 필지 선택</summary>
         <div class="hint">필지를 한 번 선택하면 아래 법규 검토와 건물 편집에 함께 적용됩니다.</div>
-        <button id="lawMode" class="primary" style="margin-top:8px">필지·법규 모드 켜기</button><div id="lawModeState" class="modeState" style="margin-top:6px">현재 꺼짐</div>
-      </div>
+        <button id="lawMode" class="primary" style="margin-top:8px">필지 선택 모드 켜기</button><div id="lawModeState" class="modeState" style="margin-top:6px">현재 꺼짐</div>
+      </details>
  <div id="lawPanel" class="lawbox">
         <div class="drawer-sec">
           <h3>선택 필지</h3>
           <div id="lawParcel" class="mini">아직 선택한 필지가 없습니다.</div>
         </div>
-        <div class="drawer-sec">
-          <h3>② 법규 검토</h3>
+        <details class="drawer-sec work-fold"><summary>② 법규 검토</summary>
           <div class="settings-label">용도지역</div>
           <select id="lawZone"><option value="">용도지역 선택</option></select>
           <div class="settings-label">경관지구 / 추가 높이제한</div>
@@ -100,10 +103,10 @@
           </select>
           <div id="lawResult" class="lawresult"><span class="lawdim">필지를 선택하면 결과가 표시됩니다.</span></div>
           <button id="printLaw" class="print-btn">검토 결과 인쇄 / PDF 저장</button>
-        </div>
+        </details>
       </div>
     
- <div class="drawer-sec"><h3>③ 건물 편집</h3><div class="hint">위에서 선택한 필지를 그대로 사용합니다. 원본 건물은 삭제되지 않습니다.</div><div id="editParcelInfo" class="mini">선택된 필지가 없습니다.</div></div>
+ <details class="drawer-sec work-fold"><summary>③ 건물 편집</summary><div class="hint">위에서 선택한 필지를 그대로 사용합니다. 원본 건물은 삭제되지 않습니다.</div><div id="editParcelInfo" class="mini">선택된 필지가 없습니다.</div></div>
  <div class="drawer-sec"><h3>원래 건물</h3><div class="row"><button id="editHideBuildings">선택 필지 건물 숨기기</button><button id="editRestore">원래 건물 복구</button></div><div id="editHideStatus" class="hint" style="margin-top:6px"></div></div>
  <div class="drawer-sec"><h3>새 건물 모델</h3>
  <label>건물 높이 (m) <input id="editHeight" type="number" min="1" max="500" step="0.5" value="12"></label>
@@ -112,7 +115,7 @@
  <div class="row"><button id="editOpenDraw" class="primary">직사각형 그리기</button><button id="editCreateSize">길이 입력으로 생성</button></div>
  <button id="editClearCustom" style="margin-top:8px">사용자 건물 삭제</button>
  <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div><div id="editModelDetails" style="padding:8px;margin-top:8px;border:1px solid #334155;border-radius:8px;font-size:12px">생성된 사용자 건물이 없습니다.</div>
- </div>    </section>
+ </div></details>    </section>
 
 <section id="tab-settings" class="tab-pane">
       <div class="drawer-sec">
@@ -185,7 +188,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -957,7 +960,7 @@ async function syncLawModeToMapCenter(){
 }
 function setLawMode(on){
   lawMode=!!on;
-  $('lawMode').textContent=lawMode?'필지·법규 모드 끄기':'필지·법규 모드 켜기';
+  $('lawMode').textContent=lawMode?'필지 선택 모드 끄기':'필지 선택 모드 켜기';
   $('lawModeState').textContent=lawMode?'현재 켜짐 · 지도를 이동해도 자동 전환':'현재 꺼짐';
   $('lawModeState').style.color=lawMode?'#86efac':'#94a3b8';
   if(!lawMode){
@@ -970,7 +973,7 @@ function setLawMode(on){
     map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[]});
     $('lawParcel').textContent='아직 선택한 필지가 없습니다.';
     $('lawResult').innerHTML='<span class="lawdim">필지·법규 모드를 켜면 사용할 수 있습니다.</span>';
-    message('필지·법규 모드 종료');
+    message('필지 선택 모드 종료');
   }
 }
 
@@ -982,7 +985,7 @@ async function enterLawWorkspace(){
   const did=d?String(d.properties.district_id):selectedId;
   await loadLawDistrictById(did,true);
   map.easeTo({center:saved,zoom,pitch:0,bearing:0,duration:500});
-  message('필지·법규 모드 ON · 지도를 이동해 다른 동으로 넘어가도 자동 전환됩니다');
+  message('필지 선택 모드 ON · 지도를 이동해 다른 동으로 넘어가도 자동 전환됩니다');
 }
 function activateDrawerTab(tab){
   DRAWER_TAB=tab;
