@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-12</title>
+<title>Jinju3D Local · v2026.10.13-13</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-12</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-13</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -117,7 +117,7 @@
  <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div><div id="editModelDetails" style="padding:8px;margin-top:8px;border:1px solid #334155;border-radius:8px;font-size:12px">생성된 사용자 건물이 없습니다.</div>
  </div></details>
 <details class="drawer-sec work-fold"><summary>④ 일사·일조 분석</summary>
- <div class="hint">계절별 태양 위치 및 사용자 건물 그림자 미리보기입니다. 주변 건물 차폐·지형 그림자·누적 일사량은 아직 계산하지 않습니다.</div>
+ <div class="hint">계절별 태양 위치와 사용자 건물·주변 높이 확인 건물의 평탄 지면 그림자 근사입니다. 지형 경사·건물 표면 차폐·누적 일사량은 계산하지 않습니다.</div>
  <div class="settings-label">분석 방식</div>
  <select id="solarMode"><option value="season">계절별 대표일</option><option value="manual">태양 위치 직접 설정</option></select>
  <div id="solarSeasonControls">
@@ -137,8 +137,8 @@
   <div class="hint">방위각: 북 0° · 동 90° · 남 180° · 서 270°</div>
  </div>
  <div id="solarReadout" class="mini" style="margin-top:10px">태양 위치 계산 대기</div>
- <label style="display:block;margin-top:8px"><input type="checkbox" id="solarShadowVisible" checked> 사용자 건물 그림자 미리보기</label>
- <div class="hint" style="margin-top:7px">사용자 건물을 생성하면 그림자를 지도에 표시합니다. 지면 평면에 투영한 단순 기하 모델이며 법정 일조시간이나 일사량 결과가 아닙니다.</div>
+ <label style="display:block;margin-top:8px"><input type="checkbox" id="solarShadowVisible" checked> 건물 그림자 미리보기 (사용자 + 주변 GIS·OSM)</label>
+ <div id="solarShadowSummary" class="mini" style="margin-top:8px">주변 건물 데이터를 확인 중입니다.</div><div class="hint" style="margin-top:7px">주변 약 180m 안의 건물 중 높이 정보가 있는 최대 180개를 근사 투영합니다. 그림자는 지형·DEM 고도 및 건물 상호차폐를 반영하지 않으며, 비정형 건물은 볼록 외피로 단순화됩니다. 법정 일조시간·일사량 결과가 아닙니다.</div>
 </details>
     </section>
 
@@ -213,7 +213,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-12',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-13',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -615,7 +615,7 @@ function editSetParcel(ft){
  $('editParcelInfo').textContent=parcelFullAddress(EDIT_PARCEL.properties)+' · '+fmt(turf.area(EDIT_PARCEL))+'㎡';
  EDIT_PICKING=false;
  map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[EDIT_PARCEL]});
- editNotice('필지 선택 완료. 건물을 숨기거나 새 건물을 그리세요.');
+ editNotice('필지 선택 완료. 건물을 숨기거나 새 건물을 그리세요.');refreshSolarPreview();
 }
 const EDIT_BASEMAP_BUILDING_VIS=new Map();
 function editBasemapBuildingFootprints(hide){
@@ -639,7 +639,7 @@ function editRefreshOriginal(){
  editBasemapBuildingFootprints(!!EDIT_HIDDEN_PARCEL);
  if(currentBuildings&&map.getSource('buildings'))map.getSource('buildings').setData(editedBuildingCollection(currentBuildings));
  const osm=districtOsmCache.get(selectedId);if(osm&&map.getSource('smart-osm'))map.getSource('smart-osm').setData(editedBuildingCollection({type:'FeatureCollection',features:[...osm.kept,...osm.facilities]}));
- $('editHideStatus').textContent=EDIT_HIDDEN_PARCEL?'원래 GIS 건물 숨김 · 복구 가능':'원래 GIS 건물 표시 중';
+ $('editHideStatus').textContent=EDIT_HIDDEN_PARCEL?'원래 GIS 건물 숨김 · 복구 가능':'원래 GIS 건물 표시 중';SOLAR_NEAR_CACHE.key='';refreshSolarPreview();
 }
 // 태양 위치: NOAA fractional-year 근사식, 기준시각 KST(UTC+9).
 function solarPosition(lat,lon,month,day,minutes){
@@ -660,10 +660,10 @@ function solarAngles(){
  const date=SOLAR_DATES[$('solarSeason').value],center=EDIT_CUSTOM?turf.centroid(EDIT_CUSTOM).geometry.coordinates:EDIT_PARCEL?turf.centroid(EDIT_PARCEL).geometry.coordinates:[128.1076,35.1802];
  return solarPosition(center[1],center[0],date[0],date[1],Number($('solarTime').value));
 }
+// 그림자 모델은 평탄 지면의 2D 투영 근사값: 실제 지형·지붕·벽면의 광선추적 아님.
 function solarShadowFootprint(footprint,height,alt,az){
- if(alt<=.5||!height)return null;
- const distance=Math.min(3000,height/Math.tan(alt*Math.PI/180));
- // 방위각은 태양 방향이므로 그림자는 반대 방향으로 연장
+ if(alt<=.5||!(height>0)||!['Polygon','MultiPolygon'].includes(footprint.geometry?.type))return null;
+ const distance=Math.min(1500,height/Math.tan(alt*Math.PI/180));
  const move=turf.transformTranslate(footprint,distance/1000,(az+180)%360,{units:'kilometers'});
  const vertices=[];
  for(const geom of [footprint,move]){
@@ -671,8 +671,31 @@ function solarShadowFootprint(footprint,height,alt,az){
   if(g.type==='Polygon')vertices.push(...g.coordinates[0]);
   else if(g.type==='MultiPolygon')for(const part of g.coordinates)vertices.push(...part[0]);
  }
- const hull=turf.convex(turf.featureCollection(vertices.map(c=>turf.point(c))));
- return hull;
+ if(vertices.length<3)return null;
+ return turf.convex(turf.featureCollection(vertices.map(c=>turf.point(c))));
+}
+let SOLAR_NEAR_CACHE={key:'',features:[],unknown:0};
+function solarNearbyBuildings(center){
+ const key=selectedId+'|'+(EDIT_PARCEL?.properties?.pnu||'')+'|'+center.map(x=>x.toFixed(5)).join(',')+'|'+(currentBuildings?.features?.length||0)+'|'+(districtOsmCache.get(selectedId)?.kept?.length||0)+'|'+!!EDIT_HIDDEN_PARCEL;
+ if(SOLAR_NEAR_CACHE.key===key)return SOLAR_NEAR_CACHE;
+ const out=[],seen=new Set();let unknown=0;
+ const sources=[...(currentBuildings?.features||[]),...(districtOsmCache.get(selectedId)?.kept||[])];
+ for(const f of sources){
+  if(!['Polygon','MultiPolygon'].includes(f?.geometry?.type))continue;
+  const p=f.properties||{};
+  if(p.suppress_render||p.hidden||p.facility)continue;
+  if(EDIT_HIDDEN_PARCEL){try{if(turf.booleanIntersects(f,EDIT_HIDDEN_PARCEL))continue}catch(e){}}
+  let c;try{c=turf.centroid(f).geometry.coordinates}catch(e){continue}
+  const d=turf.distance(center,c,{units:'meters'});if(d>180)continue;
+  const h=Number(p.render_height||p.height_m||p.height);
+  if(!Number.isFinite(h)||h<=0){unknown++;continue}
+  const signature=c[0].toFixed(5)+','+c[1].toFixed(5)+','+Math.round(turf.area(f));
+  if(seen.has(signature))continue;seen.add(signature);
+  out.push({f,h:Math.min(h,350),d});
+ }
+ out.sort((a,b)=>a.d-b.d);
+ SOLAR_NEAR_CACHE={key,features:out.slice(0,180),unknown,more:Math.max(0,out.length-180)};
+ return SOLAR_NEAR_CACHE;
 }
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
@@ -683,17 +706,39 @@ function refreshSolarPreview(){
  $('solarTimeLabel').textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
  $('solarManualAltLabel').textContent=$('solarManualAlt').value+'°';
  $('solarManualAzLabel').textContent=$('solarManualAz').value+'°';
- const a=solarAngles(),daylight=a.alt>0;
- $('solarReadout').textContent=(mode==='manual'?'가상 태양 조건':'계절 대표일 · 2026년 한국표준시')+' | 고도 '+a.alt.toFixed(1)+'° · 방위각 '+a.az.toFixed(1)+'°'+(daylight?'':' · 일몰 전/일출 전 시간');
+ const a=solarAngles(),daylight=a.alt>.5;
+ $('solarReadout').textContent=(mode==='manual'?'가상 태양 조건':'계절 대표일 · 2026년 한국표준시')+' | 고도 '+a.alt.toFixed(1)+'° · 방위각 '+a.az.toFixed(1)+'°'+(daylight?'':' · 태양이 지평선 아래 또는 근처');
  if(!map?.isStyleLoaded?.())return;
  if(!map.getSource('solar-shadow-preview')){
   map.addSource('solar-shadow-preview',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-  map.addLayer({id:'solar-shadow-preview-fill',type:'fill',source:'solar-shadow-preview',paint:{'fill-color':'#182c4f','fill-opacity':.53}});
-  map.addLayer({id:'solar-shadow-preview-line',type:'line',source:'solar-shadow-preview',paint:{'line-color':'#93a4c1','line-width':1}});
+  map.addLayer({id:'solar-shadow-preview-fill',type:'fill',source:'solar-shadow-preview',paint:{'fill-color':['match',['get','kind'],'custom','#7c3aed','#182c4f'],'fill-opacity':.48}});
+  map.addLayer({id:'solar-shadow-preview-line',type:'line',source:'solar-shadow-preview',paint:{'line-color':['match',['get','kind'],'custom','#c4b5fd','#93a4c1'],'line-width':1}});
  }
- let result=null;
- try{if(EDIT_CUSTOM&&daylight&&$('solarShadowVisible').checked)result=solarShadowFootprint(EDIT_CUSTOM,Number(EDIT_CUSTOM.properties.model_height),a.alt,a.az)}catch(err){console.warn('태양 그림자 미리보기 계산 오류',err)}
- map.getSource('solar-shadow-preview').setData({type:'FeatureCollection',features:result?[result]:[]});
+ if(!map.getSource('solar-sun-direction')){
+  map.addSource('solar-sun-direction',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.addLayer({id:'solar-sun-direction-line',type:'line',source:'solar-sun-direction',paint:{'line-color':'#fbbf24','line-width':3,'line-dasharray':[2,1]}});
+ }
+ const enabled=$('solarShadowVisible').checked;
+ let center=null;
+ try{center=turf.centroid(EDIT_CUSTOM||EDIT_PARCEL).geometry.coordinates}catch(e){}
+ const shadows=[];let nearby={features:[],unknown:0,more:0},failed=0;
+ if(center&&enabled&&daylight){
+  nearby=solarNearbyBuildings(center);
+  for(const item of nearby.features){
+   try{const v=solarShadowFootprint(item.f,item.h,a.alt,a.az);if(v){v.properties={kind:'existing'};shadows.push(v)}}catch(e){failed++}
+  }
+  if(EDIT_CUSTOM)try{
+   const v=solarShadowFootprint(EDIT_CUSTOM,Number(EDIT_CUSTOM.properties.model_height),a.alt,a.az);
+   if(v){v.properties={kind:'custom'};shadows.push(v)}
+  }catch(e){failed++}
+ }
+ map.getSource('solar-shadow-preview').setData({type:'FeatureCollection',features:shadows});
+ let ray=[];
+ if(center&&daylight&&enabled){
+  try{ray=[turf.lineString([center,turf.destination(center,.055,a.az,{units:'kilometers'}).geometry.coordinates])]}catch(e){}
+ }
+ map.getSource('solar-sun-direction').setData({type:'FeatureCollection',features:ray});
+ $('solarShadowSummary').textContent=!center?'먼저 필지를 선택하세요.':!enabled?'그림자 표시 꺼짐':!daylight?'태양 고도 0.5° 이하: 그림자 계산 중단':('그림자 '+shadows.length+'개 (주변 '+nearby.features.length+'개 후보 · 높이 미상 '+nearby.unknown+'개 제외'+(nearby.more?' · 거리순 '+nearby.more+'개 제외':'')+(failed?' · 계산 실패 '+failed+'개':'')+') · 보라색: 사용자 건물 / 짙은색: 기존 건물 · 노란 선: 태양 방향');
 }
 function setupSolarControls(){
  for(const id of ['solarMode','solarSeason','solarTime','solarManualAlt','solarManualAz','solarShadowVisible'])$(id)?.addEventListener('input',refreshSolarPreview);
@@ -991,7 +1036,7 @@ async function mergeWholeDistrict(collected,gis,token){
 }
 function withTimeout(p,ms,msg='timeout'){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(Error(msg)),ms))])}
 async function buildWholeDistrictSupplement(force=false){if(isStaticFast(selectedId)){if($('mergeState'))$('mergeState').textContent='정적 빠른 모드 · 실시간 OSM 재계산 없음';return}if(!smartOsm||!detailReady||!currentBuildings||!selectedDistrict||precisionMode)return;const id=selectedId,pf=profileFor(id),cacheKey=id+'@'+pf.level+'@v9';if(!force&&districtOsmCache.has(cacheKey)){applyCachedSupplement(cacheKey);return}const token=++scanToken,btn=$('mergeRefresh');btn.disabled=true;loading(true);$('sOsmRaw').textContent='수집 중';$('sDup').textContent='-';$('sOsm').textContent='-';$('sOsm3d').textContent='-';$('sFacility').textContent='-';try{$('mergeState').textContent=`${pf.level} 자동 보완 시작 · GIS/필지 ${(pf.ratio*100).toFixed(1)}%`;const collected=await withTimeout(collectWholeDistrictOsm(selectedDistrict,token,pf),45000,'OSM 보완 시간 초과');if(token!==scanToken)return;$('sOsmRaw').textContent=collected.buildings.length.toLocaleString()+'개';const result=await mergeWholeDistrict(collected,currentBuildings.features,token);if(token!==scanToken)return;result.profile=pf;districtOsmCache.set(cacheKey,result);applyCachedSupplement(cacheKey);message(`${selectedDistrict.properties.district_name} 겹침 제거 보완 완료 · ${APP_VERSION}`)}catch(e){if(String(e.message)!=='scan cancelled'){$('mergeState').textContent=(String(e.message).includes('시간 초과')?'OSM 보완 시간 초과 · 기본 건물은 정상 사용 가능':'OSM 자동 보완 실패 · 다시 계산해 주세요');console.warn(e)}}finally{if(token===scanToken){btn.disabled=false;loading(false)}}}
-function applyCachedSupplement(key){const r=districtOsmCache.get(key);if(!r)return;const supplementFc={type:'FeatureCollection',features:[...r.kept,...r.facilities]};map.getSource('smart-osm')?.setData(editedBuildingCollection(supplementFc));scheduleGroundElevationAfterViewport(supplementFc,'smart-osm');$('sOsmRaw').textContent=r.raw.toLocaleString()+'개';$('sDup').textContent=r.dup.toLocaleString()+'개';$('sOsm').textContent=r.kept.length.toLocaleString()+'개';$('sOsm3d').textContent=r.threeD.toLocaleString()+'개';$('sFacility').textContent=r.facilities.length.toLocaleString()+'개';if($('sReg'))$('sReg').textContent=(registerMatchedGis+(r.regOsm||0)).toLocaleString()+'개';$('mergeState').textContent=`완료 · ${r.profile.level} · 후보 ${r.raw.toLocaleString()} → 겹침/중복 ${r.dup.toLocaleString()} 처리 → ${r.kept.length.toLocaleString()} 보완`}
+function applyCachedSupplement(key){const r=districtOsmCache.get(key);if(!r)return;const supplementFc={type:'FeatureCollection',features:[...r.kept,...r.facilities]};map.getSource('smart-osm')?.setData(editedBuildingCollection(supplementFc));refreshSolarPreview();scheduleGroundElevationAfterViewport(supplementFc,'smart-osm');$('sOsmRaw').textContent=r.raw.toLocaleString()+'개';$('sDup').textContent=r.dup.toLocaleString()+'개';$('sOsm').textContent=r.kept.length.toLocaleString()+'개';$('sOsm3d').textContent=r.threeD.toLocaleString()+'개';$('sFacility').textContent=r.facilities.length.toLocaleString()+'개';if($('sReg'))$('sReg').textContent=(registerMatchedGis+(r.regOsm||0)).toLocaleString()+'개';$('mergeState').textContent=`완료 · ${r.profile.level} · 후보 ${r.raw.toLocaleString()} → 겹침/중복 ${r.dup.toLocaleString()} 처리 → ${r.kept.length.toLocaleString()} 보완`}
 function heightSummary(s){const t=s.high+s.mid+s.low;return t?`높음 ${Math.round(s.high/t*100)}% · 보통 ${Math.round(s.mid/t*100)}%`:'-'}
 async function selectDistrict(id){
   const f=DISTRICTS.features.find(x=>String(x.properties.district_id)===String(id));if(!f)return;
@@ -1016,7 +1061,7 @@ async function selectDistrict(id){
     const[b,p]=await Promise.all([loadGzipJson(bm.file),loadGzipJson(pm.file)]);
     applyKnownBuildingCorrections(b);splitTerrainFeatures(b);currentParcels=p;currentParcelGrid=makeGrid(p.features);
     try{await loadRegister()}catch(e){console.warn('건축물대장 읽기 실패, GIS/OSM만 계속 사용',e)}
-    applyRegisterToGis(b);normalizeBuildings(b);suppressRenderDuplicateBuildings(b);currentBuildings=b;addDetails(b,p);
+    applyRegisterToGis(b);normalizeBuildings(b);suppressRenderDuplicateBuildings(b);currentBuildings=b;addDetails(b,p);SOLAR_NEAR_CACHE.key='';refreshSolarPreview();
     $('sBld').textContent=b.features.length.toLocaleString()+'개'+(b._renderOverlapSuppressed?' · 중복 '+b._renderOverlapSuppressed+'개 억제':'');$('sPar').textContent=p.features.length.toLocaleString()+'개';$('sHeight').textContent=heightSummary(b._heightStats);
     if($('sReg'))$('sReg').textContent=registerMatchedGis.toLocaleString()+'개';detailReady=true;
     const bb=turf.bbox(f);map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]],{padding:{top:80,bottom:70,left:60,right:60},pitch:0,bearing:0,duration:1200});scheduleGroundElevationAfterViewport(b,'buildings');loading(false);
