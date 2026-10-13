@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-08</title>
+<title>Jinju3D Local · v2026.10.13-09</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-08</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-09</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -177,7 +177,7 @@
  <div style="width:min(540px,100%);max-height:calc(100dvh - 16px);overflow-y:auto;background:#101f33;border:1px solid #64748b;border-radius:14px;padding:10px;color:#e2e8f0">
  <div class="row" style="justify-content:space-between"><b>직사각형 건물 그리기</b><button id="editCloseDraw">닫기</button></div>
  <p style="font-size:12px">필지 안에서 드래그해 건물 바닥 면적을 그립니다. 입력 길이로도 다시 그릴 수 있습니다.</p>
- <canvas id="editDrawCanvas" width="580" height="400" style="width:100%;height:auto;max-height:min(44dvh,360px);background:#071527;touch-action:none;cursor:crosshair;border:1px solid #475569;border-radius:8px"></canvas>
+ <canvas id="editDrawCanvas" width="580" height="400" style="display:block;width:100%;height:auto;max-width:100%;background:#071527;touch-action:none;cursor:crosshair;border:1px solid #475569;border-radius:8px"></canvas>
  <div id="editDrawDims" style="font-size:13px;margin:8px 0">마우스 또는 터치로 드래그하세요.</div>
  <div class="row"><button id="editSizeInCanvas">입력한 가로·세로로 배치</button><button id="editConfirmDraw" class="primary">치수 확인 · 다음</button></div>
  </div></div>
@@ -188,7 +188,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.13-09',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -614,14 +614,18 @@ function editBoxFromCoords(a,b){
  return turf.polygon([[[x1,y1],[x2,y1],[x2,y2],[x1,y2],[x1,y1]]]);
 }
 function editCanvasBounds(){
- const b=turf.bbox(EDIT_PARCEL),latPad=(b[3]-b[1])*.13,lonPad=(b[2]-b[0])*.13;
- return [b[0]-lonPad,b[1]-latPad,b[2]+lonPad,b[3]+latPad];
+ const bounds=turf.bbox(EDIT_PARCEL),canvas=$('editDrawCanvas');
+ const refLon=(bounds[0]+bounds[2])/2,refLat=(bounds[1]+bounds[3])/2;
+ const metersLon=111320*Math.cos(refLat*Math.PI/180),metersLat=111132;
+ const width=Math.max(1,(bounds[2]-bounds[0])*metersLon),height=Math.max(1,(bounds[3]-bounds[1])*metersLat);
+ const pad=28,scale=Math.min((canvas.width-2*pad)/width,(canvas.height-2*pad)/height);
+ return {refLon,refLat,metersLon,metersLat,scale,cx:canvas.width/2,cy:canvas.height/2};
 }
 function editXYToLngLat(x,y){
- const b=EDIT_BOX,c=$('editDrawCanvas');return [b[0]+x/c.width*(b[2]-b[0]),b[3]-y/c.height*(b[3]-b[1])];
+ const b=EDIT_BOX;return [b.refLon+(x-b.cx)/(b.scale*b.metersLon),b.refLat-(y-b.cy)/(b.scale*b.metersLat)];
 }
 function editLngLatToXY(pt){
- const b=EDIT_BOX,c=$('editDrawCanvas');return [(pt[0]-b[0])/(b[2]-b[0])*c.width,(b[3]-pt[1])/(b[3]-b[1])*c.height];
+ const b=EDIT_BOX;return [b.cx+(pt[0]-b.refLon)*b.metersLon*b.scale,b.cy-(pt[1]-b.refLat)*b.metersLat*b.scale];
 }
 function editRectMeters(rect){
  const b=turf.bbox(rect),w=turf.distance([b[0],b[1]],[b[2],b[1]],{units:'kilometers'})*1000,h=turf.distance([b[0],b[1]],[b[0],b[3]],{units:'kilometers'})*1000;return [w,h];
@@ -631,9 +635,17 @@ function editRenderCanvas(){
  const c=$('editDrawCanvas'),g=c.getContext('2d');
  g.clearRect(0,0,c.width,c.height);g.fillStyle='#071527';g.fillRect(0,0,c.width,c.height);
  function shape(ft,fill,stroke){
-  const coords=ft.geometry.type==='Polygon'?ft.geometry.coordinates:[];
-  for(const ring of coords){g.beginPath();ring.forEach((p,i)=>{const xy=editLngLatToXY(p);i?g.lineTo(...xy):g.moveTo(...xy)});g.closePath();g.fillStyle=fill;g.fill();g.lineWidth=2;g.strokeStyle=stroke;g.stroke();}
+  const polygons=ft.geometry.type==='Polygon'?[ft.geometry.coordinates]:ft.geometry.type==='MultiPolygon'?ft.geometry.coordinates:[];
+  for(const polygon of polygons){
+   g.beginPath();
+   for(const ring of polygon){
+    ring.forEach((pt,i)=>{const xy=editLngLatToXY(pt);if(i===0)g.moveTo(...xy);else g.lineTo(...xy)});
+    g.closePath();
+   }
+   g.fillStyle=fill;g.fill('evenodd');g.lineWidth=2;g.strokeStyle=stroke;g.stroke();
+  }
  }
+
  shape(EDIT_PARCEL,'#164e63','#67e8f9');
  if(EDIT_RECT){shape(EDIT_RECT,'#ea580c88','#fdba74');const [w,h]=editRectMeters(EDIT_RECT);$('editDrawDims').textContent='가로 '+w.toFixed(2)+'m × 세로 '+h.toFixed(2)+'m · 면적 '+(w*h).toFixed(1)+'㎡';}
 }
