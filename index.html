@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-20</title>
+<title>Jinju3D Local · v2026.10.14-21</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-20</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-21</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -117,11 +117,20 @@
  <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div><div id="editModelDetails" style="padding:8px;margin-top:8px;border:1px solid #334155;border-radius:8px;font-size:12px">생성된 사용자 건물이 없습니다.</div>
  </div></details>
 <details class="drawer-sec work-fold"><summary>④ 일사·일조 분석</summary>
+ <button type="button" id="solarShadowToggle" aria-pressed="false" style="margin-top:10px;background:#14532d;border:1px solid #22c55e;font-size:12px;padding:12px">그림자 보기 켜기</button>
  <div class="hint">계절별 태양 위치와 사용자 건물·주변 높이 확인 건물의 평탄 지면 그림자 근사입니다. 지형 경사·건물 표면 차폐·누적 일사량은 계산하지 않습니다.</div>
- <div class="settings-label">분석 방식</div>
- <select id="solarMode"><option value="season">계절별 대표일</option><option value="manual">태양 위치 직접 설정</option></select>
+ <select id="solarMode" style="display:none" aria-label="분석 방식"><option value="season">계절별 대표일</option><option value="manual">태양 위치 직접 설정</option></select>
+ <div class="settings-label" style="margin-top:12px">분석 계절 선택</div>
+ <div id="solarSeasonButtons" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:7px 0">
+  <button type="button" data-solar-season="spring" style="padding:11px 2px">봄</button><button type="button" data-solar-season="summer" style="padding:11px 2px">여름</button><button type="button" data-solar-season="autumn" style="padding:11px 2px">가을</button><button type="button" data-solar-season="winter" style="padding:11px 2px">겨울</button>
+ </div>
+ <details id="solarCustomFold" style="border:1px solid #64748b;border-radius:8px;padding:9px;margin-bottom:9px"><summary style="cursor:pointer;font-size:12px;font-weight:600">⚙ 사용자 지정</summary>
+ <div style="margin-top:10px"><label style="font-size:12px"><input type="radio" name="solarCustomType" value="date" checked> 날짜 직접 선택</label> <label style="font-size:12px"><input type="radio" name="solarCustomType" value="manual"> 태양 각도 직접 입력</label></div>
+ <div id="solarCustomDatePanel" style="margin-top:9px"><label for="solarCustomDate" style="font-size:12px">분석 날짜</label><input type="date" id="solarCustomDate" value="2026-06-21" style="width:100%;box-sizing:border-box"></div>
+ <div id="solarCustomAnglePanel" style="display:none;margin-top:9px"></div>
+ </details>
  <div id="solarSeasonControls">
-  <div class="settings-label">계절</div><select id="solarSeason"><option value="spring">봄 · 춘분 (3/20)</option><option value="summer">여름 · 하지 (6/21)</option><option value="autumn">가을 · 추분 (9/23)</option><option value="winter" selected>겨울 · 동지 (12/22)</option></select>
+  <div style="display:none"><label for="solarSeason">계절</label><select id="solarSeason"><option value="spring">봄 · 춘분 (3/20)</option><option value="summer">여름 · 하지 (6/21)</option><option value="autumn">가을 · 추분 (9/23)</option><option value="winter" selected>겨울 · 동지 (12/22)</option></select></div>
   <div class="settings-label" style="margin-top:9px">분석 시간 <b id="solarTimeLabel">12:00</b></div>
   <input id="solarTime" type="range" min="360" max="1140" step="60" value="720" style="width:100%">
   <div style="display:flex;justify-content:space-between;font-size:10px"><span>06:00</span><span>12:00</span><span>19:00</span></div>
@@ -146,7 +155,7 @@
   <div class="hint">방위각: 북 0° · 동 90° · 남 180° · 서 270°</div>
  </div>
  <div id="solarReadout" class="mini" style="margin-top:10px">태양 위치 계산 대기</div>
- <button type="button" id="solarShadowToggle" aria-pressed="false" style="margin-top:10px;background:#14532d;border:1px solid #22c55e;font-size:12px;padding:12px">그림자 보기 켜기</button>
+ 
 
  <details class="solar-advanced-group" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px">
  <summary style="cursor:pointer;font-size:12px;font-weight:600">고급 설정 및 분석 결과</summary>
@@ -251,7 +260,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-20',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-21',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -708,9 +717,28 @@ function solarHorizonTimes(lat,lon,month,day){
  const fmt=m=>{const v=Math.round(m);return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')};
  return {rise:fmt(crossing(240,720)),set:fmt(crossing(720,1200))};
 }
+function solarActiveDate(){
+ if($("solarCustomFold")?.open&&document.querySelector('input[name="solarCustomType"]:checked')?.value==="date"){
+  const v=$("solarCustomDate")?.value||"";const m=/^\d{4}-(\d{2})-(\d{2})$/.exec(v);
+  if(m){const month=Number(m[1]),day=Number(m[2]);if(month>=1&&month<=12&&day>=1&&day<=31)return [month,day]}
+ }
+ return SOLAR_DATES[$("solarSeason").value];
+}
+function solarSyncMode(){
+ const fold=$("solarCustomFold"),custom=!!fold?.open,manual=custom&&document.querySelector('input[name="solarCustomType"]:checked')?.value==="manual";
+ $("solarMode").value=manual?"manual":"season";
+ $("solarCustomDatePanel").style.display=custom&&!manual?"block":"none";
+ $("solarCustomAnglePanel").style.display=custom&&manual?"block":"none";
+ $("solarManualControls").style.display=manual?"block":"none";
+ for(const b of document.querySelectorAll("[data-solar-season]")){
+  const selected=!custom&&b.dataset.solarSeason===$("solarSeason").value;
+  b.style.background=selected?"#2563eb":"";b.style.borderColor=selected?"#93c5fd":"";b.style.color=selected?"white":"";
+  b.setAttribute("aria-pressed",String(selected));
+ }
+}
 function solarAngles(){
  if($('solarMode')?.value==='manual')return {alt:Number($('solarManualAlt').value),az:Number($('solarManualAz').value)};
- const date=SOLAR_DATES[$('solarSeason').value],center=EDIT_CUSTOM?turf.centroid(EDIT_CUSTOM).geometry.coordinates:EDIT_PARCEL?turf.centroid(EDIT_PARCEL).geometry.coordinates:[128.1076,35.1802];
+ const date=solarActiveDate(),center=EDIT_CUSTOM?turf.centroid(EDIT_CUSTOM).geometry.coordinates:EDIT_PARCEL?turf.centroid(EDIT_PARCEL).geometry.coordinates:[128.1076,35.1802];
  return solarPosition(center[1],center[0],date[0],date[1],Number($('solarTime').value));
 }
 // 그림자 모델은 평탄 지면의 2D 투영 근사값: 실제 지형·지붕·벽면의 광선추적 아님.
@@ -1076,6 +1104,7 @@ function solarRenderUnifiedShadow(features){
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
  const mode=$('solarMode').value;
+ solarSyncMode();
  $('solarSeasonControls').style.display=mode==='season'?'block':'none';
  $('solarManualControls').style.display=mode==='manual'?'block':'none';
  const t=Number($('solarTime').value);
@@ -1085,12 +1114,12 @@ function refreshSolarPreview(){
  const a=solarAngles(),daylight=a.alt>0;
  let dayInfo='';
  if(mode==='season'){
-  const date=SOLAR_DATES[$('solarSeason').value];
+  const date=solarActiveDate();
   let pt=[128.1076,35.1802];try{if(EDIT_CUSTOM||EDIT_PARCEL)pt=turf.centroid(EDIT_CUSTOM||EDIT_PARCEL).geometry.coordinates}catch(e){}
   const times=solarHorizonTimes(pt[1],pt[0],date[0],date[1]);
   dayInfo=' · 기하학적 일출 '+times.rise+' / 일몰 '+times.set+' (굴절·산지 차폐 제외)';
  }
- $('solarReadout').textContent=(mode==='manual'?'가상 태양 조건':'계절 대표일 · 2026년 한국표준시')+' | 고도 '+a.alt.toFixed(1)+'° · 방위각 '+a.az.toFixed(1)+'°'+(daylight?'':' · 태양 중심이 수평선 아래')+dayInfo;
+ $('solarReadout').textContent=(mode==='manual'?'가상 태양 조건':($('solarCustomFold')?.open?'사용자 지정 날짜 · 한국표준시':'계절 대표일 · 2026년 한국표준시'))+' | 고도 '+a.alt.toFixed(1)+'° · 방위각 '+a.az.toFixed(1)+'°'+(daylight?'':' · 태양 중심이 수평선 아래')+dayInfo;
  if(!map?.isStyleLoaded?.())return;
  if(!map.getSource('solar-shadow-preview')){
   map.addSource('solar-shadow-preview',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
@@ -1238,6 +1267,12 @@ function solarPlaybackTick(){
  SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,40);
 }
 function setupSolarControls(){
+ const manual=$('solarManualControls'),anglePanel=$('solarCustomAnglePanel');if(manual&&anglePanel)anglePanel.appendChild(manual);
+ for(const button of document.querySelectorAll('[data-solar-season]'))button.addEventListener('click',()=>{$('solarSeason').value=button.dataset.solarSeason;$('solarCustomFold').open=false;solarPlaybackStop();solarSyncMode();scheduleSolarPreview()});
+ $('solarCustomFold')?.addEventListener('toggle',()=>{solarPlaybackStop();solarSyncMode();scheduleSolarPreview()});
+ for(const radio of document.querySelectorAll('input[name="solarCustomType"]'))radio.addEventListener('change',()=>{solarPlaybackStop();solarSyncMode();scheduleSolarPreview()});
+ $('solarCustomDate')?.addEventListener('change',scheduleSolarPreview);
+ solarSyncMode();
  const performanceSelect=$('solarPerformanceMode');
  if(performanceSelect){
   try{SOLAR_PERFORMANCE_MODE=localStorage.getItem('jinmin_solar_performance')==='high'?'high':'light'}catch(e){}
@@ -1276,7 +1311,7 @@ function setupSolarControls(){
  });
  $('solarPlay').addEventListener('click',()=>{
   if(SOLAR_PLAYING){solarPlaybackStop();return}
-  if($('solarMode').value!=='season'){$('solarMode').value='season';}
+  if($('solarMode').value!=='season'){solarPlaybackStop();return;}
   if(!SOLAR_SHADOW_ON){$('solarShadowToggle').click()}
   if(Number($('solarTime').value)>=1140)$('solarTime').value=360;
   solarClearTerrainArea();
