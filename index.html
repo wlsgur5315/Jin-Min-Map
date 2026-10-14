@@ -1103,8 +1103,8 @@ function solarRenderUnifiedShadow(features){
 }
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
- const mode=$('solarMode').value;
  solarSyncMode();
+ const mode=$('solarMode').value;
  $('solarSeasonControls').style.display=mode==='season'?'block':'none';
  $('solarManualControls').style.display=mode==='manual'?'block':'none';
  const t=Number($('solarTime').value);
