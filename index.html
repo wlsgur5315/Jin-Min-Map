@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-04</title>
+<title>Jinju3D Local · v2026.10.14-05</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-04</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-05</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -125,9 +125,18 @@
   <div class="settings-label" style="margin-top:9px">분석 시간 <b id="solarTimeLabel">12:00</b></div>
   <input id="solarTime" type="range" min="360" max="1140" step="60" value="720" style="width:100%">
   <div style="display:flex;justify-content:space-between;font-size:10px"><span>06:00</span><span>12:00</span><span>19:00</span></div>
-  <div class="settings-label" style="margin-top:9px">시간 슬라이더 조절 간격</div>
-  <label><input type="radio" name="solarStep" value="60" checked> 1시간 단위</label>
-  <label style="margin-left:10px"><input type="radio" name="solarStep" value="10"> 10분 단위</label>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:9px">
+   <button type="button" id="solarPlay" style="font-size:12px;padding:9px 3px">▶ 재생</button>
+   <button type="button" id="solarStop" style="font-size:12px;padding:9px 3px">■ 정지</button>
+   <button type="button" id="solarNext" style="font-size:12px;padding:9px 3px">⏭ 다음</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;margin-top:7px;min-width:0">
+   <button type="button" id="solarStepToggle" aria-label="시간 간격 전환" aria-pressed="false" style="flex:1.6;min-width:0;padding:3px;border:1px solid #64748b;border-radius:20px;display:flex;gap:2px;font-size:11px">
+    <span id="solarStep10" style="flex:1;padding:5px 1px;border-radius:16px">10분</span><span id="solarStep60" style="flex:1;padding:5px 1px;border-radius:16px;background:#475569;color:white;font-weight:700">1시간</span>
+   </button>
+   <select id="solarSpeed" aria-label="재생 속도" style="flex:0.95;min-width:0;width:0;margin:0;padding:6px 2px;font-size:11px"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select>
+   <label style="white-space:nowrap;font-size:11px;display:flex;align-items:center;gap:3px"><input id="solarLoop" type="checkbox">반복</label>
+  </div>
  </div>
  <div id="solarManualControls" style="display:none">
   <div class="settings-label">태양 고도각 <b id="solarManualAltLabel">35°</b></div>
@@ -211,7 +220,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -922,14 +931,61 @@ function refreshSolarPreview(){
 }
 let SOLAR_PREVIEW_FRAME=0;
 function scheduleSolarPreview(){if(SOLAR_PREVIEW_FRAME)return;SOLAR_PREVIEW_FRAME=requestAnimationFrame(()=>{SOLAR_PREVIEW_FRAME=0;refreshSolarPreview()});}
+let SOLAR_PLAY_TIMER=null,SOLAR_PLAYING=false,SOLAR_STEP=60;
+function solarPlaybackStop(reset=false){
+ if(SOLAR_PLAY_TIMER!==null){clearTimeout(SOLAR_PLAY_TIMER);SOLAR_PLAY_TIMER=null}
+ SOLAR_PLAYING=false;
+ if(reset)$('solarTime').value=360;
+ $('solarPlay').textContent='▶ 재생';
+ if(reset)scheduleSolarPreview();
+}
+function solarPlaybackAdvance(){
+ const slider=$('solarTime'),now=Number(slider.value),next=now+SOLAR_STEP;
+ if(next>1140){
+  if(!$('solarLoop').checked){solarPlaybackStop();return false}
+  slider.value=360;
+ }else slider.value=next;
+ scheduleSolarPreview();
+ return true;
+}
+function solarPlaybackTick(){
+ SOLAR_PLAY_TIMER=null;
+ if(!SOLAR_PLAYING)return;
+ if(!solarPlaybackAdvance())return;
+ SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,Math.max(200,1000/Number($('solarSpeed').value||1)));
+}
 function setupSolarControls(){
- $('solarShadowToggle').addEventListener('click',()=>{SOLAR_SHADOW_ON=!SOLAR_SHADOW_ON;refreshSolarPreview();const view=$(SOLAR_SHADOW_ON?'view3d':'view2d');if(view)view.click();});
+ $('solarShadowToggle').addEventListener('click',()=>{SOLAR_SHADOW_ON=!SOLAR_SHADOW_ON;if(!SOLAR_SHADOW_ON)solarPlaybackStop();refreshSolarPreview();const view=$(SOLAR_SHADOW_ON?'view3d':'view2d');if(view)view.click();});
  for(const id of ['solarMode','solarSeason','solarTime','solarManualAlt','solarManualAz','solarTerrainCustom','solarTerrainOcclusion','solarTerrainArea'])$(id)?.addEventListener('input',scheduleSolarPreview);
- document.querySelectorAll('input[name="solarStep"]').forEach(el=>el.addEventListener('change',()=>{
-  const step=Number(document.querySelector('input[name="solarStep"]:checked').value),slider=$('solarTime');
-  slider.step=step;slider.value=Math.min(1140,Math.max(360,Math.round(Number(slider.value)/step)*step));refreshSolarPreview();
- }));
- refreshSolarPreview();
+ function updateStepUI(){
+  $('solarTime').step=SOLAR_STEP;
+  $('solarStep10').style.background=SOLAR_STEP===10?'#475569':'transparent';
+  $('solarStep60').style.background=SOLAR_STEP===60?'#475569':'transparent';
+  $('solarStep10').style.color=SOLAR_STEP===10?'white':'inherit';
+  $('solarStep60').style.color=SOLAR_STEP===60?'white':'inherit';
+  $('solarStep10').style.fontWeight=SOLAR_STEP===10?'700':'400';
+  $('solarStep60').style.fontWeight=SOLAR_STEP===60?'700':'400';
+  $('solarStepToggle').setAttribute('aria-pressed',String(SOLAR_STEP===10));
+ }
+ $('solarStepToggle').addEventListener('click',()=>{
+  SOLAR_STEP=SOLAR_STEP===10?60:10;
+  const slider=$('solarTime');
+  slider.value=Math.min(1140,Math.max(360,Math.round(Number(slider.value)/SOLAR_STEP)*SOLAR_STEP));
+  updateStepUI();scheduleSolarPreview();
+ });
+ $('solarPlay').addEventListener('click',()=>{
+  if(SOLAR_PLAYING){solarPlaybackStop();return}
+  if($('solarMode').value!=='season'){$('solarMode').value='season';}
+  if(!SOLAR_SHADOW_ON){$('solarShadowToggle').click()}
+  if(Number($('solarTime').value)>=1140)$('solarTime').value=360;
+  SOLAR_PLAYING=true;$('solarPlay').textContent='Ⅱ 일시정지';
+  scheduleSolarPreview();
+  SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,Math.max(200,1000/Number($('solarSpeed').value||1)));
+ });
+ $('solarStop').addEventListener('click',()=>solarPlaybackStop(true));
+ $('solarNext').addEventListener('click',()=>{solarPlaybackStop();solarPlaybackAdvance()});
+ $('solarMode').addEventListener('change',()=>{if($('solarMode').value!=='season')solarPlaybackStop()});
+ updateStepUI();refreshSolarPreview();
 }
 setupSolarControls();
 function editModelSource(){
