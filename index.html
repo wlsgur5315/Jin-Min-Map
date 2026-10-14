@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-25</title>
+<title>Jinju3D Local · v2026.10.14-26</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-25</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-26</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -260,7 +260,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-25',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-26',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -817,7 +817,7 @@ function applyMapDesign(){
  const signature=mode+'|'+style.layers.map(layer=>layer.id).join('|');
  if(signature===MAP_DESIGN_APPLIED)return;
  MAP_DESIGN_APPLIED=signature;
- const customLayers=new Set(['solar-shadow-preview-fill','solar-terrain-image-layer','solar-sun-direction-line','solar-roof-shadow-3d','solar-wall-shadow-3d','edit-custom-model-3d','edit-custom-model-outline','selected-parcel-fill','selected-parcel-line']);
+ const customLayers=new Set(['solar-shadow-preview-fill','solar-terrain-image-layer','solar-sun-direction-line','solar-roof-shadow-3d','solar-wall-shadow-3d','solar-blocked-buildings-3d','edit-custom-model-3d','edit-custom-model-outline','selected-parcel-fill','selected-parcel-line']);
  function paint(id,prop,value){
   if(!map.getLayer(id))return;
   const key=id+'|'+prop;
@@ -1159,6 +1159,54 @@ function solarUpdateRoofShadows(nearby,a,enabled){
 }
 // Height-sliced wall shadow masks: approximate occlusion on sun-facing facades.
 let SOLAR_WALL_LAST=0;
+// Explicitly darken complete building extrusions when roof and upper facade both lose direct sun.
+// Directional MapLibre lighting alone never accounts for adjacent-building occlusion.
+let SOLAR_BLOCKED_BUILDING_LAST=0;
+function solarUpdateBlockedBuildingSurfaces(nearby,a,enabled){
+ if(!map?.isStyleLoaded?.())return;
+ if(!map.getSource('solar-blocked-buildings')){
+  map.addSource('solar-blocked-buildings',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.addLayer({id:'solar-blocked-buildings-3d',type:'fill-extrusion',source:'solar-blocked-buildings',
+   paint:{'fill-extrusion-color':'#344253','fill-extrusion-opacity':1,
+    'fill-extrusion-base':['get','shade_base'],'fill-extrusion-height':['get','shade_top']}});
+ }
+ const source=map.getSource('solar-blocked-buildings');
+ if(!enabled||a.alt<=1){source.setData({type:'FeatureCollection',features:[]});return}
+ if(SOLAR_PLAYING&&performance.now()-SOLAR_BLOCKED_BUILDING_LAST<550)return;
+ SOLAR_BLOCKED_BUILDING_LAST=performance.now();
+ const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?55:32);
+ if(EDIT_CUSTOM&&Number(EDIT_CUSTOM.properties?.model_height)>0)items.unshift({f:EDIT_CUSTOM,h:Number(EDIT_CUSTOM.properties.model_height),custom:true});
+ const slope=Math.tan(a.alt*Math.PI/180),shaded=[],maxRay=solarIsHighPerformance()?350:250;
+ for(const target of items.slice(0,solarIsHighPerformance()?32:18)){
+  try{
+   if(!(target.h>1))continue;
+   const pt=turf.centroid(target.f).geometry.coordinates;
+   const blockers=items.filter(b=>b!==target&&b.h>target.h*.65+1);
+   if(!blockers.length)continue;
+   function isOccluded(z){
+    const far=turf.destination(pt,maxRay/1000,a.az,{units:'kilometers'}).geometry.coordinates;
+    const ray=turf.lineString([pt,far]);
+    for(const b of blockers){
+     if(b.h<=z+1)continue;
+     const hits=turf.lineIntersect(ray,b.f);
+     for(const hit of hits.features){
+      const dist=turf.distance(pt,hit.geometry.coordinates,{units:'meters'});
+      if(dist>1&&b.h>z+dist*slope+.2)return true;
+     }
+    }
+    return false;
+   }
+   // Darken the entire extrusion only if upper and lower sample heights are blocked.
+   if(!isOccluded(target.h*.87)||!isOccluded(target.h*.35))continue;
+   const p=target.f.properties||{};
+   let base=target.custom?0:Number(p.render_base)||0;
+   let top=target.custom?target.h:Number(p.render_top);
+   if(!Number.isFinite(top)||top<=base)top=base+target.h;
+   shaded.push({type:'Feature',geometry:target.f.geometry,properties:{shade_base:base+.08,shade_top:top+.3}});
+  }catch(e){}
+ }
+ source.setData({type:'FeatureCollection',features:shaded});
+}
 function solarUpdateWallShadows(nearby,a,enabled){
  if(!map?.isStyleLoaded?.())return;
  if(!map.getSource('solar-wall-shadow')){
@@ -1285,7 +1333,7 @@ function refreshSolarPreview(){
   }catch(err){console.warn('지형 차폐 분석 실패',err);occlusion='지형 차폐 계산 실패'}
  }else if(center)occlusion=enabled?'지형 차폐 분석 꺼짐':'그림자 보기를 켜면 분석합니다.';
  $('solarOcclusionResult').textContent=occlusion+' · DEM 60m 간격/최대 3km, 선택 지점 한 곳의 근사 판정 (지형 그림자 지도 아님)';
- if(!center||!enabled||!daylight){solarUpdateRoofShadows(null,a,false);solarUpdateWallShadows(null,a,false)}
+ if(!center||!enabled||!daylight){solarUpdateRoofShadows(null,a,false);solarUpdateWallShadows(null,a,false);solarUpdateBlockedBuildingSurfaces(null,a,false)}
  const shadows=[];let nearby={features:[],unknown:0,more:0},failed=0,terrainUsed=false,terrainFallback=false;
  let terrainBlockedBuildings=0,terrainUnknownBuildings=0,terrainCheckedBuildings=0;
  const terrainShadowMemo=new Map();
@@ -1313,6 +1361,7 @@ function refreshSolarPreview(){
   nearby=solarNearbyBuildings(center);
   solarUpdateRoofShadows(nearby,a,enabled);
   solarUpdateWallShadows(nearby,a,enabled);
+  solarUpdateBlockedBuildingSurfaces(nearby,a,enabled);
   for(const item of nearby.features){
    try{
     if(!SOLAR_PLAYING&&terrainCheckedBuildings<35&&item.d<150){
