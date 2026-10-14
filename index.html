@@ -1020,6 +1020,7 @@ function setupSolarControls(){
   if($('solarMode').value!=='season'){$('solarMode').value='season';}
   if(!SOLAR_SHADOW_ON){$('solarShadowToggle').click()}
   if(Number($('solarTime').value)>=1140)$('solarTime').value=360;
+  solarClearTerrainArea();
   SOLAR_PLAYING=true;$('solarTime').step=1;SOLAR_PLAY_LAST=performance.now();$('solarPlay').textContent='Ⅱ 일시정지';
   scheduleSolarPreview();
   SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,40);
