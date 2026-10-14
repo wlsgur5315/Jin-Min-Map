@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-15</title>
+<title>Jinju3D Local · v2026.10.14-16</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-15</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-16</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -239,7 +239,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-15',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-16',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1006,6 +1006,45 @@ function solarBuildingOcclusionAt(point,receiverHeight,angles,nearby){
  if(closest)return '주변 건물에 의한 직사광선 차폐 추정 · 거리 약 '+Math.round(closest.distance)+'m · 차폐 건물 높이 약 '+Math.round(closest.buildingHeight)+'m';
  return '주변 건물 차폐 미검출 · 검사 건물 '+candidates.length+'개'+(nearby.unknown?' · 높이 미상 '+nearby.unknown+'개':'')+' · 대표 지점 1곳/동일 지반고 가정, '+maxDistance+'m 이내 근사';
 }
+// Render overlapping shadow footprints to one opaque mask, then blend the mask once.
+let SOLAR_SHADOW_RASTER_LAST=0;
+function solarRenderUnifiedShadow(features){
+ const old=map.getLayer('solar-shadow-preview-fill');
+ if(old)map.setLayoutProperty('solar-shadow-preview-fill','visibility','none');
+ if(!map.getSource('solar-shadow-mask')){
+  const tiny=document.createElement('canvas');tiny.width=2;tiny.height=2;
+  map.addSource('solar-shadow-mask',{type:'image',url:tiny.toDataURL('image/png'),coordinates:[[128.1,35.2],[128.11,35.2],[128.11,35.19],[128.1,35.19]]});
+  map.addLayer({id:'solar-shadow-mask-layer',type:'raster',source:'solar-shadow-mask',paint:{'raster-opacity':0.48,'raster-resampling':'linear','raster-fade-duration':0}});
+ }
+ if(!features.length){map.setLayoutProperty('solar-shadow-mask-layer','visibility','none');return}
+ const now=performance.now();
+ if(SOLAR_PLAYING&&now-SOLAR_SHADOW_RASTER_LAST<75)return;
+ SOLAR_SHADOW_RASTER_LAST=now;
+ const collection=turf.featureCollection(features),bounds=turf.bbox(collection);
+ const pad=.000025,west=bounds[0]-pad,east=bounds[2]+pad,south=bounds[1]-pad,north=bounds[3]+pad;
+ if(!(east>west&&north>south))return;
+ const size=SOLAR_PLAYING?384:640,canvas=document.createElement('canvas');canvas.width=size;canvas.height=size;
+ const ctx=canvas.getContext('2d');if(!ctx)return;
+ ctx.fillStyle='#66758a';
+ const x=lon=>(lon-west)/(east-west)*size,y=lat=>(north-lat)/(north-south)*size;
+ for(const feature of features){
+  const geom=feature?.geometry;if(!geom)continue;
+  const polygons=geom.type==='MultiPolygon'?geom.coordinates:geom.type==='Polygon'?[geom.coordinates]:[];
+  for(const poly of polygons){
+   ctx.beginPath();
+   for(const ring of poly){
+    if(!ring?.length)continue;
+    ctx.moveTo(x(ring[0][0]),y(ring[0][1]));
+    for(let j=1;j<ring.length;j++)ctx.lineTo(x(ring[j][0]),y(ring[j][1]));
+    ctx.closePath();
+   }
+   ctx.fill('evenodd');
+  }
+ }
+ const source=map.getSource('solar-shadow-mask');
+ source.updateImage({url:canvas.toDataURL('image/png'),coordinates:[[west,north],[east,north],[east,south],[west,south]]});
+ map.setLayoutProperty('solar-shadow-mask-layer','visibility','visible');
+}
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
  const mode=$('solarMode').value;
@@ -1122,6 +1161,7 @@ function refreshSolarPreview(){
  let resultFeatures=shadows;
  // 불투명 단색 합성: 여러 그림자가 겹쳐도 진해지지 않으며 대형 union 계산을 피한다.
  map.getSource('solar-shadow-preview').setData({type:'FeatureCollection',features:resultFeatures});
+ solarRenderUnifiedShadow(resultFeatures);
  let ray=[];
  if(center&&daylight&&enabled){
   try{ray=[turf.lineString([center,turf.destination(center,.055,a.az,{units:'kilometers'}).geometry.coordinates])]}catch(e){}
