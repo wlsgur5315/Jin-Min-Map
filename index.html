@@ -981,8 +981,9 @@ function setupSolarControls(){
   SOLAR_STEP=SOLAR_STEP===10?60:10;
   const slider=$('solarTime');
   slider.value=Math.min(1140,Math.max(360,Math.round(Number(slider.value)/SOLAR_STEP)*SOLAR_STEP));
+  updateStepUI();
   if(SOLAR_PLAYING)$('solarTime').step=1;
-  updateStepUI();scheduleSolarPreview();
+  scheduleSolarPreview();
  });
  $('solarPlay').addEventListener('click',()=>{
   if(SOLAR_PLAYING){solarPlaybackStop();return}
