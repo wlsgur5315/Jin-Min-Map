@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-08</title>
+<title>Jinju3D Local · v2026.10.14-09</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-08</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-09</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -220,7 +220,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-09',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -662,6 +662,21 @@ function solarPosition(lat,lon,month,day,minutes){
  return {alt:altitude*180/Math.PI,az:azimuth};
 }
 const SOLAR_DATES={spring:[3,20],summer:[6,21],autumn:[9,23],winter:[12,22]};
+function solarHorizonTimes(lat,lon,month,day){
+ // Geometric solar-center crossing of 0 degrees, matching shadow visibility criterion.
+ function crossing(start,end){
+  let lo=start,hi=end;
+  const initial=solarPosition(lat,lon,month,day,start).alt>0;
+  for(let i=0;i<16;i++){
+   const mid=(lo+hi)/2;
+   if((solarPosition(lat,lon,month,day,mid).alt>0)===initial)lo=mid;
+   else hi=mid;
+  }
+  return (lo+hi)/2;
+ }
+ const fmt=m=>{const v=Math.round(m);return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')};
+ return {rise:fmt(crossing(240,720)),set:fmt(crossing(720,1200))};
+}
 function solarAngles(){
  if($('solarMode')?.value==='manual')return {alt:Number($('solarManualAlt').value),az:Number($('solarManualAz').value)};
  const date=SOLAR_DATES[$('solarSeason').value],center=EDIT_CUSTOM?turf.centroid(EDIT_CUSTOM).geometry.coordinates:EDIT_PARCEL?turf.centroid(EDIT_PARCEL).geometry.coordinates:[128.1076,35.1802];
@@ -863,6 +878,7 @@ function solarTerrainAreaSchedule(center,angles){
  },180);
 }
 let SOLAR_SHADOW_ON=false;
+let solarOccCache={key:'',result:null,time:0};
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
  const mode=$('solarMode').value;
@@ -873,7 +889,14 @@ function refreshSolarPreview(){
  $('solarManualAltLabel').textContent=$('solarManualAlt').value+'°';
  $('solarManualAzLabel').textContent=$('solarManualAz').value+'°';
  const a=solarAngles(),daylight=a.alt>0;
- $('solarReadout').textContent=(mode==='manual'?'가상 태양 조건':'계절 대표일 · 2026년 한국표준시')+' | 고도 '+a.alt.toFixed(1)+'° · 방위각 '+a.az.toFixed(1)+'°'+(daylight?'':' · 태양이 지평선 아래 또는 근처');
+ let dayInfo='';
+ if(mode==='season'){
+  const date=SOLAR_DATES[$('solarSeason').value];
+  let pt=[128.1076,35.1802];try{if(EDIT_CUSTOM||EDIT_PARCEL)pt=turf.centroid(EDIT_CUSTOM||EDIT_PARCEL).geometry.coordinates}catch(e){}
+  const times=solarHorizonTimes(pt[1],pt[0],date[0],date[1]);
+  dayInfo=' · 기하학적 일출 '+times.rise+' / 일몰 '+times.set+' (굴절·산지 차폐 제외)';
+ }
+ $('solarReadout').textContent=(mode==='manual'?'가상 태양 조건':'계절 대표일 · 2026년 한국표준시')+' | 고도 '+a.alt.toFixed(1)+'° · 방위각 '+a.az.toFixed(1)+'°'+(daylight?'':' · 태양 중심이 수평선 아래')+dayInfo;
  if(!map?.isStyleLoaded?.())return;
  if(!map.getSource('solar-shadow-preview')){
   map.addSource('solar-shadow-preview',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
@@ -892,10 +915,17 @@ function refreshSolarPreview(){
  try{center=turf.centroid(EDIT_CUSTOM||EDIT_PARCEL).geometry.coordinates}catch(e){}
  if(!SOLAR_PLAYING)solarTerrainAreaSchedule(center,a);
  let occlusion='먼저 필지를 선택하세요.';
+ const occKey=center?center.map(x=>x.toFixed(5)).join(',')+'|'+a.az.toFixed(0)+'|'+(EDIT_CUSTOM?.properties?.model_height||0):'';
  if(center&&enabled&&$('solarTerrainOcclusion')?.checked){
   try{
    const roof=EDIT_CUSTOM?Number(EDIT_CUSTOM.properties.model_height)||0:0;
-   const o=solarTerrainOcclusion(center,a.alt,a.az,roof);
+   let o;
+   if(SOLAR_PLAYING&&solarOccCache.key===occKey&&performance.now()-solarOccCache.time<1200){
+    o=solarOccCache.result;
+   }else{
+    o=solarTerrainOcclusion(center,a.alt,a.az,roof);
+    solarOccCache={key:occKey,result:o,time:performance.now()};
+   }
    occlusion=o.state==='night'?'태양이 지평선 아래':o.state==='unknown'?'DEM 데이터 미준비 또는 일부 누락: 판정 불가':o.state==='blocked'?'산·언덕이 태양을 가림 (거리 약 '+o.blocking.distance+'m / 지형 고도각 '+o.blocking.angle.toFixed(1)+'°)':'선택 지점에서 3km 범위 지형 차폐 미검출';
   }catch(err){console.warn('지형 차폐 분석 실패',err);occlusion='지형 차폐 계산 실패'}
  }else if(center)occlusion=enabled?'지형 차폐 분석 꺼짐':'그림자 보기를 켜면 분석합니다.';
