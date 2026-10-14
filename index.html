@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-17</title>
+<title>Jinju3D Local · v2026.10.14-18</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-17</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-18</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -239,7 +239,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-17',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-18',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -959,20 +959,23 @@ function solarTerrainAreaSchedule(center,angles){
     const dx=(ix-(n-1)/2)*spacing,dy=((n-1)/2-iy)*spacing;
     const point=[center[0]+dx/lonMeters,center[1]+dy/latMeters],z0=elevation(point);
     if(z0===null){unknown++;continue}
-    let highest=-90,missing=false;
+    let highest=-90,peakDistance=0,missing=false;
     for(let d=stepAt(0);d<=maxRange;d+=stepAt(d)){
      const pos=turf.destination(point,d/1000,az,{units:'kilometers'}).geometry.coordinates;
      const z=elevation(pos);
      if(z===null){missing=true;break}
      const horizon=Math.atan2(z-z0-d*d/(2*R),d)*180/Math.PI;
-     if(horizon>highest)highest=horizon;
-     // Clear obstructed rays early; once a blocking ridge is found farther DEM is irrelevant.
-     if(highest>alt+0.12)break;
+     if(horizon>highest){highest=horizon;peakDistance=d}
+     // A clearly obstructing ridge allows early termination without scanning more distant DEM.
+     const bound=Math.max(.12,Math.min(1.5,Math.atan2(2,Math.max(peakDistance,1))*180/Math.PI));
+     if(highest>alt+bound)break;
     }
     // Within 0.12 degrees of the ray, DEM resolution can change the classification.
     const delta=highest-alt;
-    if(delta>0.12){blocked++;mask[iy*n+ix]=1}
-    else if(missing||Math.abs(delta)<=0.12){unknown++;nearBoundary+=!missing?1:0}
+    // +/-2m height sensitivity is a screening scenario; not a surveyed DEM error estimate.
+    const angularBand=Math.max(.12,Math.min(1.5,Math.atan2(2,Math.max(peakDistance,1))*180/Math.PI));
+    if(delta>angularBand){blocked++;mask[iy*n+ix]=1}
+    else if(missing||Math.abs(delta)<=angularBand){unknown++;nearBoundary+=!missing?1:0}
     else {clear++;mask[iy*n+ix]=0}
    }
    iy++;
@@ -981,7 +984,7 @@ function solarTerrainAreaSchedule(center,angles){
    const layer=solarTerrainAreaSource(center,n*spacing);if(!layer)return;
    layer.source.updateImage({url:solarTerrainRaster(mask,n),coordinates:layer.bounds});
    map.setLayoutProperty('solar-terrain-image-layer','visibility','visible');
-   $('solarTerrainAreaStatus').textContent='DEM 광선 분석 '+(n*n)+'지점 · 산지 차폐 '+blocked+' / 미차폐 '+clear+' / 판정 유보 '+unknown+' (경계 불확실 '+nearBoundary+') · '+n*spacing+'m 영역 · '+(high?'고성능':'경량')+' · 최대 '+(maxRange/1000)+'km 검사 · DEM/보간 근사, 실측 경계 아님';
+   $('solarTerrainAreaStatus').textContent='DEM 광선 분석 '+(n*n)+'지점 · 산지 차폐 '+blocked+' / 미차폐 '+clear+' / 판정 유보 '+unknown+' (경계 불확실 '+nearBoundary+') · '+n*spacing+'m 영역 · '+(high?'고성능':'경량')+' · 최대 '+(maxRange/1000)+'km 검사 · 고도 ±2m 민감도 가정(실측 오차 아님) · 공개 Terrarium DEM/보간 근사';
    if(unknown>0&&SOLAR_AREA_RETRY<2){SOLAR_AREA_RETRY++;map.once('idle',()=>{if(token===SOLAR_AREA_TOKEN&&SOLAR_SHADOW_ON&&$('solarTerrainArea')?.checked&&!SOLAR_PLAYING)solarTerrainAreaSchedule(center,angles)})}
   }
   evaluateRow();
