@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-12</title>
+<title>Jinju3D Local · v2026.10.14-13</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-12</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-13</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -152,6 +152,15 @@
     </section>
 
 <section id="tab-settings" class="tab-pane">
+ <div class="drawer-sec" style="border:1px solid #64748b55;border-radius:9px;padding:10px;margin:9px 0">
+  <h3>분석 성능 모드</h3>
+  <select id="solarPerformanceMode" aria-label="그림자 분석 성능 모드">
+   <option value="light">경량 모드 · iPad 및 모바일</option>
+   <option value="high">고성능 모드 · 일반 사무용 PC</option>
+  </select>
+  <div id="solarPerformanceDescription" class="hint" style="margin-top:6px">경량 모드: 지도 반응성 우선, DEM 35m 격자</div>
+  <div class="hint">고성능 모드는 분석 표본 수를 늘립니다. 실제 DEM 원본 해상도는 바뀌지 않으며 정밀도가 보장되지는 않습니다.</div>
+ </div>
       <div class="drawer-sec">
         <h3>지역 이동</h3>
         <select id="district"><option>행정구역 불러오는 중…</option></select>
@@ -220,7 +229,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-12',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-13',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -748,8 +757,10 @@ function solarTerrainShadow(footprint,height,alt,az){
  return regions.length?turf.multiPolygon(regions):null;
 }
 let SOLAR_NEAR_CACHE={key:'',features:[],unknown:0};
+let SOLAR_PERFORMANCE_MODE='light';
+function solarIsHighPerformance(){return SOLAR_PERFORMANCE_MODE==='high'}
 function solarNearbyBuildings(center){
- const key=selectedId+'|'+(EDIT_PARCEL?.properties?.pnu||'')+'|'+center.map(x=>x.toFixed(5)).join(',')+'|'+(currentBuildings?.features?.length||0)+'|'+(districtOsmCache.get(selectedId)?.kept?.length||0)+'|'+!!EDIT_HIDDEN_PARCEL;
+ const key=SOLAR_PERFORMANCE_MODE+'|'+selectedId+'|'+(EDIT_PARCEL?.properties?.pnu||'')+'|'+center.map(x=>x.toFixed(5)).join(',')+'|'+(currentBuildings?.features?.length||0)+'|'+(districtOsmCache.get(selectedId)?.kept?.length||0)+'|'+!!EDIT_HIDDEN_PARCEL;
  if(SOLAR_NEAR_CACHE.key===key)return SOLAR_NEAR_CACHE;
  const out=[],seen=new Set();let unknown=0;
  const sources=[...(currentBuildings?.features||[]),...(districtOsmCache.get(selectedId)?.kept||[])];
@@ -759,7 +770,7 @@ function solarNearbyBuildings(center){
   if(p.suppress_render||p.hidden||p.facility)continue;
   if(EDIT_HIDDEN_PARCEL){try{if(turf.booleanIntersects(f,EDIT_HIDDEN_PARCEL))continue}catch(e){}}
   let c;try{c=turf.centroid(f).geometry.coordinates}catch(e){continue}
-  const d=turf.distance(center,c,{units:'meters'});if(d>180)continue;
+  const d=turf.distance(center,c,{units:'meters'});if(d>(solarIsHighPerformance()?260:180))continue;
   const h=Number(p.render_height||p.height_m||p.height);
   if(!Number.isFinite(h)||h<=0){unknown++;continue}
   const signature=c[0].toFixed(5)+','+c[1].toFixed(5)+','+Math.round(turf.area(f));
@@ -767,7 +778,7 @@ function solarNearbyBuildings(center){
   out.push({f,h:Math.min(h,350),d});
  }
  out.sort((a,b)=>a.d-b.d);
- SOLAR_NEAR_CACHE={key,features:out.slice(0,180),unknown,more:Math.max(0,out.length-180)};
+ SOLAR_NEAR_CACHE={key,features:out.slice(0,solarIsHighPerformance()?240:180),unknown,more:Math.max(0,out.length-(solarIsHighPerformance()?240:180))};
  return SOLAR_NEAR_CACHE;
 }
 // 선택 위치에서 태양 방향의 DEM 지형 단면으로 지평선 차폐 여부를 판정한다.
@@ -837,7 +848,7 @@ function solarTerrainAreaSchedule(center,angles){
  $('solarTerrainAreaStatus').textContent='주변 지형 차폐 격자 계산 준비 중…';
  SOLAR_AREA_TIMER=setTimeout(()=>{
   SOLAR_AREA_TIMER=null;if(token!==SOLAR_AREA_TOKEN)return;
-  const n=17,spacing=35,latMeters=111132,lonMeters=111320*Math.cos(center[1]*Math.PI/180);
+  const n=solarIsHighPerformance()?25:17,spacing=solarIsHighPerformance()?24:35,latMeters=111132,lonMeters=111320*Math.cos(center[1]*Math.PI/180);
   const mask=new Array(n*n).fill(-1);let clear=0,blocked=0,unknown=0;
   const az=angles.az,alt=angles.alt,R=6371000;
   // 최대 1.8km / 100m 간격. 지형 타일 미확보 시 가림으로 추정하지 않는다.
@@ -850,7 +861,7 @@ function solarTerrainAreaSchedule(center,angles){
    const z0=map.queryTerrainElevation?.(point,{exaggerated:false});
    if(!Number.isFinite(z0)){unknown++;continue}
    let hit=false,missing=false;
-   for(let d=35;d<=2400;d+=(d<500?35:70)){
+   for(let d=solarIsHighPerformance()?25:35;d<=2400;d+=(d<500?(solarIsHighPerformance()?25:35):(solarIsHighPerformance()?50:70))){
     const xy=turf.destination(point,d/1000,az,{units:'kilometers'}).geometry.coordinates;
     const z=map.queryTerrainElevation(xy,{exaggerated:false});
     if(!Number.isFinite(z)){missing=true;break}
@@ -871,7 +882,7 @@ function solarTerrainAreaSchedule(center,angles){
   const layer=solarTerrainAreaSource(center,n*spacing);if(!layer)return;
   layer.source.updateImage({url:solarTerrainRaster(mask,n),coordinates:layer.bounds});
   map.setLayoutProperty('solar-terrain-image-layer','visibility','visible');
-  $('solarTerrainAreaStatus').textContent='DEM 광선 검사 '+(blocked+clear+unknown)+'지점 · 차폐 '+blocked+' / 미차폐 '+clear+' / 자료부족 '+unknown+' · 595m 범위, 35m 격자, 광선 35~70m 간격·최대 2.4km · DEM 기반 차폐 판정의 보간 영상(경계·정확도 검증 전)';
+  $('solarTerrainAreaStatus').textContent='DEM 광선 검사 '+(blocked+clear+unknown)+'지점 · 차폐 '+blocked+' / 미차폐 '+clear+' / 자료부족 '+unknown+' · '+(n*spacing)+'m 범위, '+spacing+'m 격자, '+(solarIsHighPerformance()?'광선 25~50m':'광선 35~70m')+' 간격·최대 2.4km · DEM 기반 차폐 보간 영상(경계·정확도 검증 전)';
   if(unknown>0&&SOLAR_AREA_RETRY<2){SOLAR_AREA_RETRY++;map.once('idle',()=>{if(token===SOLAR_AREA_TOKEN&&SOLAR_SHADOW_ON&&$('solarTerrainArea')?.checked)solarTerrainAreaSchedule(center,angles)})}
   }
   evaluateRow();
@@ -884,8 +895,8 @@ let solarOccCache={key:'',result:null,time:0};
 let solarBuildingOccCache={key:'',at:0,result:''};
 function solarBuildingOcclusionAt(point,receiverHeight,angles,nearby){
  if(angles.alt<=0)return '주변 건물 일조 차폐: 태양이 수평선 아래';
- const maxDistance=350, ray=turf.lineString([point,turf.destination(point,maxDistance/1000,angles.az,{units:'kilometers'}).geometry.coordinates]);
- const slope=Math.tan(angles.alt*Math.PI/180), candidates=(nearby.features||[]).slice(0,SOLAR_PLAYING?35:100);
+ const maxDistance=solarIsHighPerformance()?500:350, ray=turf.lineString([point,turf.destination(point,maxDistance/1000,angles.az,{units:'kilometers'}).geometry.coordinates]);
+ const slope=Math.tan(angles.alt*Math.PI/180), candidates=(nearby.features||[]).slice(0,SOLAR_PLAYING?(solarIsHighPerformance()?55:35):(solarIsHighPerformance()?180:100));
  let closest=null,inspected=0;
  for(const item of candidates){
   if(item.d>maxDistance+80)continue;
@@ -907,7 +918,7 @@ function solarBuildingOcclusionAt(point,receiverHeight,angles,nearby){
   }catch(e){}
  }
  if(closest)return '주변 건물에 의한 직사광선 차폐 추정 · 거리 약 '+Math.round(closest.distance)+'m · 차폐 건물 높이 약 '+Math.round(closest.buildingHeight)+'m';
- return '주변 건물 차폐 미검출 · 검사 건물 '+candidates.length+'개'+(nearby.unknown?' · 높이 미상 '+nearby.unknown+'개':'')+' · 대표 지점 1곳/동일 지반고 가정, 350m 이내 근사';
+ return '주변 건물 차폐 미검출 · 검사 건물 '+candidates.length+'개'+(nearby.unknown?' · 높이 미상 '+nearby.unknown+'개':'')+' · 대표 지점 1곳/동일 지반고 가정, '+maxDistance+'m 이내 근사';
 }
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
@@ -1039,6 +1050,22 @@ function solarPlaybackTick(){
  SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,40);
 }
 function setupSolarControls(){
+ const performanceSelect=$('solarPerformanceMode');
+ if(performanceSelect){
+  try{SOLAR_PERFORMANCE_MODE=localStorage.getItem('jinmin_solar_performance')==='high'?'high':'light'}catch(e){}
+  performanceSelect.value=SOLAR_PERFORMANCE_MODE;
+  function refreshPerformanceLabel(){
+   $('solarPerformanceDescription').textContent=solarIsHighPerformance()?'고성능 모드: 일반 사무용 PC 권장 · DEM 24m 격자, 주변 건물 확대 분석':'경량 모드: iPad 및 모바일 권장 · DEM 35m 격자, 반응성 우선';
+  }
+  performanceSelect.addEventListener('change',()=>{
+   SOLAR_PERFORMANCE_MODE=performanceSelect.value==='high'?'high':'light';
+   try{localStorage.setItem('jinmin_solar_performance',SOLAR_PERFORMANCE_MODE)}catch(e){}
+   SOLAR_NEAR_CACHE.key='';solarBuildingOccCache.key='';
+   solarClearTerrainArea();refreshPerformanceLabel();scheduleSolarPreview();
+  });
+  refreshPerformanceLabel();
+ }
+
  $('solarShadowToggle').addEventListener('click',()=>{SOLAR_SHADOW_ON=!SOLAR_SHADOW_ON;if(!SOLAR_SHADOW_ON)solarPlaybackStop();refreshSolarPreview();const view=$(SOLAR_SHADOW_ON?'view3d':'view2d');if(view)view.click();});
  for(const id of ['solarMode','solarSeason','solarTime','solarManualAlt','solarManualAz','solarTerrainCustom','solarTerrainOcclusion','solarTerrainArea'])$(id)?.addEventListener('input',scheduleSolarPreview);
  function updateStepUI(){
