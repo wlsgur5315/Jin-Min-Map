@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-26</title>
+<title>Jinju3D Local · v2026.10.14-27</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-26</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-27</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -260,7 +260,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-26',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-27',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1151,7 +1151,8 @@ function solarUpdateRoofShadows(nearby,a,enabled){
     const cut=turf.intersect(turf.featureCollection([target.f,swept]));
     if(!cut||!['Polygon','MultiPolygon'].includes(cut.geometry.type))continue;
     // A thin capped extrusion places the shadow directly on the recipient roof.
-    roofs.push({type:'Feature',geometry:cut.geometry,properties:{roof_base:h+.07,roof_top:h+.12}});
+    const rb=Number(target.f.properties?.render_base)||0;
+    roofs.push({type:'Feature',geometry:cut.geometry,properties:{roof_base:rb+h+.07,roof_top:rb+h+.16}});
    }catch(e){}
   }
  }
@@ -1174,10 +1175,10 @@ function solarUpdateBlockedBuildingSurfaces(nearby,a,enabled){
  if(!enabled||a.alt<=1){source.setData({type:'FeatureCollection',features:[]});return}
  if(SOLAR_PLAYING&&performance.now()-SOLAR_BLOCKED_BUILDING_LAST<550)return;
  SOLAR_BLOCKED_BUILDING_LAST=performance.now();
- const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?55:32);
+ const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?130:85);
  if(EDIT_CUSTOM&&Number(EDIT_CUSTOM.properties?.model_height)>0)items.unshift({f:EDIT_CUSTOM,h:Number(EDIT_CUSTOM.properties.model_height),custom:true});
  const slope=Math.tan(a.alt*Math.PI/180),shaded=[],maxRay=solarIsHighPerformance()?350:250;
- for(const target of items.slice(0,solarIsHighPerformance()?32:18)){
+ for(const target of items.slice(0,solarIsHighPerformance()?70:45)){
   try{
    if(!(target.h>1))continue;
    const pt=turf.centroid(target.f).geometry.coordinates;
@@ -1197,7 +1198,7 @@ function solarUpdateBlockedBuildingSurfaces(nearby,a,enabled){
     return false;
    }
    // Darken the entire extrusion only if upper and lower sample heights are blocked.
-   if(!isOccluded(target.h*.87)||!isOccluded(target.h*.35))continue;
+   if(!isOccluded(target.h*.78)||!isOccluded(target.h*.35))continue;
    const p=target.f.properties||{};
    let base=target.custom?0:Number(p.render_base)||0;
    let top=target.custom?target.h:Number(p.render_top);
@@ -1221,13 +1222,13 @@ function solarUpdateWallShadows(nearby,a,enabled){
  const now=performance.now();
  if(SOLAR_PLAYING&&now-SOLAR_WALL_LAST<550)return;
  SOLAR_WALL_LAST=now;
- const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?36:20);
+ const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?90:55);
  if(EDIT_CUSTOM&&Number(EDIT_CUSTOM.properties?.model_height)>0)items.unshift({f:EDIT_CUSTOM,h:Number(EDIT_CUSTOM.properties.model_height),d:0});
  const az=a.az*Math.PI/180,sunX=Math.sin(az),sunY=Math.cos(az);
  const tanAlt=Math.tan(a.alt*Math.PI/180),result=[],limit=solarIsHighPerformance()?230:130;
  const meters=111132,localX=111320*Math.cos((items[0]?.f?.geometry?.coordinates?.[0]?.[0]?.[1]||35.18)*Math.PI/180);
  // Restrict candidate blockers and recipient wall segments to avoid frame stalls on mobile.
- for(const receiver of items.slice(0,solarIsHighPerformance()?16:10)){
+ for(const receiver of items.slice(0,solarIsHighPerformance()?38:25)){
   if(result.length>=limit)break;
   const polys=receiver.f.geometry.type==='Polygon'?[receiver.f.geometry.coordinates]:receiver.f.geometry.coordinates;
   for(const poly of polys){
@@ -1243,14 +1244,14 @@ function solarUpdateWallShadows(nearby,a,enabled){
     const mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;
     if(nx*(mx-centroid[0])*localX+ny*(my-centroid[1])*meters<0){nx=-nx;ny=-ny}
     const dot=nx*sunX+ny*sunY;if(dot<.08)continue;
-    const sampleCount=Math.min(8,Math.max(1,Math.ceil(length/10))),levels=5;
+    const sampleCount=Math.min(6,Math.max(1,Math.ceil(length/12))),levels=4;
     for(let j=0;j<sampleCount;j++){
      if(result.length>=limit)break;
      const t0=j/sampleCount,t1=(j+1)/sampleCount,tm=(t0+t1)/2;
      const origin=[p[0]+(q[0]-p[0])*tm+nx*.65/localX,p[1]+(q[1]-p[1])*tm+ny*.65/meters];
      for(let k=0;k<levels;k++){
       const bottom=receiver.h*k/levels,top=receiver.h*(k+1)/levels,z=(bottom+top)/2;
-      const maxD=Math.min(240,(350-z)/tanAlt);
+      const maxD=Math.min(solarIsHighPerformance()?350:280,(350-z)/tanAlt);
       if(maxD<=1)continue;
       const finish=turf.destination(origin,maxD/1000,a.az,{units:'kilometers'}).geometry.coordinates;
       const ray=turf.lineString([origin,finish]);
@@ -1272,7 +1273,8 @@ function solarUpdateWallShadows(nearby,a,enabled){
       const out=.8,offLon=nx*out/localX,offLat=ny*out/meters;
       const a0=[p[0]+(q[0]-p[0])*t0+nx*.12/localX,p[1]+(q[1]-p[1])*t0+ny*.12/meters],b0=[p[0]+(q[0]-p[0])*t1+nx*.12/localX,p[1]+(q[1]-p[1])*t1+ny*.12/meters];
       const a1=[a0[0]+offLon,a0[1]+offLat],b1=[b0[0]+offLon,b0[1]+offLat];
-      result.push({type:'Feature',geometry:{type:'Polygon',coordinates:[[a0,b0,b1,a1,a0]]},properties:{z_bottom:Math.max(0,bottom+.02),z_top:top}});
+      const renderBase=Number(receiver.f.properties?.render_base)||0;
+      result.push({type:'Feature',geometry:{type:'Polygon',coordinates:[[a0,b0,b1,a1,a0]]},properties:{z_bottom:renderBase+bottom+.02,z_top:renderBase+top+.12}});
      }
     }
    }
