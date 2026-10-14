@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-24</title>
+<title>Jinju3D Local · v2026.10.14-25</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-24</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-25</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -260,7 +260,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-24',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-25',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1164,7 +1164,7 @@ function solarUpdateWallShadows(nearby,a,enabled){
  if(!map.getSource('solar-wall-shadow')){
   map.addSource('solar-wall-shadow',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   map.addLayer({id:'solar-wall-shadow-3d',type:'fill-extrusion',source:'solar-wall-shadow',paint:{
-   'fill-extrusion-color':'#29384c','fill-extrusion-opacity':.78,
+   'fill-extrusion-color':'#202c3c','fill-extrusion-opacity':.96,
    'fill-extrusion-base':['get','z_bottom'],'fill-extrusion-height':['get','z_top']
   }});
  }
@@ -1173,13 +1173,13 @@ function solarUpdateWallShadows(nearby,a,enabled){
  const now=performance.now();
  if(SOLAR_PLAYING&&now-SOLAR_WALL_LAST<550)return;
  SOLAR_WALL_LAST=now;
- const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?18:10);
+ const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?36:20);
  if(EDIT_CUSTOM&&Number(EDIT_CUSTOM.properties?.model_height)>0)items.unshift({f:EDIT_CUSTOM,h:Number(EDIT_CUSTOM.properties.model_height),d:0});
  const az=a.az*Math.PI/180,sunX=Math.sin(az),sunY=Math.cos(az);
- const tanAlt=Math.tan(a.alt*Math.PI/180),result=[],limit=solarIsHighPerformance()?170:85;
+ const tanAlt=Math.tan(a.alt*Math.PI/180),result=[],limit=solarIsHighPerformance()?230:130;
  const meters=111132,localX=111320*Math.cos((items[0]?.f?.geometry?.coordinates?.[0]?.[0]?.[1]||35.18)*Math.PI/180);
  // Restrict candidate blockers and recipient wall segments to avoid frame stalls on mobile.
- for(const receiver of items.slice(0,solarIsHighPerformance()?10:6)){
+ for(const receiver of items.slice(0,solarIsHighPerformance()?16:10)){
   if(result.length>=limit)break;
   const polys=receiver.f.geometry.type==='Polygon'?[receiver.f.geometry.coordinates]:receiver.f.geometry.coordinates;
   for(const poly of polys){
@@ -1189,13 +1189,17 @@ function solarUpdateWallShadows(nearby,a,enabled){
     const p=ring[i],q=ring[i+1],dx=(q[0]-p[0])*localX,dy=(q[1]-p[1])*meters,length=Math.hypot(dx,dy);
     if(length<3)continue;
     // Exterior winding can vary. Test occlusion on both sides; only cast shadows on the sunward surface.
-    const nx=-dy/length,ny=dx/length;
-    const dot=nx*sunX+ny*sunY;if(Math.abs(dot)<.12)continue;
-    const sampleCount=Math.min(5,Math.max(1,Math.ceil(length/18))),levels=3;
+    let nx=-dy/length,ny=dx/length;
+    // Determine actual outward normal from the building interior, regardless of footprint winding.
+    const centroid=turf.centroid(receiver.f).geometry.coordinates;
+    const mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;
+    if(nx*(mx-centroid[0])*localX+ny*(my-centroid[1])*meters<0){nx=-nx;ny=-ny}
+    const dot=nx*sunX+ny*sunY;if(dot<.08)continue;
+    const sampleCount=Math.min(8,Math.max(1,Math.ceil(length/10))),levels=5;
     for(let j=0;j<sampleCount;j++){
      if(result.length>=limit)break;
      const t0=j/sampleCount,t1=(j+1)/sampleCount,tm=(t0+t1)/2;
-     const origin=[p[0]+(q[0]-p[0])*tm,p[1]+(q[1]-p[1])*tm];
+     const origin=[p[0]+(q[0]-p[0])*tm+nx*.65/localX,p[1]+(q[1]-p[1])*tm+ny*.65/meters];
      for(let k=0;k<levels;k++){
       const bottom=receiver.h*k/levels,top=receiver.h*(k+1)/levels,z=(bottom+top)/2;
       const maxD=Math.min(240,(350-z)/tanAlt);
@@ -1206,6 +1210,7 @@ function solarUpdateWallShadows(nearby,a,enabled){
       for(const blocker of items){
        if(blocker===receiver||blocker.h<=z+1)continue;
        try{
+        if(turf.booleanPointInPolygon(origin,blocker.f)){blocked=true;break}
         const hits=turf.lineIntersect(ray,blocker.f);
         for(const hit of hits.features){
          const d=turf.distance(origin,hit.geometry.coordinates,{units:'meters'});
@@ -1216,8 +1221,8 @@ function solarUpdateWallShadows(nearby,a,enabled){
       }
       if(!blocked)continue;
       // Thin surface slab outside the original extrusion, its tall sides form the wall tint.
-      const out=.16,side=(dot>0?1:-1),offLon=nx*side*out/localX,offLat=ny*side*out/meters;
-      const a0=[p[0]+(q[0]-p[0])*t0,p[1]+(q[1]-p[1])*t0],b0=[p[0]+(q[0]-p[0])*t1,p[1]+(q[1]-p[1])*t1];
+      const out=.8,offLon=nx*out/localX,offLat=ny*out/meters;
+      const a0=[p[0]+(q[0]-p[0])*t0+nx*.12/localX,p[1]+(q[1]-p[1])*t0+ny*.12/meters],b0=[p[0]+(q[0]-p[0])*t1+nx*.12/localX,p[1]+(q[1]-p[1])*t1+ny*.12/meters];
       const a1=[a0[0]+offLon,a0[1]+offLat],b1=[b0[0]+offLon,b0[1]+offLat];
       result.push({type:'Feature',geometry:{type:'Polygon',coordinates:[[a0,b0,b1,a1,a0]]},properties:{z_bottom:Math.max(0,bottom+.02),z_top:top}});
      }
