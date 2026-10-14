@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-14</title>
+<title>Jinju3D Local · v2026.10.14-15</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-14</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-15</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -153,6 +153,16 @@
 
 <section id="tab-settings" class="tab-pane">
  <div class="drawer-sec" style="border:1px solid #64748b55;border-radius:9px;padding:10px;margin:9px 0">
+  <h3>지도 디자인</h3>
+  <select id="mapDesignMode" aria-label="지도 디자인 선택">
+   <option value="default">기본 모드 · 기존 디자인</option>
+   <option value="light">라이트 모드 · 밝은 3D 분석</option>
+   <option value="focus">그림자 집중 모드 · 단순한 배경</option>
+  </select>
+  <div id="mapDesignDescription" class="hint" style="margin-top:7px">기존 지도 스타일을 사용합니다.</div>
+  <div class="hint">지도 데이터와 그림자 계산 방식은 변경하지 않고 표시 색상과 배경만 조정합니다.</div>
+ </div>
+ <div class="drawer-sec" style="border:1px solid #64748b55;border-radius:9px;padding:10px;margin:9px 0">
   <h3>분석 성능 모드</h3>
   <select id="solarPerformanceMode" aria-label="그림자 분석 성능 모드">
    <option value="light">경량 모드 · iPad 및 모바일</option>
@@ -229,7 +239,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-14',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-15',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -757,6 +767,78 @@ function solarTerrainShadow(footprint,height,alt,az){
  return regions.length?turf.multiPolygon(regions):null;
 }
 let SOLAR_NEAR_CACHE={key:'',features:[],unknown:0};
+let MAP_DESIGN_MODE='default';
+const MAP_DESIGN_PAINT=new Map();
+function applyMapDesign(){
+ if(!map?.isStyleLoaded?.())return;
+ const mode=MAP_DESIGN_MODE,style=map.getStyle();
+ if(!style?.layers)return;
+ const customLayers=new Set(['solar-shadow-preview-fill','solar-terrain-image-layer','solar-sun-direction-line','edit-custom-model-3d','edit-custom-model-outline','selected-parcel-fill','selected-parcel-line']);
+ function paint(id,prop,value){
+  if(!map.getLayer(id))return;
+  const key=id+'|'+prop;
+  if(!MAP_DESIGN_PAINT.has(key)){
+   const original=map.getPaintProperty(id,prop);
+   MAP_DESIGN_PAINT.set(key,original===undefined?null:original);
+  }
+  if(mode==='default'){
+   const original=MAP_DESIGN_PAINT.get(key);
+   if(original===null)try{map.setPaintProperty(id,prop,null)}catch(e){}
+   else try{map.setPaintProperty(id,prop,original)}catch(e){}
+  }else try{map.setPaintProperty(id,prop,value)}catch(e){}
+ }
+ // Preserve all analytic overlay styling, selected parcels and custom-built model.
+ for(const layer of style.layers){
+  if(customLayers.has(layer.id))continue;
+  const id=layer.id;
+  if(['buildings-3d','buildings-foundation','smart-osm-3d','smart-osm-foundation'].includes(id)){
+   const high=mode==='light';
+   const color=id.endsWith('foundation')?(high?'#c7cdd5':'#c6cbd1'):(high?'#c9ced5':'#e5e7eb');
+   paint(id,'fill-extrusion-color',color);
+   paint(id,'fill-extrusion-opacity',mode==='focus'?.96:.94);
+   continue;
+  }
+  if(id==='buildings-2d'||id==='smart-osm-2d'){
+   paint(id,'fill-color',mode==='focus'?'#d8dce2':'#b8c1cc');
+   continue;
+  }
+  // Only modify original basemap vector layers; not cadastral, law or GIS overlays.
+  const source=style.sources?.[layer.source];
+  if(layer.type==='background'){
+   paint(id,'background-color',mode==='light'?'#f2f3f5':'#f6f7f8');
+  }else if(source?.type==='vector'){
+   if(layer.type==='fill'){
+    paint(id,'fill-color',mode==='light'?'#e9edf0':'#f0f1f2');
+    paint(id,'fill-opacity',mode==='focus'?.65:.84);
+   }else if(layer.type==='line'){
+    paint(id,'line-color',mode==='light'?'#cbd2d9':'#dfe3e7');
+    paint(id,'line-opacity',mode==='focus'?.5:.78);
+   }else if(layer.type==='symbol'&&mode==='focus'){
+    paint(id,'text-opacity',.25);
+    paint(id,'icon-opacity',.25);
+   }else if(layer.type==='symbol'){
+    paint(id,'text-opacity',.7);
+    paint(id,'icon-opacity',.75);
+   }
+  }
+ }
+}
+function setupMapDesign(){
+ const input=$('mapDesignMode');if(!input)return;
+ try{const stored=localStorage.getItem('jinmin_map_design');if(['default','light','focus'].includes(stored))MAP_DESIGN_MODE=stored}catch(e){}
+ input.value=MAP_DESIGN_MODE;
+ function description(){
+  $('mapDesignDescription').textContent=MAP_DESIGN_MODE==='light'?'라이트 모드: 밝은 토지와 회색 건물로 그림자 가독성 향상':MAP_DESIGN_MODE==='focus'?'그림자 집중 모드: 지도 라벨과 배경을 줄여 그림자를 강조':'기본 모드: 기존 지도 디자인 유지';
+ }
+ input.addEventListener('change',()=>{
+  MAP_DESIGN_MODE=input.value;
+  try{localStorage.setItem('jinmin_map_design',MAP_DESIGN_MODE)}catch(e){}
+  description();applyMapDesign();
+ });
+ description();
+ map.on('idle',()=>{if(MAP_DESIGN_MODE!=='default')applyMapDesign()});
+}
+setupMapDesign();
 let SOLAR_PERFORMANCE_MODE='light';
 function solarIsHighPerformance(){return SOLAR_PERFORMANCE_MODE==='high'}
 function solarNearbyBuildings(center){
