@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-07</title>
+<title>Jinju3D Local · v2026.10.14-08</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-07</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-08</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -220,7 +220,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -890,7 +890,7 @@ function refreshSolarPreview(){
  const toggle=$('solarShadowToggle');if(toggle){toggle.textContent=enabled?'그림자 보기 끄기':'그림자 보기 켜기';toggle.setAttribute('aria-pressed',String(enabled));toggle.style.background=enabled?'#7f1d1d':'#14532d';toggle.style.borderColor=enabled?'#f87171':'#22c55e';}
  let center=null;
  try{center=turf.centroid(EDIT_CUSTOM||EDIT_PARCEL).geometry.coordinates}catch(e){}
- solarTerrainAreaSchedule(center,a);
+ if(!SOLAR_PLAYING)solarTerrainAreaSchedule(center,a);
  let occlusion='먼저 필지를 선택하세요.';
  if(center&&enabled&&$('solarTerrainOcclusion')?.checked){
   try{
@@ -908,7 +908,7 @@ function refreshSolarPreview(){
   }
   if(EDIT_CUSTOM)try{
    const height=Number(EDIT_CUSTOM.properties.model_height);
-   let v=null;if($('solarTerrainCustom')?.checked){v=solarTerrainShadow(EDIT_CUSTOM,height,a.alt,a.az);terrainUsed=!!v;terrainFallback=!v;}
+   let v=null;if(!SOLAR_PLAYING&&$('solarTerrainCustom')?.checked){v=solarTerrainShadow(EDIT_CUSTOM,height,a.alt,a.az);terrainUsed=!!v;terrainFallback=!v;}
    if(!v)v=solarShadowFootprint(EDIT_CUSTOM,height,a.alt,a.az);
    if(v){v.properties={kind:'custom'};shadows.push(v)}
   }catch(e){failed++}
@@ -927,14 +927,15 @@ function refreshSolarPreview(){
  const altUncertainty=0.25,rad=Math.PI/180;
  const shadowSensitivity=(physicalShadow!==null&&a.alt>0.25&&a.alt<89.75)?Math.abs(customHeight/Math.tan((a.alt-altUncertainty)*rad)-customHeight/Math.tan((a.alt+altUncertainty)*rad))/2:null;
  const sensitivityNote=shadowSensitivity===null?'':(' · 태양 고도 ±0.25° 가정 시 평지 길이 변화 약 ±'+Math.round(shadowSensitivity)+'m (실측 오차 아님)');
- $('solarShadowSummary').textContent=!center?'먼저 필지를 선택하세요.':!enabled?'그림자 표시 꺼짐':!daylight?'태양이 지평선 아래: 그림자 없음':('그림자 '+shadows.length+'개 (주변 '+nearby.features.length+'개 후보 · 높이 미상 '+nearby.unknown+'개 제외'+(nearby.more?' · 거리순 '+nearby.more+'개 제외':'')+(failed?' · 계산 실패 '+failed+'개':'')+') · 사용자 건물 '+(terrainUsed?'DEM 지면 교차 근사':terrainFallback?'DEM 미준비/미교차 → 평면 근사':'평면 근사')+' · 주변 건물 평면 근사(최대 1km), 지형 및 건물 간 차폐 미반영 · 사용자 건물 DEM 최대 1km'+lengthNote+sensitivityNote+(terrainFallback?' · 주의: DEM 자료 누락/교차 미확인으로 평면 대체':'')+' · 노란 선: 태양 방향');
+ $('solarShadowSummary').textContent=!center?'먼저 필지를 선택하세요.':!enabled?'그림자 표시 꺼짐':!daylight?'태양이 지평선 아래: 그림자 없음':('그림자 '+shadows.length+'개 (주변 '+nearby.features.length+'개 후보 · 높이 미상 '+nearby.unknown+'개 제외'+(nearby.more?' · 거리순 '+nearby.more+'개 제외':'')+(failed?' · 계산 실패 '+failed+'개':'')+') · 사용자 건물 '+(terrainUsed?'DEM 지면 교차 근사':terrainFallback?'DEM 미준비/미교차 → 평면 근사':'평면 근사')+(SOLAR_PLAYING?' · 자동 재생 중 부드러운 움직임 우선: 사용자 DEM 그림자 계산 일시 생략':'')+' · 주변 건물 평면 근사(최대 1km), 지형 및 건물 간 차폐 미반영 · 사용자 건물 DEM 최대 1km'+lengthNote+sensitivityNote+(terrainFallback?' · 주의: DEM 자료 누락/교차 미확인으로 평면 대체':'')+' · 노란 선: 태양 방향');
 }
 let SOLAR_PREVIEW_FRAME=0;
 function scheduleSolarPreview(){if(SOLAR_PREVIEW_FRAME)return;SOLAR_PREVIEW_FRAME=requestAnimationFrame(()=>{SOLAR_PREVIEW_FRAME=0;refreshSolarPreview()});}
-let SOLAR_PLAY_TIMER=null,SOLAR_PLAYING=false,SOLAR_STEP=60;
+let SOLAR_PLAY_TIMER=null,SOLAR_PLAYING=false,SOLAR_STEP=60,SOLAR_PLAY_LAST=0;
 function solarPlaybackStop(reset=false){
  if(SOLAR_PLAY_TIMER!==null){clearTimeout(SOLAR_PLAY_TIMER);SOLAR_PLAY_TIMER=null}
  SOLAR_PLAYING=false;
+ $('solarTime').step=SOLAR_STEP;
  if(reset)$('solarTime').value=360;
  $('solarPlay').textContent='▶ 재생';
  if(reset)scheduleSolarPreview();
@@ -951,8 +952,17 @@ function solarPlaybackAdvance(){
 function solarPlaybackTick(){
  SOLAR_PLAY_TIMER=null;
  if(!SOLAR_PLAYING)return;
- if(!solarPlaybackAdvance())return;
- SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,Math.max(60,250/Number($('solarSpeed').value||1)));
+ const now=performance.now(),delta=Math.min(250,Math.max(0,now-SOLAR_PLAY_LAST));
+ SOLAR_PLAY_LAST=now;
+ const speed=Number($('solarSpeed').value)||1,slider=$('solarTime');
+ let next=Number(slider.value)+delta*SOLAR_STEP*speed/250;
+ if(next>=1140){
+  if(!$('solarLoop').checked){slider.value=1140;solarPlaybackStop();scheduleSolarPreview();return}
+  next=360+(next-360)%780;
+ }
+ slider.value=next;
+ scheduleSolarPreview();
+ SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,40);
 }
 function setupSolarControls(){
  $('solarShadowToggle').addEventListener('click',()=>{SOLAR_SHADOW_ON=!SOLAR_SHADOW_ON;if(!SOLAR_SHADOW_ON)solarPlaybackStop();refreshSolarPreview();const view=$(SOLAR_SHADOW_ON?'view3d':'view2d');if(view)view.click();});
@@ -971,6 +981,7 @@ function setupSolarControls(){
   SOLAR_STEP=SOLAR_STEP===10?60:10;
   const slider=$('solarTime');
   slider.value=Math.min(1140,Math.max(360,Math.round(Number(slider.value)/SOLAR_STEP)*SOLAR_STEP));
+  if(SOLAR_PLAYING)$('solarTime').step=1;
   updateStepUI();scheduleSolarPreview();
  });
  $('solarPlay').addEventListener('click',()=>{
@@ -978,9 +989,9 @@ function setupSolarControls(){
   if($('solarMode').value!=='season'){$('solarMode').value='season';}
   if(!SOLAR_SHADOW_ON){$('solarShadowToggle').click()}
   if(Number($('solarTime').value)>=1140)$('solarTime').value=360;
-  SOLAR_PLAYING=true;$('solarPlay').textContent='Ⅱ 일시정지';
+  SOLAR_PLAYING=true;$('solarTime').step=1;SOLAR_PLAY_LAST=performance.now();$('solarPlay').textContent='Ⅱ 일시정지';
   scheduleSolarPreview();
-  SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,Math.max(60,250/Number($('solarSpeed').value||1)));
+  SOLAR_PLAY_TIMER=setTimeout(solarPlaybackTick,40);
  });
  $('solarStop').addEventListener('click',()=>solarPlaybackStop(true));
  $('solarNext').addEventListener('click',()=>{solarPlaybackStop();solarPlaybackAdvance()});
