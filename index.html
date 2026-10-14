@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-16</title>
+<title>Jinju3D Local · v2026.10.14-17</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-16</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-17</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -239,7 +239,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-16',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-17',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -914,7 +914,7 @@ function solarTerrainRaster(values,n){
   const p=(y*canvas.width+x)*4;
   const confidence=weight/(weight+unknown||1);
   const fraction=weight?total/weight:0;
-  const smooth=fraction>=.62?Math.min(1,(fraction-.62)/.22):0; // do not paint uncertain interpolated boundaries as confirmed terrain shadows
+  const smooth=confidence>=.65&&fraction>=.68?Math.min(1,(fraction-.68)/.18):0; // do not paint uncertain interpolated boundaries as confirmed terrain shadows
   im.data[p]=37;im.data[p+1]=53;im.data[p+2]=72;
   im.data[p+3]=Math.round(175*smooth*confidence);
  }
@@ -931,45 +931,58 @@ function solarTerrainAreaSchedule(center,angles){
  }
  if(SOLAR_AREA_TIMER)clearTimeout(SOLAR_AREA_TIMER);
  const token=++SOLAR_AREA_TOKEN;
- $('solarTerrainAreaStatus').textContent='주변 지형 차폐 격자 계산 준비 중…';
+ $('solarTerrainAreaStatus').textContent='지형 고도와 태양 방향을 분석 중…';
  SOLAR_AREA_TIMER=setTimeout(()=>{
   SOLAR_AREA_TIMER=null;if(token!==SOLAR_AREA_TOKEN)return;
-  const n=solarIsHighPerformance()?25:17,spacing=solarIsHighPerformance()?24:35,latMeters=111132,lonMeters=111320*Math.cos(center[1]*Math.PI/180);
-  const mask=new Array(n*n).fill(-1);let clear=0,blocked=0,unknown=0;
+  const high=solarIsHighPerformance(),n=high?25:17,spacing=high?24:35;
+  const latMeters=111132,lonMeters=111320*Math.cos(center[1]*Math.PI/180);
+  const mask=new Array(n*n).fill(-1);
+  let clear=0,blocked=0,unknown=0,nearBoundary=0;
   const az=angles.az,alt=angles.alt,R=6371000;
-  // 최대 1.8km / 100m 간격. 지형 타일 미확보 시 가림으로 추정하지 않는다.
+  // Loaded DEM only. No elevation outside loaded tiles is inferred; ambiguous rays remain unknown.
+  const maxRange=high?3200:2400;
+  const stepAt=d=>d<200?(high?15:25):d<800?(high?30:40):(high?60:80);
+  const elevationCache=new Map();
+  function elevation(pos){
+   const key=pos[0].toFixed(6)+','+pos[1].toFixed(6);
+   if(elevationCache.has(key))return elevationCache.get(key);
+   let z=null;try{z=map.queryTerrainElevation(pos,{exaggerated:false})}catch(e){}
+   const result=Number.isFinite(z)?z:null;
+   if(elevationCache.size<18000)elevationCache.set(key,result);
+   return result;
+  }
   let iy=0;
   function evaluateRow(){
+   SOLAR_AREA_TIMER=null;
    if(token!==SOLAR_AREA_TOKEN)return;
    for(let ix=0;ix<n;ix++){
-   const dx=(ix-(n-1)/2)*spacing,dy=((n-1)/2-iy)*spacing; // raster row 0 is north, matching NW→NE→SE→SW image coordinates
-   const point=[center[0]+dx/lonMeters,center[1]+dy/latMeters];
-   const z0=map.queryTerrainElevation?.(point,{exaggerated:false});
-   if(!Number.isFinite(z0)){unknown++;continue}
-   let hit=false,missing=false;
-   for(let d=solarIsHighPerformance()?25:35;d<=2400;d+=(d<500?(solarIsHighPerformance()?25:35):(solarIsHighPerformance()?50:70))){
-    const xy=turf.destination(point,d/1000,az,{units:'kilometers'}).geometry.coordinates;
-    const z=map.queryTerrainElevation(xy,{exaggerated:false});
-    if(!Number.isFinite(z)){missing=true;break}
-    const horizon=Math.atan2(z-z0-d*d/(2*R),d)*180/Math.PI;
-    if(horizon>alt){hit=true;break}
-   }
-   if(missing&&!hit){unknown++;continue}
-   if(!hit){clear++;mask[iy*n+ix]=0;continue}
-   blocked++;mask[iy*n+ix]=1;
+    const dx=(ix-(n-1)/2)*spacing,dy=((n-1)/2-iy)*spacing;
+    const point=[center[0]+dx/lonMeters,center[1]+dy/latMeters],z0=elevation(point);
+    if(z0===null){unknown++;continue}
+    let highest=-90,missing=false;
+    for(let d=stepAt(0);d<=maxRange;d+=stepAt(d)){
+     const pos=turf.destination(point,d/1000,az,{units:'kilometers'}).geometry.coordinates;
+     const z=elevation(pos);
+     if(z===null){missing=true;break}
+     const horizon=Math.atan2(z-z0-d*d/(2*R),d)*180/Math.PI;
+     if(horizon>highest)highest=horizon;
+     // Clear obstructed rays early; once a blocking ridge is found farther DEM is irrelevant.
+     if(highest>alt+0.12)break;
+    }
+    // Within 0.12 degrees of the ray, DEM resolution can change the classification.
+    const delta=highest-alt;
+    if(delta>0.12){blocked++;mask[iy*n+ix]=1}
+    else if(missing||Math.abs(delta)<=0.12){unknown++;nearBoundary+=!missing?1:0}
+    else {clear++;mask[iy*n+ix]=0}
    }
    iy++;
-   if(token!==SOLAR_AREA_TOKEN)return;
    if(iy<n){SOLAR_AREA_TIMER=setTimeout(evaluateRow,0);return}
-   finishTerrainArea();
-  }
-  function finishTerrainArea(){
-  if(token!==SOLAR_AREA_TOKEN)return;
-  const layer=solarTerrainAreaSource(center,n*spacing);if(!layer)return;
-  layer.source.updateImage({url:solarTerrainRaster(mask,n),coordinates:layer.bounds});
-  map.setLayoutProperty('solar-terrain-image-layer','visibility','visible');
-  $('solarTerrainAreaStatus').textContent='DEM 광선 검사 '+(blocked+clear+unknown)+'지점 · 차폐 '+blocked+' / 미차폐 '+clear+' / 자료부족 '+unknown+' · '+(n*spacing)+'m 범위, '+spacing+'m 격자, '+(solarIsHighPerformance()?'광선 25~50m':'광선 35~70m')+' 간격·최대 2.4km · DEM 기반 차폐 보간 영상(경계·정확도 검증 전)';
-  if(unknown>0&&SOLAR_AREA_RETRY<2){SOLAR_AREA_RETRY++;map.once('idle',()=>{if(token===SOLAR_AREA_TOKEN&&SOLAR_SHADOW_ON&&$('solarTerrainArea')?.checked)solarTerrainAreaSchedule(center,angles)})}
+   if(token!==SOLAR_AREA_TOKEN)return;
+   const layer=solarTerrainAreaSource(center,n*spacing);if(!layer)return;
+   layer.source.updateImage({url:solarTerrainRaster(mask,n),coordinates:layer.bounds});
+   map.setLayoutProperty('solar-terrain-image-layer','visibility','visible');
+   $('solarTerrainAreaStatus').textContent='DEM 광선 분석 '+(n*n)+'지점 · 산지 차폐 '+blocked+' / 미차폐 '+clear+' / 판정 유보 '+unknown+' (경계 불확실 '+nearBoundary+') · '+n*spacing+'m 영역 · '+(high?'고성능':'경량')+' · 최대 '+(maxRange/1000)+'km 검사 · DEM/보간 근사, 실측 경계 아님';
+   if(unknown>0&&SOLAR_AREA_RETRY<2){SOLAR_AREA_RETRY++;map.once('idle',()=>{if(token===SOLAR_AREA_TOKEN&&SOLAR_SHADOW_ON&&$('solarTerrainArea')?.checked&&!SOLAR_PLAYING)solarTerrainAreaSchedule(center,angles)})}
   }
   evaluateRow();
  },180);
