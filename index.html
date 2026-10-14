@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-27</title>
+<title>Jinju3D Local · v2026.10.14-28</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-27</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-28</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -159,6 +159,7 @@
 
  <details class="solar-advanced-group" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px">
  <summary style="cursor:pointer;font-size:12px;font-weight:600">고급 설정 및 분석 결과</summary>
+ <div id="solarFacadeDiagnostic" class="mini" style="margin-top:7px">외벽 그림자 진단: 그림자 보기를 켜면 계산 상태를 표시합니다.</div>
 <label style="display:block;margin-top:8px;font-size:10px"><input type="checkbox" id="solarTerrainCustom" checked> 사용자 건물 지형 반영 시험 (DEM)</label>
   <label style="display:block;margin-top:7px;font-size:10px"><input type="checkbox" id="solarTerrainOcclusion" checked> 산·언덕에 의한 태양 차폐 확인 (선택 위치)</label><label style="display:block;margin-top:7px;font-size:10px"><input type="checkbox" id="solarTerrainArea" checked> 주변 지형 그늘 연속 표시 (DEM 광선검사)</label><div id="solarTerrainAreaStatus" class="mini">선택 지점 주변 DEM 지형 차폐 분석 · 자료 부족 지역은 표시하지 않음</div><div id="solarOcclusionResult" class="mini" style="margin-top:7px">필지를 선택하면 지형 차폐를 확인합니다.</div>
  
@@ -260,7 +261,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-27',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-28',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1117,7 +1118,7 @@ function solarUpdateBuildingLight(a,enabled){
  try{
   // MapLibre extrusion directional lighting follows the selected solar position.
   map.setLight(enabled&&a.alt>0?
-   {anchor:'map',position:[1.5,a.az,Math.max(1,90-a.alt)],color:'#ffffff',intensity:.65}:
+   {anchor:'map',position:[1.5,a.az,Math.max(1,90-a.alt)],color:'#dce5f0',intensity:.30}:
    {anchor:'viewport',position:[1.15,210,30],color:'#ffffff',intensity:.5});
  }catch(e){}
 }
@@ -1207,6 +1208,7 @@ function solarUpdateBlockedBuildingSurfaces(nearby,a,enabled){
   }catch(e){}
  }
  source.setData({type:'FeatureCollection',features:shaded});
+ const diag=$('solarFacadeDiagnostic');if(diag)diag.dataset.whole=String(shaded.length);
 }
 function solarUpdateWallShadows(nearby,a,enabled){
  if(!map?.isStyleLoaded?.())return;
@@ -1281,6 +1283,7 @@ function solarUpdateWallShadows(nearby,a,enabled){
   }
  }
  source.setData({type:'FeatureCollection',features:result});
+ const diag=$('solarFacadeDiagnostic');if(diag){diag.dataset.wall=String(result.length);diag.textContent='외벽 차폐 구간 '+result.length+'개 · 전체 차폐 건물 '+(diag.dataset.whole||'0')+'개 · 차폐 검사는 근사이며 3D 표면 표시 미검증';}
 }
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
@@ -1362,8 +1365,8 @@ function refreshSolarPreview(){
  if(center&&enabled&&daylight){
   nearby=solarNearbyBuildings(center);
   solarUpdateRoofShadows(nearby,a,enabled);
-  solarUpdateWallShadows(nearby,a,enabled);
   solarUpdateBlockedBuildingSurfaces(nearby,a,enabled);
+  solarUpdateWallShadows(nearby,a,enabled);
   for(const item of nearby.features){
    try{
     if(!SOLAR_PLAYING&&terrainCheckedBuildings<35&&item.d<150){
