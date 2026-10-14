@@ -769,10 +769,14 @@ function solarTerrainShadow(footprint,height,alt,az){
 let SOLAR_NEAR_CACHE={key:'',features:[],unknown:0};
 let MAP_DESIGN_MODE='default';
 const MAP_DESIGN_PAINT=new Map();
+let MAP_DESIGN_APPLIED='';
 function applyMapDesign(){
  if(!map?.isStyleLoaded?.())return;
  const mode=MAP_DESIGN_MODE,style=map.getStyle();
  if(!style?.layers)return;
+ const signature=mode+'|'+style.layers.map(layer=>layer.id).join('|');
+ if(signature===MAP_DESIGN_APPLIED)return;
+ MAP_DESIGN_APPLIED=signature;
  const customLayers=new Set(['solar-shadow-preview-fill','solar-terrain-image-layer','solar-sun-direction-line','edit-custom-model-3d','edit-custom-model-outline','selected-parcel-fill','selected-parcel-line']);
  function paint(id,prop,value){
   if(!map.getLayer(id))return;
