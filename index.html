@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-28</title>
+<title>Jinju3D Local · v2026.10.14-29</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-28</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-29</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -261,7 +261,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-28',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-29',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1164,6 +1164,45 @@ let SOLAR_WALL_LAST=0;
 // Explicitly darken complete building extrusions when roof and upper facade both lose direct sun.
 // Directional MapLibre lighting alone never accounts for adjacent-building occlusion.
 let SOLAR_BLOCKED_BUILDING_LAST=0;
+// Apply occlusion tint to the SAME GeoJSON sources used by the visible buildings.
+// Overlay extrusions can be buried by depth testing, so they are not a reliable primary shadow display.
+let SOLAR_DIRECT_LAST=0,SOLAR_DIRECT_SIGNATURE='',SOLAR_DIRECT_ORIGINAL=new Map();
+function solarDirectSurfaceTint(shaded,enabled){
+ if(!map?.isStyleLoaded?.())return;
+ const active=enabled&&shaded.length>0;
+ const keys=new Set();
+ for(const f of shaded){try{const c=turf.centroid(f).geometry.coordinates;keys.add(c[0].toFixed(5)+','+c[1].toFixed(5))}catch(e){}}
+ const signature=active?[...keys].sort().join('|'):'off';
+ if(signature===SOLAR_DIRECT_SIGNATURE)return;
+ if(SOLAR_PLAYING&&performance.now()-SOLAR_DIRECT_LAST<650)return;
+ SOLAR_DIRECT_SIGNATURE=signature;SOLAR_DIRECT_LAST=performance.now();
+ const sourceSets=[['buildings',currentBuildings?.features||[]],['smart-osm',[...(districtOsmCache.get(selectedId)?.kept||[]),...(districtOsmCache.get(selectedId)?.facilities||[])]]];
+ for(const [src,features] of sourceSets){
+  if(!map.getSource(src)||!features.length)continue;
+  const visible=editedBuildingCollection({type:'FeatureCollection',features});
+  const mapped=visible.features.map(f=>{
+   if(!['Polygon','MultiPolygon'].includes(f.geometry?.type))return f;
+   let c;try{c=turf.centroid(f).geometry.coordinates}catch(e){return f}
+   const blocked=active&&keys.has(c[0].toFixed(5)+','+c[1].toFixed(5));
+   if(!blocked&&!f.properties?.solar_direct_blocked)return f;
+   const p={...(f.properties||{})};if(blocked)p.solar_direct_blocked=true;else delete p.solar_direct_blocked;
+   return {...f,properties:p};
+  });
+  map.getSource(src).setData({type:'FeatureCollection',features:mapped});
+ }
+ for(const id of ['buildings-3d','smart-osm-3d']){
+  if(!map.getLayer(id))continue;
+  if(!SOLAR_DIRECT_ORIGINAL.has(id)){
+   const original=MAP_DESIGN_PAINT.get(id+'|fill-extrusion-color');
+   SOLAR_DIRECT_ORIGINAL.set(id,original??map.getPaintProperty(id,'fill-extrusion-color'));
+  }
+  const base=MAP_DESIGN_MODE==='default'?SOLAR_DIRECT_ORIGINAL.get(id):MAP_DESIGN_MODE==='light'?'#c7d2df':'#e0e5ec';
+  const desired=active?['case',['boolean',['get','solar_direct_blocked'],false],'#27384b',base]:base;
+  map.setPaintProperty(id,'fill-extrusion-color',desired);
+ }
+ const diag=$('solarFacadeDiagnostic');
+ if(diag)diag.textContent='건물 자체 음영 적용: '+keys.size+'개 · 외벽 부분 그림자는 별도 근사 · 실시간 렌더링 검증 전';
+}
 function solarUpdateBlockedBuildingSurfaces(nearby,a,enabled){
  if(!map?.isStyleLoaded?.())return;
  if(!map.getSource('solar-blocked-buildings')){
@@ -1173,7 +1212,7 @@ function solarUpdateBlockedBuildingSurfaces(nearby,a,enabled){
     'fill-extrusion-base':['get','shade_base'],'fill-extrusion-height':['get','shade_top']}});
  }
  const source=map.getSource('solar-blocked-buildings');
- if(!enabled||a.alt<=1){source.setData({type:'FeatureCollection',features:[]});return}
+ if(!enabled||a.alt<=1){source.setData({type:'FeatureCollection',features:[]});solarDirectSurfaceTint([],false);return}
  if(SOLAR_PLAYING&&performance.now()-SOLAR_BLOCKED_BUILDING_LAST<550)return;
  SOLAR_BLOCKED_BUILDING_LAST=performance.now();
  const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?130:85);
@@ -1207,7 +1246,8 @@ function solarUpdateBlockedBuildingSurfaces(nearby,a,enabled){
    shaded.push({type:'Feature',geometry:target.f.geometry,properties:{shade_base:base+.08,shade_top:top+.3}});
   }catch(e){}
  }
- source.setData({type:'FeatureCollection',features:shaded});
+ source.setData({type:'FeatureCollection',features:[]});
+ solarDirectSurfaceTint(shaded,enabled);
  const diag=$('solarFacadeDiagnostic');if(diag)diag.dataset.whole=String(shaded.length);
 }
 function solarUpdateWallShadows(nearby,a,enabled){
