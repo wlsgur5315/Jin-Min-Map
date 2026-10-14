@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-23</title>
+<title>Jinju3D Local · v2026.10.14-24</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-23</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-24</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -260,7 +260,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-23',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-24',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -817,7 +817,7 @@ function applyMapDesign(){
  const signature=mode+'|'+style.layers.map(layer=>layer.id).join('|');
  if(signature===MAP_DESIGN_APPLIED)return;
  MAP_DESIGN_APPLIED=signature;
- const customLayers=new Set(['solar-shadow-preview-fill','solar-terrain-image-layer','solar-sun-direction-line','edit-custom-model-3d','edit-custom-model-outline','selected-parcel-fill','selected-parcel-line']);
+ const customLayers=new Set(['solar-shadow-preview-fill','solar-terrain-image-layer','solar-sun-direction-line','solar-roof-shadow-3d','solar-wall-shadow-3d','edit-custom-model-3d','edit-custom-model-outline','selected-parcel-fill','selected-parcel-line']);
  function paint(id,prop,value){
   if(!map.getLayer(id))return;
   const key=id+'|'+prop;
@@ -837,9 +837,9 @@ function applyMapDesign(){
   const id=layer.id;
   if(['buildings-3d','buildings-foundation','smart-osm-3d','smart-osm-foundation'].includes(id)){
    const high=mode==='light';
-   const color=id.endsWith('foundation')?(high?'#c7cdd5':'#c6cbd1'):(high?'#c9ced5':'#e5e7eb');
+   const color=id.endsWith('foundation')?(high?'#bac3cf':'#b9c2cc'):(high?'#c7d2df':'#e0e5ec');
    paint(id,'fill-extrusion-color',color);
-   paint(id,'fill-extrusion-opacity',mode==='focus'?.96:.94);
+   paint(id,'fill-extrusion-opacity',mode==='default'?.95:1);
    continue;
   }
   if(id==='buildings-2d'||id==='smart-osm-2d'){
@@ -1157,6 +1157,76 @@ function solarUpdateRoofShadows(nearby,a,enabled){
  }
  source.setData({type:'FeatureCollection',features:roofs});
 }
+// Height-sliced wall shadow masks: approximate occlusion on sun-facing facades.
+let SOLAR_WALL_LAST=0;
+function solarUpdateWallShadows(nearby,a,enabled){
+ if(!map?.isStyleLoaded?.())return;
+ if(!map.getSource('solar-wall-shadow')){
+  map.addSource('solar-wall-shadow',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.addLayer({id:'solar-wall-shadow-3d',type:'fill-extrusion',source:'solar-wall-shadow',paint:{
+   'fill-extrusion-color':'#29384c','fill-extrusion-opacity':.78,
+   'fill-extrusion-base':['get','z_bottom'],'fill-extrusion-height':['get','z_top']
+  }});
+ }
+ const source=map.getSource('solar-wall-shadow');
+ if(!enabled||a.alt<=1){source.setData({type:'FeatureCollection',features:[]});return}
+ const now=performance.now();
+ if(SOLAR_PLAYING&&now-SOLAR_WALL_LAST<550)return;
+ SOLAR_WALL_LAST=now;
+ const items=(nearby?.features||[]).slice(0,solarIsHighPerformance()?18:10);
+ if(EDIT_CUSTOM&&Number(EDIT_CUSTOM.properties?.model_height)>0)items.unshift({f:EDIT_CUSTOM,h:Number(EDIT_CUSTOM.properties.model_height),d:0});
+ const az=a.az*Math.PI/180,sunX=Math.sin(az),sunY=Math.cos(az);
+ const tanAlt=Math.tan(a.alt*Math.PI/180),result=[],limit=solarIsHighPerformance()?170:85;
+ const meters=111132,localX=111320*Math.cos((items[0]?.f?.geometry?.coordinates?.[0]?.[0]?.[1]||35.18)*Math.PI/180);
+ // Restrict candidate blockers and recipient wall segments to avoid frame stalls on mobile.
+ for(const receiver of items.slice(0,solarIsHighPerformance()?10:6)){
+  if(result.length>=limit)break;
+  const polys=receiver.f.geometry.type==='Polygon'?[receiver.f.geometry.coordinates]:receiver.f.geometry.coordinates;
+  for(const poly of polys){
+   const ring=poly[0];if(!ring)continue;
+   for(let i=0;i<ring.length-1;i++){
+    if(result.length>=limit)break;
+    const p=ring[i],q=ring[i+1],dx=(q[0]-p[0])*localX,dy=(q[1]-p[1])*meters,length=Math.hypot(dx,dy);
+    if(length<3)continue;
+    // Exterior winding can vary. Test occlusion on both sides; only cast shadows on the sunward surface.
+    const nx=-dy/length,ny=dx/length;
+    const dot=nx*sunX+ny*sunY;if(Math.abs(dot)<.12)continue;
+    const sampleCount=Math.min(5,Math.max(1,Math.ceil(length/18))),levels=3;
+    for(let j=0;j<sampleCount;j++){
+     if(result.length>=limit)break;
+     const t0=j/sampleCount,t1=(j+1)/sampleCount,tm=(t0+t1)/2;
+     const origin=[p[0]+(q[0]-p[0])*tm,p[1]+(q[1]-p[1])*tm];
+     for(let k=0;k<levels;k++){
+      const bottom=receiver.h*k/levels,top=receiver.h*(k+1)/levels,z=(bottom+top)/2;
+      const maxD=Math.min(240,(350-z)/tanAlt);
+      if(maxD<=1)continue;
+      const finish=turf.destination(origin,maxD/1000,a.az,{units:'kilometers'}).geometry.coordinates;
+      const ray=turf.lineString([origin,finish]);
+      let blocked=false;
+      for(const blocker of items){
+       if(blocker===receiver||blocker.h<=z+1)continue;
+       try{
+        const hits=turf.lineIntersect(ray,blocker.f);
+        for(const hit of hits.features){
+         const d=turf.distance(origin,hit.geometry.coordinates,{units:'meters'});
+         if(d>0.5&&blocker.h>z+d*tanAlt+.1){blocked=true;break}
+        }
+       }catch(e){}
+       if(blocked)break;
+      }
+      if(!blocked)continue;
+      // Thin surface slab outside the original extrusion, its tall sides form the wall tint.
+      const out=.16,side=(dot>0?1:-1),offLon=nx*side*out/localX,offLat=ny*side*out/meters;
+      const a0=[p[0]+(q[0]-p[0])*t0,p[1]+(q[1]-p[1])*t0],b0=[p[0]+(q[0]-p[0])*t1,p[1]+(q[1]-p[1])*t1];
+      const a1=[a0[0]+offLon,a0[1]+offLat],b1=[b0[0]+offLon,b0[1]+offLat];
+      result.push({type:'Feature',geometry:{type:'Polygon',coordinates:[[a0,b0,b1,a1,a0]]},properties:{z_bottom:Math.max(0,bottom+.02),z_top:top}});
+     }
+    }
+   }
+  }
+ }
+ source.setData({type:'FeatureCollection',features:result});
+}
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
  solarSyncMode();
@@ -1210,7 +1280,7 @@ function refreshSolarPreview(){
   }catch(err){console.warn('지형 차폐 분석 실패',err);occlusion='지형 차폐 계산 실패'}
  }else if(center)occlusion=enabled?'지형 차폐 분석 꺼짐':'그림자 보기를 켜면 분석합니다.';
  $('solarOcclusionResult').textContent=occlusion+' · DEM 60m 간격/최대 3km, 선택 지점 한 곳의 근사 판정 (지형 그림자 지도 아님)';
- if(!center||!enabled||!daylight)solarUpdateRoofShadows(null,a,false);
+ if(!center||!enabled||!daylight){solarUpdateRoofShadows(null,a,false);solarUpdateWallShadows(null,a,false)}
  const shadows=[];let nearby={features:[],unknown:0,more:0},failed=0,terrainUsed=false,terrainFallback=false;
  let terrainBlockedBuildings=0,terrainUnknownBuildings=0,terrainCheckedBuildings=0;
  const terrainShadowMemo=new Map();
@@ -1237,6 +1307,7 @@ function refreshSolarPreview(){
  if(center&&enabled&&daylight){
   nearby=solarNearbyBuildings(center);
   solarUpdateRoofShadows(nearby,a,enabled);
+  solarUpdateWallShadows(nearby,a,enabled);
   for(const item of nearby.features){
    try{
     if(!SOLAR_PLAYING&&terrainCheckedBuildings<35&&item.d<150){
