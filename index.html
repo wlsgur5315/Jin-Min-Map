@@ -1210,6 +1210,7 @@ function refreshSolarPreview(){
   }catch(err){console.warn('지형 차폐 분석 실패',err);occlusion='지형 차폐 계산 실패'}
  }else if(center)occlusion=enabled?'지형 차폐 분석 꺼짐':'그림자 보기를 켜면 분석합니다.';
  $('solarOcclusionResult').textContent=occlusion+' · DEM 60m 간격/최대 3km, 선택 지점 한 곳의 근사 판정 (지형 그림자 지도 아님)';
+ if(!center||!enabled||!daylight)solarUpdateRoofShadows(null,a,false);
  const shadows=[];let nearby={features:[],unknown:0,more:0},failed=0,terrainUsed=false,terrainFallback=false;
  let terrainBlockedBuildings=0,terrainUnknownBuildings=0,terrainCheckedBuildings=0;
  const terrainShadowMemo=new Map();
