@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.13-26</title>
+<title>Jinju3D Local · v2026.10.14-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.13-26</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-01</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -138,7 +138,7 @@
  </div>
  <div id="solarReadout" class="mini" style="margin-top:10px">태양 위치 계산 대기</div>
  <button type="button" id="solarShadowToggle" aria-pressed="false" style="margin-top:10px;background:#14532d;border:1px solid #22c55e;font-size:12px;padding:12px">그림자 보기 켜기</button>
- <label style="display:block;margin-top:8px;font-size:10px"><input type="checkbox" id="solarTerrainCustom" checked> 사용자 건물 지형 반영 시험 (DEM)</label><label style="display:block;margin-top:7px;font-size:10px"><input type="checkbox" id="solarTerrainOcclusion" checked> 산·언덕에 의한 태양 차폐 확인 (선택 위치)</label><label style="display:block;margin-top:7px;font-size:10px"><input type="checkbox" id="solarTerrainArea"> 주변 지형 그늘 연속 표시 (시험)</label><div id="solarTerrainAreaStatus" class="mini">선택 지점 주변 약 420m 영역 · 낮은 해상도 시각화</div><div id="solarOcclusionResult" class="mini" style="margin-top:7px">필지를 선택하면 지형 차폐를 확인합니다.</div><div id="solarShadowSummary" class="mini" style="margin-top:8px">주변 건물 데이터를 확인 중입니다.</div><div class="hint" style="margin-top:7px">주변 약 180m 안의 건물 중 높이 정보가 있는 최대 180개를 경량 근사 투영합니다. 겹침 농도를 일정하게 유지하는 회청색 그림자와 추가 선 레이어 없이 그림자 내부 경계선을 숨깁니다. 태양이 지평선 위에 있으면 낮은 고도에서도 그림자를 표시합니다. 단, 최대 250m까지만 표시합니다. 사용자 건물 DEM 지면 교차 시험과 선택 위치에서 3km 내 산·언덕 태양 차폐 판정을 제공합니다. 주변 건물은 아직 평면 근사입니다. 그림자는 지형·DEM 고도 및 건물 상호차폐를 반영하지 않으며, 비정형 건물은 볼록 외피로 단순화됩니다. 법정 일조시간·일사량 결과가 아닙니다.</div>
+ <label style="display:block;margin-top:8px;font-size:10px"><input type="checkbox" id="solarTerrainCustom" checked> 사용자 건물 지형 반영 시험 (DEM)</label><label style="display:block;margin-top:7px;font-size:10px"><input type="checkbox" id="solarTerrainOcclusion" checked> 산·언덕에 의한 태양 차폐 확인 (선택 위치)</label><label style="display:block;margin-top:7px;font-size:10px"><input type="checkbox" id="solarTerrainArea"> 주변 지형 그늘 연속 표시 (DEM 광선검사)</label><div id="solarTerrainAreaStatus" class="mini">선택 지점 주변 약 420m 영역 · 낮은 해상도 시각화</div><div id="solarOcclusionResult" class="mini" style="margin-top:7px">필지를 선택하면 지형 차폐를 확인합니다.</div><div id="solarShadowSummary" class="mini" style="margin-top:8px">주변 건물 데이터를 확인 중입니다.</div><div class="hint" style="margin-top:7px">주변 약 180m 안의 건물 중 높이 정보가 있는 최대 180개를 경량 근사 투영합니다. 겹침 농도를 일정하게 유지하는 회청색 그림자와 추가 선 레이어 없이 그림자 내부 경계선을 숨깁니다. 태양이 지평선 위에 있으면 낮은 고도에서도 그림자를 표시합니다. 단, 최대 250m까지만 표시합니다. 사용자 건물 DEM 지면 교차 시험과 선택 위치에서 3km 내 산·언덕 태양 차폐 판정을 제공합니다. 주변 건물은 아직 평면 근사입니다. 그림자는 지형·DEM 고도 및 건물 상호차폐를 반영하지 않으며, 비정형 건물은 볼록 외피로 단순화됩니다. 법정 일조시간·일사량 결과가 아닙니다.</div>
 </details>
     </section>
 
@@ -211,7 +211,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.13-26',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.14-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -808,17 +808,20 @@ function solarTerrainAreaSchedule(center,angles){
  $('solarTerrainAreaStatus').textContent='주변 지형 차폐 격자 계산 준비 중…';
  SOLAR_AREA_TIMER=setTimeout(()=>{
   SOLAR_AREA_TIMER=null;if(token!==SOLAR_AREA_TOKEN)return;
-  const n=13,spacing=45,latMeters=111132,lonMeters=111320*Math.cos(center[1]*Math.PI/180);
+  const n=21,spacing=28,latMeters=111132,lonMeters=111320*Math.cos(center[1]*Math.PI/180);
   const mask=new Array(n*n).fill(-1);let clear=0,blocked=0,unknown=0;
   const az=angles.az,alt=angles.alt,R=6371000;
   // 최대 1.8km / 100m 간격. 지형 타일 미확보 시 가림으로 추정하지 않는다.
-  for(let iy=0;iy<n;iy++)for(let ix=0;ix<n;ix++){
+  let iy=0;
+  function evaluateRow(){
+   if(token!==SOLAR_AREA_TOKEN)return;
+   for(let ix=0;ix<n;ix++){
    const dx=(ix-(n-1)/2)*spacing,dy=(iy-(n-1)/2)*spacing;
    const point=[center[0]+dx/lonMeters,center[1]+dy/latMeters];
    const z0=map.queryTerrainElevation?.(point,{exaggerated:false});
    if(!Number.isFinite(z0)){unknown++;continue}
    let hit=false,missing=false;
-   for(let d=75;d<=1200;d+=75){
+   for(let d=40;d<=1200;d+=40){
     const xy=turf.destination(point,d/1000,az,{units:'kilometers'}).geometry.coordinates;
     const z=map.queryTerrainElevation(xy,{exaggerated:false});
     if(!Number.isFinite(z)){missing=true;break}
@@ -828,13 +831,21 @@ function solarTerrainAreaSchedule(center,angles){
    if(missing&&!hit){unknown++;continue}
    if(!hit){clear++;mask[iy*n+ix]=0;continue}
    blocked++;mask[iy*n+ix]=1;
+   }
+   iy++;
+   if(token!==SOLAR_AREA_TOKEN)return;
+   if(iy<n){SOLAR_AREA_TIMER=setTimeout(evaluateRow,0);return}
+   finishTerrainArea();
   }
+  function finishTerrainArea(){
   if(token!==SOLAR_AREA_TOKEN)return;
   const layer=solarTerrainAreaSource(center,n*spacing);if(!layer)return;
   layer.source.updateImage({url:solarTerrainRaster(mask,n),coordinates:layer.bounds});
   map.setLayoutProperty('solar-terrain-image-layer','visibility','visible');
-  $('solarTerrainAreaStatus').textContent='지형 차폐 표본 '+blocked+'개 / 미차폐 '+clear+'칸 / DEM 부족 '+unknown+'칸 · 약 585m 영역, 45m 격자, 태양 방향 최대 1.2km · '+(blocked?'회청색 영역이 지형 그늘 근사':'확인된 그늘 없음')+' · 시각적 보간으로 경계를 부드럽게 표시 · 실제 그림자 경계 아님';
+  $('solarTerrainAreaStatus').textContent='DEM 광선 검사 '+(blocked+clear+unknown)+'지점 · 차폐 '+blocked+' / 미차폐 '+clear+' / 자료부족 '+unknown+' · 588m 범위, 28m 격자, 광선 40m 간격·최대 1.2km · 보간 영상(실제 경계 아님)';
   if(unknown>0&&SOLAR_AREA_RETRY<2){SOLAR_AREA_RETRY++;map.once('idle',()=>{if(token===SOLAR_AREA_TOKEN&&SOLAR_SHADOW_ON&&$('solarTerrainArea')?.checked)solarTerrainAreaSchedule(center,angles)})}
+  }
+  evaluateRow();
  },180);
 }
 let SOLAR_SHADOW_ON=false;
