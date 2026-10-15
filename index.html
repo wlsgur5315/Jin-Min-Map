@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.14-29</title>
+<title>Jinju3D Local · v2026.10.15-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.14-29</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.15-01</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -229,19 +229,21 @@
 <button id="sourceInfoBtn" class="info-fab" aria-label="자료 출처 보기">!</button>
 <div id="sourceModal" class="source-modal">
   <div class="source-card">
-    <h2>자료 출처</h2>
-    <p>Jin-Min-Map은 여러 공공·개방형 공간정보를 결합해 만든 초기 설계 검토용 지도입니다. 데이터별 기준일과 정확도는 서로 다를 수 있습니다.</p>
+    <h2>자료 출처 및 갱신 상태</h2>
+    <p>공식 제공처 확인일: <b>2026-10-15</b>. 출처 링크와 이용 안내를 점검한 날짜이며, 지도에 저장된 모든 데이터가 이날 갱신됐다는 뜻은 아닙니다.</p>
     <div class="source-list">
-      <div class="source-item"><b>GIS 건물통합정보</b><div>건물 위치·형상 기본 데이터. 진주시 전역 건물 표현의 주 데이터입니다.</div></div>
-      <div class="source-item"><b>건축물대장 표제부</b><div>건물명, 동명칭, 층수, 높이, 용도 등 건축물 속성 보정에 사용합니다.</div></div>
-      <div class="source-item"><b>연속지적도 · PNU</b><div>필지 경계, 지번 및 필지 식별에 사용합니다.</div></div><div class="source-item"><b>행정안전부 건물DB</b><div>2026-09 전체분에서 진주시만 추출하여 지번/PNU와 도로명주소를 오프라인으로 연결합니다.</div></div>
-      <div class="source-item"><b>토지이음 · 국토교통부</b><div>(도시계획) 용도지역정보 SHP. 용도지역·경관지구·고도지구 자동판정에 사용합니다. 현재 연결 기준일: 2026-09-29.</div></div>
-      <div class="source-item"><b>OpenStreetMap</b><div>GIS 누락 건물 및 일부 시설 보완에 사용합니다. © OpenStreetMap contributors.</div></div>
-      <div class="source-item"><b>Overture Maps Foundation</b><div>건물 footprint 보완 데이터로 사용합니다.</div></div>
-      <div class="source-item"><b>Terrarium DEM</b><div>지형 고도와 3D 건물의 Ground Level 보정에 사용하는 표고 데이터입니다.</div></div>
-      <div class="source-item"><b>OpenFreeMap</b><div>기본 지도 스타일 및 배경지도에 사용합니다.</div></div>
-      <div class="source-item"><b>VWorld</b><div>온라인 환경에서 사용자가 API 키를 입력한 경우 선택적으로 정밀지도와 보조 공간정보 조회에 사용합니다. 도로명주소는 행정안전부 건물DB 로컬 데이터를 우선 사용합니다.</div></div>
+      <div class="source-item"><b>GIS 건물통합정보 · 국토교통부</b><div>진주시 건물 형상과 속성의 주 자료. <a href="https://www.data.go.kr/data/15083092/fileData.do" target="_blank" rel="noopener noreferrer">공식 제공 페이지</a>. 최신 공개 목록과 현재 저장소에 반영된 원본의 기준일은 구분하며, 실제 GIS 데이터 재다운로드는 수행하지 않았습니다.</div></div>
+      <div class="source-item"><b>건축물대장 표제부 · 국토교통부 건축HUB</b><div>건물명·동명·층수·높이·용도 보정. <a href="https://www.data.go.kr/data/15134735/openapi.do" target="_blank" rel="noopener noreferrer">공식 건축HUB 서비스</a> / <a href="https://www.data.go.kr/data/15044720/fileData.do" target="_blank" rel="noopener noreferrer">파일데이터 안내</a>. 매칭되지 않은 건물의 높이는 추정값일 수 있습니다.</div></div>
+      <div class="source-item"><b>연속지적도 · 국토교통부</b><div>필지 경계·PNU·지번의 참고 자료. <a href="https://www.data.go.kr/data/15123899/openapi.do" target="_blank" rel="noopener noreferrer">공식 연속지적도형정보</a>. 연속지적도는 측량성과를 대신하지 않는 참조용 자료입니다.</div></div>
+      <div class="source-item"><b>행정안전부 건물DB</b><div>도로명주소 오프라인 연결. 현재 적용 파일: 2026-09 전체분 중 진주시 추출 데이터(프로젝트 기록). 새 원본 다운로드·대조는 아직 수행하지 않았습니다.</div></div>
+      <div class="source-item"><b>토지이음 · 국토교통부 공간정보</b><div>용도지역·지구 및 도시계획 법규 사전검토. 현재 연결된 용도지역 SHP 기준일: <b>2026-09-29</b>(프로젝트 기록). <a href="https://www.eum.go.kr/" target="_blank" rel="noopener noreferrer">토지이음 공식 사이트</a>. 개별 지구단위계획과 도시계획시설은 결정·변경 고시를 별도로 확인해야 합니다.</div></div>
+      <div class="source-item"><b>OpenStreetMap</b><div>일부 건물·시설 보완 및 배경지도 원천. © OpenStreetMap contributors · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">ODbL 및 저작권 안내</a>. 지도 공급자의 타일 갱신과 로컬 저장 건물 갱신은 별개입니다.</div></div>
+      <div class="source-item"><b>Overture Maps Foundation · 건물</b><div>건물 외곽 형상 보완. © OpenStreetMap contributors, Overture Maps Foundation. <a href="https://docs.overturemaps.org/guides/buildings/" target="_blank" rel="noopener noreferrer">건물 데이터 설명</a> / <a href="https://docs.overturemaps.org/attribution/" target="_blank" rel="noopener noreferrer">출처·ODbL 안내</a>. 공식 배포판이 갱신되어도 로컬 파일은 자동 갱신되지 않습니다.</div></div>
+      <div class="source-item"><b>Mapzen Terrarium DEM · AWS Open Data</b><div>지형 높이와 일사·그림자 차폐 근사 계산. <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener noreferrer">공식 AWS 데이터 등록정보</a> / <a href="https://www.mapzen.com/rights/" target="_blank" rel="noopener noreferrer">Mapzen 출처표시</a>. © Mapzen, OpenStreetMap, and others. 원본 해상도·고도 오차는 지역별로 다르며 정밀측량을 대신하지 않습니다. 반출 제한된 국내 5m DEM은 적용하지 않았습니다.</div></div>
+      <div class="source-item"><b>OpenFreeMap · OpenMapTiles</b><div>MapLibre 배경지도 Liberty 스타일. <a href="https://openfreemap.org/" target="_blank" rel="noopener noreferrer">서비스·표시 조건</a>. OpenFreeMap © OpenMapTiles · Data from OpenStreetMap.</div></div>
+      <div class="source-item"><b>VWorld</b><div>사용자가 API 키를 입력할 때만 동작하는 선택적 정밀지도·보조 조회. <a href="https://www.vworld.kr/" target="_blank" rel="noopener noreferrer">VWorld 공식 사이트</a>. 일부 자료는 별도 사용 조건과 승인 범위를 확인해야 합니다.</div></div>
     </div>
+    <p style="font-size:11px;line-height:1.6;color:#cbd5e1">※ 출처 안내 갱신만 수행했습니다. 실제 파일의 최신성·완전성·법적 효력 및 출처별 재배포 허용 범위는 별도 확인이 필요합니다. 일사·일조 결과와 용도지역 자동판정은 참고용이며 인허가·법정 검토를 대신하지 않습니다.</p>
     <button id="closeSourceModal" style="margin-top:12px">닫기</button>
   </div>
 </div>
@@ -261,7 +263,7 @@
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
 <script>
-const APP_VERSION='v2026.10.14-29',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.15-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
