@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.16-21</title>
+<title>Jinju3D Local · v2026.10.16-22</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-21</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-22</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -358,7 +358,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.16-21',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.16-22',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1512,7 +1512,7 @@ function solarThreeMapRestore(){
 }
 function solarThreeSetOnly(enabled){
  const state=SOLAR_THREE_MAP,box=$('solarThreeOnly');
- if(state?.shadowMeshes)for(const mesh of state.shadowMeshes)mesh.material=enabled?(mesh.userData.solarCustom?state.litCustomMaterial:state.litMaterial):(mesh.userData.solarCustom?state.debugCustomMaterial:state.debugMaterial);
+ if(state?.shadowMeshes)for(const mesh of state.shadowMeshes)mesh.material=enabled?(mesh.userData.solarCustom?($('solarThreeShadowDebug').checked?state.litCustomMaterial:state.sunOffCustomMaterial):($('solarThreeShadowDebug').checked?state.litMaterial:state.sunOffMaterial)):(mesh.userData.solarCustom?state.debugCustomMaterial:state.debugMaterial);
  if(!state){box.checked=false;solarThreeMapStatus('먼저 지도 3D 시험을 실행해 주세요.');return}
  // MapLibre fill-extrusion layers are shared citywide. Layout visibility reliably
  // hides them; feature geometry filters did not work consistently with these layers.
@@ -1592,7 +1592,7 @@ async function solarThreeMapOn(){
   const scene=new THREE.Scene(),root=new THREE.Group();scene.add(root);
   // Sunlight is dominant while soft ambient prevents wholly black facades.
   // Use the verified independent GIS lab lighting, keeping Three.js Y as the vertical axis.
-  const amb=new THREE.HemisphereLight('#d6e8ff','#a6afba',1.35);root.add(amb);
+  const amb=new THREE.HemisphereLight('#d6e8ff','#7f8c9f',1.35);amb.position.set(0,1,0);root.add(amb);
   const sun=new THREE.DirectionalLight('#fff4e1',2.7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
   // Concentrate shadow pixels near selected parcel, as in the standalone three-building lab.
   sun.shadow.camera.left=-140;sun.shadow.camera.right=140;sun.shadow.camera.top=140;sun.shadow.camera.bottom=-140;
@@ -1601,8 +1601,10 @@ async function solarThreeMapOn(){
   const geoLocal=p=>{const c=maplibregl.MercatorCoordinate.fromLngLat({lng:p[0],lat:p[1]},0);return [(c.x-merc.x)/scale,(c.y-merc.y)/scale]};
   const makeMaterial=c=>new THREE.MeshStandardMaterial({color:c,roughness:.95,metalness:0,side:THREE.DoubleSide});
   const buildingMat=new THREE.MeshBasicMaterial({color:0x56b6ff,transparent:true,opacity:.32,side:THREE.DoubleSide,depthWrite:false});
-  const litMat=new THREE.MeshStandardMaterial({color:0xd8e0e6,roughness:.85,metalness:0,side:THREE.DoubleSide,emissive:0x647482,emissiveIntensity:.16});
-  const litCustomMat=new THREE.MeshStandardMaterial({color:0xf2ad77,roughness:.85,metalness:0,side:THREE.DoubleSide,emissive:0x875337,emissiveIntensity:.16});
+  const litMat=new THREE.MeshStandardMaterial({color:0xd8e0e6,roughness:.85,metalness:0,side:THREE.DoubleSide});
+  const sunOffMat=new THREE.MeshBasicMaterial({color:0xd8e0e6,side:THREE.DoubleSide});
+  const litCustomMat=new THREE.MeshStandardMaterial({color:0xf2ad77,roughness:.85,metalness:0,side:THREE.DoubleSide});
+  const sunOffCustomMat=new THREE.MeshBasicMaterial({color:0xf2ad77,side:THREE.DoubleSide});
   const debugCustomMat=new THREE.MeshBasicMaterial({color:0xf97316,transparent:true,opacity:.5,depthWrite:false,side:THREE.DoubleSide});
   const shadowMeshes=[];
   let count=0,ground=null;
@@ -1634,9 +1636,11 @@ async function solarThreeMapOn(){
   const terrainZ=Number(map.queryTerrainElevation?.(center,{exaggerated:false}));
   const groundZ=Number.isFinite(terrainZ)?terrainZ:0;
   // Three Y-up -> MapLibre x-east/y-south/z-up; rotation restores the original validated map footprint alignment.
+  // Y-up GIS shapes (after rotateX(-PI/2)) -> Mercator Z-up. Rotation pair must cancel precisely.
+  const yUpToMercator=new THREE.Matrix4().makeRotationX(Math.PI/2);
   const transform=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z+groundZ*scale)
    .multiply(new THREE.Matrix4().makeScale(scale,scale,scale))
-   .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
+   .multiply(yUpToMercator);
   const camera=new THREE.Camera();let renderer=null;
   const layer={id:'solar-three-map-custom',type:'custom',renderingMode:'3d',
    onAdd(_map,gl){renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=true;renderer.outputColorSpace=THREE.SRGBColorSpace;},
@@ -1645,10 +1649,16 @@ async function solarThreeMapOn(){
     const mat=projection?.defaultProjectionData?.mainMatrix||projection?.modelViewProjectionMatrix||(Array.isArray(projection)?projection:null);
     if(!mat){solarThreeMapStatus('MapLibre 투영행렬을 가져올 수 없음');return}
     const a=solarAngles(),az=a.az*Math.PI/180,alt=Math.max(.02,a.alt)*Math.PI/180;
-    sun.position.set(205*Math.sin(az)*Math.cos(alt),205*Math.sin(alt),205*Math.cos(az)*Math.cos(alt));sun.up.set(0,1,0);sun.target.updateMatrixWorld(true);
+    // Y-up scene: east +X, north +Z. Correct azimuth 0° to north (-sign was inverted).
+    sun.position.set(205*Math.sin(az)*Math.cos(alt),205*Math.sin(alt),-205*Math.cos(az)*Math.cos(alt));sun.up.set(0,1,0);sun.target.updateMatrixWorld(true);
     sun.intensity=a.alt>0?2.7:0;sun.castShadow=a.alt>0&&$('solarThreeShadowDebug').checked;
     // Disable receiving shadows while the toggle is off: a positive baseline for sunlight-only shading.
-    for(const building of shadowMeshes)building.receiveShadow=sun.castShadow;
+    for(const building of shadowMeshes){
+      building.receiveShadow=sun.castShadow;
+      if($('solarThreeOnly').checked){
+        building.material=sun.castShadow?(building.userData.solarCustom?litCustomMat:litMat):(building.userData.solarCustom?sunOffCustomMat:sunOffMat);
+      }
+    }
     ground.visible=sun.castShadow&&$('solarThreeOnly').checked;
     sun.shadow.camera.updateProjectionMatrix();
     sun.shadow.needsUpdate=true;
@@ -1664,7 +1674,7 @@ async function solarThreeMapOn(){
       SOLAR_THREE_MAP.lastSunAltitude=a.alt;
     }
    }};
-  SOLAR_THREE_MAP={hidden,originalFilters:new Map(),renderer:null,count,center,ground,firstRender:false,shadowMeshes,debugMaterial:buildingMat,debugCustomMaterial:debugCustomMat,litMaterial:litMat,litCustomMaterial:litCustomMat};
+  SOLAR_THREE_MAP={hidden,originalFilters:new Map(),renderer:null,count,center,ground,firstRender:false,shadowMeshes,debugMaterial:buildingMat,debugCustomMaterial:debugCustomMat,litMaterial:litMat,litCustomMaterial:litCustomMat,sunOffMaterial:sunOffMat,sunOffCustomMaterial:sunOffCustomMat};
   $('solarThreeShadowDebug').checked=false;
   $('solarThreeOnly').checked=false;
   map.addLayer(layer);
