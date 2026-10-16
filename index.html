@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.16-13</title>
+<title>Jinju3D Local · v2026.10.16-14</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-13</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-14</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -346,7 +346,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.16-13',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.16-14',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1495,7 +1495,7 @@ async function solarThreeMapOn(){
   if(!candidates.length){solarThreeMapStatus('이 필지 주변에는 높이가 확인된 3D 건물이 없습니다.');return}
   const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:center[0],lat:center[1]},0),scale=merc.meterInMercatorCoordinateUnits();
   const scene=new THREE.Scene(),root=new THREE.Group();scene.add(root);
-  const amb=new THREE.HemisphereLight(0xeaf4ff,0x7c8da4,.72);amb.position.set(0,0,150);root.add(amb);root.add(new THREE.AmbientLight(0xffffff,.20));
+  const amb=new THREE.HemisphereLight(0xeaf4ff,0x7c8da4,1.8);amb.position.set(0,0,150);root.add(amb);root.add(new THREE.AmbientLight(0xffffff,1.05));
   const sun=new THREE.DirectionalLight(0xffffff,2.3);sun.castShadow=true;sun.shadow.mapSize.set(solarIsHighPerformance()?2048:1024,solarIsHighPerformance()?2048:1024);
   sun.shadow.camera.left=-245;sun.shadow.camera.right=245;sun.shadow.camera.top=245;sun.shadow.camera.bottom=-245;
   sun.shadow.camera.near=1;sun.shadow.camera.far=700;sun.shadow.normalBias=.012;sun.shadow.bias=-.000075;sun.shadow.radius=1.5;
@@ -1503,8 +1503,8 @@ async function solarThreeMapOn(){
   const geoLocal=p=>{const c=maplibregl.MercatorCoordinate.fromLngLat({lng:p[0],lat:p[1]},0);return [(c.x-merc.x)/scale,(c.y-merc.y)/scale]};
   const makeMaterial=c=>new THREE.MeshStandardMaterial({color:c,roughness:.95,metalness:0,side:THREE.DoubleSide});
   const buildingMat=new THREE.MeshBasicMaterial({color:0x56b6ff,transparent:true,opacity:.32,side:THREE.DoubleSide,depthWrite:false});
-  const litMat=new THREE.MeshStandardMaterial({color:0xe4edf8,roughness:1,metalness:0,side:THREE.DoubleSide,emissive:0x6e819c,emissiveIntensity:.11});
-  const litCustomMat=new THREE.MeshStandardMaterial({color:0xffc49a,roughness:1,metalness:0,side:THREE.DoubleSide,emissive:0x9c5536,emissiveIntensity:.10});
+  const litMat=new THREE.MeshStandardMaterial({color:0xe4edf8,roughness:1,metalness:0,side:THREE.DoubleSide,emissive:0x6e819c,emissiveIntensity:.45});
+  const litCustomMat=new THREE.MeshStandardMaterial({color:0xffc49a,roughness:1,metalness:0,side:THREE.DoubleSide,emissive:0x9c5536,emissiveIntensity:.35});
   const debugCustomMat=new THREE.MeshBasicMaterial({color:0xf97316,transparent:true,opacity:.5,depthWrite:false,side:THREE.DoubleSide});
   const shadowMeshes=[];
   let count=0,ground=null;
@@ -1543,7 +1543,7 @@ async function solarThreeMapOn(){
     if(!mat){solarThreeMapStatus('MapLibre 투영행렬을 가져올 수 없음');return}
     const a=solarAngles(),az=a.az*Math.PI/180,alt=Math.max(.02,a.alt)*Math.PI/180;
     sun.position.set(150*Math.sin(az)*Math.cos(alt),-150*Math.cos(az)*Math.cos(alt),150*Math.sin(alt));sun.up.set(0,0,1);sun.target.updateMatrixWorld();
-    sun.intensity=a.alt>0?4.0:0;sun.castShadow=a.alt>0&&$('solarThreeShadowDebug').checked;
+    sun.intensity=a.alt>0?3.1:0;sun.castShadow=a.alt>0&&$('solarThreeShadowDebug').checked;
     if(renderer.shadowMap.enabled){renderer.shadowMap.needsUpdate=true;}
     sun.updateMatrixWorld();sun.target.updateMatrixWorld();
     camera.projectionMatrix=new THREE.Matrix4().fromArray(mat).multiply(transform);
