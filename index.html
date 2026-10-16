@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.16-18</title>
+<title>Jinju3D Local · v2026.10.16-19</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-18</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-19</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -157,6 +157,7 @@
  <div id="solarReadout" class="mini" style="margin-top:10px">태양 위치 계산 대기</div>
  
 
+ <button type="button" id="solarGISLabOpen" style="width:100%;margin-top:8px;border:1px solid #22c55e;background:#164e35;font-size:12px">실제 GIS 건물 그림자 검증실 (독립 렌더러)</button>
  <button type="button" id="solarThreeMapToggle" style="width:100%;margin-top:9px;border:1px solid #2563eb;background:#132c45;font-size:12px">선택 필지 주변 3D 그림자 시험 (실제 지도)</button>
  <label style="display:block;margin-top:6px;font-size:11px;color:#dbeafe"><input type="checkbox" id="solarThreeOnly" style="width:auto;margin-right:5px">Three.js 단독 비교 (기존 3D 건물 전체 임시 숨김)</label>
  <label style="display:block;margin-top:6px;font-size:11px;color:#dbeafe"><input type="checkbox" id="solarThreeShadowDebug" checked style="width:auto;margin-right:5px">실제 건물 그림자 계산 (체크 해제하면 직사광만 표시)</label>
@@ -267,6 +268,17 @@
  <label>건물 높이 (m)<input id="editHeightConfirm" type="number" min="1" max="500" step="0.5" value="12" style="width:100%;margin:6px 0 12px"></label>
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
+<div id="solarGISLab" style="display:none;position:fixed;inset:0;z-index:245;background:#020617ee;padding:12px;align-items:center;justify-content:center">
+ <div style="width:min(850px,100%);max-height:calc(100dvh - 24px);overflow:auto;background:#101c30;border:1px solid #64748b;border-radius:14px;padding:12px">
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>실제 GIS 건물 그림자 검증실</b><button type="button" id="solarGISLabClose" style="width:auto">닫기 ✕</button></div>
+  <p style="font-size:11px;color:#cbd5e1;line-height:1.5">선택 필지 주변 실제 건물 형상·높이를 Three.js 기본 Y-up 공간으로 변환합니다. 기존 지도와 독립된 렌더러에서 건물 간 차폐를 확인합니다. 지도 내 정확한 정합과 DEM 지형은 별도 검증 대상입니다.</p>
+  <div id="solarGISLabCanvas" style="width:100%;height:min(53vh,430px);min-height:250px;background:#bdd0e2;touch-action:none;border-radius:9px;overflow:hidden"></div>
+  <div id="solarGISLabState" style="font-size:11px;color:#bfdbfe;margin:8px 0">대기 중</div>
+  <label style="display:block;font-size:12px">태양 고도/방위각: 현재 일사 설정 연동 <input id="solarGISLabTime" type="range" min="360" max="1140" step="10" value="900" style="width:100%"></label>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:#cbd5e1"><span id="solarGISLabClock">15:00</span><label><input type="checkbox" id="solarGISLabShadow" checked style="width:auto"> 건물 그림자 ON</label></div>
+  <div style="font-size:10px;color:#94a3b8;margin-top:7px">손가락으로 드래그: 시점 회전 · 선택 필지 주변 최대 70개 건물 · 그림자 맵 2048² · GPU 성능에 따라 제한</div>
+ </div>
+</div>
 <div id="solarThreeDemo" style="display:none;position:fixed;inset:0;z-index:240;background:rgba(2,6,23,.96);padding:12px;align-items:center;justify-content:center">
  <div style="width:min(780px,100%);max-height:calc(100dvh - 24px);overflow:auto;background:#101c30;border:1px solid #64748b;border-radius:13px;padding:12px;color:#f1f5f9">
   <div style="display:flex;gap:8px;align-items:center;justify-content:space-between"><b>3D 그림자 엔진 시험장 · 건물 3개</b><button type="button" id="solarThreeDemoClose" style="width:auto">닫기 ✕</button></div>
@@ -346,7 +358,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.16-18',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.16-19',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1411,6 +1423,84 @@ function solarUpdateWallShadows(nearby,a,enabled){
  const diag=$('solarFacadeDiagnostic');if(diag){diag.dataset.wall=String(result.length);diag.textContent='외벽 차폐 구간 '+result.length+'개 · 전체 차폐 건물 '+(diag.dataset.whole||'0')+'개 · 차폐 검사는 근사이며 3D 표면 표시 미검증';}
 }
 
+
+// GIS shadow lab: independent Y-up scene to isolate shared WebGL and map-coordinate effects.
+let SOLAR_GIS_LAB=null,SOLAR_GIS_LAB_LOADING=false;
+async function solarGISLabOpen(){
+ const overlay=$('solarGISLab');if(!EDIT_PARCEL){solarThreeMapStatus('먼저 필지를 선택하세요.');return}
+ overlay.style.display='flex';
+ if(SOLAR_GIS_LAB){SOLAR_GIS_LAB.resize();return}
+ if(SOLAR_GIS_LAB_LOADING)return;
+ SOLAR_GIS_LAB_LOADING=true;$('solarGISLabState').textContent='실제 GIS 건물로 독립 장면 생성 중…';
+ try{
+ const T=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');
+ const center=turf.centroid(EDIT_PARCEL).geometry.coordinates;
+ const raw=[...(currentBuildings?.features||[]),...(districtOsmCache.get(selectedId)?.kept||[])];
+ const byDistance=[];
+ for(const f of raw){
+  if(!['Polygon','MultiPolygon'].includes(f?.geometry?.type))continue;
+  if(f.properties?.suppress_render||f.properties?.hidden||f.properties?.facility)continue;
+  let c,d;try{c=turf.centroid(f).geometry.coordinates;d=turf.distance(center,c,{units:'meters'})}catch(e){continue}
+  if(d>160)continue;
+  const p=f.properties||{},b=Number(p.render_base)||0,t=Number(p.render_top),h=(Number.isFinite(t)&&t>b)?t-b:Number(p.render_height||p.height_m||p.height);
+  if(!(h>0&&h<400))continue;byDistance.push({f,d,h,base:b});
+ }
+ byDistance.sort((a,b)=>a.d-b.d);byDistance.length=Math.min(70,byDistance.length);
+ if(!byDistance.length)throw Error('선택 필지 주변에 높이가 있는 GIS 건물이 없습니다.');
+ const host=$('solarGISLabCanvas'),scene=new T.Scene();scene.background=new T.Color('#bdd0e2');
+ const camera=new T.PerspectiveCamera(48,1,.1,750);camera.position.set(115,105,135);
+ const renderer=new T.WebGLRenderer({antialias:true});renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
+ renderer.outputColorSpace=T.SRGBColorSpace;renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));host.appendChild(renderer.domElement);
+ scene.add(new T.HemisphereLight('#d6e8ff','#7f8c9f',1.35));
+ const sun=new T.DirectionalLight('#fff4e1',2.7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+ sun.shadow.camera.left=-140;sun.shadow.camera.right=140;sun.shadow.camera.top=140;sun.shadow.camera.bottom=-140;
+ sun.shadow.camera.near=1;sun.shadow.camera.far=480;sun.shadow.bias=-.0002;sun.shadow.normalBias=.035;scene.add(sun,sun.target);
+ const mat=new T.MeshStandardMaterial({color:'#d8e0e6',roughness:.85,metalness:0,side:T.DoubleSide});
+ const customMat=new T.MeshStandardMaterial({color:'#f2ad77',roughness:.85,metalness:0,side:T.DoubleSide});
+ const floor=new T.Mesh(new T.PlaneGeometry(340,340),new T.MeshStandardMaterial({color:'#d7dce0',roughness:1}));
+ floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+ const R=6378137,lat=center[1]*Math.PI/180;
+ const xy=p=>[(p[0]-center[0])*Math.PI/180*R*Math.cos(lat),-(p[1]-center[1])*Math.PI/180*R];
+ let pieces=0;
+ function create(f,h,base,m){
+  const polygons=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+  for(const poly of polygons){
+   if(!poly?.[0]||poly[0].length<4)continue;
+   try{
+    const sh=new T.Shape();poly[0].forEach((p,i)=>{const [x,z]=xy(p);if(i)sh.lineTo(x,z);else sh.moveTo(x,z)});
+    for(const ring of poly.slice(1)){const hole=new T.Path();ring.forEach((p,i)=>{const [x,z]=xy(p);if(i)hole.lineTo(x,z);else hole.moveTo(x,z)});sh.holes.push(hole)}
+    const geo=new T.ExtrudeGeometry(sh,{depth:h,bevelEnabled:false,steps:1});
+    // Original shape XY is east/south; rotate extrusion +Z into three.js +Y.
+    geo.rotateX(-Math.PI/2);
+    const mesh=new T.Mesh(geo,m);mesh.position.y=base;mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);pieces++;
+   }catch(e){}
+  }
+ }
+ for(const v of byDistance)create(v.f,v.h,v.base,mat);
+ if(EDIT_CUSTOM?.geometry&&Number(EDIT_CUSTOM.properties.model_height)>0)create(EDIT_CUSTOM,Number(EDIT_CUSTOM.properties.model_height),0,customMat);
+ let azCamera=.7,tilt=.48,drag=null;
+ const down=e=>{drag=[e.clientX,e.clientY,azCamera,tilt];host.setPointerCapture(e.pointerId)};
+ const move=e=>{if(!drag)return;azCamera=drag[2]+(e.clientX-drag[0])*.007;tilt=Math.max(.12,Math.min(1.2,drag[3]+(e.clientY-drag[1])*.005));draw()};
+ host.addEventListener('pointerdown',down);host.addEventListener('pointermove',move);host.addEventListener('pointerup',()=>drag=null);host.addEventListener('pointercancel',()=>drag=null);
+ function draw(){
+  const min=Number($('solarGISLabTime').value),date=solarActiveDate(),a=$('solarMode').value==='manual'?solarAngles():solarPosition(center[1],center[0],date[0],date[1],min);
+  const az=a.az*Math.PI/180,alt=Math.max(.02,a.alt)*Math.PI/180;
+  sun.position.set(205*Math.sin(az)*Math.cos(alt),205*Math.sin(alt),-205*Math.cos(az)*Math.cos(alt));
+  sun.intensity=a.alt>0?2.7:0;sun.castShadow=a.alt>0&&$('solarGISLabShadow').checked;
+  sun.updateMatrixWorld();sun.target.updateMatrixWorld();renderer.shadowMap.needsUpdate=true;
+  camera.position.set(Math.sin(azCamera)*Math.cos(tilt)*185,35+Math.sin(tilt)*135,Math.cos(azCamera)*Math.cos(tilt)*185);camera.lookAt(0,15,0);
+  $('solarGISLabClock').textContent=String(Math.floor(min/60)).padStart(2,'0')+':'+String(min%60).padStart(2,'0')+' · 태양 고도 '+a.alt.toFixed(1)+'°';
+  renderer.render(scene,camera);
+ }
+ function resize(){let w=Math.max(100,host.clientWidth),h=Math.max(100,host.clientHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();draw()}
+ $('solarGISLabTime').oninput=draw;$('solarGISLabShadow').onchange=draw;
+ $('solarGISLabTime').value=$('solarTime').value;SOLAR_GIS_LAB={resize,renderer,draw};window.addEventListener('resize',resize);resize();
+ $('solarGISLabState').textContent='실제 GIS 건물 '+byDistance.length+'개 / 형상 '+pieces+'개 · 독립 Three.js 그림자 시험 (DEM 지형 별도)';
+ }catch(e){console.warn(e);$('solarGISLabState').textContent='시험 장면 생성 오류: '+(e?.message||e)}
+ finally{SOLAR_GIS_LAB_LOADING=false}
+}
+document.getElementById('solarGISLabOpen')?.addEventListener('click',solarGISLabOpen);
+document.getElementById('solarGISLabClose')?.addEventListener('click',()=>{$('solarGISLab').style.display='none'});
 /* Three.js map layer POC. Keeps a reversible map-only mode. No legal solar result. */
 let SOLAR_THREE_MAP=null,SOLAR_THREE_MAP_BUSY=false;
 const SOLAR_THREE_MAP_LAYERS=['buildings-3d','smart-osm-3d','edit-custom-model-3d','buildings-foundation','smart-osm-foundation'];
