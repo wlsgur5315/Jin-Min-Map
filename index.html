@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.16-06</title>
+<title>Jinju3D Local · v2026.10.16-07</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-06</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-07</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -345,7 +345,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.16-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.16-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1453,7 +1453,26 @@ async function solarThreeMapOn(){
  try{
   const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');
   const center=turf.centroid(EDIT_PARCEL).geometry.coordinates;
-  const candidates=solarNearbyBuildings(center).features.slice(0,solarIsHighPerformance()?100:50);
+  // Use the same source properties as production fill-extrusion; the solar-preview cache truncates to 50/100.
+  const raw=[...(currentBuildings?.features||[]),...(districtOsmCache.get(selectedId)?.kept||[])];
+  const candidates=[],seen=new Set();
+  for(const f of raw){
+   if(!['Polygon','MultiPolygon'].includes(f?.geometry?.type))continue;
+   const p=f.properties||{};if(p.hidden||p.suppress_render||p.facility)continue;
+   if(EDIT_HIDDEN_PARCEL){try{if(turf.booleanIntersects(f,EDIT_HIDDEN_PARCEL))continue}catch(e){}}
+   let d,c;try{c=turf.centroid(f).geometry.coordinates;d=turf.distance(center,c,{units:'meters'})}catch(e){continue}
+   if(d>200)continue;
+   const top=Number(p.render_top),base=Number(p.render_base)||0;
+   const h=Number.isFinite(top)&&top>base?top-base:Number(p.render_height||p.height_m||p.height);
+   if(!Number.isFinite(h)||h<=0)continue;
+   const sig=c.map(x=>x.toFixed(6)).join(',')+'|'+Math.round(turf.area(f));
+   if(seen.has(sig))continue;seen.add(sig);
+   candidates.push({f,h,d,base,top:Number.isFinite(top)?top:base+h});
+  }
+  candidates.sort((a,b)=>a.d-b.d);
+  const candidateCount=candidates.length;
+  // Cap GPU workload, rather than silently limiting the trial to the nearest 50 buildings.
+  candidates.length=Math.min(candidates.length,solarIsHighPerformance()?280:180);
   if(EDIT_CUSTOM?.geometry&&Number(EDIT_CUSTOM.properties?.model_height)>0)candidates.unshift({f:EDIT_CUSTOM,h:Number(EDIT_CUSTOM.properties.model_height),custom:true});
   if(!candidates.length){solarThreeMapStatus('이 필지 주변에는 높이가 확인된 3D 건물이 없습니다.');return}
   const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:center[0],lat:center[1]},0),scale=merc.meterInMercatorCoordinateUnits();
@@ -1471,12 +1490,12 @@ async function solarThreeMapOn(){
    try{
     const f=item.f,polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
     const h=Number(item.h);if(!(h>0&&h<500))continue;
-    const prop=f.properties||{},base=item.custom?0:Number(prop.render_base)||0;
+    const prop=f.properties||{},base=item.custom?0:(Number.isFinite(item.base)?item.base:(Number(prop.render_base)||0));
     for(const poly of polys){
      const ring=poly[0];if(!ring||ring.length<4)continue;
      const shape=new THREE.Shape();ring.forEach((p,i)=>{const [x,y]=geoLocal(p);if(i===0)shape.moveTo(x,y);else shape.lineTo(x,y)});
      for(const hole of poly.slice(1)){const path=new THREE.Path();hole.forEach((p,i)=>{const [x,y]=geoLocal(p);if(i===0)path.moveTo(x,y);else path.lineTo(x,y)});shape.holes.push(path)}
-     const mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:h,bevelEnabled:false,steps:1}),item.custom?makeMaterial(0xf97316):buildingMat);
+     const mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:h,bevelEnabled:false,steps:1}),item.custom?new THREE.MeshBasicMaterial({color:0xf97316,transparent:true,opacity:.5,depthWrite:false,side:THREE.DoubleSide}):buildingMat);
      mesh.position.z=base;mesh.castShadow=false;mesh.receiveShadow=false;root.add(mesh);count++;
     }
    }catch(e){}
@@ -1509,7 +1528,7 @@ async function solarThreeMapOn(){
   map.addLayer(layer);
   SOLAR_THREE_MAP.renderer=renderer;
   $('solarThreeMapToggle').textContent='실제 지도 3D 시험 종료';
-  solarThreeMapStatus('좌표 진단 활성 · 기존 GIS 건물 유지 · 파란색 반투명 Three.js '+count+'개 형상 · 실제 그림자는 정합성 확인 후 재활성화');
+  solarThreeMapStatus('좌표·높이 진단 · 200m 반경 대상 '+candidateCount+'개 중 '+count+'개 변환 · 기존 지도 높이(render_top−render_base) 적용 · 파란색 비교용 · DEM 정합 미완료');
  }catch(e){console.warn('Three map overlay failed',e);if(SOLAR_THREE_MAP)solarThreeMapOff();solarThreeMapStatus('시험 장면 연결 실패: '+(e?.message||e))}
  finally{SOLAR_THREE_MAP_BUSY=false}
 }
