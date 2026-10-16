@@ -1508,6 +1508,7 @@ function refreshSolarPreview(){
  $('solarManualAltLabel').textContent=$('solarManualAlt').value+'°';
  $('solarManualAzLabel').textContent=$('solarManualAz').value+'°';
  const a=solarAngles(),daylight=a.alt>0;
+ if(SOLAR_THREE_MAP)map.triggerRepaint();
  let dayInfo='';
  if(mode==='season'){
   const date=solarActiveDate();
