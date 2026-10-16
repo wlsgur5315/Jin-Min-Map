@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.16-02</title>
+<title>Jinju3D Local · v2026.10.16-03</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-02</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-03</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -157,6 +157,8 @@
  <div id="solarReadout" class="mini" style="margin-top:10px">태양 위치 계산 대기</div>
  
 
+ <button type="button" id="solarThreeMapToggle" style="width:100%;margin-top:9px;border:1px solid #2563eb;background:#132c45;font-size:12px">선택 필지 주변 3D 그림자 시험 (실제 지도)</button>
+ <div id="solarThreeMapStatus" class="mini" style="margin-top:6px">필지를 선택하고 시험 모드를 켜면 주변 건물에 Three.js 그림자를 적용합니다. 시험 중 기존 3D 건물 표시를 임시로 숨깁니다.</div>
  <button type="button" id="solarThreeDemoOpen" style="width:100%;margin-top:9px;border:1px solid #64748b;background:#17243a;font-size:12px">3D 실제 그림자 시험장 (Three.js)</button>
  <details class="solar-advanced-group" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px">
  <summary style="cursor:pointer;font-size:12px;font-weight:600">고급 설정 및 분석 결과</summary>
@@ -342,7 +344,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.16-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.16-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1406,6 +1408,93 @@ function solarUpdateWallShadows(nearby,a,enabled){
  source.setData({type:'FeatureCollection',features:result});
  const diag=$('solarFacadeDiagnostic');if(diag){diag.dataset.wall=String(result.length);diag.textContent='외벽 차폐 구간 '+result.length+'개 · 전체 차폐 건물 '+(diag.dataset.whole||'0')+'개 · 차폐 검사는 근사이며 3D 표면 표시 미검증';}
 }
+
+/* Three.js map layer POC. Keeps a reversible map-only mode. No legal solar result. */
+let SOLAR_THREE_MAP=null,SOLAR_THREE_MAP_BUSY=false;
+const SOLAR_THREE_MAP_LAYERS=['buildings-3d','smart-osm-3d','edit-custom-model-3d','buildings-foundation','smart-osm-foundation'];
+function solarThreeMapStatus(msg){const el=$('solarThreeMapStatus');if(el)el.textContent=msg}
+function solarThreeMapRestore(){
+ if(SOLAR_THREE_MAP?.hidden)for(const [id,v] of SOLAR_THREE_MAP.hidden){
+  try{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',v)}catch(e){}
+ }
+}
+function solarThreeMapOff(){
+ if(!SOLAR_THREE_MAP)return;
+ const state=SOLAR_THREE_MAP;SOLAR_THREE_MAP=null;
+ try{if(map.getLayer('solar-three-map-custom'))map.removeLayer('solar-three-map-custom')}catch(e){}
+ solarThreeMapRestore.call(null);
+ for(const [id,v] of state.hidden)try{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',v)}catch(e){}
+ try{state.renderer?.dispose()}catch(e){}
+ $('solarThreeMapToggle').textContent='선택 필지 주변 3D 그림자 시험 (실제 지도)';
+ solarThreeMapStatus('시험 모드 종료 · 기존 3D 건물 표시 복원');
+}
+async function solarThreeMapOn(){
+ if(SOLAR_THREE_MAP_BUSY)return;
+ if(SOLAR_THREE_MAP){solarThreeMapOff();return}
+ if(!map?.isStyleLoaded?.()||!EDIT_PARCEL){solarThreeMapStatus('먼저 필지를 선택하고 지도가 로드될 때까지 기다려 주세요.');return}
+ SOLAR_THREE_MAP_BUSY=true;
+ solarThreeMapStatus('실제 GIS 건물 위치와 Three.js 장면 준비 중…');
+ try{
+  const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');
+  const center=turf.centroid(EDIT_PARCEL).geometry.coordinates;
+  const candidates=solarNearbyBuildings(center).features.slice(0,solarIsHighPerformance()?100:50);
+  if(EDIT_CUSTOM?.geometry&&Number(EDIT_CUSTOM.properties?.model_height)>0)candidates.unshift({f:EDIT_CUSTOM,h:Number(EDIT_CUSTOM.properties.model_height),custom:true});
+  if(!candidates.length){solarThreeMapStatus('이 필지 주변에는 높이가 확인된 3D 건물이 없습니다.');return}
+  const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:center[0],lat:center[1]},0),scale=merc.meterInMercatorCoordinateUnits();
+  const scene=new THREE.Scene(),root=new THREE.Group();scene.add(root);
+  const amb=new THREE.HemisphereLight(0xd9e9ff,0x8994a0,1.65);root.add(amb);
+  const sun=new THREE.DirectionalLight(0xffffff,2.3);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
+  sun.shadow.camera.left=-280;sun.shadow.camera.right=280;sun.shadow.camera.top=280;sun.shadow.camera.bottom=-280;
+  sun.shadow.camera.near=1;sun.shadow.camera.far=700;sun.shadow.normalBias=.12;
+  root.add(sun);root.add(sun.target);
+  const geoLocal=p=>{const c=maplibregl.MercatorCoordinate.fromLngLat({lng:p[0],lat:p[1]},0);return [(c.x-merc.x)/scale,(c.y-merc.y)/scale]};
+  const makeMaterial=c=>new THREE.MeshStandardMaterial({color:c,roughness:.95,metalness:0,side:THREE.DoubleSide});
+  const buildingMat=makeMaterial(MAP_DESIGN_MODE==='focus'?0xe0e5ec:MAP_DESIGN_MODE==='light'?0xc7d2df:0x8da9ca);
+  let count=0,ground=null;
+  for(const item of candidates){
+   try{
+    const f=item.f,polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+    const h=Number(item.h);if(!(h>0&&h<500))continue;
+    const prop=f.properties||{},base=item.custom?0:Number(prop.render_base)||0;
+    for(const poly of polys){
+     const ring=poly[0];if(!ring||ring.length<4)continue;
+     const shape=new THREE.Shape();ring.forEach((p,i)=>{const [x,y]=geoLocal(p);if(i===0)shape.moveTo(x,y);else shape.lineTo(x,y)});
+     for(const hole of poly.slice(1)){const path=new THREE.Path();hole.forEach((p,i)=>{const [x,y]=geoLocal(p);if(i===0)path.moveTo(x,y);else path.lineTo(x,y)});shape.holes.push(path)}
+     const mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:h,bevelEnabled:false,steps:1}),item.custom?makeMaterial(0xf97316):buildingMat);
+     mesh.position.z=base;mesh.castShadow=true;mesh.receiveShadow=true;root.add(mesh);count++;
+    }
+   }catch(e){}
+  }
+  const groundMesh=new THREE.Mesh(new THREE.PlaneGeometry(650,650),new THREE.MeshStandardMaterial({color:0xe2e8ef,roughness:1,transparent:true,opacity:.55,side:THREE.DoubleSide}));
+  groundMesh.position.z=-.05;groundMesh.receiveShadow=true;
+  // PlaneGeometry lies on local x/y, which is the horizontal geographic plane.
+  root.add(groundMesh);ground=groundMesh;
+  if(!count){solarThreeMapStatus('변환 가능한 건물 형상이 없습니다.');return}
+  const hidden=new Map();for(const id of SOLAR_THREE_MAP_LAYERS){if(map.getLayer(id)){hidden.set(id,map.getLayoutProperty(id,'visibility')||'visible');map.setLayoutProperty(id,'visibility','none')}}
+  const transform=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z).multiply(new THREE.Matrix4().makeScale(scale,scale,scale));
+  const camera=new THREE.Camera();let renderer=null;
+  const layer={id:'solar-three-map-custom',type:'custom',renderingMode:'3d',
+   onAdd(_map,gl){renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;},
+   render(gl,projection){
+    if(!SOLAR_THREE_MAP||!renderer)return;
+    const mat=Array.isArray(projection)?projection:projection?.defaultProjectionData?.mainMatrix||projection?.mainMatrix;
+    if(!mat)return;
+    const a=solarAngles(),az=a.az*Math.PI/180,alt=Math.max(.02,a.alt)*Math.PI/180;
+    sun.position.set(150*Math.sin(az)*Math.cos(alt),-150*Math.cos(az)*Math.cos(alt),150*Math.sin(alt));
+    sun.intensity=a.alt>0?2.3:.3;
+    camera.projectionMatrix=new THREE.Matrix4().fromArray(mat).multiply(transform);
+    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+    renderer.resetState();renderer.render(scene,camera);map.triggerRepaint();
+   }};
+  SOLAR_THREE_MAP={hidden,renderer:null,count,center,ground};
+  map.addLayer(layer);
+  SOLAR_THREE_MAP.renderer=renderer;
+  $('solarThreeMapToggle').textContent='실제 지도 3D 시험 종료';
+  solarThreeMapStatus('지도 3D 시험 활성 · 건물 '+count+'개 · 중심 200m 근방 · GIS 높이 기반·평탄 바닥(DEM 미연동) · 실측 정확도 미검증');
+ }catch(e){console.warn('Three map overlay failed',e);if(SOLAR_THREE_MAP)solarThreeMapOff();solarThreeMapStatus('시험 장면 연결 실패: '+(e?.message||e))}
+ finally{SOLAR_THREE_MAP_BUSY=false}
+}
+document.getElementById('solarThreeMapToggle')?.addEventListener('click',solarThreeMapOn);
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
  solarSyncMode();
