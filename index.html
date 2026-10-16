@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.16-20</title>
+<title>Jinju3D Local · v2026.10.16-21</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-20</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-21</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -160,7 +160,7 @@
  <button type="button" id="solarGISLabOpen" style="width:100%;margin-top:8px;border:1px solid #22c55e;background:#164e35;font-size:12px">실제 GIS 건물 그림자 검증실 (독립 렌더러)</button>
  <button type="button" id="solarThreeMapToggle" style="width:100%;margin-top:9px;border:1px solid #2563eb;background:#132c45;font-size:12px">선택 필지 주변 3D 그림자 시험 (실제 지도)</button>
  <label style="display:block;margin-top:6px;font-size:11px;color:#dbeafe"><input type="checkbox" id="solarThreeOnly" style="width:auto;margin-right:5px">Three.js 단독 비교 (기존 3D 건물 전체 임시 숨김)</label>
- <label style="display:block;margin-top:6px;font-size:11px;color:#dbeafe"><input type="checkbox" id="solarThreeShadowDebug" checked style="width:auto;margin-right:5px">실제 건물 그림자 계산 (체크 해제하면 직사광만 표시)</label>
+ <label style="display:block;margin-top:6px;font-size:11px;color:#dbeafe"><input type="checkbox" id="solarThreeShadowDebug" style="width:auto;margin-right:5px">실제 건물 그림자 계산 (체크 해제하면 직사광만 표시)</label>
  <div id="solarThreeMapStatus" class="mini" style="margin-top:6px">필지를 선택하고 시험 모드를 켜면 주변 건물에 Three.js 그림자를 적용합니다. 시험 중 기존 3D 건물 표시를 임시로 숨깁니다.</div>
  <button type="button" id="solarThreeDemoOpen" style="width:100%;margin-top:9px;border:1px solid #64748b;background:#17243a;font-size:12px">3D 실제 그림자 시험장 (Three.js)</button>
  <details class="solar-advanced-group" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px">
@@ -358,7 +358,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.16-20',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.16-21',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1472,7 +1472,7 @@ async function solarGISLabOpen(){
     const geo=new T.ExtrudeGeometry(sh,{depth:h,bevelEnabled:false,steps:1});
     // Original shape XY is east/south; rotate extrusion +Z into three.js +Y.
     geo.rotateX(-Math.PI/2);
-    const mesh=new T.Mesh(geo,m);mesh.position.y=base;mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);pieces++;
+    const mesh=new T.Mesh(geo,m);mesh.position.y=base;mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData.shadowReceiver=true;scene.add(mesh);pieces++;
    }catch(e){}
   }
  }
@@ -1543,7 +1543,7 @@ document.getElementById('solarThreeShadowDebug')?.addEventListener('change',()=>
  if(!SOLAR_THREE_MAP)return;
  map.triggerRepaint();
  const shadowOk=SOLAR_THREE_MAP.shadowTextureReady;
- solarThreeMapStatus('차폐 진단 · 그림자 맵 텍스처 '+(shadowOk?'생성됨':'미생성/미확인')+' · 차폐 '+($('solarThreeShadowDebug').checked?'ON':'OFF')+' · 생성 여부만으로 그림자가 표면에 표시된다는 뜻은 아닙니다.');
+ solarThreeMapStatus('태양광 기본 표시와 차폐 비교 · 그림자 맵 '+(shadowOk?'할당됨':'미할당/미확인')+' · 차폐 '+($('solarThreeShadowDebug').checked?'ON':'OFF')+' · OFF에서도 건물이 어두우면 조명/좌표 변환 문제입니다.');
 });
 function solarThreeMapOff(){
  if(!SOLAR_THREE_MAP)return;
@@ -1592,17 +1592,17 @@ async function solarThreeMapOn(){
   const scene=new THREE.Scene(),root=new THREE.Group();scene.add(root);
   // Sunlight is dominant while soft ambient prevents wholly black facades.
   // Use the verified independent GIS lab lighting, keeping Three.js Y as the vertical axis.
-  const amb=new THREE.HemisphereLight('#d6e8ff','#7f8c9f',1.35);root.add(amb);
+  const amb=new THREE.HemisphereLight('#d6e8ff','#a6afba',1.35);root.add(amb);
   const sun=new THREE.DirectionalLight('#fff4e1',2.7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
   // Concentrate shadow pixels near selected parcel, as in the standalone three-building lab.
   sun.shadow.camera.left=-140;sun.shadow.camera.right=140;sun.shadow.camera.top=140;sun.shadow.camera.bottom=-140;
-  sun.shadow.camera.near=1;sun.shadow.camera.far=480;sun.shadow.normalBias=.035;sun.shadow.bias=-.0002;sun.shadow.radius=1.5;
+  sun.shadow.camera.near=1;sun.shadow.camera.far=480;sun.shadow.normalBias=.06;sun.shadow.bias=-.0001;sun.shadow.radius=1.5;
   sun.target.position.set(0,0,0);sun.shadow.camera.up.set(0,1,0);root.add(sun);root.add(sun.target);
   const geoLocal=p=>{const c=maplibregl.MercatorCoordinate.fromLngLat({lng:p[0],lat:p[1]},0);return [(c.x-merc.x)/scale,(c.y-merc.y)/scale]};
   const makeMaterial=c=>new THREE.MeshStandardMaterial({color:c,roughness:.95,metalness:0,side:THREE.DoubleSide});
   const buildingMat=new THREE.MeshBasicMaterial({color:0x56b6ff,transparent:true,opacity:.32,side:THREE.DoubleSide,depthWrite:false});
-  const litMat=new THREE.MeshStandardMaterial({color:0xd8e0e6,roughness:.85,metalness:0,side:THREE.DoubleSide});
-  const litCustomMat=new THREE.MeshStandardMaterial({color:0xf2ad77,roughness:.85,metalness:0,side:THREE.DoubleSide});
+  const litMat=new THREE.MeshStandardMaterial({color:0xd8e0e6,roughness:.85,metalness:0,side:THREE.DoubleSide,emissive:0x647482,emissiveIntensity:.16});
+  const litCustomMat=new THREE.MeshStandardMaterial({color:0xf2ad77,roughness:.85,metalness:0,side:THREE.DoubleSide,emissive:0x875337,emissiveIntensity:.16});
   const debugCustomMat=new THREE.MeshBasicMaterial({color:0xf97316,transparent:true,opacity:.5,depthWrite:false,side:THREE.DoubleSide});
   const shadowMeshes=[];
   let count=0,ground=null;
@@ -1647,6 +1647,8 @@ async function solarThreeMapOn(){
     const a=solarAngles(),az=a.az*Math.PI/180,alt=Math.max(.02,a.alt)*Math.PI/180;
     sun.position.set(205*Math.sin(az)*Math.cos(alt),205*Math.sin(alt),205*Math.cos(az)*Math.cos(alt));sun.up.set(0,1,0);sun.target.updateMatrixWorld(true);
     sun.intensity=a.alt>0?2.7:0;sun.castShadow=a.alt>0&&$('solarThreeShadowDebug').checked;
+    // Disable receiving shadows while the toggle is off: a positive baseline for sunlight-only shading.
+    for(const building of shadowMeshes)building.receiveShadow=sun.castShadow;
     ground.visible=sun.castShadow&&$('solarThreeOnly').checked;
     sun.shadow.camera.updateProjectionMatrix();
     sun.shadow.needsUpdate=true;
@@ -1663,12 +1665,12 @@ async function solarThreeMapOn(){
     }
    }};
   SOLAR_THREE_MAP={hidden,originalFilters:new Map(),renderer:null,count,center,ground,firstRender:false,shadowMeshes,debugMaterial:buildingMat,debugCustomMaterial:debugCustomMat,litMaterial:litMat,litCustomMaterial:litCustomMat};
-  $('solarThreeShadowDebug').checked=true;
+  $('solarThreeShadowDebug').checked=false;
   $('solarThreeOnly').checked=false;
   map.addLayer(layer);
   SOLAR_THREE_MAP.renderer=renderer;
   $('solarThreeMapToggle').textContent='실제 지도 3D 시험 종료';
-  solarThreeMapStatus('검증실의 Y-up 좌표·재질·태양 조명을 실제 지도에 연결 · Three.js 단독 비교와 그림자 ON/OFF로 확인 · '+count+'/'+candidateCount+'개');
+  solarThreeMapStatus('차폐 분리 검증 · 기본값은 그림자 OFF(태양광 면별 밝기만 표시) · 체크 시 건물 간 그림자 추가 · '+count+'/'+candidateCount+'개');
  }catch(e){console.warn('Three map overlay failed',e);if(SOLAR_THREE_MAP)solarThreeMapOff();solarThreeMapStatus('시험 장면 연결 실패: '+(e?.message||e))}
  finally{SOLAR_THREE_MAP_BUSY=false}
 }
