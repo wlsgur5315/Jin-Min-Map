@@ -1484,7 +1484,7 @@ async function solarThreeMapOn(){
     sun.intensity=a.alt>0?2.3:.3;
     camera.projectionMatrix=new THREE.Matrix4().fromArray(mat).multiply(transform);
     camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
-    renderer.resetState();renderer.render(scene,camera);map.triggerRepaint();
+    renderer.resetState();renderer.render(scene,camera);
    }};
   SOLAR_THREE_MAP={hidden,renderer:null,count,center,ground};
   map.addLayer(layer);
@@ -1495,6 +1495,8 @@ async function solarThreeMapOn(){
  finally{SOLAR_THREE_MAP_BUSY=false}
 }
 document.getElementById('solarThreeMapToggle')?.addEventListener('click',solarThreeMapOn);
+// Drive the test renderer only when the existing sun slider / buttons update the analysis.
+for(const id of ['solarTime','solarManualAlt','solarManualAz','solarSeason','solarCustomDate'])document.getElementById(id)?.addEventListener('input',()=>{if(SOLAR_THREE_MAP)map.triggerRepaint()});
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
  solarSyncMode();
