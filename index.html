@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.15-01</title>
+<title>Jinju3D Local · v2026.10.16-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.15-01</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-01</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -157,6 +157,7 @@
  <div id="solarReadout" class="mini" style="margin-top:10px">태양 위치 계산 대기</div>
  
 
+ <button type="button" id="solarThreeDemoOpen" style="width:100%;margin-top:9px;border:1px solid #64748b;background:#17243a;font-size:12px">3D 실제 그림자 시험장 (Three.js)</button>
  <details class="solar-advanced-group" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px">
  <summary style="cursor:pointer;font-size:12px;font-weight:600">고급 설정 및 분석 결과</summary>
  <div id="solarFacadeDiagnostic" class="mini" style="margin-top:7px">외벽 그림자 진단: 그림자 보기를 켜면 계산 상태를 표시합니다.</div>
@@ -262,8 +263,86 @@
  <label>건물 높이 (m)<input id="editHeightConfirm" type="number" min="1" max="500" step="0.5" value="12" style="width:100%;margin:6px 0 12px"></label>
  <div class="row"><button id="editHeightBack">도면으로 돌아가기</button><button id="editHeightCreate" class="primary">3D 건물 생성</button></div>
  </div></div>
+<div id="solarThreeDemo" style="display:none;position:fixed;inset:0;z-index:240;background:rgba(2,6,23,.96);padding:12px;align-items:center;justify-content:center">
+ <div style="width:min(780px,100%);max-height:calc(100dvh - 24px);overflow:auto;background:#101c30;border:1px solid #64748b;border-radius:13px;padding:12px;color:#f1f5f9">
+  <div style="display:flex;gap:8px;align-items:center;justify-content:space-between"><b>3D 그림자 엔진 시험장 · 건물 3개</b><button type="button" id="solarThreeDemoClose" style="width:auto">닫기 ✕</button></div>
+  <p style="font-size:11px;line-height:1.6;margin:8px 0">독립 시험 모델: 앞 건물이 뒤 건물의 외벽·지붕·지면에 실제 그림자를 투사합니다. 아직 진주시 GIS 건물과 연결되지 않았습니다.</p>
+  <div id="solarThreeCanvas" style="height:min(52vh,420px);min-height:250px;width:100%;border-radius:9px;overflow:hidden;background:#b7c9dc;touch-action:none"></div>
+  <div id="solarThreeStatus" style="font-size:11px;color:#bbd5f3;margin:7px 0">시험 엔진 대기 중</div>
+  <label for="solarThreeTime" style="display:block;font-size:12px">시험 태양 시간 <b id="solarThreeTimeLabel">15:00</b></label>
+  <input id="solarThreeTime" type="range" min="7" max="18" value="15" step=".25" style="width:100%">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:7px"><button type="button" id="solarThreePlay" style="flex:1">▶ 시험 재생</button><button type="button" id="solarThreeReset" style="flex:1">15시로 초기화</button></div>
+  <div style="font-size:10px;color:#aebfd6;line-height:1.6;margin-top:8px">드래그: 시점 회전 · GPU Shadow Map 기반 · 간접광 유지 · 물리적 실측 정확도 및 지형/법규 분석 결과 아님</div>
+ </div>
+</div>
 <script>
-const APP_VERSION='v2026.10.15-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+// Isolated proof-of-concept: do not replace map render layers until shadow casting is visually verified.
+let SOLAR_THREE_STATE=null,SOLAR_THREE_LOADING=null;
+async function solarThreeDemoOpen(){
+ const overlay=$('solarThreeDemo');overlay.style.display='flex';
+ if(SOLAR_THREE_STATE){SOLAR_THREE_STATE.resize();return}
+ if(SOLAR_THREE_LOADING)return;
+ $('solarThreeStatus').textContent='Three.js 렌더러 불러오는 중…';
+ SOLAR_THREE_LOADING=(async()=>{
+  const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');
+  if(overlay.style.display==='none')return;
+  const host=$('solarThreeCanvas'),scene=new THREE.Scene();scene.background=new THREE.Color('#bdd0e2');
+  const camera=new THREE.PerspectiveCamera(47,1,.1,800);camera.position.set(78,70,95);camera.lookAt(0,10,0);
+  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.setSize(Math.max(100,host.clientWidth),Math.max(100,host.clientHeight));
+  host.appendChild(renderer.domElement);
+  scene.add(new THREE.HemisphereLight('#d6e8ff','#7f8c9f',1.35));
+  const sun=new THREE.DirectionalLight('#fff4e1',2.7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+  sun.shadow.camera.left=-85;sun.shadow.camera.right=85;sun.shadow.camera.top=85;sun.shadow.camera.bottom=-85;
+  sun.shadow.camera.near=1;sun.shadow.camera.far=380;sun.shadow.bias=-.00025;
+  sun.shadow.normalBias=.035;sun.target.position.set(0,0,0);scene.add(sun,sun.target);
+  const mat=(c)=>new THREE.MeshStandardMaterial({color:c,roughness:.85,metalness:0});
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(230,230),mat('#d7dce0'));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+  const make=(x,z,w,d,h,color)=>{
+   const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));mesh.position.set(x,h/2,z);
+   mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
+   const edges=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry),new THREE.LineBasicMaterial({color:0x5f6b78,transparent:true,opacity:.28}));
+   mesh.add(edges);return mesh;
+  };
+  make(-27,0,22,19,38,'#d8e0e6');
+  make(13,12,22,18,21,'#f0f3f5');
+  make(38,-21,17,22,29,'#c7d2dd');
+  const base=new THREE.GridHelper(220,22,0x8c9bab,0xaab7bf);base.position.y=.025;scene.add(base);
+  let angle=.6,down=.48,drag=null,playing=false,last=0,raf=0;
+  function draw(){
+   const hour=Number($('solarThreeTime').value);
+   $('solarThreeTimeLabel').textContent=String(Math.floor(hour)).padStart(2,'0')+':'+String(Math.round((hour%1)*60)).padStart(2,'0');
+   const t=(hour-7)/11,alt=Math.max(.035,Math.sin(t*Math.PI))*1.05;
+   const az=(55+180*t)*Math.PI/180;
+   sun.position.set(Math.sin(az)*Math.cos(alt)*145,Math.sin(alt)*145,Math.cos(az)*Math.cos(alt)*145);
+   sun.intensity=hour<7.3||hour>17.7?1.35:2.7;
+   camera.position.set(Math.sin(angle)*Math.cos(down)*135,25+Math.sin(down)*100,Math.cos(angle)*Math.cos(down)*135);camera.lookAt(0,11,0);
+   renderer.render(scene,camera);
+  }
+  function resize(){const w=Math.max(100,host.clientWidth),h=Math.max(100,host.clientHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();draw()}
+  const pointerDown=e=>{drag=[e.clientX,e.clientY,angle,down];host.setPointerCapture(e.pointerId)};
+  const pointerMove=e=>{if(!drag)return;angle=drag[2]+(e.clientX-drag[0])*.008;down=Math.max(.05,Math.min(1.15,drag[3]+(e.clientY-drag[1])*.005));draw()};
+  const pointerUp=()=>{drag=null};
+  host.addEventListener('pointerdown',pointerDown);host.addEventListener('pointermove',pointerMove);host.addEventListener('pointerup',pointerUp);
+  host.addEventListener('pointercancel',pointerUp);
+  $('solarThreeTime').addEventListener('input',draw);
+  function frame(now){if(!playing)return;if(last){let v=Number($('solarThreeTime').value)+(now-last)*.0012;if(v>18)v=7;$('solarThreeTime').value=v;draw()}last=now;raf=requestAnimationFrame(frame)}
+  function stop(){playing=false;cancelAnimationFrame(raf);last=0;$('solarThreePlay').textContent='▶ 시험 재생'}
+  $('solarThreePlay').onclick=()=>{if(playing){stop();return}playing=true;$('solarThreePlay').textContent='Ⅱ 일시정지';raf=requestAnimationFrame(frame)};
+  $('solarThreeReset').onclick=()=>{stop();$('solarThreeTime').value=15;draw()};
+  $('solarThreeDemoClose').onclick=()=>{stop();overlay.style.display='none'};
+  SOLAR_THREE_STATE={resize,stop};window.addEventListener('resize',resize);
+  resize();$('solarThreeStatus').textContent='3D 시험 그림자 활성 · 외벽·지붕·지면 수신 · 시간 조절 가능';
+ })().catch(err=>{$('solarThreeStatus').textContent='Three.js 시험 엔진 실행 실패: '+(err?.message||String(err));console.warn(err)}).finally(()=>{SOLAR_THREE_LOADING=null});
+ await SOLAR_THREE_LOADING;
+}
+$('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
+$('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();$('solarThreeDemo').style.display='none'});
+
+const APP_VERSION='v2026.10.16-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
