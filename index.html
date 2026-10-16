@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.16-03</title>
+<title>Jinju3D Local · v2026.10.16-04</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-03</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-04</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -344,7 +344,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.16-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.16-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1470,7 +1470,8 @@ async function solarThreeMapOn(){
   // PlaneGeometry lies on local x/y, which is the horizontal geographic plane.
   root.add(groundMesh);ground=groundMesh;
   if(!count){solarThreeMapStatus('변환 가능한 건물 형상이 없습니다.');return}
-  const hidden=new Map();for(const id of SOLAR_THREE_MAP_LAYERS){if(map.getLayer(id)){hidden.set(id,map.getLayoutProperty(id,'visibility')||'visible');map.setLayoutProperty(id,'visibility','none')}}
+  // Safety: do not conceal production GIS buildings until Three.js has been visually validated.
+  const hidden=new Map();
   const transform=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z).multiply(new THREE.Matrix4().makeScale(scale,scale,scale));
   const camera=new THREE.Camera();let renderer=null;
   const layer={id:'solar-three-map-custom',type:'custom',renderingMode:'3d',
@@ -1490,7 +1491,7 @@ async function solarThreeMapOn(){
   map.addLayer(layer);
   SOLAR_THREE_MAP.renderer=renderer;
   $('solarThreeMapToggle').textContent='실제 지도 3D 시험 종료';
-  solarThreeMapStatus('지도 3D 시험 활성 · 건물 '+count+'개 · 중심 200m 근방 · GIS 높이 기반·평탄 바닥(DEM 미연동) · 실측 정확도 미검증');
+  solarThreeMapStatus('지도 3D 시험 활성 · 기존 GIS 건물 표시 유지 · Three.js '+count+'개 중첩 시험 · DEM 미연동 · 실측 정확도 미검증');
  }catch(e){console.warn('Three map overlay failed',e);if(SOLAR_THREE_MAP)solarThreeMapOff();solarThreeMapStatus('시험 장면 연결 실패: '+(e?.message||e))}
  finally{SOLAR_THREE_MAP_BUSY=false}
 }
