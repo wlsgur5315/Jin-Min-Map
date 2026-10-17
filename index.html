@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.17-07</title>
+<title>Jinju3D Local · v2026.10.17-08</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.17-07</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.17-08</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -416,7 +416,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.17-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.17-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -871,6 +871,34 @@ function buildingSyncList(){
  for(const record of records){const o=document.createElement('option');o.value=record.key;o.textContent=buildingLabel(record)+' · '+buildingHeight(record).toFixed(1)+'m'+(buildingIsHidden(record.f)?' · 숨김':'');select.appendChild(o)}
  if(records.some(r=>r.key===BUILDING_SELECTED_KEY))select.value=BUILDING_SELECTED_KEY;
 }
+// Selection colors wrap existing style expressions instead of adding coincident geometry.
+function buildingBaseColor(value){
+ return Array.isArray(value)&&value[0]==='case'&&value[1]?.[0]==='=='&&value[1]?.[1]?.[0]==='get'&&value[1]?.[1]?.[1]==='jm_building_key'&&value[2]==='#22d3ee'?value[3]:value;
+}
+function buildingSelectionColor(value){
+ const base=buildingBaseColor(value);
+ return BUILDING_SELECTED_KEY?['case',['==',['get','jm_building_key'],BUILDING_SELECTED_KEY],'#22d3ee',base]:base;
+}
+function buildingNativeHighlight(){
+ if(!map?.getPaintProperty||!map?.setPaintProperty)return;
+ for(const id of ['buildings-2d','smart-osm-2d','buildings-3d','smart-osm-3d','buildings-foundation','smart-osm-foundation']){
+  if(!map.getLayer(id))continue;
+  const prop=id.endsWith('-2d')?'fill-color':'fill-extrusion-color',value=map.getPaintProperty(id,prop);
+  if(value!==undefined&&value!==null)map.setPaintProperty(id,prop,buildingSelectionColor(value));
+ }
+}
+function buildingShow3D(record,focus=false){
+ for(const id of ['buildings-3d','buildings-foundation','smart-osm-3d','smart-osm-foundation'])if(map.getLayer(id))map.setLayoutProperty(id,'visibility',smartOsm||!id.startsWith('smart-')?'visible':'none');
+ if(map.setPaintProperty)for(const id of ['buildings-2d','smart-osm-2d','smart-facility-2d'])if(map.getLayer(id))map.setPaintProperty(id,'fill-opacity',id==='smart-facility-2d'?.18:.08);
+ const camera={duration:650};
+ if(map.getPitch()<30)camera.pitch=62;
+ if(focus){camera.center=turf.centroid(record.f).geometry.coordinates;camera.zoom=Math.max(map.getZoom(),18)}
+ if(camera.pitch!==undefined||focus)map.easeTo(camera);
+}
+function buildingThreeMaterial(state,mesh){
+ const selected=buildingSelected();
+ return !mesh.userData.solarCustom&&selected&&mesh.userData.solarFeature===selected.f&&state.litSelectedMaterial?state.litSelectedMaterial:mesh.userData.solarCustom?state.litCustomMaterial:state.litMaterial;
+}
 function buildingHighlight(){
  if(!map?.isStyleLoaded?.())return;
  const selected=buildingSelected(),data={type:'FeatureCollection',features:selected?[selected.f]:[]};
@@ -879,6 +907,7 @@ function buildingHighlight(){
   map.addLayer({id:'selected-building-fill',type:'fill',source:'selected-building',paint:{'fill-color':'#22d3ee','fill-opacity':.16}});
   map.addLayer({id:'selected-building-line',type:'line',source:'selected-building',paint:{'line-color':'#67e8f9','line-width':3}});
  }else map.getSource('selected-building').setData(data);
+ buildingNativeHighlight();
  if(map.setPaintProperty){const hidden=selected&&buildingIsHidden(selected.f);map.setPaintProperty('selected-building-fill','fill-opacity',hidden?0:.16);map.setPaintProperty('selected-building-line','line-dasharray',hidden?[2,2]:null)}
 }
 function buildingSetMode(on){
@@ -907,7 +936,7 @@ function buildingClearLawContext(){
 }
 function buildingClearSelection(refresh=true,restoreLaw=false){
  BUILDING_SELECT_TOKEN++;BUILDING_SELECTED_KEY='';
- map?.getSource('selected-building')?.setData({type:'FeatureCollection',features:[]});
+ map?.getSource('selected-building')?.setData({type:'FeatureCollection',features:[]});buildingNativeHighlight();map?.triggerRepaint();
  buildingRenderCard();buildingSyncList();if(restoreLaw&&EDIT_PARCEL)selectParcelForLaw(EDIT_PARCEL,{buildingContext:true});if(refresh)solarThreeRequestRefresh();
 }
 function buildingReset(){
@@ -954,7 +983,7 @@ async function buildingSelect(key,{focus=false}={}){
  if(typeof setDrawer==='function')setDrawer(true);if(typeof activateDrawerTab==='function')activateDrawerTab('law');
  $('selectedBuildingPanel')?.scrollIntoView?.({behavior:'smooth',block:'nearest'});
  SOLAR_SURFACE_SELECTED_F=record.f;
- if(focus){const center=turf.centroid(record.f).geometry.coordinates;map.easeTo({center,zoom:Math.max(map.getZoom(),18),duration:650})}
+ buildingShow3D(record,focus);
  solarThreeRequestRefresh();
  if(SOLAR_THREE_MAP?.production){solarExposureTargets()}
  try{
@@ -1197,7 +1226,7 @@ function applyMapDesign(){
   const key=id+'|'+prop;
   if(!MAP_DESIGN_PAINT.has(key)){
    const original=map.getPaintProperty(id,prop);
-   MAP_DESIGN_PAINT.set(key,original===undefined?null:original);
+   MAP_DESIGN_PAINT.set(key,original===undefined?null:buildingBaseColor(original));
   }
   if(mode==='default'){
    const original=MAP_DESIGN_PAINT.get(key);
@@ -1240,6 +1269,7 @@ function applyMapDesign(){
    }
   }
  }
+ buildingNativeHighlight();
 }
 function setupMapDesign(){
  const input=$('mapDesignMode');if(!input)return;
@@ -1567,11 +1597,11 @@ function solarDirectSurfaceTint(shaded,enabled){
   if(!map.getLayer(id))continue;
   if(!SOLAR_DIRECT_ORIGINAL.has(id)){
    const original=MAP_DESIGN_PAINT.get(id+'|fill-extrusion-color');
-   SOLAR_DIRECT_ORIGINAL.set(id,original??map.getPaintProperty(id,'fill-extrusion-color'));
+   SOLAR_DIRECT_ORIGINAL.set(id,buildingBaseColor(original??map.getPaintProperty(id,'fill-extrusion-color')));
   }
   const base=MAP_DESIGN_MODE==='default'?SOLAR_DIRECT_ORIGINAL.get(id):MAP_DESIGN_MODE==='light'?'#c7d2df':'#e0e5ec';
   const desired=active?['case',['boolean',['get','solar_direct_blocked'],false],'#27384b',base]:base;
-  map.setPaintProperty(id,'fill-extrusion-color',desired);
+  map.setPaintProperty(id,'fill-extrusion-color',buildingSelectionColor(desired));
  }
  const diag=$('solarFacadeDiagnostic');
  if(diag)diag.textContent='건물 자체 음영 적용: '+keys.size+'개 · 외벽 부분 그림자는 별도 근사 · 실시간 렌더링 검증 전';
@@ -2357,7 +2387,7 @@ function solarThreeMapRestore(){
 }
 function solarThreeSetOnly(enabled){
  const state=SOLAR_THREE_MAP,box=$('solarThreeOnly');
- if(state?.shadowMeshes)for(const mesh of state.shadowMeshes)mesh.material=enabled?(mesh.userData.solarCustom?state.litCustomMaterial:state.litMaterial):(mesh.userData.solarCustom?state.debugCustomMaterial:state.debugMaterial);
+ if(state?.shadowMeshes)for(const mesh of state.shadowMeshes)mesh.material=enabled?buildingThreeMaterial(state,mesh):(mesh.userData.solarCustom?state.debugCustomMaterial:state.debugMaterial);
  if(!state){box.checked=false;solarThreeMapStatus('먼저 지도 3D 시험을 실행해 주세요.');return}
  // MapLibre fill-extrusion layers are shared citywide. Layout visibility reliably
  // hides them; feature geometry filters did not work consistently with these layers.
@@ -2454,6 +2484,7 @@ async function solarThreeMapOn({production=false}={}){
   const buildingMat=new THREE.MeshBasicMaterial({color:0x56b6ff,transparent:true,opacity:.32,side:THREE.DoubleSide,depthWrite:false});
   const litMat=new THREE.MeshStandardMaterial({color:0xd8e0e6,roughness:.85,metalness:0,side:THREE.DoubleSide});
   const litCustomMat=new THREE.MeshStandardMaterial({color:0xf2ad77,roughness:.85,metalness:0,side:THREE.DoubleSide});
+  const litSelectedMat=litMat.clone();litSelectedMat.color.set('#22d3ee');
   const debugCustomMat=new THREE.MeshBasicMaterial({color:0xf97316,transparent:true,opacity:.5,depthWrite:false,side:THREE.DoubleSide});
   const shadowMeshes=[],entries=[],replacedFeatures=new Set();
   let count=0,ground=null;
@@ -2565,7 +2596,7 @@ async function solarThreeMapOn({production=false}={}){
     for(const building of shadowMeshes){
       building.receiveShadow=sun.castShadow;
       if($('solarThreeOnly').checked){
-        building.material=building.userData.solarCustom?litCustomMat:litMat;
+        building.material=buildingThreeMaterial(SOLAR_THREE_MAP,building);
       }
     }
     ground.visible=sun.castShadow&&$('solarThreeOnly').checked;
@@ -2596,7 +2627,7 @@ async function solarThreeMapOn({production=false}={}){
       SOLAR_THREE_MAP.lastSunAltitude=a.alt;
     }
    }};
-  SOLAR_THREE_MAP={production,entries,replacedFeatures,terrainMissing,groundZ,THREE,scene,camera,updateTerrain,hidden,originalFilters:new Map(),renderer:null,count,center,ground,firstRender:false,shadowMeshes,debugMaterial:buildingMat,debugCustomMaterial:debugCustomMat,litMaterial:litMat,litCustomMaterial:litCustomMat};
+  SOLAR_THREE_MAP={production,entries,replacedFeatures,terrainMissing,groundZ,THREE,scene,camera,updateTerrain,hidden,originalFilters:new Map(),renderer:null,count,center,ground,firstRender:false,shadowMeshes,debugMaterial:buildingMat,debugCustomMaterial:debugCustomMat,litMaterial:litMat,litCustomMaterial:litCustomMat,litSelectedMaterial:litSelectedMat};
   $('solarThreeShadowDebug').checked=production;
   $('solarThreeOnly').checked=production;
   map.addLayer(layer);
@@ -2611,7 +2642,7 @@ async function solarThreeMapOn({production=false}={}){
    map.off('sourcedata',terrainChanged);clearTimeout(terrainTimer);
    const geometries=new Set(),materials=new Set();
    scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)materials.add(o.material)});
-   for(const g of geometries)g.dispose();for(const m of [buildingMat,debugCustomMat,litMat,litCustomMat,...materials])m.dispose();
+   for(const g of geometries)g.dispose();for(const m of [buildingMat,debugCustomMat,litMat,litCustomMat,litSelectedMat,...materials])m.dispose();
    sun.shadow.dispose();
   };
   if(production){solarThreeSyncSources();solarExposureTargets()}
