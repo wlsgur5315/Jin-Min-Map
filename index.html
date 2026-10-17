@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.17-06</title>
+<title>Jinju3D Local · v2026.10.17-07</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.17-06</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.17-07</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -92,7 +92,7 @@
       </details>
  <div id="lawPanel" class="lawbox">
         <div class="drawer-sec">
-          <h3>선택 필지</h3>
+          <h3 id="lawParcelHeading">선택 필지</h3>
           <div id="lawParcel" class="mini">아직 선택한 필지가 없습니다.</div>
         </div>
         <div class="drawer-sec" id="selectedBuildingPanel" style="border-color:#22d3ee55">
@@ -416,7 +416,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.17-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.17-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -810,7 +810,7 @@ function prepareStaticBuildings(fc){
   fc._heightStats={high,mid,low};fc._staticRegisterMatched=reg;return fc
 }
 // Building selection is independent of parcel ownership/PNU: never use PNU as a building ID.
-let PARCEL_MODE_TOKEN=0;
+let PARCEL_MODE_TOKEN=0,BUILDING_PARCEL_CONTEXT=false;
 let BUILDING_PICK_MODE=true,BUILDING_SELECTED_KEY='',BUILDING_SELECT_TOKEN=0,BUILDING_CACHE=null,BUILDING_VISIBILITY_REV=0;
 const BUILDING_HIDDEN_KEYS=new Set(),BUILDING_RESTORED_KEYS=new Set();
 function buildingHash(text,seed=2166136261){let h=seed;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
@@ -897,10 +897,12 @@ function buildingEnterMode(){
  buildingSyncList();message('건물 선택 · 지도에서 건물 한 동을 누르세요.');
 }
 function buildingClearLawContext(){
- SELECTED_PARCEL=null;AUTO_ZONE_SOURCE='';AUTO_LANDSCAPE_NAME='';AUTO_HEIGHT_DISTRICT='';AUTO_ZONE_SHARES=[];
+ BUILDING_PARCEL_CONTEXT=false;SELECTED_PARCEL=null;AUTO_ZONE_SOURCE='';AUTO_LANDSCAPE_NAME='';AUTO_HEIGHT_DISTRICT='';AUTO_ZONE_SHARES=[];
  ADV_PLAN_RESULT=null;ADV_FACILITY_RESULT=[];ROAD_ADDRESS='';ROAD_ADDRESS_SOURCE='';
- $('lawZone').value='';$('lawLandscape').value='';$('lawParcel').textContent='선택 건물의 연결 필지 확인 중 / 미확인';
- $('lawResult').textContent='건물에 연결되는 필지가 확인되면 법규를 검토합니다.';
+ const selected=!!buildingSelected();
+ if($('lawParcelHeading'))$('lawParcelHeading').textContent=selected?'건물의 연결 필지':'선택 필지';
+ $('lawZone').value='';$('lawLandscape').value='';$('lawParcel').textContent=selected?'선택 건물의 연결 필지 확인 중 / 미확인':'아직 선택한 필지가 없습니다.';
+ $('lawResult').textContent=selected?'건물에 연결되는 필지가 확인되면 법규를 검토합니다.':'필지를 선택하면 법규를 검토합니다.';
  map?.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[]});
 }
 function buildingClearSelection(refresh=true,restoreLaw=false){
@@ -1029,10 +1031,11 @@ function editSetParcel(ft,{keepBuilding=false}={}){
  const nextPnu=String(ft.properties?.pnu||'');
  const previousPnu=String(EDIT_PARCEL?.properties?.pnu||'');
  if(EDIT_PARCEL&&previousPnu!==nextPnu){EDIT_HIDDEN_PARCEL=null;EDIT_CUSTOM=null;EDIT_RECT=null;editRefreshOriginal();editUpdateModel();editModelSummary();}
+ BUILDING_PARCEL_CONTEXT=!!keepBuilding;
  EDIT_PARCEL={type:'Feature',geometry:ft.geometry,properties:{...(ft.properties||{})}};
  $('editParcelInfo').textContent=parcelFullAddress(EDIT_PARCEL.properties)+' · '+fmt(turf.area(EDIT_PARCEL))+'㎡';
  EDIT_PICKING=false;
- map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[EDIT_PARCEL]});
+ map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:keepBuilding?[]:[EDIT_PARCEL]});
  editNotice('필지 선택 완료. 건물을 숨기거나 새 건물을 그리세요.');buildingSyncList();solarThreeRequestRefresh();refreshSolarPreview();
 }
 const EDIT_BASEMAP_BUILDING_VIS=new Map();
@@ -3245,7 +3248,7 @@ async function syncLawModeToMapCenter(){
 }
 function setLawMode(on){
   PARCEL_MODE_TOKEN++;lawMode=!!on;buildingSetMode(!lawMode);
-  if(on){buildingClearSelection(false);if(SOLAR_SHADOW_ON)solarSetShadowEnabled(false)}
+  if(on){buildingClearSelection(false);buildingClearLawContext();if(SOLAR_SHADOW_ON)solarSetShadowEnabled(false)}
   $('lawMode').textContent=lawMode?'필지 선택 종료 · 건물 선택으로':'필지 선택';
   $('lawModeState').textContent=lawMode?'현재 필지 선택 · 지도를 이동해도 자동 전환':'현재 건물 선택 · 기본';
   $('lawMode').setAttribute('aria-pressed',String(lawMode));
@@ -3256,8 +3259,9 @@ function setLawMode(on){
       if(map.getLayer('parcel-fill'))map.setPaintProperty('parcel-fill','fill-opacity',.02);
       if(map.getLayer('parcel-line')){map.setPaintProperty('parcel-line','line-opacity',.7);map.setPaintProperty('parcel-line','line-width',.8)}
     }catch(e){}
-    SELECTED_PARCEL=null;AUTO_ZONE_SOURCE='';AUTO_LANDSCAPE_NAME='';AUTO_HEIGHT_DISTRICT='';AUTO_ZONE_SHARES=[];ROAD_ADDRESS='';ROAD_ADDRESS_SOURCE='';
+    BUILDING_PARCEL_CONTEXT=false;SELECTED_PARCEL=null;AUTO_ZONE_SOURCE='';AUTO_LANDSCAPE_NAME='';AUTO_HEIGHT_DISTRICT='';AUTO_ZONE_SHARES=[];ROAD_ADDRESS='';ROAD_ADDRESS_SOURCE='';
     map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[]});
+    if($('lawParcelHeading'))$('lawParcelHeading').textContent='선택 필지';
     $('lawParcel').textContent='아직 선택한 필지가 없습니다.';
     $('lawResult').innerHTML='<span class="lawdim">필지·법규 모드를 켜면 사용할 수 있습니다.</span>';
     message('건물 선택 · 기본 지도로 돌아왔습니다');
@@ -3596,16 +3600,24 @@ async function lookupRoadAddress(parcel){
 function refreshSelectedParcelAddressUI(){
   if(!SELECTED_PARCEL)return;
   const p=SELECTED_PARCEL.properties||{},ap=parcelAddressParts(p),a=turf.area(SELECTED_PARCEL),road=roadAddressDisplay();
-  $('lawParcel').innerHTML='<b class="selectedParcel">선택 필지</b><br>지번주소 '+ap.address+'<br>도로명주소 '+road+(ROAD_ADDRESS_SOURCE?' <span class="lawdim">('+ROAD_ADDRESS_SOURCE+')</span>':'')+'<br>지번 '+ap.lot+'<br>지목 '+ap.landClass+'<br>PNU '+ap.pnu+'<br>대지면적 '+fmt(a)+'㎡';
+  const title=BUILDING_PARCEL_CONTEXT?'건물의 연결 필지':'선택 필지';
+  if($('lawParcelHeading'))$('lawParcelHeading').textContent=title;
+  $('lawParcel').innerHTML='<b class="selectedParcel">'+title+'</b><br>지번주소 '+ap.address+'<br>도로명주소 '+road+(ROAD_ADDRESS_SOURCE?' <span class="lawdim">('+ROAD_ADDRESS_SOURCE+')</span>':'')+'<br>지번 '+ap.lot+'<br>지목 '+ap.landClass+'<br>PNU '+ap.pnu+'<br>대지면적 '+fmt(a)+'㎡';
+  if(BUILDING_PARCEL_CONTEXT){
+   const record=buildingSelected();
+   $('info').innerHTML=record?'<b>선택 건물 · '+escapeHtml(buildingLabel(record))+'</b><br>높이 '+buildingHeight(record).toFixed(1)+'m<br>연결 필지 '+escapeHtml(ap.address)+'<br>법규는 연결 필지 기준으로 검토합니다.':'건물 선택을 해제했습니다.';
+   return;
+  }
   $('info').innerHTML='<b>선택 대지</b><br>지번주소 '+ap.address+'<br>도로명주소 '+road+(ROAD_ADDRESS_SOURCE?' <span class="lawdim">('+ROAD_ADDRESS_SOURCE+')</span>':'')+'<br>지목 '+ap.landClass+'<br>PNU '+ap.pnu+'<br>면적 '+fmt(a)+'㎡<br><span class="selectedParcel">법규 자동 사전검토 대상</span>';
 }
 
 function selectParcelForLaw(f,{buildingContext=false}={}){
   if(!buildingContext)buildingClearSelection(false);
+  BUILDING_PARCEL_CONTEXT=!!buildingContext;
   SELECTED_PARCEL={type:'Feature',geometry:f.geometry,properties:{...(f.properties||{})}};
   ADV_PLAN_RESULT=null;ADV_FACILITY_RESULT=[];AUTO_ZONE_SHARES=[];
   AUTO_ZONE_SOURCE='';AUTO_LANDSCAPE_NAME='';AUTO_HEIGHT_DISTRICT='';ROAD_ADDRESS='';ROAD_ADDRESS_SOURCE='';$('lawZone').value='';$('lawLandscape').value='';
-  try{map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[SELECTED_PARCEL]})}catch(e){}
+  try{map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:buildingContext?[]:[SELECTED_PARCEL]})}catch(e){}
   if(!buildingContext||!EDIT_PARCEL)editSetParcel(SELECTED_PARCEL,{keepBuilding:buildingContext});
   refreshSelectedParcelAddressUI();
   renderLawReview();buildingRenderLawSummary();
