@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.16-24</title>
+<title>Jinju3D Local · v2026.10.17-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.16-24</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.17-01</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -73,6 +73,7 @@
     <div id="addressSearchState" class="address-search-state"></div>
   </div>
 </div>
+<div id="solarSurfaceLegend" style="display:none;position:absolute;z-index:27;left:58px;bottom:64px;width:min(280px,70vw);padding:10px;border:1px solid #64748b;border-radius:10px;background:rgba(7,15,29,.94);color:#f8fafc;font-size:11px;pointer-events:none" aria-live="polite"></div>
 <button id="drawerToggle" class="drawer-toggle" aria-label="기능 메뉴 열기">‹</button>
 <div id="drawer" class="drawer">
   <div class="drawer-head"><div class="drawer-title">Jin-Min-Map 도구</div><div class="drawer-sub">지도는 그대로 두고 필요한 기능만 열어 사용합니다.</div></div>
@@ -164,6 +165,17 @@
  <button type="button" id="solarExposureRun" style="margin-top:7px">대표일 일조 분석 실행</button>
  <div id="solarExposureResult" class="mini" style="margin-top:8px" role="status">계절·날짜 선택 후 실행하세요. 06:00~19:00, 현재 시간 간격의 구간 중간값으로 계산합니다.</div>
  <div class="hint" style="margin-top:7px">표본점 평균 직사광 시간입니다. 일사 에너지·법정 일조시간 판정이 아니며, 분석 범위 밖 건물은 제외됩니다.</div>
+ </details>
+ <details id="solarSurfacePanel" style="margin-top:9px;border:1px solid #38bdf877;border-radius:8px;padding:9px"><summary style="cursor:pointer;font-size:12px;font-weight:600">3D 표면 일조 색상 · 배치 전·후 비교</summary>
+ <div class="hint" style="margin-top:8px">선택한 한 동의 지붕·외벽을 작은 구역으로 나누어 하루 직사광 시간을 색으로 표시합니다.</div>
+ <select id="solarSurfaceTarget" aria-label="표면 일조 분석 건물" style="margin-top:7px"><option value="">그림자 보기를 켜세요.</option></select>
+ <label style="display:block;margin-top:7px;font-size:10px"><input type="checkbox" id="solarSurfaceTerrain" style="width:auto;margin-right:5px">산·언덕 차폐도 검사 (DEM 미확보 구역은 회색)</label>
+ <button type="button" id="solarSurfaceRun" class="primary" style="margin-top:7px">표면 일조 색상 계산</button>
+ <div class="settings-label">색상 보기</div>
+ <select id="solarSurfaceView" aria-label="표면 일조 표시 방식"><option value="after">현재 일조시간 / 배치 후</option><option value="before" disabled>가상건물 배치 전</option><option value="loss" disabled>가상건물로 인한 일조 감소</option></select>
+ <div class="row"><button type="button" id="solarSurfaceFocus">대상 건물 보기</button><button type="button" id="solarSurfaceToggle" disabled aria-pressed="false">표면 색상 숨기기</button></div>
+ <div id="solarSurfaceResult" class="mini" style="margin-top:8px" role="status" aria-live="polite">그림자 보기를 켜고 건물·날짜를 선택하세요.</div>
+ <div class="hint" style="margin-top:7px">전·후 비교: 사용자 건물을 만든 뒤 주변 기존 건물을 선택합니다. 같은 표면에서 사용자 건물 유무만 비교합니다. 배치 전 보기에서는 사용자 건물도 숨깁니다. 철거 전 상태를 복원하는 기능은 아닙니다.</div>
  </details>
  <details style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px"><summary style="cursor:pointer;font-size:12px;font-weight:600">검증실 및 위치 비교</summary>
  <button type="button" id="solarGISLabOpen" style="width:100%;margin-top:8px;border:1px solid #22c55e;background:#164e35;font-size:12px">실제 GIS 건물 그림자 검증실 (독립 렌더러)</button>
@@ -369,7 +381,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.16-24',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.17-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1609,7 +1621,7 @@ function solarIntegratedPreview(a){
  map.triggerRepaint();
 }
 function solarExposureInvalidate(){
- SOLAR_EXPOSURE_TOKEN++;
+ SOLAR_EXPOSURE_TOKEN++;solarSurfaceInvalidate();
  const el=$('solarExposureResult');if(el)el.textContent='조건이 바뀌면 다시 실행하세요. 06:00~19:00 표본점 평균 직사광 시간을 계산합니다.';
  const b=$('solarExposureRun');if(b){b.disabled=false;b.textContent='대표일 일조 분석 실행'}
 }
@@ -1628,6 +1640,7 @@ function solarExposureTargets(){
  }
  if(!entries.length){const option=document.createElement('option');option.value='';option.textContent=state?'선택 필지에 분석 가능한 건물이 없습니다.':'그림자 보기를 켜세요.';select.appendChild(option)}
  else if([...select.options].some(o=>o.value===previous))select.value=previous;
+ solarSurfaceTargets();
 }
 // A point is lit only if it faces the sun and no actual building surface intercepts its ray.
 function solarPointSunState(T,raycaster,point,normal,direction,meshes){
@@ -1719,6 +1732,223 @@ for(const id of ['solarSeason','solarCustomDate','solarMode','solarTerrainOcclus
 for(const el of document.querySelectorAll('[data-solar-season],input[name="solarCustomType"]'))el.addEventListener('click',solarExposureInvalidate);
 document.getElementById('solarCustomFold')?.addEventListener('toggle',solarExposureInvalidate);
 
+// Daily surface sunlight: ray-test actual geometry; keep the verified lighting unchanged.
+let SOLAR_SURFACE_TOKEN=0,SOLAR_SURFACE_JOB=null,SOLAR_SURFACE_SELECTED_F=null;
+function solarSurfaceKey(){
+ const state=SOLAR_THREE_MAP;
+ return JSON.stringify([SOLAR_THREE_MAP_TOKEN,state?.terrainRevision||0,solarActiveDate(),SOLAR_STEP,$('solarMode')?.value,$('solarSurfaceTarget')?.value,$('solarSurfaceTerrain')?.checked]);
+}
+function solarSurfaceScenario(state,before){
+ if(before){
+  if(!state.surfaceCustomVisibility)state.surfaceCustomVisibility=new Map(state.shadowMeshes.filter(m=>m.userData.solarCustom).map(m=>[m,m.visible]));
+  for(const mesh of state.surfaceCustomVisibility.keys())mesh.visible=false;
+ }else if(state.surfaceCustomVisibility){
+  for(const [mesh,visible] of state.surfaceCustomVisibility)mesh.visible=visible;
+  state.surfaceCustomVisibility=null;
+ }
+}
+function solarSurfaceRemove(state=SOLAR_THREE_MAP){
+ if(!state)return;
+ solarSurfaceScenario(state,false);
+ if(state.surfaceMesh){state.scene.remove(state.surfaceMesh);state.surfaceMesh.geometry.dispose();state.surfaceMesh.material.dispose();state.surfaceMesh=null}
+ state.surfaceResult=null;
+ const legend=$('solarSurfaceLegend');if(legend)legend.style.display='none';
+ const toggle=$('solarSurfaceToggle');if(toggle){toggle.disabled=true;toggle.textContent='표면 색상 숨기기';toggle.setAttribute('aria-pressed','false')}
+ map?.triggerRepaint();
+}
+function solarSurfaceInvalidate(force=false){
+ const state=SOLAR_THREE_MAP,key=solarSurfaceKey();
+ if(!force&&!SOLAR_SURFACE_JOB&&!state?.surfaceResult)return;
+ if(!force&&(SOLAR_SURFACE_JOB?.key===key||state?.surfaceResult?.key===key))return;
+ SOLAR_SURFACE_TOKEN++;SOLAR_SURFACE_JOB=null;solarSurfaceRemove(state);
+ const button=$('solarSurfaceRun');if(button){button.disabled=false;button.textContent='표면 일조 색상 계산'}
+ const result=$('solarSurfaceResult');if(result)result.textContent='건물·날짜·시간 간격을 선택하고 계산하세요. 조건을 변경하면 색상이 해제됩니다.';
+}
+function solarSurfaceTargets(){
+ solarSurfaceInvalidate(true);
+ const select=$('solarSurfaceTarget');if(!select)return;
+ select.replaceChildren();
+ const state=SOLAR_THREE_MAP;
+ if(!state?.production){const o=document.createElement('option');o.value='';o.textContent='그림자 보기를 켜세요.';select.appendChild(o);return}
+ const order=state.entries.map((entry,i)=>{
+  let selected=false;try{selected=turf.booleanIntersects(entry.f,EDIT_PARCEL)}catch(e){}
+  let d=0;try{d=turf.distance(state.center,turf.centroid(entry.f),{units:'meters'})}catch(e){}
+  return {entry,i,selected,d};
+ }).sort((a,b)=>Number(b.entry.custom)-Number(a.entry.custom)||Number(b.selected)-Number(a.selected)||a.d-b.d);
+ for(const {entry,i,selected,d} of order){
+  const o=document.createElement('option');o.value=String(i);
+  o.textContent=entry.custom?'사용자 건물':(selected?'[선택 필지] ':'[주변 '+Math.round(d)+'m] ')+(entry.f.properties?.building_name||entry.f.properties?.register_dong||'기존 건물')+' · '+entry.h.toFixed(1)+'m';
+  select.appendChild(o);
+ }
+ const previous=order.find(x=>x.entry.f===SOLAR_SURFACE_SELECTED_F);
+ if(previous)select.value=String(previous.i);
+ SOLAR_SURFACE_SELECTED_F=state.entries[Number(select.value)]?.f||null;
+ solarSurfaceModeOptions();
+}
+function solarSurfaceModeOptions(){
+ const state=SOLAR_THREE_MAP,value=$('solarSurfaceTarget')?.value,entry=value===''?null:state?.entries[Number(value)];
+ const compare=!!(entry&&!entry.custom&&state.shadowMeshes.some(m=>m.userData.solarCustom));
+ for(const o of $('solarSurfaceView')?.options||[])if(o.value!=='after')o.disabled=!compare;
+ if(!compare&&$('solarSurfaceView'))$('solarSurfaceView').value='after';
+}
+function solarSurfaceCells(state,entry){
+ const T=state.THREE,faces=[];
+ state.scene.updateMatrixWorld(true);
+ for(const mesh of entry.meshes){
+  const geometry=mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry;
+  const positions=geometry.attributes.position,normals=geometry.attributes.normal;
+  for(let i=0;i<positions.count;i+=3){
+   const n=new T.Vector3().fromBufferAttribute(normals,i).transformDirection(mesh.matrixWorld);
+   if(n.y<-.3)continue; // underside is not an exterior roof/facade receiver
+   const a=new T.Vector3().fromBufferAttribute(positions,i).applyMatrix4(mesh.matrixWorld),b=new T.Vector3().fromBufferAttribute(positions,i+1).applyMatrix4(mesh.matrixWorld),c=new T.Vector3().fromBufferAttribute(positions,i+2).applyMatrix4(mesh.matrixWorld);
+   const area=new T.Vector3().subVectors(b,a).cross(new T.Vector3().subVectors(c,a)).length()/2;
+   if(area<1e-7)continue;
+   const group=n.y>.5?'roof':Math.abs(n.x)>Math.abs(n.z)?(n.x>0?'east':'west'):(n.z>0?'south':'north');
+   faces.push({a,b,c,n,group,maxEdge:Math.max(a.distanceTo(b),b.distanceTo(c),c.distanceTo(a))});
+  }
+  if(geometry!==mesh.geometry)geometry.dispose();
+ }
+ const limit=solarIsHighPerformance()?1400:600;
+ if(faces.length>limit)throw Error('이 건물의 형상이 너무 복잡합니다. 고성능 모드 또는 다른 건물을 선택하세요.');
+ let spacing=solarIsHighPerformance()?2.5:4;
+ const divisions=f=>Math.max(1,Math.ceil(f.maxEdge/spacing));
+ while(faces.reduce((sum,f)=>sum+divisions(f)**2,0)>limit)spacing*=1.25;
+ const cells=[];
+ for(const face of faces){
+  const {a,b,c,n,group}=face,steps=divisions(face),ab=b.clone().sub(a),ac=c.clone().sub(a);
+  const at=(i,j)=>a.clone().addScaledVector(ab,i/steps).addScaledVector(ac,j/steps);
+  const add=(v0,v1,v2)=>{
+   const area=v1.clone().sub(v0).cross(v2.clone().sub(v0)).length()/2;
+   cells.push({vertices:[v0,v1,v2],p:v0.clone().add(v1).add(v2).multiplyScalar(1/3),n:n.clone(),group,area,before:0,after:0,beforeUnknown:0,afterUnknown:0});
+  };
+  for(let i=0;i<steps;i++)for(let j=0;j<steps-i;j++){
+   const v0=at(i,j),v1=at(i+1,j),v2=at(i,j+1);add(v0,v1,v2);
+   if(j<steps-i-1)add(v1,at(i+1,j+1),v2);
+  }
+ }
+ if(!cells.length)throw Error('분석 가능한 지붕·외벽 형상이 없습니다.');
+ return {cells,spacing};
+}
+function solarSurfaceMinutes(cell,minutes,before,after){
+ if(before==='lit')cell.before+=minutes;else if(before==='unknown')cell.beforeUnknown+=minutes;
+ if(after==='lit')cell.after+=minutes;else if(after==='unknown')cell.afterUnknown+=minutes;
+}
+function solarSurfaceColor(T,cell,view){
+ const difference=view==='loss',unknown=difference?cell.beforeUnknown+cell.afterUnknown:view==='before'?cell.beforeUnknown:cell.afterUnknown;
+ if(unknown>0)return new T.Color('#94a3b8');
+ const hours=(difference?Math.max(0,cell.before-cell.after):view==='before'?cell.before:cell.after)/60;
+ if(difference)return new T.Color(hours<1e-6?'#e2e8f0':hours<1?'#fde68a':hours<2?'#fbbf24':hours<4?'#f97316':'#dc2626');
+ return new T.Color(['#004dff','#00c8e8','#37e65b','#ffe42a','#ff7b0a'][Math.min(4,Math.floor(hours/2))]);
+}
+function solarSurfaceShow(){
+ const state=SOLAR_THREE_MAP,data=state?.surfaceResult;if(!data)return;
+ const T=state.THREE,view=$('solarSurfaceView').value;
+ const mode=data.compare?view:'after';
+ solarSurfaceScenario(state,mode==='before');
+ if(!state.surfaceMesh){
+  const positions=[],colors=[];
+  for(const cell of data.cells){const color=solarSurfaceColor(T,cell,mode);for(const v of cell.vertices){const p=v.clone().addScaledVector(cell.n,.025);positions.push(p.x,p.y,p.z);colors.push(color.r,color.g,color.b)}}
+  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));
+  const material=new T.MeshBasicMaterial({vertexColors:true,side:T.DoubleSide,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
+  const mesh=new T.Mesh(geometry,material);mesh.castShadow=false;mesh.receiveShadow=false;
+  // Use the same post-shadow framebuffer restoration as the production buildings.
+  mesh.onBeforeRender=data.entry.meshes[0].onBeforeRender;
+  state.scene.add(mesh);state.surfaceMesh=mesh;
+ }else{
+  const colorAttribute=state.surfaceMesh.geometry.attributes.color;
+  data.cells.forEach((cell,i)=>{const c=solarSurfaceColor(T,cell,mode);for(let j=0;j<3;j++)colorAttribute.setXYZ(i*3+j,c.r,c.g,c.b)});colorAttribute.needsUpdate=true;
+ }
+ state.surfaceMesh.visible=true;
+ $('solarSurfaceToggle').disabled=false;
+ $('solarSurfaceToggle').textContent='표면 색상 숨기기';$('solarSurfaceToggle').setAttribute('aria-pressed','true');
+ const title=mode==='loss'?'가상건물로 인한 일조 감소':mode==='before'?'가상건물 배치 전 일조시간':data.compare?'가상건물 배치 후 일조시간':'현재 건물 표면 일조시간';
+ const bins=mode==='loss'?[['#e2e8f0','감소 없음'],['#fde68a','0~1h'],['#fbbf24','1~2h'],['#f97316','2~4h'],['#dc2626','4h 이상']]:[['#004dff','0~2h'],['#00c8e8','2~4h'],['#37e65b','4~6h'],['#ffe42a','6~8h'],['#ff7b0a','8h 이상']];
+ const legend=$('solarSurfaceLegend');legend.style.display='block';
+ legend.innerHTML='<b>'+title+'</b><div style="display:flex;gap:5px;margin-top:6px">'+bins.map(([c,t])=>'<span style="flex:1;text-align:center;font-size:9px"><i style="display:block;height:9px;background:'+c+';margin-bottom:3px"></i>'+t+'</span>').join('')+'</div><div style="font-size:9px;margin-top:5px">'+data.date[0]+'/'+data.date[1]+' · 06~19시 · '+data.step+'분 간격'+(data.terrain?' · 회색: DEM 미확정':' · 건물 차폐 기준')+'</div>';
+ map.triggerRepaint();
+}
+function solarSurfaceSummary(data){
+ const labels={roof:'지붕',north:'북측 외벽',east:'동측 외벽',south:'남측 외벽',west:'서측 외벽'};
+ const hours=n=>(n/60).toFixed(1)+'h';
+ const rows=Object.entries(labels).map(([group,label])=>{
+  const cells=data.cells.filter(c=>c.group===group),area=cells.reduce((s,c)=>s+c.area,0);
+  const unknownBefore=cells.some(c=>c.beforeUnknown>0),unknownAfter=cells.some(c=>c.afterUnknown>0);
+  const mean=k=>area?cells.reduce((s,c)=>s+c[k]*c.area,0)/area:0;
+  const before=mean('before'),after=mean('after');
+  const fmt=(value,unknown)=>!area?'—':unknown?'미확정':hours(value);
+  return '<tr><th style="text-align:left;padding:4px 2px">'+label+'</th><td>'+(!data.compare?'—':fmt(before,unknownBefore))+'</td><td>'+fmt(after,unknownAfter)+'</td><td>'+(!data.compare?'—':fmt(Math.max(0,before-after),unknownBefore||unknownAfter))+'</td></tr>';
+ }).join('');
+ $('solarSurfaceResult').innerHTML='<b>'+data.date[0]+'월 '+data.date[1]+'일 · '+data.step+'분 간격</b><div style="margin-top:5px">'+data.cells.length+'개 삼각 구역 · 구역 중심점 광선검사</div><table style="width:100%;margin:7px 0;border-collapse:collapse;font-size:10px"><thead><tr><th>표면</th><th>배치 전</th><th>'+(data.compare?'배치 후':'현재')+'</th><th>감소</th></tr></thead><tbody>'+rows+'</tbody></table><div>구역 면적으로 가중한 표면 평균 · 06:00~19:00 구간 중간시각 근사.</div><div style="margin-top:5px">'+(data.compare?'동일 건물·구역·주변 조건에서 사용자 건물 유무만 비교합니다. 원래 건물 숨김 상태는 두 경우에 동일하게 유지됩니다.':'주변 기존 건물과 사용자 건물을 함께 검사합니다. 사용자 건물 추가 후 주변 기존 건물을 선택하면 전·후 비교가 가능합니다.')+'</div><div style="margin-top:5px">'+(data.terrain?'DEM 차폐 검사 포함. 회색 구역은 지형 데이터 부족으로 일조시간 미확정.':'산·언덕 차폐 제외. 필요하면 위 DEM 지형 차폐 옵션을 선택하세요.')+' 약 200m 범위의 표시된 건물만 사용하며, 창문별 일조시간·법적 판정·일사 에너지가 아닙니다.</div>';
+}
+async function solarSurfaceRun(){
+ if(SOLAR_SURFACE_JOB){solarSurfaceInvalidate(true);$('solarSurfaceResult').textContent='표면 분석을 취소했습니다.';return}
+ const state=SOLAR_THREE_MAP,result=$('solarSurfaceResult'),button=$('solarSurfaceRun');
+ if(!state?.production){result.textContent='먼저 필지를 선택하고 그림자 보기를 켜세요.';return}
+ if($('solarMode').value==='manual'){result.textContent='계절 또는 날짜를 선택하세요. 태양 각도 직접 설정은 하루 일조시간 분석에 사용할 수 없습니다.';return}
+ const value=$('solarSurfaceTarget').value,entry=value===''?null:state.entries[Number(value)];
+ if(!entry){result.textContent='분석할 건물을 선택하세요.';return}
+ solarPlaybackStop();solarSurfaceRemove(state);
+ const token=++SOLAR_SURFACE_TOKEN,key=solarSurfaceKey();SOLAR_SURFACE_JOB={token,key};
+ button.textContent='표면 분석 취소';
+ try{
+  const T=state.THREE,{cells,spacing}=solarSurfaceCells(state,entry),date=solarActiveDate(),step=SOLAR_STEP;
+  const customMeshes=state.shadowMeshes.filter(m=>m.userData.solarCustom),compare=!entry.custom&&customMeshes.length>0;
+  // Fix receivers and all surrounding geometry. Only the custom occluder changes.
+  const baseline=compare?state.shadowMeshes.filter(m=>!m.userData.solarCustom):state.shadowMeshes;
+  const terrain=$('solarSurfaceTerrain').checked,raycaster=new T.Raycaster();
+  const center=state.center,merc=maplibregl.MercatorCoordinate.fromLngLat({lng:center[0],lat:center[1]},0),scale=merc.meterInMercatorCoordinateUnits();
+  const locations=terrain?cells.map(cell=>{const ll=new maplibregl.MercatorCoordinate(merc.x+cell.p.x*scale,merc.y+cell.p.z*scale,0).toLngLat();return [ll.lng,ll.lat]}):[];
+  let lastYield=performance.now();
+  const valid=()=>token===SOLAR_SURFACE_TOKEN&&state===SOLAR_THREE_MAP&&key===solarSurfaceKey();
+  for(let start=360;start<1140;start+=step){
+   if(!valid())return;
+   const minutes=Math.min(step,1140-start),a=solarPosition(center[1],center[0],date[0],date[1],start+minutes/2);
+   const az=a.az*Math.PI/180,alt=a.alt*Math.PI/180,direction=new T.Vector3(Math.sin(az)*Math.cos(alt),Math.sin(alt),-Math.cos(az)*Math.cos(alt));
+   for(let i=0;i<cells.length;i++){
+    const cell=cells[i];
+    let before=a.alt<=0?'back':solarPointSunState(T,raycaster,cell.p,cell.n,direction,baseline),after=before;
+    if(compare&&before==='lit')after=solarPointSunState(T,raycaster,cell.p,cell.n,direction,customMeshes);
+    if(terrain&&before==='lit'){
+     const ground=solarTerrainHeight(locations[i]);
+     const o=ground===null?{state:'unknown'}:solarTerrainOcclusion(locations[i],a.alt,a.az,Math.max(0,state.groundZ+cell.p.y-ground));
+     if(o.state==='blocked'){before='blocked';after='blocked'}
+     else if(o.state==='unknown'){before='unknown';if(after==='lit')after='unknown'}
+    }
+    solarSurfaceMinutes(cell,minutes,before,after);
+    if(performance.now()-lastYield>12){
+     result.textContent='표면 분석 중 '+Math.round(((start-360)+minutes*(i+1)/cells.length)/780*100)+'% · '+cells.length+'개 구역';
+     await new Promise(requestAnimationFrame);lastYield=performance.now();if(!valid())return;
+    }
+   }
+  }
+  if(!valid())return;
+  state.surfaceResult={key,cells,spacing,date,step,entry,compare,terrain};
+  solarSurfaceShow();solarSurfaceSummary(state.surfaceResult);
+ }catch(e){
+  if(token===SOLAR_SURFACE_TOKEN){solarSurfaceRemove(state);result.textContent='표면 분석 실패: '+(e?.message||e)}
+  console.warn('Surface sunlight analysis failed',e);
+ }finally{
+  if(token===SOLAR_SURFACE_TOKEN){SOLAR_SURFACE_JOB=null;button.textContent='표면 일조 색상 다시 계산'}
+ }
+}
+document.getElementById('solarSurfaceRun')?.addEventListener('click',solarSurfaceRun);
+document.getElementById('solarSurfaceTarget')?.addEventListener('change',()=>{
+ const value=$('solarSurfaceTarget').value;SOLAR_SURFACE_SELECTED_F=value===''?null:SOLAR_THREE_MAP?.entries[Number(value)]?.f;
+ solarSurfaceModeOptions();solarSurfaceInvalidate(true);
+});
+document.getElementById('solarSurfaceTerrain')?.addEventListener('change',()=>solarSurfaceInvalidate(true));
+document.getElementById('solarSurfaceView')?.addEventListener('change',solarSurfaceShow);
+document.getElementById('solarSurfaceFocus')?.addEventListener('click',()=>{
+ const state=SOLAR_THREE_MAP,value=$('solarSurfaceTarget').value,entry=value===''?null:state?.entries[Number(value)];
+ if(!entry)return;
+ map.easeTo({center:turf.centroid(entry.f).geometry.coordinates,zoom:Math.max(map.getZoom(),18),pitch:Math.max(map.getPitch(),55),duration:650});
+});
+document.getElementById('solarSurfaceToggle')?.addEventListener('click',()=>{
+ const state=SOLAR_THREE_MAP;if(!state?.surfaceMesh)return;
+ if(state.surfaceMesh.visible){state.surfaceMesh.visible=false;solarSurfaceScenario(state,false);$('solarSurfaceLegend').style.display='none';$('solarSurfaceToggle').textContent='표면 색상 다시 보기';$('solarSurfaceToggle').setAttribute('aria-pressed','false');map.triggerRepaint()}
+ else solarSurfaceShow();
+});
+
 /* Three.js map layer POC. Keeps a reversible map-only mode. No legal solar result. */
 let SOLAR_THREE_MAP=null,SOLAR_THREE_MAP_BUSY=false,SOLAR_THREE_MAP_TOKEN=0,SOLAR_THREE_REFRESH_TIMER=null,SOLAR_EXPOSURE_TOKEN=0;
 const SOLAR_THREE_MAP_LAYERS=['buildings-3d','smart-osm-3d','edit-custom-model-3d','buildings-foundation','smart-osm-foundation'];
@@ -1764,6 +1994,7 @@ document.getElementById('solarThreeShadowDebug')?.addEventListener('change',()=>
  solarThreeMapStatus('태양광 기본 표시와 차폐 비교 · 그림자 맵 '+(shadowOk?'할당됨':'미할당/미확인')+' · 차폐 '+($('solarThreeShadowDebug').checked?'ON':'OFF')+' · OFF에서도 건물이 어두우면 조명/좌표 변환 문제입니다.');
 });
 function solarThreeMapOff(){
+ solarSurfaceInvalidate(true);
  SOLAR_THREE_MAP_TOKEN++;SOLAR_EXPOSURE_TOKEN++;
  if(!SOLAR_THREE_MAP)return;
  const state=SOLAR_THREE_MAP;SOLAR_THREE_MAP=null;
@@ -1878,20 +2109,25 @@ async function solarThreeMapOn({production=false}={}){
   // Every production building uses its own centroid terrain datum, not this site datum.
   const updateTerrain=()=>{
    if(!production)return;
-   terrainMissing=0;
+   terrainMissing=0;let terrainChanged=false;
    for(const entry of entries)for(const mesh of entry.meshes){
-    mesh.position.y=localBase(entry.f,entry.custom);
+    const nextY=localBase(entry.f,entry.custom);if(Math.abs(nextY-mesh.position.y)>.01)terrainChanged=true;
+    mesh.position.y=nextY;
     const foundation=mesh.userData.foundation,base=Number(entry.f.properties?.render_base)||0;
-    if(foundation){foundation.position.y=mesh.position.y-base;foundation.scale.y=base/entry.h}
+    if(foundation){if(Math.abs(foundation.scale.y-base/entry.h)>.0001)terrainChanged=true;foundation.position.y=mesh.position.y-base;foundation.scale.y=base/entry.h}
    }
    const positions=groundMesh.geometry.attributes.position;
    for(let i=0;i<positions.count;i++){
     const coord=new maplibregl.MercatorCoordinate(merc.x+positions.getX(i)*scale,merc.y+positions.getZ(i)*scale,0).toLngLat();
     const z=solarTerrainHeight([coord.lng,coord.lat]);
-    positions.setY(i,(z??groundZ)-groundZ);
+    const nextY=(z??groundZ)-groundZ;if(Math.abs(positions.getY(i)-nextY)>.01)terrainChanged=true;positions.setY(i,nextY);
    }
    positions.needsUpdate=true;groundMesh.geometry.computeVertexNormals();scene.updateMatrixWorld(true);
-   if(SOLAR_THREE_MAP){SOLAR_THREE_MAP.terrainMissing=terrainMissing;solarExposureInvalidate()}
+   if(SOLAR_THREE_MAP){
+    terrainChanged=terrainChanged||SOLAR_THREE_MAP.terrainMissing!==terrainMissing;
+    SOLAR_THREE_MAP.terrainMissing=terrainMissing;
+    if(terrainChanged){SOLAR_THREE_MAP.terrainRevision=(SOLAR_THREE_MAP.terrainRevision||0)+1;solarExposureInvalidate()}
+   }
   };
   updateTerrain();
   // Reflection is essential: otherwise gl_FrontFacing reverses and DoubleSide
@@ -1986,7 +2222,7 @@ document.getElementById('solarThreeMapToggle')?.addEventListener('click',()=>{if
 for(const id of ['solarTime','solarManualAlt','solarManualAz','solarSeason','solarCustomDate'])document.getElementById(id)?.addEventListener('input',()=>{if(SOLAR_THREE_MAP)map.triggerRepaint()});
 function refreshSolarPreview(){
  if(!$('solarReadout'))return;
- solarSyncMode();
+ solarSyncMode();solarSurfaceInvalidate();
  const mode=$('solarMode').value;
  $('solarSeasonControls').style.display=mode==='season'?'block':'none';
  $('solarManualControls').style.display=mode==='manual'?'block':'none';
