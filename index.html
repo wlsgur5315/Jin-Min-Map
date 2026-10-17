@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.17-05</title>
+<title>Jinju3D Local · v2026.10.17-06</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -65,7 +65,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.17-05</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.17-06</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -83,12 +83,12 @@
   </div>
   <div class="drawer-body">
     <section id="tab-law" class="tab-pane active">
-      <details class="drawer-sec work-fold" open><summary>① 필지·건물 선택</summary>
-        <div class="hint">필지를 한 번 선택하면 아래 법규 검토와 건물 편집에 함께 적용됩니다.</div>
-        <button type="button" id="buildingMode" aria-pressed="false" style="margin-top:8px;background:#132c45;border-color:#22d3ee">건물 선택 모드 켜기</button>
-        <div id="buildingModeState" class="mini" style="margin-top:5px">필지와 별도로 건물 한 동을 선택할 수 있습니다.</div>
+      <details class="drawer-sec work-fold" open><summary>① 건물·필지 선택</summary>
+        <div class="hint">평소에는 건물을 눌러 정보와 기능을 사용합니다. 대지를 선택하려면 필지 선택 버튼을 켜세요.</div>
+        <button type="button" id="buildingMode" aria-pressed="true" disabled style="margin-top:8px;background:#132c45;border-color:#22d3ee">건물 선택 · 기본</button>
+        <div id="buildingModeState" class="mini" style="margin-top:5px">건물 선택 중 · 지도에서 건물을 누르세요. 빈 곳을 눌러도 필지는 선택되지 않습니다.</div>
         <select id="buildingInParcel" aria-label="선택 필지 안 건물" style="margin-top:7px"><option value="">필지를 선택하면 건물 목록이 표시됩니다.</option></select>
-        <button id="lawMode" class="primary" style="margin-top:8px">필지 선택 모드 켜기</button><div id="lawModeState" class="modeState" style="margin-top:6px">현재 꺼짐</div><div class="settings-label" style="margin-top:12px">지도 보기</div><div class="row"><button id="view2d">2D 보기</button><button id="view3d">3D 보기</button></div>
+        <button id="lawMode" class="primary" aria-pressed="false" style="margin-top:8px">필지 선택</button><div id="lawModeState" class="modeState" style="margin-top:6px">현재 건물 선택 · 기본</div><div class="settings-label" style="margin-top:12px">지도 보기</div><div class="row"><button id="view2d">2D 보기</button><button id="view3d">3D 보기</button></div>
       </details>
  <div id="lawPanel" class="lawbox">
         <div class="drawer-sec">
@@ -416,7 +416,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.17-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.17-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -810,7 +810,8 @@ function prepareStaticBuildings(fc){
   fc._heightStats={high,mid,low};fc._staticRegisterMatched=reg;return fc
 }
 // Building selection is independent of parcel ownership/PNU: never use PNU as a building ID.
-let BUILDING_PICK_MODE=false,BUILDING_SELECTED_KEY='',BUILDING_SELECT_TOKEN=0,BUILDING_CACHE=null,BUILDING_VISIBILITY_REV=0;
+let PARCEL_MODE_TOKEN=0;
+let BUILDING_PICK_MODE=true,BUILDING_SELECTED_KEY='',BUILDING_SELECT_TOKEN=0,BUILDING_CACHE=null,BUILDING_VISIBILITY_REV=0;
 const BUILDING_HIDDEN_KEYS=new Set(),BUILDING_RESTORED_KEYS=new Set();
 function buildingHash(text,seed=2166136261){let h=seed;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
 function buildingRecords(){
@@ -881,19 +882,19 @@ function buildingHighlight(){
  if(map.setPaintProperty){const hidden=selected&&buildingIsHidden(selected.f);map.setPaintProperty('selected-building-fill','fill-opacity',hidden?0:.16);map.setPaintProperty('selected-building-line','line-dasharray',hidden?[2,2]:null)}
 }
 function buildingSetMode(on){
+ // Building selection is the normal map state; parcel selection is the explicit alternative.
+ if(on&&lawMode){setLawMode(false);return}
  BUILDING_PICK_MODE=!!on;
- if(on){lawMode=false;EDIT_PICKING=false;$('lawMode').textContent='필지 선택 모드 켜기';$('lawModeState').textContent='현재 꺼짐 · 건물 선택 사용 중';$('lawModeState').style.color='#94a3b8'}
- const b=$('buildingMode');if(b){b.textContent=on?'건물 선택 모드 끄기':'건물 선택 모드 켜기';b.setAttribute('aria-pressed',String(!!on));b.style.background=on?'#155e75':'#132c45'}
- const text=$('buildingModeState');if(text)text.textContent=on?'지도에서 건물 한 동을 누르거나 아래 목록에서 선택하세요.':'필지와 별도로 건물 한 동을 선택할 수 있습니다.';
-}
-async function buildingEnterMode(){
- if(BUILDING_PICK_MODE){buildingSetMode(false);return}
- if(!detailReady||!currentBuildings?.features?.length){
-  const district=districtAtMapCenter();if(!district){message('먼저 읍·면·동을 선택하거나 지도에서 건물이 있는 곳으로 이동하세요.');return}
-  await selectDistrict(String(district.properties.district_id));
-  if(!detailReady||!currentBuildings?.features?.length){message('건물 데이터가 준비되지 않았습니다. 지역을 다시 선택해 주세요.');return}
+ if(on)EDIT_PICKING=false;
+ const button=$('buildingMode');if(button){
+  button.textContent=on?'건물 선택 · 기본':'건물 선택으로 돌아가기';button.disabled=!!on;
+  button.setAttribute('aria-pressed',String(!!on));button.style.background=on?'#155e75':'#132c45';
  }
- buildingSetMode(true);buildingSyncList();message('건물 선택 모드 · 지붕·외벽 또는 건물 바닥 형상을 누르세요.');
+ const text=$('buildingModeState');if(text)text.textContent=on?'건물 선택 중 · 지도에서 건물을 누르세요. 빈 곳을 눌러도 필지는 선택되지 않습니다.':'필지 선택 중 · 대지를 누르세요. 건물 선택 버튼으로 기본 지도로 돌아갑니다.';
+}
+function buildingEnterMode(){
+ if(lawMode)setLawMode(false);else buildingSetMode(true);
+ buildingSyncList();message('건물 선택 · 지도에서 건물 한 동을 누르세요.');
 }
 function buildingClearLawContext(){
  SELECTED_PARCEL=null;AUTO_ZONE_SOURCE='';AUTO_LANDSCAPE_NAME='';AUTO_HEIGHT_DISTRICT='';AUTO_ZONE_SHARES=[];
@@ -909,7 +910,7 @@ function buildingClearSelection(refresh=true,restoreLaw=false){
 }
 function buildingReset(){
  buildingClearSelection(false);buildingClearLawContext();BUILDING_HIDDEN_KEYS.clear();BUILDING_RESTORED_KEYS.clear();BUILDING_VISIBILITY_REV++;
- BUILDING_CACHE=null;buildingSetMode(false);const list=$('buildingInParcel');if(list){list.replaceChildren();const o=document.createElement('option');o.value='';o.textContent='필지를 선택하면 건물 목록이 표시됩니다.';list.appendChild(o)}
+ BUILDING_CACHE=null;buildingSetMode(!lawMode);const list=$('buildingInParcel');if(list){list.replaceChildren();const o=document.createElement('option');o.value='';o.textContent='필지를 선택하면 건물 목록이 표시됩니다.';list.appendChild(o)}
 }
 function buildingRenderLawSummary(){
  const out=$('buildingLawSummary'),record=buildingSelected();if(!out)return;
@@ -943,7 +944,7 @@ function buildingApplyParcel(pnu){
  if(!/^\d{19}$/.test(String(pnu))){record.parcelStatus='PNU 미확인 · 자동 법규 연결 보류';buildingRenderCard();return}
  record.linkedPnu=String(pnu);selectParcelForLaw(match.f,{buildingContext:true});buildingRenderCard();buildingSyncList();
 }
-async function buildingSelect(key,{focus=true}={}){
+async function buildingSelect(key,{focus=false}={}){
  let record=buildingRecords().byKey.get(key);if(!record||buildingSuppressed(record))return;
  if(lawMode)buildingSetMode(true);
  const token=++BUILDING_SELECT_TOKEN,district=selectedId;BUILDING_SELECTED_KEY=key;
@@ -990,12 +991,11 @@ function buildingPick(e){
  return null;
 }
 function buildingHandleClick(e){
- if(!BUILDING_PICK_MODE&&(lawMode||EDIT_PICKING))return false;
+ if(lawMode||EDIT_PICKING)return false;
  const record=buildingPick(e);
- if(!BUILDING_PICK_MODE&&!record)return false;
- if(record?.custom){if(!BUILDING_PICK_MODE)return false;message('사용자 건물은 ③ 건물 편집의 사용자 건물 삭제에서 관리하세요.');return true}
- if(record){buildingSelect(record.key);return true}
- message('건물을 누르세요. 숨긴 건물은 필지 안 건물 목록에서 다시 선택할 수 있습니다.');return true;
+ if(!record)return false; // Empty map clicks retain navigation; they never select a parcel.
+ if(record.custom){message('사용자 건물은 ③ 건물 편집에서 관리하세요.');return true}
+ buildingSelect(record.key,{focus:false});return true;
 }
 document.getElementById('buildingMode')?.addEventListener('click',buildingEnterMode);
 document.getElementById('buildingInParcel')?.addEventListener('change',e=>{if(e.target.value)buildingSelect(e.target.value)});
@@ -3183,7 +3183,7 @@ async function selectDistrict(id){
 }
 function cinematic(c,l){map.setLayoutProperty('buildings-foundation','visibility','visible');map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-foundation','visibility',smartOsm?'visible':'none');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({center:c,zoom:18,pitch:67,bearing:30,duration:1600});if(currentBuildings)scheduleGroundElevationAfterViewport(currentBuildings,'buildings');message(l+' · 3D 공간 보기')}
 function fmt(n){return Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:1}):'-'}
-map.on('click',e=>{if(precisionMode)return;if(buildingHandleClick(e))return;if(EDIT_PICKING){const pf=map.queryRenderedFeatures(e.point,{layers:['parcel-fill']})[0];if(pf)editSetParcel(pf);else editNotice('필지 경계를 클릭하세요.');return}const ls=['parcel-fill','buildings-2d'];if(smartOsm)ls.push('smart-osm-2d','smart-facility-2d');const fs=map.queryRenderedFeatures(e.point,{layers:ls}),p=fs.find(x=>x.layer.id==='parcel-fill');if(lawMode&&p){selectParcelForLaw(p);return}const gs=fs.filter(x=>x.layer.id==='buildings-2d'),g=gs.sort((a,b)=>{const ap=a.properties||{},bp=b.properties||{};const aq=(Number(ap.building_area)>0?4:0)+(ap.building_name?3:0)+(ap.building_dong?2:0)+(ap.register_dong||ap.register_name?1:0);const bq=(Number(bp.building_area)>0?4:0)+(bp.building_name?3:0)+(bp.building_dong?2:0)+(bp.register_dong||bp.register_name?1:0);if(aq!==bq)return bq-aq;const aa=Number(ap.building_area)||Number.MAX_SAFE_INTEGER,ba=Number(bp.building_area)||Number.MAX_SAFE_INTEGER;return aa-ba})[0],o=fs.find(x=>x.layer.id==='smart-osm-2d'),fac=fs.find(x=>x.layer.id==='smart-facility-2d');if(g){const a=g.properties;$('info').innerHTML=`<b>${a.building_name||a.register_dong||'GIS 건물'}</b><br>${a.legal_name||''} ${a.jibun||''}<br>지상 ${a.floors_above||'-'}층 · 높이 <b>${fmt(Number(a.render_height))}m</b><br>${a.height_confidence||'-'} · ${a.height_source||''}${a.register_matched?' · 건축물대장 매칭':''}${a.register_dong?`<br>대장 동명칭: <b>${a.register_dong}</b>`:''}${a.register_match_basis?`<br>매칭 근거: ${a.register_match_basis}`:''}${a.verified_override?`<br>검증 보정: <b>${a.verified_override}</b>`:''}${a.building_uid?`<br>UID: ${a.building_uid}`:''}`;cinematic(e.lngLat,a.building_name||'GIS 건물');return}if(o){const a=o.properties;$('info').innerHTML=`<b>${a.building_name||'OSM 보완 건물'}</b><br>${a.floors_above?('지상 '+a.floors_above+'층 · '):''}${a.height_source||'높이정보 없음'}<br>${a.register_matched?'건축물대장 매칭 완료 · ':''}${a.has_3d==='true'||a.has_3d===true?'3D 높이 적용':'높이 정보가 없어 2D만 표시'}`;if(a.has_3d==='true'||a.has_3d===true)cinematic(e.lngLat,'OSM 보완 건물');return}if(fac){$('info').innerHTML='<b>OSM 대형시설</b><br>경기장 등 시설 범위 참고용<br>임의 높이를 적용하지 않고 2D로만 표시';return}if(p){if(lawMode){selectParcelForLaw(p);return}const a=turf.area(p);$('info').innerHTML=`<b>선택 대지</b><br>지번주소 ${parcelFullAddress(p.properties||{})}<br>PNU ${parcelPnu(p.properties||{})}<br>면적 ${fmt(a)}㎡`;return}const d=map.queryRenderedFeatures(e.point,{layers:['district-fill']})[0];if(d)selectDistrict(String(d.properties.district_id))});
+map.on('click',e=>{if(precisionMode)return;if(buildingHandleClick(e))return;if(EDIT_PICKING){const pf=map.queryRenderedFeatures(e.point,{layers:['parcel-fill']})[0];if(pf)editSetParcel(pf);else editNotice('필지 경계를 클릭하세요.');return}const ls=['parcel-fill','buildings-2d'];if(smartOsm)ls.push('smart-osm-2d','smart-facility-2d');const fs=map.queryRenderedFeatures(e.point,{layers:ls}),p=fs.find(x=>x.layer.id==='parcel-fill');if(lawMode){if(p)selectParcelForLaw(p);return}const gs=fs.filter(x=>x.layer.id==='buildings-2d'),g=gs.sort((a,b)=>{const ap=a.properties||{},bp=b.properties||{};const aq=(Number(ap.building_area)>0?4:0)+(ap.building_name?3:0)+(ap.building_dong?2:0)+(ap.register_dong||ap.register_name?1:0);const bq=(Number(bp.building_area)>0?4:0)+(bp.building_name?3:0)+(bp.building_dong?2:0)+(bp.register_dong||bp.register_name?1:0);if(aq!==bq)return bq-aq;const aa=Number(ap.building_area)||Number.MAX_SAFE_INTEGER,ba=Number(bp.building_area)||Number.MAX_SAFE_INTEGER;return aa-ba})[0],o=fs.find(x=>x.layer.id==='smart-osm-2d'),fac=fs.find(x=>x.layer.id==='smart-facility-2d');if(g){const a=g.properties;$('info').innerHTML=`<b>${a.building_name||a.register_dong||'GIS 건물'}</b><br>${a.legal_name||''} ${a.jibun||''}<br>지상 ${a.floors_above||'-'}층 · 높이 <b>${fmt(Number(a.render_height))}m</b><br>${a.height_confidence||'-'} · ${a.height_source||''}${a.register_matched?' · 건축물대장 매칭':''}${a.register_dong?`<br>대장 동명칭: <b>${a.register_dong}</b>`:''}${a.register_match_basis?`<br>매칭 근거: ${a.register_match_basis}`:''}${a.verified_override?`<br>검증 보정: <b>${a.verified_override}</b>`:''}${a.building_uid?`<br>UID: ${a.building_uid}`:''}`;cinematic(e.lngLat,a.building_name||'GIS 건물');return}if(o){const a=o.properties;$('info').innerHTML=`<b>${a.building_name||'OSM 보완 건물'}</b><br>${a.floors_above?('지상 '+a.floors_above+'층 · '):''}${a.height_source||'높이정보 없음'}<br>${a.register_matched?'건축물대장 매칭 완료 · ':''}${a.has_3d==='true'||a.has_3d===true?'3D 높이 적용':'높이 정보가 없어 2D만 표시'}`;if(a.has_3d==='true'||a.has_3d===true)cinematic(e.lngLat,'OSM 보완 건물');return}if(fac){$('info').innerHTML='<b>OSM 대형시설</b><br>경기장 등 시설 범위 참고용<br>임의 높이를 적용하지 않고 2D로만 표시';return}if(p&&lawMode){selectParcelForLaw(p);return}const d=map.queryRenderedFeatures(e.point,{layers:['district-fill']})[0];if(d&&String(d.properties.district_id)!==selectedId)selectDistrict(String(d.properties.district_id))});
 
 
 let DRAWER_OPEN=false,DRAWER_TAB='law';
@@ -3209,14 +3209,16 @@ function setMap2D(){
   map.easeTo({pitch:0,bearing:0,duration:650});
 }
 
-async function loadLawDistrictById(did,keepView=true){
+async function loadLawDistrictById(did,keepView=true,token=PARCEL_MODE_TOKEN){
   const f=DISTRICTS?.features?.find(x=>String(x.properties.district_id)===String(did));if(!f)return false;
   const c=map.getCenter(),z=map.getZoom();
   if(selectedId!==String(did))await selectDistrict(String(did));
+  const valid=()=>lawMode&&token===PARCEL_MODE_TOKEN&&selectedId===String(did);
+  if(!valid())return false;
   setMap2D();
   if(keepView)map.jumpTo({center:[c.lng,c.lat],zoom:z,pitch:0,bearing:0});
-  await ensureParcelData(true);
-  await ensurePlanningData();
+  await ensureParcelData(true);if(!valid())return false;
+  await ensurePlanningData();if(!valid())return false;
   for(const id of ['planning-zone-fill','planning-zone-line'])if(map.getLayer(id))map.setLayoutProperty(id,'visibility','visible');
   return true;
 }
@@ -3228,10 +3230,10 @@ async function syncLawModeToMapCenter(){
   if(!lawMode)return;
   const did=lawDistrictAtCenter();
   if(!did||did===selectedId)return;
-  const c=map.getCenter(),z=map.getZoom();
+  const c=map.getCenter(),z=map.getZoom(),token=PARCEL_MODE_TOKEN;
   message('필지·법규 모드 · '+(DISTRICTS.features.find(x=>String(x.properties.district_id)===did)?.properties?.district_name||'새 지역')+' 데이터 전환 중…');
   try{
-    await loadLawDistrictById(did,true);
+    if(!await loadLawDistrictById(did,true,token)||!lawMode||token!==PARCEL_MODE_TOKEN)return;
     map.jumpTo({center:[c.lng,c.lat],zoom:z,pitch:0,bearing:0});
     SELECTED_PARCEL=null;
     AUTO_ZONE_SOURCE='';AUTO_LANDSCAPE_NAME='';AUTO_HEIGHT_DISTRICT='';AUTO_ZONE_SHARES=[];ROAD_ADDRESS='';ROAD_ADDRESS_SOURCE='';
@@ -3242,10 +3244,11 @@ async function syncLawModeToMapCenter(){
   }catch(e){console.warn('법규 모드 지역 전환 실패',e);message('새 지역 필지 데이터 전환 실패')}
 }
 function setLawMode(on){
-  if(on){buildingSetMode(false);buildingClearSelection(false);if(SOLAR_SHADOW_ON)solarSetShadowEnabled(false)}
-  lawMode=!!on;
-  $('lawMode').textContent=lawMode?'필지 선택 모드 끄기':'필지 선택 모드 켜기';
-  $('lawModeState').textContent=lawMode?'현재 켜짐 · 지도를 이동해도 자동 전환':'현재 꺼짐';
+  PARCEL_MODE_TOKEN++;lawMode=!!on;buildingSetMode(!lawMode);
+  if(on){buildingClearSelection(false);if(SOLAR_SHADOW_ON)solarSetShadowEnabled(false)}
+  $('lawMode').textContent=lawMode?'필지 선택 종료 · 건물 선택으로':'필지 선택';
+  $('lawModeState').textContent=lawMode?'현재 필지 선택 · 지도를 이동해도 자동 전환':'현재 건물 선택 · 기본';
+  $('lawMode').setAttribute('aria-pressed',String(lawMode));
   $('lawModeState').style.color=lawMode?'#86efac':'#94a3b8';
   if(!lawMode){
     for(const id of ['planning-zone-fill','planning-zone-line'])if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none');
@@ -3257,7 +3260,7 @@ function setLawMode(on){
     map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[]});
     $('lawParcel').textContent='아직 선택한 필지가 없습니다.';
     $('lawResult').innerHTML='<span class="lawdim">필지·법규 모드를 켜면 사용할 수 있습니다.</span>';
-    message('필지 선택 모드 종료');
+    message('건물 선택 · 기본 지도로 돌아왔습니다');
   }
 }
 
@@ -3265,9 +3268,9 @@ async function enterLawWorkspace(){
   const c=map.getCenter(),saved=[c.lng,c.lat],zoom=Math.max(map.getZoom(),15.5);
   const d=districtAtMapCenter();
   if(!d&&!selectedId){message('진주시 안에서 검토할 위치를 먼저 지도 중심에 두어 주세요');return}
-  setLawMode(true);
+  setLawMode(true);const token=PARCEL_MODE_TOKEN;
   const did=d?String(d.properties.district_id):selectedId;
-  await loadLawDistrictById(did,true);
+  if(!await loadLawDistrictById(did,true,token)||!lawMode||token!==PARCEL_MODE_TOKEN)return;
   map.easeTo({center:saved,zoom,pitch:0,bearing:0,duration:500});
   message('필지 선택 모드 ON · 지도를 이동해 다른 동으로 넘어가도 자동 전환됩니다');
 }
@@ -3275,7 +3278,7 @@ function activateDrawerTab(tab){
   DRAWER_TAB=tab;
   document.querySelectorAll('.drawer-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id==='tab-'+tab));
-  if(tab==='law'&&lawMode)$('lawModeState').textContent='현재 켜짐 · 지도를 이동해도 자동 전환';
+  if(tab==='law'&&lawMode)$('lawModeState').textContent='현재 필지 선택 · 지도를 이동해도 자동 전환';
 }
 function planningEvidence(){
  const local=!!(CURRENT_PLANNING?.features?.length&&CURRENT_PLANNING_ID===selectedId);
@@ -4196,7 +4199,7 @@ $('vopen').onclick=openVWorld;$('vclose').onclick=closeVWorld;
 $('smartToggle').onclick=()=>{smartOsm=!smartOsm;$('smartToggle').textContent=smartOsm?'OSM 보완 숨기기':'OSM 보완 표시하기';for(const id of['smart-osm-2d','smart-facility-2d'])map.setLayoutProperty(id,'visibility',smartOsm?'visible':'none');if(!smartOsm)map.setLayoutProperty('smart-osm-3d','visibility','none');else if(detailReady)buildWholeDistrictSupplement(false);solarThreeRequestRefresh()};
 $('mergeRefresh').onclick=()=>{if(!detailReady){message('먼저 읍·면·동을 선택해 주세요');return}for(const k of [...districtOsmCache.keys()])if(k.startsWith(selectedId+'@'))districtOsmCache.delete(k);buildWholeDistrictSupplement(true)};
 $('go').onclick=()=>{if($('district').value)selectDistrict($('district').value)};$('district').onchange=()=>{if($('district').value)selectDistrict($('district').value)};
-$('home').onclick=()=>{solarSetShadowEnabled(false);buildingReset();EDIT_PARCEL=null;EDIT_CUSTOM=null;EDIT_HIDDEN_PARCEL=null;EDIT_RECT=null;editBasemapBuildingFootprints(false);map.getSource('edit-custom-model')?.setData({type:'FeatureCollection',features:[]});$('editParcelInfo').textContent='선택된 필지가 없습니다.';editModelSummary();scanToken++;selectedDistrict=null;selectedId='';detailReady=false;currentBuildings=null;currentParcels=null;currentParcelGrid=null;SELECTED_PARCEL=null;CURRENT_PLANNING=null;CURRENT_PLANNING_ID='';AUTO_ZONE_SHARES=[];$('district').value='';$('sDistrict').textContent='진주시 전체';$('sBld').textContent='미로드';for(const k of['sOsmRaw','sDup','sOsm','sOsm3d','sFacility'])$(k).textContent='-';map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[]});$('mergeState').textContent='행정구역 선택 후 자동 계산';const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:60},pitch:0,bearing:0,duration:1200})};
+$('home').onclick=()=>{setLawMode(false);solarSetShadowEnabled(false);buildingReset();EDIT_PARCEL=null;EDIT_CUSTOM=null;EDIT_HIDDEN_PARCEL=null;EDIT_RECT=null;editBasemapBuildingFootprints(false);map.getSource('edit-custom-model')?.setData({type:'FeatureCollection',features:[]});$('editParcelInfo').textContent='선택된 필지가 없습니다.';editModelSummary();scanToken++;selectedDistrict=null;selectedId='';detailReady=false;currentBuildings=null;currentParcels=null;currentParcelGrid=null;SELECTED_PARCEL=null;CURRENT_PLANNING=null;CURRENT_PLANNING_ID='';AUTO_ZONE_SHARES=[];$('district').value='';$('sDistrict').textContent='진주시 전체';$('sBld').textContent='미로드';for(const k of['sOsmRaw','sDup','sOsm','sOsm3d','sFacility'])$(k).textContent='-';map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[]});$('mergeState').textContent='행정구역 선택 후 자동 계산';const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:60},pitch:0,bearing:0,duration:1200})};
 $('view2d').onclick=()=>{if(SOLAR_SHADOW_ON)solarSetShadowEnabled(false);else if(SOLAR_THREE_MAP)solarThreeMapOff();map.setLayoutProperty('buildings-foundation','visibility','none');map.setLayoutProperty('buildings-3d','visibility','none');map.setLayoutProperty('smart-osm-foundation','visibility','none');map.setLayoutProperty('smart-osm-3d','visibility','none');map.setPaintProperty('buildings-2d','fill-opacity',.72);map.setPaintProperty('smart-osm-2d','fill-opacity',.46);map.setPaintProperty('smart-facility-2d','fill-opacity',.26);if(!selectedDistrict){const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:60},pitch:0,bearing:0,duration:900})}else map.easeTo({pitch:0,bearing:0,duration:900})};
 $('view3d').onclick=()=>{map.setLayoutProperty('buildings-foundation','visibility','visible');map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-foundation','visibility',smartOsm?'visible':'none');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({pitch:62,bearing:28,duration:1200})};
 async function waitForMapReady(m,timeout=5000){
