@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.18-02</title>
+<title>Jinju3D Local · v2026.10.18-03</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -107,10 +107,14 @@
 #workspaceShell .workspace-reveal.is-open{grid-template-rows:1fr;opacity:1}
 #workspaceShell .workspace-reveal-inner{min-height:0;overflow:hidden}
 @media(prefers-reduced-motion:reduce){#workspaceShell .workspace-reveal{transition:none}}
+
+#workspaceShell #solarShadowToggle{margin:0 0 10px!important}
+#workspaceShell #solarStepToggle{align-items:stretch;justify-content:center;text-align:center}
+#workspaceShell #solarStep10,#workspaceShell #solarStep60{display:flex;flex:1 1 0;min-width:0;min-height:34px;padding:0 2px;align-items:center;justify-content:center;text-align:center;line-height:1.2;border-radius:16px;white-space:nowrap}
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.18-02</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.18-03</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -214,7 +218,7 @@
   </div>
   <div style="display:flex;align-items:center;gap:4px;margin-top:7px;min-width:0;width:100%;box-sizing:border-box">
    <button type="button" id="solarStepToggle" aria-label="시간 간격 전환" aria-pressed="false" style="flex:1 1 auto;min-width:0;width:auto;padding:3px;border:1px solid #64748b;border-radius:20px;display:flex;gap:2px;font-size:11px">
-    <span id="solarStep10" style="flex:1;padding:5px 1px;border-radius:16px">10분</span><span id="solarStep60" style="flex:1;padding:5px 1px;border-radius:16px;background:#475569;color:white;font-weight:700">1시간</span>
+    <span id="solarStep10">10분</span><span id="solarStep60" style="background:#475569;color:white;font-weight:700">1시간</span>
    </button>
    <select id="solarSpeed" aria-label="재생 속도" style="flex:0 1 76px;min-width:62px;max-width:76px;width:76px;margin:0;padding:6px 2px;font-size:11px"><option value="0.5">0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4" selected>4×</option></select>
    <label style="flex:0 0 auto;min-width:55px;white-space:nowrap;font-size:11px;display:flex;align-items:center;justify-content:flex-end;gap:3px;margin:0"><input id="solarLoop" type="checkbox" style="width:15px;height:15px;flex:0 0 15px;margin:0">반복</label>
@@ -475,7 +479,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.18-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.18-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1148,6 +1152,7 @@ function workspaceUpdate(){
  $('editHideBuildings').disabled=!parcel;$('editRestore').disabled=!parcel;
  $('workspaceLaw').hidden=WORKSPACE_ACTIVE!=='law';$('workspaceModel').hidden=WORKSPACE_ACTIVE!=='model';
  $('workspaceList').hidden=WORKSPACE_ACTIVE!=='list';$('workspaceSolar').hidden=!['shadow','surface','compare'].includes(WORKSPACE_ACTIVE);
+ $('solarShadowToggle').hidden=WORKSPACE_ACTIVE!=='shadow';
  $('workspaceSolarPrimary').hidden=WORKSPACE_ACTIVE!=='shadow';$('workspaceExposure').hidden=WORKSPACE_ACTIVE!=='shadow';
  $('solarSurfacePanel').hidden=!['surface','compare'].includes(WORKSPACE_ACTIVE);
  $('solarSurfacePanel').open=['surface','compare'].includes(WORKSPACE_ACTIVE);
@@ -1225,6 +1230,7 @@ function setupWorkspaceUI(){
  const protectedNodes=new Set([solar.querySelector(':scope > summary'),$('workspaceExposure'),$('solarSurfacePanel'),$('workspaceLabs'),$('workspaceSolarAdvanced')]);
  for(const child of [...solar.children])if(!protectedNodes.has(child))move(child,primary);
  solar.insertBefore(date,solar.children[1]);solar.insertBefore(primary,date.nextSibling);
+ solar.insertBefore($('solarShadowToggle'),date);
  const advanced=document.createElement('details');advanced.className='drawer-sec work-fold';const label=document.createElement('summary');label.textContent='검증실·고급 분석 도구';advanced.appendChild(label);move($('workspaceLabs'),advanced);move($('workspaceSolarAdvanced'),advanced);move(advanced,$('tab-settings'));
  const region=$('district').closest('.drawer-sec'),regionMenu=document.createElement('details'),regionTitle=document.createElement('summary');regionMenu.id='workspaceRegion';regionTitle.textContent='읍·면·동 이동';regionMenu.appendChild(regionTitle);move(region,regionMenu);move(regionMenu,document.querySelector('.top'));
  document.querySelector('.drawer-title').textContent='지도 작업';document.querySelector('.drawer-sub').textContent='선택한 건물 또는 필지를 기준으로 작업합니다.';document.querySelector('.drawer-tab[data-tab="law"]').textContent='지도 작업';
