@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.17-08</title>
+<title>Jinju3D Local · v2026.10.18-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -62,10 +62,47 @@
   50%{circle-radius:16;circle-opacity:.05;circle-stroke-opacity:.25}
 }
 
+/* Selection-centered workspace. Existing controls retain their IDs and listeners. */
+#workspaceShell [hidden]{display:none!important}
+#workspaceShell{font-size:12px;min-width:0}
+#workspaceShell button{min-height:44px;font-size:12px;font-weight:600}
+#workspaceShell input:not([type=range]):not([type=checkbox]):not([type=radio]),#workspaceShell select{font-size:16px;min-width:0;max-width:100%}
+#workspaceShell .hint,#workspaceShell .mini,#workspaceShell .settings-label{font-size:11px;line-height:1.55}
+#workspaceShell .workspace-mode{padding:4px 0 12px;border-bottom:1px solid #334155}
+#workspaceModeText{color:#7dd3fc;font-size:12px;margin-bottom:7px}
+#workspaceShell .workspace-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+#workspaceShell .workspace-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#workspaceShell .workspace-three button{padding:8px 3px;font-size:11px}
+#workspaceShell .workspace-stack{display:grid;gap:7px}
+#workspaceShell .workspace-summary{padding:14px 0;line-height:1.6;overflow-wrap:anywhere}
+#workspaceShell .workspace-summary b{color:#7dd3fc;font-size:14px}
+#workspaceShell .workspace-summary.is-parcel b{color:#fbbf24}
+#workspaceShell .workspace-actions{margin-bottom:10px}
+#workspaceShell .workspace-actions [aria-pressed=true],#workspaceParcelActions [aria-pressed=true]{background:#164e63;border-color:#67e8f9}
+#workspaceShell .workspace-wide{width:100%;margin:7px 0 10px}
+#workspaceShell .workspace-main-panel{background:#ffffff05;margin-top:10px}
+#workspaceShell .workspace-main-panel>summary{display:none}
+#workspaceShell .workspace-fold{margin-top:10px;border-top:1px solid #334155;padding-top:6px}
+#workspaceShell .workspace-fold>summary{min-height:44px;cursor:pointer;align-content:center}
+#workspaceShell #selectedBuildingPanel{padding:9px 0;background:transparent;border:0}
+#workspaceShell #buildingModeState,#workspaceShell #lawModeState{display:none}
+#workspaceShell #lawResult{font-size:11px}
+#workspaceShell #workspaceStatus{margin-top:10px;overflow-wrap:anywhere}
+#workspaceShell #solarSeasonButtons button{min-height:44px}
+#workspaceShell #solarSpeed{font-size:12px;min-width:62px;min-height:44px}
+#workspaceShell #solarStepToggle{min-height:44px}
+#workspaceShell #solarLoop{min-height:0}
+#workspaceRegion{margin-top:8px;font-size:11px}
+#workspaceRegion>summary{cursor:pointer;min-height:30px}
+#workspaceRegion .drawer-sec{margin:6px 0 0;padding:8px;max-width:100%}
+#workspaceMapView{display:flex;gap:6px;margin-top:7px}
+#workspaceMapView button{min-height:36px}
+@media(max-width:400px){#workspaceShell .workspace-three button{font-size:11px}#workspaceShell .row{gap:5px}#workspaceShell .row button{padding:9px 4px}}
+
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.17-08</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.18-01</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -83,7 +120,19 @@
   </div>
   <div class="drawer-body">
     <section id="tab-law" class="tab-pane active">
-      <details class="drawer-sec work-fold" open><summary>① 건물·필지 선택</summary>
+<div id="workspaceShell">
+ <div id="workspaceModeBar" class="workspace-mode"><div id="workspaceModeText">건물 선택 · 기본</div><div id="workspaceModeButtons" class="workspace-grid"></div></div>
+ <div id="workspaceSummary" class="workspace-summary" role="status" aria-live="polite">지도에서 건물 한 동을 선택하세요.</div>
+ <div id="workspaceBuildingActions" class="workspace-grid workspace-actions"><button type="button" data-workspace-action="shadow">그림자 보기</button><button type="button" data-workspace-action="surface">표면 일조</button><button type="button" data-workspace-action="law">법규 검토</button><button type="button" data-workspace-action="compare">제거 전·후 비교</button></div>
+ <div id="workspaceParcelActions" hidden><div class="workspace-three"><button type="button" data-workspace-action="law">법규 검토</button><button type="button" data-workspace-action="model">새 건물 배치</button><button type="button" data-workspace-action="list">필지 안 건물</button></div><button type="button" data-workspace-action="shadow" class="workspace-wide">필지 주변 그림자·일조</button></div>
+ <div id="workspacePanels"><section id="workspaceList" class="drawer-sec" hidden><h3>필지 안 건물</h3><div id="workspaceBuildingList"></div><div class="hint">목록에서 한 동을 선택하면 건물 작업으로 전환합니다. 숨긴 건물도 다시 선택해 복원할 수 있습니다.</div></section></div>
+ <details id="workspaceBuildingManagement" class="workspace-fold"><summary>건물 관리 · 추가·숨김·복원</summary><div class="workspace-stack"><button type="button" id="workspaceAdd">같은 필지에 새 건물 추가</button><button type="button" id="workspaceReplace">이 건물 대신 새로 배치</button></div><div id="workspaceBuildingManagementControls"></div></details>
+ <details id="workspaceParcelManagement" class="workspace-fold" hidden><summary>필지 전체 건물 관리</summary><div id="workspaceParcelManagementControls"></div></details>
+ <details id="workspaceInfo" class="workspace-fold"><summary id="workspaceInfoTitle">건물 상세 정보 · 연결 필지</summary><div id="workspaceInfoContent"></div></details>
+ <div id="workspaceStatus" class="hint" role="status" aria-live="polite"></div>
+</div>
+
+      <details id="workspaceLegacySelection" class="drawer-sec work-fold" open><summary>① 건물·필지 선택</summary>
         <div class="hint">평소에는 건물을 눌러 정보와 기능을 사용합니다. 대지를 선택하려면 필지 선택 버튼을 켜세요.</div>
         <button type="button" id="buildingMode" aria-pressed="true" disabled style="margin-top:8px;background:#132c45;border-color:#22d3ee">건물 선택 · 기본</button>
         <div id="buildingModeState" class="mini" style="margin-top:5px">건물 선택 중 · 지도에서 건물을 누르세요. 빈 곳을 눌러도 필지는 선택되지 않습니다.</div>
@@ -105,7 +154,7 @@
  <button type="button" id="buildingLawFocus" disabled style="margin-top:7px">연결 필지 법규 상세 보기</button>
          <div class="hint" style="margin-top:6px">숨김은 원본 삭제가 아닌 설계용 임시 제거입니다. 같은 필지의 다른 건물은 유지됩니다.</div>
         </div>
-        <details class="drawer-sec work-fold"><summary>② 법규 검토</summary>
+        <details id="workspaceLaw" class="drawer-sec work-fold"><summary>② 법규 검토</summary>
           <div class="settings-label">용도지역</div>
           <select id="lawZone"><option value="">용도지역 선택</option></select>
           <div class="settings-label">경관지구 / 추가 높이제한</div>
@@ -120,7 +169,7 @@
         </details>
       </div>
     
- <details class="drawer-sec work-fold"><summary>③ 건물 편집</summary><div class="hint">새 건물은 편집 대지 안에 배치합니다. 한 동만 제거하려면 위의 선택 건물에서 숨기기를 사용하세요. 원본 데이터는 삭제되지 않습니다.</div><div id="editParcelInfo" class="mini">선택된 필지가 없습니다.</div>
+ <details id="workspaceModel" class="drawer-sec work-fold"><summary>③ 건물 편집</summary><div class="hint">새 건물은 편집 대지 안에 배치합니다. 한 동만 제거하려면 위의 선택 건물에서 숨기기를 사용하세요. 원본 데이터는 삭제되지 않습니다.</div><div id="editParcelInfo" class="mini">선택된 필지가 없습니다.</div>
  <div class="drawer-sec"><h3>원래 건물</h3><div class="row"><button id="editHideBuildings">선택 필지 건물 숨기기</button><button id="editRestore">원래 건물 복구</button></div><div id="editHideStatus" class="hint" style="margin-top:6px"></div></div>
  <div class="drawer-sec"><h3>새 건물 모델</h3>
  <label>건물 높이 (m) <input id="editHeight" type="number" min="1" max="500" step="0.5" value="12"></label>
@@ -130,7 +179,7 @@
  <button id="editClearCustom" style="margin-top:8px">사용자 건물 삭제</button>
  <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div><div id="editModelDetails" style="padding:8px;margin-top:8px;border:1px solid #334155;border-radius:8px;font-size:12px">생성된 사용자 건물이 없습니다.</div>
  </div></details>
-<details class="drawer-sec work-fold"><summary>④ 일사·일조 분석</summary>
+<details id="workspaceSolar" class="drawer-sec work-fold"><summary>④ 일사·일조 분석</summary>
  <button type="button" id="solarShadowToggle" aria-pressed="false" style="margin-top:10px;background:#14532d;border:1px solid #22c55e;font-size:12px;padding:12px">그림자 보기 켜기</button>
  <div class="hint">선택 필지 주변 건물의 지붕·외벽·지면 그림자를 표시합니다. 계절·시간과 사용자 건물 편집을 반영합니다.</div>
  <select id="solarMode" style="display:none" aria-label="분석 방식"><option value="season">계절별 대표일</option><option value="manual">태양 위치 직접 설정</option></select>
@@ -157,7 +206,7 @@
    <button type="button" id="solarStepToggle" aria-label="시간 간격 전환" aria-pressed="false" style="flex:1 1 auto;min-width:0;width:auto;padding:3px;border:1px solid #64748b;border-radius:20px;display:flex;gap:2px;font-size:11px">
     <span id="solarStep10" style="flex:1;padding:5px 1px;border-radius:16px">10분</span><span id="solarStep60" style="flex:1;padding:5px 1px;border-radius:16px;background:#475569;color:white;font-weight:700">1시간</span>
    </button>
-   <select id="solarSpeed" aria-label="재생 속도" style="flex:0 1 76px;min-width:62px;max-width:76px;width:76px;margin:0;padding:6px 2px;font-size:11px"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select>
+   <select id="solarSpeed" aria-label="재생 속도" style="flex:0 1 76px;min-width:62px;max-width:76px;width:76px;margin:0;padding:6px 2px;font-size:11px"><option value="0.5">0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4" selected>4×</option></select>
    <label style="flex:0 0 auto;min-width:55px;white-space:nowrap;font-size:11px;display:flex;align-items:center;justify-content:flex-end;gap:3px;margin:0"><input id="solarLoop" type="checkbox" style="width:15px;height:15px;flex:0 0 15px;margin:0">반복</label>
   </div>
  </div>
@@ -172,7 +221,7 @@
  
 
  <div id="solarMainStatus" class="mini" style="margin-top:8px" role="status" aria-live="polite">필지를 선택하고 그림자 보기를 켜세요.</div>
- <details style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px"><summary style="cursor:pointer;font-size:12px;font-weight:600">선택 건물 일조시간 분석</summary>
+ <details id="workspaceExposure" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px"><summary style="cursor:pointer;font-size:12px;font-weight:600">선택 건물 일조시간 분석</summary>
  <div class="hint" style="margin-top:8px">선택 필지의 건물 지붕·외벽에 놓인 표본점이 직접 햇빛을 받는 시간을 계산합니다.</div>
  <select id="solarExposureTarget" aria-label="일조 분석 대상 건물" style="margin-top:7px"><option value="">그림자 보기를 켜세요.</option></select>
  <button type="button" id="solarExposureRun" style="margin-top:7px">대표일 일조 분석 실행</button>
@@ -200,7 +249,7 @@
  <div id="solarSurfaceResult" class="mini" style="margin-top:8px" role="status" aria-live="polite">그림자 보기를 켜고 건물·날짜를 선택하세요.</div>
  <div class="hint" style="margin-top:7px">추가 비교는 사용자 건물 유무를, 제거 비교는 ①에서 선택한 기존 건물 한 동의 유무를 비교합니다. 아래 분석 대상은 일조 변화를 확인할 주변 건물입니다. 다른 건물·날짜·분석 지점은 동일하게 유지됩니다.</div>
  </details>
- <details style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px"><summary style="cursor:pointer;font-size:12px;font-weight:600">검증실 및 위치 비교</summary>
+ <details id="workspaceLabs" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px"><summary style="cursor:pointer;font-size:12px;font-weight:600">검증실 및 위치 비교</summary>
  <button type="button" id="solarGISLabOpen" style="width:100%;margin-top:8px;border:1px solid #22c55e;background:#164e35;font-size:12px">실제 GIS 건물 그림자 검증실 (독립 렌더러)</button>
  <button type="button" id="solarThreeMapToggle" style="width:100%;margin-top:9px;border:1px solid #2563eb;background:#132c45;font-size:12px">선택 필지 주변 3D 그림자 시험 (실제 지도)</button>
  <label style="display:block;margin-top:6px;font-size:11px;color:#dbeafe"><input type="checkbox" id="solarThreeOnly" style="width:auto;margin-right:5px">3D 건물만 표시 (시험에서는 기존 건물 전체 임시 숨김)</label>
@@ -208,7 +257,7 @@
  <div id="solarThreeMapStatus" class="mini" style="margin-top:6px">필지를 선택하고 시험 모드를 켜면 주변 건물에 Three.js 그림자를 적용합니다. 시험 중 기존 3D 건물 표시를 임시로 숨깁니다.</div>
  <button type="button" id="solarThreeDemoOpen" style="width:100%;margin-top:9px;border:1px solid #64748b;background:#17243a;font-size:12px">3D 실제 그림자 시험장 (Three.js)</button>
  </details>
- <details class="solar-advanced-group" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px">
+ <details id="workspaceSolarAdvanced" class="solar-advanced-group" style="margin-top:9px;border:1px solid #64748b66;border-radius:8px;padding:9px">
  <summary style="cursor:pointer;font-size:12px;font-weight:600">고급 설정 및 분석 결과</summary>
  <div id="solarFacadeDiagnostic" class="mini" style="margin-top:7px">외벽 그림자 진단: 그림자 보기를 켜면 계산 상태를 표시합니다.</div>
 <label style="display:block;margin-top:8px;font-size:10px"><input type="checkbox" id="solarTerrainCustom" checked> 사용자 건물 지형 반영 시험 (DEM)</label>
@@ -416,7 +465,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.17-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.18-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -810,6 +859,7 @@ function prepareStaticBuildings(fc){
   fc._heightStats={high,mid,low};fc._staticRegisterMatched=reg;return fc
 }
 // Building selection is independent of parcel ownership/PNU: never use PNU as a building ID.
+let WORKSPACE_READY=false,WORKSPACE_ACTIVE='shadow',WORKSPACE_LAST_MODE=false,WORKSPACE_BUILD_JOB=null;
 let PARCEL_MODE_TOKEN=0,BUILDING_PARCEL_CONTEXT=false;
 let BUILDING_PICK_MODE=true,BUILDING_SELECTED_KEY='',BUILDING_SELECT_TOKEN=0,BUILDING_CACHE=null,BUILDING_VISIBILITY_REV=0;
 const BUILDING_HIDDEN_KEYS=new Set(),BUILDING_RESTORED_KEYS=new Set();
@@ -919,6 +969,7 @@ function buildingSetMode(on){
   button.textContent=on?'건물 선택 · 기본':'건물 선택으로 돌아가기';button.disabled=!!on;
   button.setAttribute('aria-pressed',String(!!on));button.style.background=on?'#155e75':'#132c45';
  }
+ workspaceUpdate();
  const text=$('buildingModeState');if(text)text.textContent=on?'건물 선택 중 · 지도에서 건물을 누르세요. 빈 곳을 눌러도 필지는 선택되지 않습니다.':'필지 선택 중 · 대지를 누르세요. 건물 선택 버튼으로 기본 지도로 돌아갑니다.';
 }
 function buildingEnterMode(){
@@ -932,7 +983,7 @@ function buildingClearLawContext(){
  if($('lawParcelHeading'))$('lawParcelHeading').textContent=selected?'건물의 연결 필지':'선택 필지';
  $('lawZone').value='';$('lawLandscape').value='';$('lawParcel').textContent=selected?'선택 건물의 연결 필지 확인 중 / 미확인':'아직 선택한 필지가 없습니다.';
  $('lawResult').textContent=selected?'건물에 연결되는 필지가 확인되면 법규를 검토합니다.':'필지를 선택하면 법규를 검토합니다.';
- map?.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[]});
+ map?.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:[]});workspaceUpdate();
 }
 function buildingClearSelection(refresh=true,restoreLaw=false){
  BUILDING_SELECT_TOKEN++;BUILDING_SELECTED_KEY='';
@@ -952,6 +1003,7 @@ function buildingRenderLawSummary(){
  out.innerHTML='<b>연결 필지 기준 자동 사전검토</b><br>'+esc(parcelFullAddress(linked.f.properties||{}))+'<br>용도지역: '+esc(zone||'조회 중 / 미확인')+'<br>건폐율: '+(rule?rule.bcr+'%':'미확인')+' · 용적률: '+(rule?rule.far+'%':'미확인')+'<br>높이제한: '+esc(height.summary)+'<br><span class="lawdim">건폐율·용적률은 대지 전체 기준입니다. 선택한 한 동의 허용값이나 기존 건물의 위법 여부를 판정하는 결과가 아닙니다. 상세 근거는 아래 ② 법규 검토에서 확인하세요.</span>';
 }
 function buildingRenderCard(){
+ workspaceUpdate();
  const record=buildingSelected(),info=$('selectedBuildingInfo'),parcelSelect=$('buildingParcelSelect');if(!info)return;
  for(const id of ['buildingHideOne','buildingRestoreOne','buildingShadowFocus','buildingLawFocus','buildingClear','buildingRemovalCompare'])if($(id))$(id).disabled=!record;
  if(!record){info.textContent='아직 선택한 건물이 없습니다.';if(parcelSelect)parcelSelect.replaceChildren();buildingRenderLawSummary();return}
@@ -981,7 +1033,7 @@ async function buildingSelect(key,{focus=false}={}){
  const token=++BUILDING_SELECT_TOKEN,district=selectedId;BUILDING_SELECTED_KEY=key;
  record.parcels=[];record.linkedPnu='';record.parcelStatus='연결 필지 확인 중';buildingClearLawContext();buildingRenderCard();buildingHighlight();buildingSyncList();
  if(typeof setDrawer==='function')setDrawer(true);if(typeof activateDrawerTab==='function')activateDrawerTab('law');
- $('selectedBuildingPanel')?.scrollIntoView?.({behavior:'smooth',block:'nearest'});
+ $('workspaceSummary')?.scrollIntoView?.({behavior:'smooth',block:'nearest'});
  SOLAR_SURFACE_SELECTED_F=record.f;
  buildingShow3D(record,focus);
  solarThreeRequestRefresh();
@@ -1042,6 +1094,7 @@ document.getElementById('buildingShadowFocus')?.addEventListener('click',()=>{
 document.getElementById('buildingRemovalCompare')?.addEventListener('click',()=>{
  const record=buildingSelected();if(!record)return;
  if(buildingIsHidden(record.f)){message('제거 전 상태를 비교하려면 선택한 한 동을 먼저 복원하세요.');return}
+ workspaceAction('compare');
  $('solarSurfaceScenario').value='removal';$('solarSurfaceView').value='after';solarSurfaceTargets();
  if(!SOLAR_SHADOW_ON)solarSetShadowEnabled(true);
  const panel=$('solarSurfacePanel');for(let el=panel;el;el=el.parentElement)if(el.tagName==='DETAILS')el.open=true;
@@ -1049,9 +1102,118 @@ document.getElementById('buildingRemovalCompare')?.addEventListener('click',()=>
 });
 document.getElementById('buildingLawFocus')?.addEventListener('click',()=>{
  const record=buildingSelected();if(!record?.linkedPnu){message('건물에 연결되는 필지를 먼저 확인하세요.');return}
+ workspaceAction('law');
  const section=$('lawResult')?.closest('details');if(section)section.open=true;
  $('lawResult')?.scrollIntoView({behavior:'smooth',block:'nearest'});
 });
+
+// Workspace composition reuses the original form nodes, including playback controls.
+function workspaceStatus(text){if($('workspaceStatus'))$('workspaceStatus').textContent=text;message(text)}
+function workspaceUpdate(){
+ if(!WORKSPACE_READY)return;
+ const record=buildingSelected(),parcelMode=lawMode,parcel=parcelMode?SELECTED_PARCEL:EDIT_PARCEL;
+ if(WORKSPACE_BUILD_JOB&&WORKSPACE_BUILD_JOB.key!==record?.key)WORKSPACE_BUILD_JOB=null;
+ if(WORKSPACE_LAST_MODE!==parcelMode){WORKSPACE_LAST_MODE=parcelMode;WORKSPACE_ACTIVE=parcelMode?'law':'shadow'}
+ $('workspaceModeText').textContent=parcelMode?'필지 선택 중':'건물 선택 · 기본';
+ $('workspaceBuildingActions').hidden=parcelMode;$('workspaceParcelActions').hidden=!parcelMode;
+ $('workspaceBuildingManagement').hidden=parcelMode;$('workspaceParcelManagement').hidden=!parcelMode;
+ $('workspaceInfoTitle').textContent=parcelMode?'필지 상세 정보':'건물 상세 정보 · 연결 필지';
+ const summary=$('workspaceSummary');summary.classList.toggle('is-parcel',parcelMode);
+ summary.innerHTML=parcelMode?(SELECTED_PARCEL?'<b>'+escapeHtml(parcelFullAddress(SELECTED_PARCEL.properties||{}))+'</b><br>대지 '+fmt(turf.area(SELECTED_PARCEL))+'㎡ · 필지 전체를 기준으로 작업':'<b>필지를 선택하세요</b><br>지도에서 대지를 누르세요.'):(record?'<b>'+escapeHtml(buildingLabel(record))+'</b><br>높이 '+buildingHeight(record).toFixed(1)+'m · '+escapeHtml(record.f.properties?.use_name||record.f.properties?.main_purpose||'용도 미확인')+'<br>'+(buildingIsHidden(record.f)?'임시 숨김 · 복원 가능':'3D · 선택한 건물의 지붕·외벽 강조'):'<b>건물을 선택하세요</b><br>지도에서 건물 한 동을 누르세요.');
+ for(const button of document.querySelectorAll('[data-workspace-action]')){
+  const action=button.dataset.workspaceAction;button.setAttribute('aria-pressed',String(action===WORKSPACE_ACTIVE));
+  button.disabled=parcelMode?(action!=='law'&&!parcel):!record;
+ }
+ const linked=record?.parcels?.some(x=>String(parcelPnu(x.f.properties||{}))===record.linkedPnu);
+ $('workspaceAdd').disabled=!linked;$('workspaceReplace').disabled=!linked;
+ $('editHideBuildings').disabled=!parcel;$('editRestore').disabled=!parcel;
+ $('workspaceLaw').hidden=WORKSPACE_ACTIVE!=='law';$('workspaceModel').hidden=WORKSPACE_ACTIVE!=='model';
+ $('workspaceList').hidden=WORKSPACE_ACTIVE!=='list';$('workspaceSolar').hidden=!['shadow','surface','compare'].includes(WORKSPACE_ACTIVE);
+ $('workspaceSolarPrimary').hidden=WORKSPACE_ACTIVE!=='shadow';$('workspaceExposure').hidden=WORKSPACE_ACTIVE!=='shadow';
+ $('solarSurfacePanel').hidden=!['surface','compare'].includes(WORKSPACE_ACTIVE);
+ $('solarSurfacePanel').open=['surface','compare'].includes(WORKSPACE_ACTIVE);
+ for(const id of ['workspaceLaw','workspaceModel','workspaceSolar'])$(id).open=true;
+ if($('workspaceModelIntro'))$('workspaceModelIntro').textContent=WORKSPACE_BUILD_JOB?(WORKSPACE_BUILD_JOB.replace?'새 건물 생성이 완료되면 선택한 한 동만 임시로 숨깁니다.':'연결 필지의 기존 건물을 유지하며 새 건물을 배치합니다.'):'편집 대지 안에 새 건물 평면을 그리고 높이를 지정하세요.';
+}
+function workspaceAction(action,{start=false}={}){
+ if(!WORKSPACE_READY)return;
+ WORKSPACE_ACTIVE=action;workspaceUpdate();
+ if(start&&['shadow','surface','compare'].includes(action)){
+  if(!buildingSelected()&&!EDIT_PARCEL){workspaceStatus('먼저 건물 또는 필지를 선택하세요.');return}
+  if(action==='compare'&&buildingIsHidden(buildingSelected()?.f)){workspaceStatus('제거 전·후 비교를 하려면 선택한 한 동을 먼저 복원하세요.');return}
+  if(['surface','compare'].includes(action)){
+   const scenario=action==='compare'?'removal':'addition';
+   if($('solarSurfaceScenario').value!==scenario){$('solarSurfaceScenario').value=scenario;solarSurfaceTargets()}
+  }
+  if(!SOLAR_SHADOW_ON)solarSetShadowEnabled(true);
+ }
+}
+function workspaceStartPlacement(replace=false){
+ const record=buildingSelected();if(!record)return;
+ const linked=record.parcels.find(x=>String(parcelPnu(x.f.properties||{}))===record.linkedPnu);
+ if(!linked){workspaceStatus('연결 필지를 확인하거나 검토할 연결 필지를 선택하세요.');return}
+ // One editable custom model is supported. Never silently discard an existing design.
+ if(EDIT_CUSTOM){workspaceAction('model');workspaceStatus('현재 사용자 건물이 있습니다. 아래에서 편집하거나 사용자 건물 삭제 후 새 배치를 시작하세요.');return}
+ WORKSPACE_BUILD_JOB=null;
+ editSetParcel(linked.f,{keepBuilding:true});
+ WORKSPACE_BUILD_JOB={key:record.key,pnu:String(parcelPnu(linked.f.properties||{})),replace:!!replace};
+ WORKSPACE_ACTIVE='model';workspaceUpdate();workspaceStatus(replace?'대체 배치 준비 · 평면 그리기와 높이 입력 후 완료하세요. 취소하면 기존 건물은 유지됩니다.':'추가 배치 준비 · 같은 필지 안에서 새 건물 평면을 그리세요.');
+}
+function workspaceCommitPlacement(){
+ const job=WORKSPACE_BUILD_JOB;WORKSPACE_BUILD_JOB=null;
+ if(!job||!EDIT_CUSTOM)return;
+ if(job.replace&&buildingSelected()?.key===job.key&&String(parcelPnu(EDIT_PARCEL?.properties||{}))===job.pnu){
+  BUILDING_HIDDEN_KEYS.add(job.key);BUILDING_RESTORED_KEYS.delete(job.key);BUILDING_VISIBILITY_REV++;
+  editRefreshOriginal();buildingHighlight();buildingRenderCard();
+  workspaceStatus('새 건물을 배치하고 선택한 기존 한 동만 숨겼습니다. 다른 동은 유지됩니다.');
+ }
+ workspaceUpdate();
+}
+function workspaceCancelPlacement(){WORKSPACE_BUILD_JOB=null;workspaceUpdate()}
+function workspaceRestoreParcel(){
+ if(!EDIT_PARCEL){editNotice('먼저 필지를 선택하세요.');return}
+ const bounds=turf.bbox(EDIT_PARCEL);
+ for(const record of buildingRecords().records)if(buildingInParcel(record,EDIT_PARCEL,bounds)){
+  BUILDING_HIDDEN_KEYS.delete(record.key);BUILDING_RESTORED_KEYS.add(record.key);
+ }
+ if(EDIT_HIDDEN_PARCEL&&(String(parcelPnu(EDIT_HIDDEN_PARCEL.properties||{}))===String(parcelPnu(EDIT_PARCEL.properties||{}))))EDIT_HIDDEN_PARCEL=null;
+ BUILDING_VISIBILITY_REV++;editRefreshOriginal();buildingHighlight();buildingRenderCard();
+ editNotice('선택 필지의 기존 건물을 복원했습니다. 사용자 건물과 다른 필지의 숨김 설정은 유지됩니다.');
+}
+function setupWorkspaceUI(){
+ const shell=$('workspaceShell');if(!shell||WORKSPACE_READY)return;
+ const move=(node,host)=>{if(node&&host)host.appendChild(node)};
+ const legacy=$('workspaceLegacySelection'),selectedPanel=$('selectedBuildingPanel');
+ move($('buildingMode'),$('workspaceModeButtons'));move($('lawMode'),$('workspaceModeButtons'));
+ move($('buildingModeState'),shell);move($('lawModeState'),shell);
+ const views=document.createElement('div');views.id='workspaceMapView';move($('view2d'),views);move($('view3d'),views);move(views,document.querySelector('.top'));
+ move($('buildingInParcel'),$('workspaceBuildingList'));legacy.remove();
+ move($('lawParcel').parentElement,$('workspaceInfoContent'));
+ move($('buildingHideOne').parentElement,$('workspaceBuildingManagementControls'));
+ move($('buildingShadowFocus').parentElement,$('workspaceBuildingManagementControls'));
+ move($('buildingRemovalCompare'),$('workspaceBuildingManagementControls'));move($('buildingLawFocus'),$('workspaceBuildingManagementControls'));
+ move(selectedPanel,$('workspaceInfoContent'));
+ move($('workspaceLaw'),$('workspacePanels'));move($('workspaceModel'),$('workspacePanels'));move($('workspaceSolar'),$('workspacePanels'));
+ for(const id of ['workspaceLaw','workspaceModel','workspaceSolar'])$(id).classList.add('workspace-main-panel');
+ move($('editHideBuildings').closest('.drawer-sec'),$('workspaceParcelManagementControls'));
+ const intro=document.createElement('div');intro.id='workspaceModelIntro';intro.className='hint';$('workspaceModel').insertBefore(intro,$('workspaceModel').children[1]);
+ // Shared date controls stay available for surface analysis and comparison.
+ const solar=$('workspaceSolar'),date=document.createElement('div');date.id='workspaceSolarDate';
+ const seasonButtons=$('solarSeasonButtons'),seasonLabel=seasonButtons.previousElementSibling;
+ move(seasonLabel,date);move(seasonButtons,date);move($('solarMode'),date);move($('solarCustomFold'),date);
+ const primary=document.createElement('div');primary.id='workspaceSolarPrimary';
+ const protectedNodes=new Set([solar.querySelector(':scope > summary'),$('workspaceExposure'),$('solarSurfacePanel'),$('workspaceLabs'),$('workspaceSolarAdvanced')]);
+ for(const child of [...solar.children])if(!protectedNodes.has(child))move(child,primary);
+ solar.insertBefore(date,solar.children[1]);solar.insertBefore(primary,date.nextSibling);
+ const advanced=document.createElement('details');advanced.className='drawer-sec work-fold';const label=document.createElement('summary');label.textContent='검증실·고급 분석 도구';advanced.appendChild(label);move($('workspaceLabs'),advanced);move($('workspaceSolarAdvanced'),advanced);move(advanced,$('tab-settings'));
+ const region=$('district').closest('.drawer-sec'),regionMenu=document.createElement('details'),regionTitle=document.createElement('summary');regionMenu.id='workspaceRegion';regionTitle.textContent='읍·면·동 이동';regionMenu.appendChild(regionTitle);move(region,regionMenu);move(regionMenu,document.querySelector('.top'));
+ document.querySelector('.drawer-title').textContent='지도 작업';document.querySelector('.drawer-sub').textContent='선택한 건물 또는 필지를 기준으로 작업합니다.';document.querySelector('.drawer-tab[data-tab="law"]').textContent='지도 작업';
+ for(const button of document.querySelectorAll('[data-workspace-action]'))button.addEventListener('click',()=>workspaceAction(button.dataset.workspaceAction,{start:true}));
+ $('workspaceAdd').addEventListener('click',()=>workspaceStartPlacement(false));$('workspaceReplace').addEventListener('click',()=>workspaceStartPlacement(true));
+ $('editRestore').textContent='전체 복원';$('editHideBuildings').textContent='기존 건물 전체 숨김';$('editRestore').onclick=workspaceRestoreParcel;
+ $('editCloseDraw').addEventListener('click',workspaceCancelPlacement);
+ WORKSPACE_READY=true;WORKSPACE_LAST_MODE=lawMode;workspaceUpdate();
+}
 
 let EDIT_PICKING=false,EDIT_PARCEL=null,EDIT_HIDDEN_PARCEL=null,EDIT_RECT=null,EDIT_CUSTOM=null,EDIT_BOX=null,EDIT_DRAG_START=null;
 function editNotice(msg){if($('editStatus'))$('editStatus').textContent=msg}
@@ -2980,7 +3142,7 @@ function editCommitModel(){
  if(!(height>0&&height<=500)){$('editConfirmDimensions').textContent='높이는 1~500m로 입력하세요.';return}
  if(!turf.booleanWithin(EDIT_RECT,EDIT_PARCEL)){editNotice('직사각형이 필지 바깥으로 나갑니다. 위치나 길이를 조정하세요.');return}
  EDIT_CUSTOM={...EDIT_RECT,properties:{model_height:height,editor_generated:true}};
- $('editHeight').value=height;editUpdateModel();editModelSummary();$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';EDIT_PICKING=false;
+ $('editHeight').value=height;editUpdateModel();editModelSummary();workspaceCommitPlacement();$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';EDIT_PICKING=false;
  map.easeTo({center:turf.centroid(EDIT_RECT).geometry.coordinates,zoom:Math.max(map.getZoom(),18),pitch:70,duration:650});
  editNotice('새 건물 '+height+'m 생성 완료. 원본 데이터는 보존됩니다.');
 }
@@ -3184,7 +3346,7 @@ function applyCachedSupplement(key){const r=districtOsmCache.get(key);if(!r)retu
 function heightSummary(s){const t=s.high+s.mid+s.low;return t?`높음 ${Math.round(s.high/t*100)}% · 보통 ${Math.round(s.mid/t*100)}%`:'-'}
 async function selectDistrict(id){
   const f=DISTRICTS.features.find(x=>String(x.properties.district_id)===String(id));if(!f)return;
-  solarSetShadowEnabled(false);buildingReset();EDIT_PARCEL=null;EDIT_CUSTOM=null;EDIT_HIDDEN_PARCEL=null;EDIT_RECT=null;editBasemapBuildingFootprints(false);map.getSource('edit-custom-model')?.setData({type:'FeatureCollection',features:[]});$('editParcelInfo').textContent='선택된 필지가 없습니다.';editModelSummary();
+  workspaceCancelPlacement();solarSetShadowEnabled(false);buildingReset();EDIT_PARCEL=null;EDIT_CUSTOM=null;EDIT_HIDDEN_PARCEL=null;EDIT_RECT=null;editBasemapBuildingFootprints(false);map.getSource('edit-custom-model')?.setData({type:'FeatureCollection',features:[]});$('editParcelInfo').textContent='선택된 필지가 없습니다.';editModelSummary();
   scanToken++;terrainRefreshDone=false;selectedDistrict=f;selectedId=String(id);detailReady=false;CURRENT_PLANNING=null;CURRENT_PLANNING_ID='';AUTO_ZONE_SHARES=[];$('district').value=selectedId;$('sDistrict').textContent=f.properties.district_name;
   for(const k of['sOsmRaw','sDup','sOsm','sOsm3d','sFacility'])$(k).textContent=isStaticFast(selectedId)?'-':(k==='sOsmRaw'?'대기':'-');
   map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[]});loading(true);
@@ -3297,6 +3459,7 @@ function setLawMode(on){
     $('lawResult').innerHTML='<span class="lawdim">필지·법규 모드를 켜면 사용할 수 있습니다.</span>';
     message('건물 선택 · 기본 지도로 돌아왔습니다');
   }
+  workspaceUpdate();
 }
 
 async function enterLawWorkspace(){
@@ -3650,7 +3813,7 @@ function selectParcelForLaw(f,{buildingContext=false}={}){
   AUTO_ZONE_SOURCE='';AUTO_LANDSCAPE_NAME='';AUTO_HEIGHT_DISTRICT='';ROAD_ADDRESS='';ROAD_ADDRESS_SOURCE='';$('lawZone').value='';$('lawLandscape').value='';
   try{map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:buildingContext?[]:[SELECTED_PARCEL]})}catch(e){}
   if(!buildingContext||!EDIT_PARCEL)editSetParcel(SELECTED_PARCEL,{keepBuilding:buildingContext});
-  refreshSelectedParcelAddressUI();
+  refreshSelectedParcelAddressUI();workspaceUpdate();
   renderLawReview();buildingRenderLawSummary();
   ensurePyeonggeo2Reference().then(()=>{if(SELECTED_PARCEL===null)return;renderLawReview()});
   ensureGajwaGeumsanReference().then(()=>{if(SELECTED_PARCEL!==null)renderLawReview()});
@@ -4289,4 +4452,5 @@ async function waitForMapReady(m,timeout=5000){
     message('초기 데이터 오류 · '+(e?.message||e)+' · '+APP_VERSION);
   }finally{loading(false)}
 })();
+setupWorkspaceUI();
 </script></body></html>
