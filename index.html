@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.18-01</title>
+<title>Jinju3D Local · v2026.10.18-02</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -99,10 +99,18 @@
 #workspaceMapView button{min-height:36px}
 @media(max-width:400px){#workspaceShell .workspace-three button{font-size:11px}#workspaceShell .row{gap:5px}#workspaceShell .row button{padding:9px 4px}}
 
+
+#workspaceShell .workspace-selection-header{display:flex;align-items:center;gap:8px}
+#workspaceShell .workspace-selection-header .workspace-summary{flex:1;min-width:0}
+#workspaceShell #workspaceClearSelection{width:auto;flex:0 0 auto;padding:8px}
+#workspaceShell .workspace-reveal{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .28s ease,opacity .2s ease}
+#workspaceShell .workspace-reveal.is-open{grid-template-rows:1fr;opacity:1}
+#workspaceShell .workspace-reveal-inner{min-height:0;overflow:hidden}
+@media(prefers-reduced-motion:reduce){#workspaceShell .workspace-reveal{transition:none}}
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.18-01</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.18-02</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -122,7 +130,8 @@
     <section id="tab-law" class="tab-pane active">
 <div id="workspaceShell">
  <div id="workspaceModeBar" class="workspace-mode"><div id="workspaceModeText">건물 선택 · 기본</div><div id="workspaceModeButtons" class="workspace-grid"></div></div>
- <div id="workspaceSummary" class="workspace-summary" role="status" aria-live="polite">지도에서 건물 한 동을 선택하세요.</div>
+ <div class="workspace-selection-header"><div id="workspaceSummary" class="workspace-summary" role="status" aria-live="polite">지도에서 건물 한 동을 선택하세요.</div><button type="button" id="workspaceClearSelection" hidden>선택 해제</button></div>
+ <div id="workspaceReveal" class="workspace-reveal" aria-hidden="true" inert><div id="workspaceRevealInner" class="workspace-reveal-inner">
  <div id="workspaceBuildingActions" class="workspace-grid workspace-actions"><button type="button" data-workspace-action="shadow">그림자 보기</button><button type="button" data-workspace-action="surface">표면 일조</button><button type="button" data-workspace-action="law">법규 검토</button><button type="button" data-workspace-action="compare">제거 전·후 비교</button></div>
  <div id="workspaceParcelActions" hidden><div class="workspace-three"><button type="button" data-workspace-action="law">법규 검토</button><button type="button" data-workspace-action="model">새 건물 배치</button><button type="button" data-workspace-action="list">필지 안 건물</button></div><button type="button" data-workspace-action="shadow" class="workspace-wide">필지 주변 그림자·일조</button></div>
  <div id="workspacePanels"><section id="workspaceList" class="drawer-sec" hidden><h3>필지 안 건물</h3><div id="workspaceBuildingList"></div><div class="hint">목록에서 한 동을 선택하면 건물 작업으로 전환합니다. 숨긴 건물도 다시 선택해 복원할 수 있습니다.</div></section></div>
@@ -130,6 +139,7 @@
  <details id="workspaceParcelManagement" class="workspace-fold" hidden><summary>필지 전체 건물 관리</summary><div id="workspaceParcelManagementControls"></div></details>
  <details id="workspaceInfo" class="workspace-fold"><summary id="workspaceInfoTitle">건물 상세 정보 · 연결 필지</summary><div id="workspaceInfoContent"></div></details>
  <div id="workspaceStatus" class="hint" role="status" aria-live="polite"></div>
+ </div></div>
 </div>
 
       <details id="workspaceLegacySelection" class="drawer-sec work-fold" open><summary>① 건물·필지 선택</summary>
@@ -465,7 +475,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.18-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.18-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -859,7 +869,7 @@ function prepareStaticBuildings(fc){
   fc._heightStats={high,mid,low};fc._staticRegisterMatched=reg;return fc
 }
 // Building selection is independent of parcel ownership/PNU: never use PNU as a building ID.
-let WORKSPACE_READY=false,WORKSPACE_ACTIVE='shadow',WORKSPACE_LAST_MODE=false,WORKSPACE_BUILD_JOB=null;
+let WORKSPACE_READY=false,WORKSPACE_ACTIVE='',WORKSPACE_LAST_MODE=false,WORKSPACE_LAST_TARGET='',WORKSPACE_BUILD_JOB=null;
 let PARCEL_MODE_TOKEN=0,BUILDING_PARCEL_CONTEXT=false;
 let BUILDING_PICK_MODE=true,BUILDING_SELECTED_KEY='',BUILDING_SELECT_TOKEN=0,BUILDING_CACHE=null,BUILDING_VISIBILITY_REV=0;
 const BUILDING_HIDDEN_KEYS=new Set(),BUILDING_RESTORED_KEYS=new Set();
@@ -1113,7 +1123,16 @@ function workspaceUpdate(){
  if(!WORKSPACE_READY)return;
  const record=buildingSelected(),parcelMode=lawMode,parcel=parcelMode?SELECTED_PARCEL:EDIT_PARCEL;
  if(WORKSPACE_BUILD_JOB&&WORKSPACE_BUILD_JOB.key!==record?.key)WORKSPACE_BUILD_JOB=null;
- if(WORKSPACE_LAST_MODE!==parcelMode){WORKSPACE_LAST_MODE=parcelMode;WORKSPACE_ACTIVE=parcelMode?'law':'shadow'}
+ WORKSPACE_LAST_MODE=parcelMode;
+ const hasSelection=parcelMode?!!SELECTED_PARCEL:!!record;
+ const target=hasSelection?(parcelMode?'parcel:'+String(parcelPnu(SELECTED_PARCEL.properties||{}))+':'+JSON.stringify(SELECTED_PARCEL.geometry):'building:'+record.key):'';
+ if(WORKSPACE_LAST_TARGET!==target){
+  WORKSPACE_LAST_TARGET=target;WORKSPACE_ACTIVE='';
+  for(const id of ['workspaceInfo','workspaceBuildingManagement','workspaceParcelManagement'])$(id).open=false;
+  $('workspaceStatus').textContent='';
+ }
+ const reveal=$('workspaceReveal');reveal.classList.toggle('is-open',hasSelection);reveal.inert=!hasSelection;reveal.setAttribute('aria-hidden',String(!hasSelection));
+ $('workspaceClearSelection').hidden=!hasSelection;
  $('workspaceModeText').textContent=parcelMode?'필지 선택 중':'건물 선택 · 기본';
  $('workspaceBuildingActions').hidden=parcelMode;$('workspaceParcelActions').hidden=!parcelMode;
  $('workspaceBuildingManagement').hidden=parcelMode;$('workspaceParcelManagement').hidden=!parcelMode;
@@ -1137,6 +1156,7 @@ function workspaceUpdate(){
 }
 function workspaceAction(action,{start=false}={}){
  if(!WORKSPACE_READY)return;
+ if(lawMode?!SELECTED_PARCEL:!buildingSelected())return;
  WORKSPACE_ACTIVE=action;workspaceUpdate();
  if(start&&['shadow','surface','compare'].includes(action)){
   if(!buildingSelected()&&!EDIT_PARCEL){workspaceStatus('먼저 건물 또는 필지를 선택하세요.');return}
@@ -1209,6 +1229,11 @@ function setupWorkspaceUI(){
  const region=$('district').closest('.drawer-sec'),regionMenu=document.createElement('details'),regionTitle=document.createElement('summary');regionMenu.id='workspaceRegion';regionTitle.textContent='읍·면·동 이동';regionMenu.appendChild(regionTitle);move(region,regionMenu);move(regionMenu,document.querySelector('.top'));
  document.querySelector('.drawer-title').textContent='지도 작업';document.querySelector('.drawer-sub').textContent='선택한 건물 또는 필지를 기준으로 작업합니다.';document.querySelector('.drawer-tab[data-tab="law"]').textContent='지도 작업';
  for(const button of document.querySelectorAll('[data-workspace-action]'))button.addEventListener('click',()=>workspaceAction(button.dataset.workspaceAction,{start:true}));
+ $('workspaceClearSelection').addEventListener('click',()=>{
+  solarPlaybackStop();workspaceCancelPlacement();
+  if(lawMode)buildingClearLawContext();else buildingClearSelection(true,true);
+  workspaceUpdate();$('lawMode').focus();
+ });
  $('workspaceAdd').addEventListener('click',()=>workspaceStartPlacement(false));$('workspaceReplace').addEventListener('click',()=>workspaceStartPlacement(true));
  $('editRestore').textContent='전체 복원';$('editHideBuildings').textContent='기존 건물 전체 숨김';$('editRestore').onclick=workspaceRestoreParcel;
  $('editCloseDraw').addEventListener('click',workspaceCancelPlacement);
