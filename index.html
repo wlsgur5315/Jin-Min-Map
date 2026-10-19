@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-12</title>
+<title>Jinju3D Local · v2026.10.19-13</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -200,7 +200,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-12</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-13</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -495,6 +495,7 @@
    <label style="min-height:36px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementSnap" checked>격자 맞춤</label>
    <select id="editPlacementGrid" aria-label="맞춤 격자 간격" style="width:auto;font-size:16px;min-height:40px"><option value="0.1">0.1m</option><option value="0.5" selected>0.5m</option><option value="1">1m</option></select>
    <label style="min-height:36px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementDistances" checked>거리 표시</label>
+   <label style="min-height:44px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementDimensions" checked>치수선 표시</label>
    <span id="editPlacementScale" style="color:#cbd5e1"></span>
   </div>
   <label for="editPlacementSelect" style="font-size:13px">이 필지의 사용자 건물</label><select id="editPlacementSelect" style="width:100%;min-height:44px;margin:6px 0;font-size:16px" aria-label="배치 캔버스에서 선택할 사용자 건물"></select>
@@ -659,7 +660,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-12',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.19-13',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -3545,7 +3546,7 @@ function editRenderCanvas({placement=false}={}){
   if(turf.booleanIntersects(model,EDIT_PARCEL))shape(feature,invalid?'#ef444466':model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#22d3ee66':'#3b82f655',invalid?'#fca5a5':model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#67e8f9':'#93c5fd');
  }catch(e){}}
  g.restore();
- if(placement){editPlacementDrawMeasures(g,c,analysis);return}
+ if(placement){const labels=editPlacementDrawMeasures(g,c,analysis);editPlacementDrawDimensions(g,c,analysis?.feature,labels);return}
  $('editDrawContext').textContent='기존 건물 '+existing.length+'동 표시 · 숨긴 건물은 제외합니다.';
  if(EDIT_RECT){shape(EDIT_RECT,'#ea580c88','#fdba74');const [w,h]=editRectMeters(EDIT_RECT);$('editDrawDims').textContent='가로 '+w.toFixed(2)+'m × 세로 '+h.toFixed(2)+'m · 면적 '+(w*h).toFixed(1)+'㎡';}
  else $('editDrawDims').textContent='마우스 또는 터치로 드래그하세요.';
@@ -3629,6 +3630,39 @@ function editPlacementDrawMeasures(g,c,analysis){
   if(!data?.a||!data?.b)continue;const a=toXY(data.a),z=toXY(data.b),text=label+' '+data.distance.toFixed(2)+'m',w=g.measureText(text).width+12,x=Math.max(w/2+4,Math.min(c.width-w/2-4,(a[0]+z[0])/2)),initialY=Math.max(font+4,Math.min(c.height-font-4,(a[1]+z[1])/2-12));
   let y=initialY;for(const label of placed)if(Math.abs(x-label.x)<(w+label.w)/2&&Math.abs(y-label.y)<font*1.5)y=Math.max(font+4,Math.min(c.height-font-4,label.y+font*1.8));placed.push({x,y,w});
   g.strokeStyle=color;g.lineWidth=2;g.setLineDash([5,4]);g.beginPath();g.moveTo(...a);g.lineTo(...z);g.stroke();g.setLineDash([]);g.fillStyle='#071527ee';g.fillRect(x-w/2,y-font*.7,w,font*1.4);g.fillStyle=color;g.fillText(text,x,y);
+ }
+ g.restore();
+ return placed;
+}
+
+function editPlacementDrawDimensions(g,c,feature,occupied=[]){
+ if(!$('editPlacementDimensions')?.checked||!feature)return;
+ const ring=feature.geometry?.type==='Polygon'?feature.geometry.coordinates[0]:null;
+ if(!ring||!(editPlacementRectangle(feature)||editIsLShape(feature)))return;
+ const points=ring.slice(0,-1).map(editPlacementToXY),area=points.reduce((sum,p,i)=>{const q=points[(i+1)%points.length];return sum+p[0]*q[1]-q[0]*p[1]},0),edges=points.map((a,i)=>({a,b:points[(i+1)%points.length],index:i,length:turf.distance(ring[i],ring[i+1],{units:'meters'})}));
+ let dimensions;
+ if(editIsLShape(feature)){
+  const p=editLParams(feature),r=(Number(feature.properties.model_rotation)||0)*Math.PI/180,cs=Math.cos(r),sn=Math.sin(r),used=new Set();
+  const local=ring.slice(0,-1).map(pt=>{const b=editPlacementBox(),x=(pt[0]-b.refLon)*b.metersLon,y=(pt[1]-b.refLat)*b.metersLat;return [x*cs-y*sn,x*sn+y*cs]});
+  dimensions=[['전체 가로',p.w,true],['전체 세로',p.d,false],['세로 날개',p.a,true],['가로 날개',p.b,false]].map(([label,value,horizontal])=>{
+   const candidates=edges.filter(e=>{const a=local[e.index],b=local[(e.index+1)%local.length];return !used.has(e.index)&&(Math.abs(b[0]-a[0])>=Math.abs(b[1]-a[1]))===horizontal}).sort((a,b)=>Math.abs(a.length-value)-Math.abs(b.length-value));
+   const edge=candidates[0];if(!edge)return null;used.add(edge.index);return {...edge,label,value};
+  }).filter(Boolean);
+ }else dimensions=edges.slice(0,2).map((edge,i)=>({...edge,label:i?'세로':'가로',value:edge.length}));
+ const density=c.width/(c.getBoundingClientRect().width||c.width),font=14*density,padding=6*density,placed=(occupied||[]).map(p=>({x:p.x,y:p.y,w:p.w,h:font*1.5}));
+ g.save();g.font=font+'px system-ui';g.textAlign='center';g.textBaseline='middle';g.strokeStyle='#bae6fd';g.lineWidth=density;g.setLineDash([]);
+ for(const dim of dimensions){
+  const {a,b}=dim,dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);if(length<1)continue;
+  const sign=area>0?1:-1,nx=sign*dy/length,ny=-sign*dx/length,offset=28*density,start=[a[0]+nx*offset,a[1]+ny*offset],end=[b[0]+nx*offset,b[1]+ny*offset];
+  g.beginPath();for(const [p,q] of [[a,start],[b,end],[start,end]]){g.moveTo(...p);g.lineTo(...q)}
+  for(const p of [start,end]){const tx=(dx/length+nx)*3*density,ty=(dy/length+ny)*3*density;g.moveTo(p[0]-tx,p[1]-ty);g.lineTo(p[0]+tx,p[1]+ty)}g.stroke();
+  const text=dim.label+' '+dim.value.toFixed(2)+'m',w=g.measureText(text).width+padding*2,h=font+padding,mid=[(start[0]+end[0])/2,(start[1]+end[1])/2];
+  if(w>c.width-8*density)continue;
+  let box=null;for(let i=0;i<16;i++){
+   const shift=i===0?0:Math.ceil(i/2)*22*density*(i%2?1:-1),x=Math.max(w/2+4*density,Math.min(c.width-w/2-4*density,mid[0]+nx*shift)),y=Math.max(h/2+4*density,Math.min(c.height-h/2-4*density,mid[1]+ny*shift));
+   if(!placed.some(p=>Math.abs(p.x-x)<(p.w+w)/2+padding&&Math.abs(p.y-y)<(p.h+h)/2+padding)){box={x,y,w,h};break}
+  }
+  if(!box)continue;placed.push(box);g.fillStyle='#071527f2';g.fillRect(box.x-w/2,box.y-h/2,w,h);g.fillStyle='#e0f2fe';g.fillText(text,box.x,box.y);
  }
  g.restore();
 }
@@ -3788,7 +3822,7 @@ function setupPlacementCanvas(){
  for(const [id,factor] of [['editPlacementZoomIn',1.25],['editPlacementZoomOut',.8]])$(id).onclick=()=>{cancel();editPlacementZoom(factor)};
  $('editPlacementFit').onclick=()=>{cancel();EDIT_PLACEMENT_VIEW={key:editPlacementScope(),zoom:1,x:0,y:0};draw()};
  $('editPlacementUndo').onclick=()=>{cancel();editPlacementHistoryStep(false)};$('editPlacementRedo').onclick=()=>{cancel();editPlacementHistoryStep(true)};
- for(const id of ['editPlacementSnap','editPlacementGrid','editPlacementDistances'])$(id).addEventListener('change',()=>{cancel();draw()});
+ for(const id of ['editPlacementSnap','editPlacementGrid','editPlacementDistances','editPlacementDimensions'])$(id).addEventListener('change',()=>{cancel();draw()});
  $('editPlacementDraw').onclick=()=>{cancel();editOpenDraw()};$('editPlacementSize').onclick=()=>{cancel();editOpenSize()};$('editPlacementL').onclick=()=>{cancel();editOpenSize('l')};
  $('editPlacementClose').onclick=()=>{cancel();$('editPlacementModal').style.display='none';workspaceCancelPlacement()};
  window.addEventListener('blur',cancel);document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel()});
