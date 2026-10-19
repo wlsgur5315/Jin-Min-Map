@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-05</title>
+<title>Jinju3D Local · v2026.10.19-06</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -111,10 +111,19 @@
 #workspaceShell #solarShadowToggle{margin:0 0 10px!important}
 #workspaceShell #solarStepToggle{align-items:stretch;justify-content:center;text-align:center}
 #workspaceShell #solarStep10,#workspaceShell #solarStep60{display:flex;flex:1 1 0;min-width:0;min-height:34px;padding:0 2px;align-items:center;justify-content:center;text-align:center;line-height:1.2;border-radius:16px;white-space:nowrap}
+
+/* Placement editor controls stay usable with touch and narrow viewports. */
+#editPlacementModal button{width:auto;min-height:44px;font-size:13px;white-space:normal}
+#editPlacementModal .row button{flex:1;min-width:0}
+#editPlacementModal #editPlacementClose{flex:0 0 auto}
+#editPlacementModal button[aria-pressed="true"]{background:#155e75;border-color:#67e8f9}
+#editPlacementModal button:disabled{opacity:.4;cursor:default}
+#editPlacementModal input[type="checkbox"]{width:18px;height:18px;padding:0;flex:0 0 18px}
+#editPlacementModal .hint{font-size:12px}
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-05</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-06</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -392,11 +401,23 @@
  <div style="width:min(720px,100%);max-height:calc(100dvh - 16px);overflow-y:auto;background:#101f33;border:1px solid #64748b;border-radius:14px;padding:12px;color:#e2e8f0">
   <div class="row" style="justify-content:space-between"><b id="editPlacementTitle">사용자 건물 배치</b><button type="button" id="editPlacementClose">닫기</button></div>
   <div class="row" style="margin:10px 0"><button type="button" id="editPlacementDraw">직접 그려 추가</button><button type="button" id="editPlacementSize">치수 입력으로 추가</button></div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0">
+   <button type="button" id="editPlacementMove" aria-pressed="true">선택·이동</button><button type="button" id="editPlacementPan" aria-pressed="false">화면 이동</button>
+   <button type="button" id="editPlacementZoomIn" aria-label="배치 캔버스 확대">확대 ＋</button><button type="button" id="editPlacementZoomOut" aria-label="배치 캔버스 축소">축소 −</button><button type="button" id="editPlacementFit">전체 보기</button>
+   <button type="button" id="editPlacementUndo" disabled>되돌리기</button><button type="button" id="editPlacementRedo" disabled>다시 실행</button>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0;font-size:13px">
+   <label style="min-height:36px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementSnap" checked>격자 맞춤</label>
+   <select id="editPlacementGrid" aria-label="맞춤 격자 간격" style="width:auto;font-size:16px;min-height:40px"><option value="0.1">0.1m</option><option value="0.5" selected>0.5m</option><option value="1">1m</option></select>
+   <label style="min-height:36px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementDistances" checked>거리 표시</label>
+   <span id="editPlacementScale" style="color:#cbd5e1"></span>
+  </div>
   <canvas id="editPlacementCanvas" width="580" height="400" aria-label="사용자 건물 선택 및 이동 캔버스" style="display:block;width:100%;height:auto;max-width:100%;background:#071527;touch-action:none;border:1px solid #475569;border-radius:8px"></canvas>
   <div style="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin:8px 0"><span style="color:#cbd5e1">■ 기존 건물 · 고정</span><span style="color:#93c5fd">■ 사용자 건물</span><span style="color:#67e8f9">■ 선택한 건물 · 이동 가능</span></div>
   <label for="editPlacementSelect" style="font-size:13px">이 필지의 사용자 건물</label><select id="editPlacementSelect" style="width:100%;min-height:44px;margin:6px 0;font-size:16px" aria-label="배치 캔버스에서 선택할 사용자 건물"></select>
+  <div id="editPlacementMetrics" style="font-size:13px;line-height:1.7;margin-top:8px;color:#d1fae5"></div>
   <div id="editPlacementStatus" style="font-size:13px;line-height:1.7;margin-top:8px" role="status" aria-live="polite">건물을 선택한 뒤 끌어서 이동하세요.</div>
-  <div class="hint" style="margin-top:6px">빈 곳을 끌어도 새 건물이 그려지지 않습니다. 새 건물은 위 버튼으로 추가합니다. 필지 밖에 놓으면 기존 위치가 유지됩니다.</div>
+  <div class="hint" style="margin-top:6px">빈 곳 드래그: 화면 이동 · 두 손가락/마우스 휠: 확대·축소 · 겹침은 경고만 표시하며 필지 밖 이동은 적용하지 않습니다. 거리값은 표시된 건물과 필지 경계 기준 참고값입니다. 되돌리기는 현재 필지의 최근 30단계를 지원합니다.</div>
  </div>
 </div>
 <div id="editSizeModal" role="dialog" aria-modal="true" aria-labelledby="editSizeTitle" style="display:none;position:fixed;z-index:205;inset:0;background:#030712ee;padding:12px;align-items:center;justify-content:center;overflow-y:auto">
@@ -528,7 +549,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.19-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -973,6 +994,8 @@ function prepareStaticBuildings(fc){
 let EDIT_MODELS=[],EDIT_SELECTED_MODEL_ID='',EDIT_MODEL_SEQ=0,EDIT_MODEL_SELECT_TOKEN=0;
 const EDIT_MODEL_PARCELS=new Map();
 let EDIT_PLACEMENT_DRAG=null;
+let EDIT_PLACEMENT_VIEW={key:'',zoom:1,x:0,y:0},EDIT_PLACEMENT_TOOL='move';
+let EDIT_PLACEMENT_UNDO=[],EDIT_PLACEMENT_REDO=[],EDIT_PLACEMENT_HISTORY_SCOPE='';
 let WORKSPACE_READY=false,WORKSPACE_ACTIVE='',WORKSPACE_LAST_MODE=false,WORKSPACE_LAST_TARGET='',WORKSPACE_BUILD_JOB=null;
 let PARCEL_MODE_TOKEN=0,BUILDING_PARCEL_CONTEXT=false;
 let BUILDING_PICK_MODE=true,BUILDING_SELECTED_KEY='',BUILDING_SELECT_TOKEN=0,BUILDING_CACHE=null,BUILDING_VISIBILITY_REV=0;
@@ -1223,6 +1246,38 @@ document.getElementById('buildingLawFocus')?.addEventListener('click',()=>{
  $('lawResult')?.scrollIntoView({behavior:'smooth',block:'nearest'});
 });
 
+// History contains proposed-building edits; visibility deltas cover only a replaced existing dong.
+function editPlacementScope(){return String(selectedId||'')+'|'+JSON.stringify(EDIT_PARCEL?.geometry||null)}
+function editPlacementHistoryControls(){
+ if($('editPlacementUndo'))$('editPlacementUndo').disabled=!EDIT_PLACEMENT_UNDO.length;
+ if($('editPlacementRedo'))$('editPlacementRedo').disabled=!EDIT_PLACEMENT_REDO.length;
+}
+function editPlacementHistoryCapture(){
+ return {scope:editPlacementScope(),models:JSON.parse(JSON.stringify(EDIT_MODELS)),parcels:JSON.parse(JSON.stringify([...EDIT_MODEL_PARCELS])),selected:EDIT_SELECTED_MODEL_ID,active:EDIT_CUSTOM?.properties?.model_id||'',seq:EDIT_MODEL_SEQ,parcel:EDIT_PARCEL?JSON.parse(JSON.stringify(EDIT_PARCEL)):null,building:BUILDING_SELECTED_KEY,hidden:[...BUILDING_HIDDEN_KEYS],restored:[...BUILDING_RESTORED_KEYS]};
+}
+function editPlacementRecord(before,label){
+ const after=editPlacementHistoryCapture();if(JSON.stringify(before.models)===JSON.stringify(after.models))return;
+ if(EDIT_PLACEMENT_HISTORY_SCOPE!==before.scope){EDIT_PLACEMENT_UNDO=[];EDIT_PLACEMENT_HISTORY_SCOPE=before.scope}
+ const keys=new Set([...before.hidden,...after.hidden,...before.restored,...after.restored]);
+ const visibility=[...keys].filter(k=>before.hidden.includes(k)!==after.hidden.includes(k)||before.restored.includes(k)!==after.restored.includes(k));
+ EDIT_PLACEMENT_UNDO.push({before,after,visibility,label});if(EDIT_PLACEMENT_UNDO.length>30)EDIT_PLACEMENT_UNDO.shift();EDIT_PLACEMENT_REDO=[];editPlacementHistoryControls();
+}
+function editPlacementHistoryStep(redo=false){
+ if(EDIT_PLACEMENT_DRAG)return;
+ const from=redo?EDIT_PLACEMENT_REDO:EDIT_PLACEMENT_UNDO,to=redo?EDIT_PLACEMENT_UNDO:EDIT_PLACEMENT_REDO,command=from.at(-1);if(!command)return;
+ if(editPlacementScope()!==EDIT_PLACEMENT_HISTORY_SCOPE){EDIT_PLACEMENT_UNDO=[];EDIT_PLACEMENT_REDO=[];editPlacementHistoryControls();return}
+ from.pop();const state=redo?command.after:command.before;
+ EDIT_MODELS=JSON.parse(JSON.stringify(state.models));EDIT_MODEL_PARCELS.clear();for(const [id,parcel] of state.parcels)EDIT_MODEL_PARCELS.set(id,JSON.parse(JSON.stringify(parcel)));
+ EDIT_MODEL_SEQ=Math.max(EDIT_MODEL_SEQ,state.seq);EDIT_SELECTED_MODEL_ID=state.selected;EDIT_CUSTOM=editFindModel(state.active);EDIT_PARCEL=state.parcel?JSON.parse(JSON.stringify(state.parcel)):null;EDIT_RECT=null;WORKSPACE_BUILD_JOB=null;
+ for(const key of command.visibility){if(state.hidden.includes(key))BUILDING_HIDDEN_KEYS.add(key);else BUILDING_HIDDEN_KEYS.delete(key);if(state.restored.includes(key))BUILDING_RESTORED_KEYS.add(key);else BUILDING_RESTORED_KEYS.delete(key)}
+ if(command.visibility.length){BUILDING_VISIBILITY_REV++;editRefreshOriginal()}
+ to.push(command);
+ if(editSelectedModel())editSelectModel(EDIT_SELECTED_MODEL_ID,{openEditor:true});
+ else{buildingClearSelection(false);if(state.building&&buildingRecords().byKey.has(state.building))buildingSelect(state.building);else if(EDIT_PARCEL)selectParcelForLaw(EDIT_PARCEL,{buildingContext:true});editUpdateModel()}
+ editModelSummary();workspaceUpdate();editPlacementHistoryControls();if(typeof editRenderPlacementCanvas==='function')editRenderPlacementCanvas();
+ if($('editPlacementStatus'))$('editPlacementStatus').textContent=command.label+' · '+(redo?'다시 실행했습니다.':'되돌렸습니다.');
+}
+
 // Multiple proposed buildings. EDIT_CUSTOM remains the last active feature for legacy callers.
 function editCustomModels(){
  const models=[...EDIT_MODELS];
@@ -1306,14 +1361,14 @@ function editApplySelected(){
  const name=String($('editModelName').value||'').trim().slice(0,60)||editModelLabel(model);
  next.properties={...model.properties,model_name:name,model_height:height,model_rotation:((Number(model.properties.model_rotation)||0)+angle+360)%360};
  const index=EDIT_MODELS.findIndex(f=>f.properties?.model_id===model.properties.model_id);if(index<0)return false;
- EDIT_MODELS[index]=next;EDIT_CUSTOM=next;
+ const history=editPlacementHistoryCapture();EDIT_MODELS[index]=next;EDIT_CUSTOM=next;
  for(const id of ['editMoveEast','editMoveNorth','editRotateDelta'])$(id).value=0;
- editRefreshModelControls();editUpdateModel();editModelSummary();workspaceUpdate();editNotice(name+' 수정 완료 · 다른 사용자 건물은 유지됩니다.');return true;
+ editRefreshModelControls();editUpdateModel();editModelSummary();workspaceUpdate();editNotice(name+' 수정 완료 · 다른 사용자 건물은 유지됩니다.');editPlacementRecord(history,'건물 수정');return true;
 }
 function editDeleteSelected(){
  const model=editSelectedModel();if(!model){editNotice('삭제할 사용자 건물을 먼저 선택하세요.');return}
- const id=model.properties.model_id;EDIT_MODELS=EDIT_MODELS.filter(f=>f.properties?.model_id!==id);EDIT_MODEL_PARCELS.delete(id);EDIT_SELECTED_MODEL_ID='';EDIT_CUSTOM=null;EDIT_RECT=null;WORKSPACE_BUILD_JOB=null;
- editRefreshModelControls();editUpdateModel();editModelSummary();workspaceUpdate();editNotice(editModelLabel(model)+' 한 동만 삭제했습니다.');
+ const history=editPlacementHistoryCapture(),id=model.properties.model_id;EDIT_MODELS=EDIT_MODELS.filter(f=>f.properties?.model_id!==id);EDIT_MODEL_PARCELS.delete(id);EDIT_SELECTED_MODEL_ID='';EDIT_CUSTOM=null;EDIT_RECT=null;WORKSPACE_BUILD_JOB=null;
+ editRefreshModelControls();editUpdateModel();editModelSummary();workspaceUpdate();editNotice(editModelLabel(model)+' 한 동만 삭제했습니다.');editPlacementRecord(history,'건물 삭제');
 }
 function editClearModelSelection(){
  EDIT_MODEL_SELECT_TOKEN++;EDIT_SELECTED_MODEL_ID='';
@@ -3330,12 +3385,13 @@ function editCanvasExistingBuildings(){
 function editRenderCanvas({placement=false}={}){
  if(!EDIT_PARCEL)return;
  const c=$(placement?'editPlacementCanvas':'editDrawCanvas'),g=c.getContext('2d');if(!g)return;
+ const toXY=placement?editPlacementToXY:editLngLatToXY,analysis=placement?editPlacementAnalysis():null;
  g.clearRect(0,0,c.width,c.height);g.fillStyle='#071527';g.fillRect(0,0,c.width,c.height);
  function path(ft){
   const polygons=ft.geometry.type==='Polygon'?[ft.geometry.coordinates]:ft.geometry.type==='MultiPolygon'?ft.geometry.coordinates:[];
   g.beginPath();
   for(const polygon of polygons)for(const ring of polygon){
-   ring.forEach((pt,i)=>{const xy=editLngLatToXY(pt);if(i===0)g.moveTo(...xy);else g.lineTo(...xy)});
+   ring.forEach((pt,i)=>{const xy=toXY(pt);if(i===0)g.moveTo(...xy);else g.lineTo(...xy)});
    g.closePath();
   }
  }
@@ -3345,18 +3401,87 @@ function editRenderCanvas({placement=false}={}){
  shape(EDIT_PARCEL,'#164e63','#67e8f9');
  // Use the same per-building visibility as the map; clip cross-boundary footprints to this parcel.
  const existing=editCanvasExistingBuildings();
- g.save();path(EDIT_PARCEL);g.clip('evenodd');
+ g.save();path(EDIT_PARCEL);g.clip('evenodd');if(placement)editPlacementDrawGrid(g,c);
  for(const record of existing)shape(record.f,'#94a3b877','#cbd5e1');
  for(const model of editCustomModels()){try{
-  const preview=placement&&EDIT_PLACEMENT_DRAG?.model.properties.model_id===model.properties?.model_id?EDIT_PLACEMENT_DRAG.candidate:null,feature=preview||model,invalid=preview&&!EDIT_PLACEMENT_DRAG.valid;
+  const preview=placement&&EDIT_PLACEMENT_DRAG?.model.properties.model_id===model.properties?.model_id?EDIT_PLACEMENT_DRAG.candidate:null,feature=preview||model,invalid=preview&&!EDIT_PLACEMENT_DRAG.valid||placement&&model.properties?.model_id===EDIT_SELECTED_MODEL_ID&&analysis?.overlaps>0;
   if(turf.booleanIntersects(model,EDIT_PARCEL))shape(feature,invalid?'#ef444466':model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#22d3ee66':'#3b82f655',invalid?'#fca5a5':model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#67e8f9':'#93c5fd');
  }catch(e){}}
  g.restore();
- if(placement)return;
+ if(placement){editPlacementDrawMeasures(g,c,analysis);return}
  $('editDrawContext').textContent='기존 건물 '+existing.length+'동 표시 · 숨긴 건물은 제외합니다.';
  if(EDIT_RECT){shape(EDIT_RECT,'#ea580c88','#fdba74');const [w,h]=editRectMeters(EDIT_RECT);$('editDrawDims').textContent='가로 '+w.toFixed(2)+'m × 세로 '+h.toFixed(2)+'m · 면적 '+(w*h).toFixed(1)+'㎡';}
  else $('editDrawDims').textContent='마우스 또는 터치로 드래그하세요.';
 }
+function editPlacementEnsureView(){
+ const key=editPlacementScope();
+ if(EDIT_PLACEMENT_VIEW.key!==key)EDIT_PLACEMENT_VIEW={key,zoom:1,x:0,y:0};
+ if(EDIT_PLACEMENT_HISTORY_SCOPE!==key){EDIT_PLACEMENT_UNDO=[];EDIT_PLACEMENT_REDO=[];EDIT_PLACEMENT_HISTORY_SCOPE=key;editPlacementHistoryControls()}
+}
+function editPlacementBox(){const b=editCanvasBounds();return {...b,scale:b.scale*EDIT_PLACEMENT_VIEW.zoom,cx:b.cx+EDIT_PLACEMENT_VIEW.x,cy:b.cy+EDIT_PLACEMENT_VIEW.y}}
+function editPlacementToXY(pt){const b=editPlacementBox();return [b.cx+(pt[0]-b.refLon)*b.metersLon*b.scale,b.cy-(pt[1]-b.refLat)*b.metersLat*b.scale]}
+function editPlacementToLngLat(x,y){const b=editPlacementBox();return [b.refLon+(x-b.cx)/(b.scale*b.metersLon),b.refLat-(y-b.cy)/(b.scale*b.metersLat)]}
+function editPlacementZoom(factor,anchor=null){
+ const c=$('editPlacementCanvas'),b=editPlacementBox(),p=anchor||[c.width/2,c.height/2],zoom=Math.max(.5,Math.min(8,EDIT_PLACEMENT_VIEW.zoom*factor)),ratio=zoom/EDIT_PLACEMENT_VIEW.zoom,base=editCanvasBounds();
+ EDIT_PLACEMENT_VIEW.x=p[0]+(b.cx-p[0])*ratio-base.cx;EDIT_PLACEMENT_VIEW.y=p[1]+(b.cy-p[1])*ratio-base.cy;EDIT_PLACEMENT_VIEW.zoom=zoom;editRenderCanvas({placement:true});
+}
+function editPlacementTranslate(model,east,north){
+ const b=editCanvasBounds(),next=JSON.parse(JSON.stringify(model));
+ const shift=coordinates=>typeof coordinates[0]==='number'?[coordinates[0]+east/b.metersLon,coordinates[1]+north/b.metersLat,...coordinates.slice(2)]:coordinates.map(shift);
+ next.geometry.coordinates=shift(next.geometry.coordinates);if(next.bbox)delete next.bbox;return next;
+}
+function editPlacementGridStep(){
+ const snap=Number($('editPlacementGrid')?.value)||.5,scale=editPlacementBox().scale;let display=snap;while(display*scale<18)display*=2;return {snap,display};
+}
+function editPlacementDrawGrid(g,c){
+ const b=editPlacementBox(),{display}=editPlacementGridStep(),space=display*b.scale;
+ g.save();g.strokeStyle='#64748b55';g.lineWidth=1;g.beginPath();
+ for(let x=((b.cx%space)+space)%space;x<c.width;x+=space){g.moveTo(x,0);g.lineTo(x,c.height)}
+ for(let y=((b.cy%space)+space)%space;y<c.height;y+=space){g.moveTo(0,y);g.lineTo(c.width,y)}g.stroke();g.restore();
+ $('editPlacementScale').textContent=Math.round(EDIT_PLACEMENT_VIEW.zoom*100)+'% · 표시 격자 '+Number(display.toFixed(3))+'m';
+}
+function editPlacementRings(f){
+ const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates,b=editCanvasBounds();
+ return polys.flat().map(ring=>ring.map(p=>[(p[0]-b.refLon)*b.metersLon,(p[1]-b.refLat)*b.metersLat]));
+}
+function editPlacementNearest(a,b){
+ let best={distance:Infinity,a:null,b:null};
+ function pointSegment(p,u,v,reverse){const dx=v[0]-u[0],dy=v[1]-u[1],len=dx*dx+dy*dy,t=len?Math.max(0,Math.min(1,((p[0]-u[0])*dx+(p[1]-u[1])*dy)/len)):0,q=[u[0]+t*dx,u[1]+t*dy],d=Math.hypot(p[0]-q[0],p[1]-q[1]);if(d<best.distance)best={distance:d,a:reverse?q:p,b:reverse?p:q}}
+ for(const ra of a)for(const rb of b)for(let i=0;i<ra.length-1;i++)for(let j=0;j<rb.length-1;j++){
+  const u=ra[i],v=ra[i+1],p=rb[j],q=rb[j+1],r=[v[0]-u[0],v[1]-u[1]],s=[q[0]-p[0],q[1]-p[1]],den=r[0]*s[1]-r[1]*s[0];
+  if(Math.abs(den)>1e-10){const t=((p[0]-u[0])*s[1]-(p[1]-u[1])*s[0])/den,w=((p[0]-u[0])*r[1]-(p[1]-u[1])*r[0])/den;if(t>=0&&t<=1&&w>=0&&w<=1){const hit=[u[0]+t*r[0],u[1]+t*r[1]];return {distance:0,a:hit,b:hit}}}
+  pointSegment(u,p,q,false);pointSegment(v,p,q,false);pointSegment(p,u,v,true);pointSegment(q,u,v,true);
+ }
+ return best;
+}
+function editPlacementAnalysis(){
+ const model=editSelectedModel();if(!model||!editPlacementModels().includes(model))return null;
+ const feature=EDIT_PLACEMENT_DRAG?.candidate||model,rings=editPlacementRings(feature),others=[...editCanvasExistingBuildings().map(r=>r.f),...editCustomModels().filter(f=>f.properties?.model_id!==model.properties.model_id&&turf.booleanIntersects(f,EDIT_PARCEL))];
+ let nearest=null,overlaps=0;const bounds=turf.bbox(feature),base=editCanvasBounds();
+ for(const other of others){
+  const bb=turf.bbox(other),lower=Math.hypot(Math.max(0,bounds[0]-bb[2],bb[0]-bounds[2])*base.metersLon,Math.max(0,bounds[1]-bb[3],bb[1]-bounds[3])*base.metersLat);if(nearest&&lower>nearest.distance)continue;
+  let overlap=false;try{if(bounds[0]<=bb[2]&&bounds[2]>=bb[0]&&bounds[1]<=bb[3]&&bounds[3]>=bb[1]){const intersection=turf.intersect(turf.featureCollection([feature,other]));overlap=!!intersection&&turf.area(intersection)>.01}}catch(e){}
+  const d=editPlacementNearest(rings,editPlacementRings(other));if(overlap){overlaps++;d.distance=0;d.a=null;d.b=null}
+  if(!nearest||d.distance<nearest.distance)nearest=d;
+ }
+ return {feature,nearest,boundary:editPlacementNearest(rings,editPlacementRings(EDIT_PARCEL)),overlaps,valid:EDIT_PLACEMENT_DRAG?EDIT_PLACEMENT_DRAG.valid:editModelFits(feature,editModelParcel(model))};
+}
+function editPlacementDrawMeasures(g,c,analysis){
+ const info=$('editPlacementMetrics');if(!analysis){info.textContent='사용자 건물을 선택하면 거리와 겹침을 확인할 수 있습니다.';return}
+ const {nearest,boundary,overlaps,valid}=analysis,show=$('editPlacementDistances')?.checked;
+ info.style.color=overlaps||!valid?'#fda4af':'#d1fae5';
+ info.textContent=(overlaps?'겹침 '+overlaps+'동 · ':'')+(!valid?'필지 경계 밖 · ':'')+(show?'표시 건물까지 '+(nearest?nearest.distance.toFixed(2)+'m':'대상 없음')+' · 경계까지 '+(valid?boundary.distance.toFixed(2):'0.00')+'m':'거리 표시 꺼짐');
+ if(!show)return;
+ const b=editPlacementBox(),toXY=p=>[b.cx+p[0]*b.scale,b.cy-p[1]*b.scale],font=Math.max(14,12*c.width/(c.getBoundingClientRect().width||c.width));
+ g.save();g.font=font+'px system-ui';g.textAlign='center';g.textBaseline='middle';const placed=[];
+ for(const [data,color,label] of [[nearest,'#a7f3d0','건물'],[valid?boundary:null,'#fde68a','경계']]){
+  if(!data?.a||!data?.b)continue;const a=toXY(data.a),z=toXY(data.b),text=label+' '+data.distance.toFixed(2)+'m',w=g.measureText(text).width+12,x=Math.max(w/2+4,Math.min(c.width-w/2-4,(a[0]+z[0])/2)),initialY=Math.max(font+4,Math.min(c.height-font-4,(a[1]+z[1])/2-12));
+  let y=initialY;for(const label of placed)if(Math.abs(x-label.x)<(w+label.w)/2&&Math.abs(y-label.y)<font*1.5)y=Math.max(font+4,Math.min(c.height-font-4,label.y+font*1.8));placed.push({x,y,w});
+  g.strokeStyle=color;g.lineWidth=2;g.setLineDash([5,4]);g.beginPath();g.moveTo(...a);g.lineTo(...z);g.stroke();g.setLineDash([]);g.fillStyle='#071527ee';g.fillRect(x-w/2,y-font*.7,w,font*1.4);g.fillStyle=color;g.fillText(text,x,y);
+ }
+ g.restore();
+}
+
 function editPlacementModels(){
  if(!EDIT_PARCEL)return [];
  const pnu=String(parcelPnu(EDIT_PARCEL.properties||{}));
@@ -3368,6 +3493,7 @@ function editPlacementModels(){
 }
 function editRenderPlacementCanvas(){
  if(!EDIT_PARCEL)return;
+ editPlacementEnsureView();editPlacementHistoryControls();
  editRenderCanvas({placement:true});
  const select=$('editPlacementSelect'),models=editPlacementModels();select.replaceChildren();
  const first=document.createElement('option');first.value='';first.textContent=models.length?'이동할 건물 선택 ('+models.length+'동)':'사용자 건물이 없습니다. 위 버튼으로 추가하세요.';select.appendChild(first);
@@ -3377,7 +3503,7 @@ function editRenderPlacementCanvas(){
 }
 function editOpenPlacement(){
  if(!EDIT_PARCEL){editNotice('먼저 배치할 필지를 선택하세요.');return}
- EDIT_PLACEMENT_DRAG=null;EDIT_BOX=editCanvasBounds();$('editPlacementModal').style.display='flex';editRenderPlacementCanvas();
+ EDIT_PLACEMENT_DRAG=null;EDIT_BOX=editCanvasBounds();editPlacementEnsureView();$('editPlacementModal').style.display='flex';editRenderPlacementCanvas();
 }
 function editOpenSize(){
  if(!EDIT_PARCEL){editNotice('먼저 배치할 필지를 선택하세요.');return}
@@ -3392,45 +3518,65 @@ function editCreateFromSize(){
  $('editHeightConfirm').value=h;editCommitModel();
 }
 function setupPlacementCanvas(){
- const canvas=$('editPlacementCanvas');
+ const canvas=$('editPlacementCanvas'),pointers=new Map();let gesture=null;
  const pos=e=>{const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height]};
- function cancel(){EDIT_PLACEMENT_DRAG=null;if($('editPlacementModal').style.display==='flex')editRenderPlacementCanvas()}
+ const draw=()=>editRenderCanvas({placement:true});
+ function cancel(){pointers.clear();gesture=null;EDIT_PLACEMENT_DRAG=null;if($('editPlacementModal').style.display==='flex')editRenderPlacementCanvas()}
  function preview(e){
   const drag=EDIT_PLACEMENT_DRAG;if(!drag||e.pointerId!==drag.pointerId)return;
-  const xy=pos(e),east=(xy[0]-drag.start[0])/EDIT_BOX.scale,north=-(xy[1]-drag.start[1])/EDIT_BOX.scale;
-  drag.moved=Math.hypot(xy[0]-drag.start[0],xy[1]-drag.start[1])>=1;
-  drag.candidate=turf.transformTranslate(drag.model,Math.hypot(east,north)/1000,Math.atan2(east,north)*180/Math.PI,{units:'kilometers',mutate:false});
+  const xy=pos(e),b=editPlacementBox(),origin=turf.centroid(drag.model).geometry.coordinates;
+  let east=(xy[0]-drag.start[0])/drag.scale,north=-(xy[1]-drag.start[1])/drag.scale;
+  if($('editPlacementSnap').checked){const {snap}=editPlacementGridStep(),mx=(origin[0]-b.refLon)*b.metersLon,my=(origin[1]-b.refLat)*b.metersLat;east=Math.round((mx+east)/snap)*snap-mx;north=Math.round((my+north)/snap)*snap-my}
+  drag.moved=Math.hypot(xy[0]-drag.start[0],xy[1]-drag.start[1])>=2;
+  drag.candidate=drag.moved?editPlacementTranslate(drag.model,east,north):drag.model;
   const valid=editModelFits(drag.candidate,drag.parcel);
   if(valid!==drag.valid)$('editPlacementStatus').textContent=valid?'필지 안 · 놓으면 위치가 적용됩니다.':'필지 경계 밖입니다. 이 위치에 놓으면 원래 위치가 유지됩니다.';
-  drag.valid=valid;editRenderCanvas({placement:true});
+  drag.valid=valid;draw();
  }
  canvas.addEventListener('pointerdown',e=>{
-  if(e.button!==0||EDIT_PLACEMENT_DRAG||!EDIT_PARCEL)return;
-  e.preventDefault();const point=turf.point(editXYToLngLat(...pos(e)));
-  if(!turf.booleanPointInPolygon(point,EDIT_PARCEL))return;
-  const model=editPlacementModels().reverse().find(f=>turf.booleanPointInPolygon(point,f));
-  if(!model){$('editPlacementStatus').textContent='이곳에는 이동할 사용자 건물이 없습니다. 새 건물은 위 버튼으로 추가하세요.';return}
-  editSelectModel(model.properties.model_id);EDIT_BOX=editCanvasBounds();
-  EDIT_PLACEMENT_DRAG={pointerId:e.pointerId,model,parcel:editModelParcel(model),start:pos(e),candidate:model,valid:true,moved:false};
-  canvas.setPointerCapture(e.pointerId);editRenderCanvas({placement:true});
+  if(e.button!==0||!EDIT_PARCEL||pointers.size>=2)return;
+  e.preventDefault();const xy=pos(e);pointers.set(e.pointerId,xy);canvas.setPointerCapture(e.pointerId);
+  if(pointers.size===2){
+   EDIT_PLACEMENT_DRAG=null;const [a,b]=[...pointers.values()],box=editPlacementBox();gesture={type:'pinch',distance:Math.max(1,Math.hypot(a[0]-b[0],a[1]-b[1])),mid:[(a[0]+b[0])/2,(a[1]+b[1])/2],box,view:{...EDIT_PLACEMENT_VIEW}};draw();return;
+  }
+  const point=turf.point(editPlacementToLngLat(...xy)),model=EDIT_PLACEMENT_TOOL==='move'&&turf.booleanPointInPolygon(point,EDIT_PARCEL)?editPlacementModels().reverse().find(f=>turf.booleanPointInPolygon(point,f)):null;
+  if(!model){gesture={type:'pan',id:e.pointerId,start:xy,x:EDIT_PLACEMENT_VIEW.x,y:EDIT_PLACEMENT_VIEW.y};return}
+  editSelectModel(model.properties.model_id);
+  EDIT_PLACEMENT_DRAG={pointerId:e.pointerId,model,parcel:editModelParcel(model),start:xy,scale:editPlacementBox().scale,candidate:model,valid:true,moved:false};gesture={type:'model'};draw();
  });
- canvas.addEventListener('pointermove',preview);
+ canvas.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,pos(e));if(!gesture)return;
+  if(gesture.type==='pinch'&&pointers.size===2){
+   const [a,b]=[...pointers.values()],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],zoom=Math.max(.5,Math.min(8,gesture.view.zoom*Math.hypot(a[0]-b[0],a[1]-b[1])/gesture.distance)),ratio=zoom/gesture.view.zoom,base=editCanvasBounds();
+   EDIT_PLACEMENT_VIEW.zoom=zoom;EDIT_PLACEMENT_VIEW.x=mid[0]+(gesture.box.cx-gesture.mid[0])*ratio-base.cx;EDIT_PLACEMENT_VIEW.y=mid[1]+(gesture.box.cy-gesture.mid[1])*ratio-base.cy;draw();return;
+  }
+  if(gesture.type==='pan'&&gesture.id===e.pointerId){const xy=pos(e);EDIT_PLACEMENT_VIEW.x=gesture.x+xy[0]-gesture.start[0];EDIT_PLACEMENT_VIEW.y=gesture.y+xy[1]-gesture.start[1];draw();return}
+  preview(e);
+ });
  canvas.addEventListener('pointerup',e=>{
-  const active=EDIT_PLACEMENT_DRAG;if(!active||e.pointerId!==active.pointerId)return;
-  preview(e);const drag=EDIT_PLACEMENT_DRAG;EDIT_PLACEMENT_DRAG=null;
+  if(!pointers.has(e.pointerId))return;pointers.delete(e.pointerId);
+  if(gesture?.type!=='model'||EDIT_PLACEMENT_DRAG?.pointerId!==e.pointerId){gesture=null;if(!pointers.size)editRenderPlacementCanvas();return}
+  preview(e);const drag=EDIT_PLACEMENT_DRAG;EDIT_PLACEMENT_DRAG=null;gesture=null;
   if(!drag.moved){editRenderPlacementCanvas();return}
   if(!drag.valid){editRenderPlacementCanvas();$('editPlacementStatus').textContent='필지 밖으로 이동할 수 없어 원래 위치를 유지했습니다.';return}
   const id=drag.model.properties.model_id,index=EDIT_MODELS.findIndex(f=>f.properties?.model_id===id);
   if(index<0||EDIT_MODELS[index]!==drag.model||EDIT_SELECTED_MODEL_ID!==id){editRenderPlacementCanvas();return}
-  EDIT_MODELS[index]=drag.candidate;EDIT_CUSTOM=drag.candidate;
-  editUpdateModel();editModelSummary();workspaceUpdate();
+  const history=editPlacementHistoryCapture();EDIT_MODELS[index]=drag.candidate;EDIT_CUSTOM=drag.candidate;
+  editUpdateModel();editModelSummary();workspaceUpdate();editPlacementRecord(history,'건물 이동');
   $('editPlacementStatus').textContent=editModelLabel(drag.candidate)+' 이동 완료 · 높이와 다른 건물은 유지됩니다.';
  });
- canvas.addEventListener('pointercancel',e=>{if(EDIT_PLACEMENT_DRAG?.pointerId===e.pointerId)cancel()});
- canvas.addEventListener('lostpointercapture',e=>{if(EDIT_PLACEMENT_DRAG?.pointerId===e.pointerId)cancel()});
- $('editPlacementSelect').addEventListener('change',e=>{if(e.target.value){EDIT_PLACEMENT_DRAG=null;editSelectModel(e.target.value);EDIT_BOX=editCanvasBounds();editRenderPlacementCanvas()}});
+ canvas.addEventListener('pointercancel',e=>{if(pointers.has(e.pointerId))cancel()});
+ canvas.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))cancel()});
+ canvas.addEventListener('wheel',e=>{e.preventDefault();if(pointers.size)return;editPlacementZoom(Math.exp(-Math.max(-200,Math.min(200,e.deltaY))*.003),pos(e))},{passive:false});
+ $('editPlacementSelect').addEventListener('change',e=>{if(e.target.value){cancel();editSelectModel(e.target.value);editRenderPlacementCanvas()}});
+ for(const [id,tool] of [['editPlacementMove','move'],['editPlacementPan','pan']])$(id).onclick=()=>{cancel();EDIT_PLACEMENT_TOOL=tool;$('editPlacementMove').setAttribute('aria-pressed',String(tool==='move'));$('editPlacementPan').setAttribute('aria-pressed',String(tool==='pan'))};
+ for(const [id,factor] of [['editPlacementZoomIn',1.25],['editPlacementZoomOut',.8]])$(id).onclick=()=>{cancel();editPlacementZoom(factor)};
+ $('editPlacementFit').onclick=()=>{cancel();EDIT_PLACEMENT_VIEW={key:editPlacementScope(),zoom:1,x:0,y:0};draw()};
+ $('editPlacementUndo').onclick=()=>{cancel();editPlacementHistoryStep(false)};$('editPlacementRedo').onclick=()=>{cancel();editPlacementHistoryStep(true)};
+ for(const id of ['editPlacementSnap','editPlacementGrid','editPlacementDistances'])$(id).addEventListener('change',()=>{cancel();draw()});
  $('editPlacementDraw').onclick=()=>{cancel();editOpenDraw()};$('editPlacementSize').onclick=()=>{cancel();editOpenSize()};
- $('editPlacementClose').onclick=()=>{EDIT_PLACEMENT_DRAG=null;$('editPlacementModal').style.display='none';workspaceCancelPlacement()};
+ $('editPlacementClose').onclick=()=>{cancel();$('editPlacementModal').style.display='none';workspaceCancelPlacement()};
+ window.addEventListener('blur',cancel);document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel()});
 }
 
 function editSizedRectangle(){
@@ -3466,11 +3612,11 @@ function editCommitModel(){
  const height=Number($('editHeightConfirm').value);
  if(!(height>0&&height<=500)){$('editConfirmDimensions').textContent='높이는 1~500m로 입력하세요.';return}
  if(!editModelFits(EDIT_RECT,EDIT_PARCEL)){editNotice('직사각형이 필지 바깥으로 나갑니다. 위치나 길이를 조정하세요.');return}
- const created=editRegisterModel(EDIT_RECT,height),createdCenter=turf.centroid(created).geometry.coordinates;
+ const history=editPlacementHistoryCapture(),created=editRegisterModel(EDIT_RECT,height),createdCenter=turf.centroid(created).geometry.coordinates;
  $('editHeight').value=height;editUpdateModel();editModelSummary();workspaceCommitPlacement();
  editSelectModel(created.properties.model_id,{openEditor:true});$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';$('editSizeModal').style.display='none';EDIT_PICKING=false;editOpenPlacement();
  map.easeTo({center:createdCenter,zoom:Math.max(map.getZoom(),18),pitch:70,duration:650});
- editNotice('새 건물 '+height+'m 생성 완료. 원본 데이터는 보존됩니다.');
+ editNotice('새 건물 '+height+'m 생성 완료. 원본 데이터는 보존됩니다.');editPlacementRecord(history,'건물 추가');
 }
 function setupBuildingEditor(){
 
