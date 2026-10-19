@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-11</title>
+<title>Jinju3D Local · v2026.10.19-12</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -200,7 +200,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-11</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-12</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -659,7 +659,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-11',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.19-12',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -670,7 +670,7 @@ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-l
 let terrainRefreshDone=false,lawMapSyncTimer=0;
 map.on('idle',()=>{if(!terrainRefreshDone&&currentBuildings&&terrainSourceReady()){terrainRefreshDone=true;setTimeout(refreshTerrainBuildings,0)}});
 map.on('moveend',()=>{clearTimeout(lawMapSyncTimer);if(lawMode)lawMapSyncTimer=setTimeout(()=>syncLawModeToMapCenter().catch(console.warn),120)});
-map.on('sourcedata',e=>{if(e.sourceId==='terrain'&&currentBuildings&&terrainSourceReady()){terrainRefreshDone=true;setTimeout(refreshTerrainBuildings,0)}});
+map.on('sourcedata',e=>{if(e.sourceId==='terrain'&&(currentBuildings||editCustomModels().length)&&terrainSourceReady()){terrainRefreshDone=true;setTimeout(refreshTerrainBuildings,0)}});
 // Continuous keyboard camera controls; native keyboard handling is disabled to avoid duplicate steps.
 function setupMapKeyboard(){
  const held=new Set();let frame=0,last=0,fast=false;
@@ -736,6 +736,7 @@ function refreshTerrainBuildings(){
     if(src&&currentBuildings)src.setData(editedBuildingCollection(currentBuildings));
     const osm=map.getSource('smart-osm');
     if(osm)map.triggerRepaint();
+    map.getSource('edit-custom-model')?.setData(editCustomCollection({excludeReplaced:true}));
   }catch(e){}
 }
 const groundUpdateTokens=new Map();
@@ -1318,7 +1319,7 @@ function buildingPick(e){
    if(hits.length){const f=hits[0].object.userData.solarFeature;if(hits[0].object.userData.solarCustom)return {custom:true,f};const r=buildingRecordFor(f);if(r&&!buildingIsHidden(r.f))return r}
   }
  }
- const layers=['edit-custom-model-3d','edit-custom-model-outline','buildings-3d','smart-osm-3d','buildings-2d','smart-osm-2d'].filter(id=>map.getLayer(id)&&(smartOsm||!id.startsWith('smart')));
+ const layers=['edit-custom-model-3d','edit-custom-model-foundation','edit-custom-model-outline','buildings-3d','smart-osm-3d','buildings-2d','smart-osm-2d'].filter(id=>map.getLayer(id)&&(smartOsm||!id.startsWith('smart')));
  for(const f of layers.length?map.queryRenderedFeatures(e.point,{layers}):[]){const custom=editFindModel(f.properties?.model_id);if(custom)return {custom:true,f:custom};const record=buildingRecordFor(f);if(record&&!buildingSuppressed(record)&&!buildingIsHidden(record.f))return record}
  return null;
 }
@@ -1418,9 +1419,17 @@ function editSolarModels(center=null){
   try{return turf.distance(center,turf.centroid(f),{units:'meters'})<=200}catch(e){return false}
  });
 }
+function editModelElevation(f){
+ // Derived rendering data only: model_height and the footprint remain the user's design.
+ // Match native GIS foundations, including the same capped local terrain relief.
+ let profile=null;
+ if(map?.getTerrain?.())try{profile=featureTerrainProfile(f)}catch(e){}
+ const base=profile?Math.max(0,profile.relief+.15):.15;
+ return {render_base:base,render_top:base+Number(f.properties.model_height),terrain_foundation_height:base};
+}
 function editCustomCollection({excludeReplaced=false}={}){
  const replaced=excludeReplaced&&SOLAR_THREE_MAP?.production?SOLAR_THREE_MAP.replacedFeatures:null;
- return {type:'FeatureCollection',features:editCustomModels().filter(f=>!replaced?.has(f)).map(f=>({...f,properties:{...f.properties,model_selected:!!EDIT_SELECTED_MODEL_ID&&f.properties?.model_id===EDIT_SELECTED_MODEL_ID}}))};
+ return {type:'FeatureCollection',features:editCustomModels().filter(f=>!replaced?.has(f)).map(f=>({...f,properties:{...f.properties,...editModelElevation(f),model_selected:!!EDIT_SELECTED_MODEL_ID&&f.properties?.model_id===EDIT_SELECTED_MODEL_ID}}))};
 }
 function editModelParcel(f){return EDIT_MODEL_PARCELS.get(f?.properties?.model_id)||null}
 function editModelLabel(f){return f?.properties?.model_name||'사용자 건물'}
@@ -1646,7 +1655,7 @@ function editSetParcel(ft,{keepBuilding=false}={}){
 const EDIT_BASEMAP_BUILDING_VIS=new Map();
 function editBasemapBuildingFootprints(hide){
  if(!map?.getStyle()?.layers)return;
- const ours=new Set(['buildings-2d','buildings-3d','buildings-foundation','smart-osm-2d','smart-osm-3d','smart-osm-foundation','edit-custom-model-3d','edit-custom-model-outline']);
+ const ours=new Set(['buildings-2d','buildings-3d','buildings-foundation','smart-osm-2d','smart-osm-3d','smart-osm-foundation','edit-custom-model-3d','edit-custom-model-foundation','edit-custom-model-outline']);
  for(const layer of map.getStyle().layers){
   if(ours.has(layer.id))continue;
   if(!['fill','line','fill-extrusion'].includes(layer.type))continue;
@@ -1796,7 +1805,7 @@ function applyMapDesign(){
  const signature=mode+'|'+style.layers.map(layer=>layer.id).join('|');
  if(signature===MAP_DESIGN_APPLIED)return;
  MAP_DESIGN_APPLIED=signature;
- const customLayers=new Set(['selected-building-fill','selected-building-line','solar-shadow-preview-fill','solar-terrain-image-layer','solar-sun-direction-line','solar-roof-shadow-3d','solar-wall-shadow-3d','solar-blocked-buildings-3d','edit-custom-model-3d','edit-custom-model-outline','selected-parcel-fill','selected-parcel-line']);
+ const customLayers=new Set(['selected-building-fill','selected-building-line','solar-shadow-preview-fill','solar-terrain-image-layer','solar-sun-direction-line','solar-roof-shadow-3d','solar-wall-shadow-3d','solar-blocked-buildings-3d','edit-custom-model-3d','edit-custom-model-foundation','edit-custom-model-outline','selected-parcel-fill','selected-parcel-line']);
  function paint(id,prop,value){
   if(!map.getLayer(id))return;
   const key=id+'|'+prop;
@@ -2952,7 +2961,7 @@ document.getElementById('solarSurfaceCanvas')?.addEventListener('pointerdown',e=
 
 /* Three.js map layer POC. Keeps a reversible map-only mode. No legal solar result. */
 let SOLAR_THREE_MAP=null,SOLAR_THREE_MAP_BUSY=false,SOLAR_THREE_MAP_TOKEN=0,SOLAR_THREE_REFRESH_TIMER=null,SOLAR_EXPOSURE_TOKEN=0;
-const SOLAR_THREE_MAP_LAYERS=['buildings-3d','smart-osm-3d','edit-custom-model-3d','buildings-foundation','smart-osm-foundation'];
+const SOLAR_THREE_MAP_LAYERS=['buildings-3d','smart-osm-3d','edit-custom-model-3d','edit-custom-model-foundation','buildings-foundation','smart-osm-foundation'];
 function solarThreeMapStatus(msg){const el=$('solarThreeMapStatus');if(el)el.textContent=msg}
 function solarThreeMapRestore(){
  if(SOLAR_THREE_MAP?.hidden)for(const [id,v] of SOLAR_THREE_MAP.hidden){
@@ -3069,13 +3078,13 @@ async function solarThreeMapOn({production=false}={}){
    const pos=featureGroundAnchor(f)||center,p=f.properties||{};
    const elevation=solarTerrainHeight(pos)??(Number.isFinite(p.ground_elevation_m)?p.ground_elevation_m:null);
    if(elevation===null)terrainMissing++;
-   return (elevation??groundZ)-groundZ+(custom ? .2 : (Number(p.render_base)||0));
+   return (elevation??groundZ)-groundZ+(custom ? editModelElevation(f).render_base : (Number(p.render_base)||0));
   };
   for(const item of candidates){
    try{
     const f=item.f,polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
     const h=Number(item.h);if(!(h>0&&h<=500))continue;
-    const prop=f.properties||{},base=item.custom?0:(Number.isFinite(item.base)?item.base:(Number(prop.render_base)||0));
+    const prop=f.properties||{},base=item.custom?editModelElevation(f).render_base:(Number.isFinite(item.base)?item.base:(Number(prop.render_base)||0));
     for(const poly of polys){
      const ring=poly[0];if(!ring||ring.length<4)continue;
      const shape=new THREE.Shape();ring.forEach((p,i)=>{const [x,y]=geoLocal(p);if(i===0)shape.moveTo(x,y);else shape.lineTo(x,y)});
@@ -3089,11 +3098,11 @@ async function solarThreeMapOn({production=false}={}){
      let entry=entries.find(e=>e.f===f);
      if(!entry){entry={f,h,custom:!!item.custom,meshes:[]};entries.push(entry)}
      entry.meshes.push(mesh);
-     if(production&&!item.custom&&base>0){
-      const foundation=new THREE.Mesh(geometry,litMat);
+     if(production&&base>0){
+      const foundation=new THREE.Mesh(geometry,item.custom?litCustomMat:litMat);
       foundation.scale.y=base/h;foundation.position.y=mesh.position.y-base;
       foundation.castShadow=true;foundation.receiveShadow=true;foundation.userData.solarFoundation=true;
-      foundation.userData.solarCustom=false;foundation.userData.solarFeature=f;shadowMeshes.push(foundation);root.add(foundation);
+      foundation.userData.solarCustom=!!item.custom;foundation.userData.solarFeature=f;shadowMeshes.push(foundation);root.add(foundation);
       mesh.userData.foundation=foundation;
      }
     }
@@ -3123,7 +3132,7 @@ async function solarThreeMapOn({production=false}={}){
    for(const entry of entries)for(const mesh of entry.meshes){
     const nextY=localBase(entry.f,entry.custom);if(Math.abs(nextY-mesh.position.y)>.01)terrainChanged=true;
     mesh.position.y=nextY;
-    const foundation=mesh.userData.foundation,base=Number(entry.f.properties?.render_base)||0;
+    const foundation=mesh.userData.foundation,base=entry.custom?editModelElevation(entry.f).render_base:(Number(entry.f.properties?.render_base)||0);
     if(foundation){if(Math.abs(foundation.scale.y-base/entry.h)>.0001)terrainChanged=true;foundation.position.y=mesh.position.y-base;foundation.scale.y=base/entry.h}
    }
    const positions=groundMesh.geometry.attributes.position;
@@ -3463,7 +3472,8 @@ setupSolarControls();
 function editModelSource(){
  if(!map.getSource('edit-custom-model')){
   map.addSource('edit-custom-model',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-  map.addLayer({id:'edit-custom-model-3d',type:'fill-extrusion',source:'edit-custom-model',paint:{'fill-extrusion-color':['case',['boolean',['get','model_selected'],false],'#22d3ee','#f97316'],'fill-extrusion-height':['get','model_height'],'fill-extrusion-base':0.2,'fill-extrusion-opacity':.97}});
+  map.addLayer({id:'edit-custom-model-foundation',type:'fill-extrusion',source:'edit-custom-model',paint:{'fill-extrusion-color':['case',['boolean',['get','model_selected'],false],'#155e75','#9a5c32'],'fill-extrusion-height':['get','terrain_foundation_height'],'fill-extrusion-base':0,'fill-extrusion-opacity':.97}});
+  map.addLayer({id:'edit-custom-model-3d',type:'fill-extrusion',source:'edit-custom-model',paint:{'fill-extrusion-color':['case',['boolean',['get','model_selected'],false],'#22d3ee','#f97316'],'fill-extrusion-height':['get','render_top'],'fill-extrusion-base':['get','render_base'],'fill-extrusion-opacity':.97}});
   map.addLayer({id:'edit-custom-model-outline',type:'line',source:'edit-custom-model',paint:{'line-color':['case',['boolean',['get','model_selected'],false],'#67e8f9','#fdba74'],'line-width':2}});
  }
  return map.getSource('edit-custom-model');
@@ -3476,6 +3486,7 @@ function editUpdateModel(){
  if($('editPlacementModal')?.style.display==='flex')editRenderPlacementCanvas();
  if(editCustomModels().length){
   map.setLayoutProperty('edit-custom-model-3d','visibility','visible');
+  if(map.getLayer('edit-custom-model-foundation'))map.setLayoutProperty('edit-custom-model-foundation','visibility','visible');
   map.setLayoutProperty('edit-custom-model-outline','visibility','visible');
   for(const id of ['buildings-foundation','buildings-3d','smart-osm-foundation','smart-osm-3d'])if(map.getLayer(id))map.setLayoutProperty(id,'visibility','visible');
   if(map.getLayer('buildings-2d'))map.setPaintProperty('buildings-2d','fill-opacity',.06);
