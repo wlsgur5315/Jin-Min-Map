@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-06</title>
+<title>Jinju3D Local · v2026.10.19-07</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -120,10 +120,15 @@
 #editPlacementModal button:disabled{opacity:.4;cursor:default}
 #editPlacementModal input[type="checkbox"]{width:18px;height:18px;padding:0;flex:0 0 18px}
 #editPlacementModal .hint{font-size:12px}
+
+#editPlacementEditor .placement-editor-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#editPlacementEditor label{font-size:12px;min-width:0}
+#editPlacementEditor input{display:block;width:100%;min-width:0;margin-top:5px;font-size:16px;min-height:44px}
+@media(max-width:540px){#editPlacementEditor .placement-editor-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-06</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-07</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -415,6 +420,17 @@
   <canvas id="editPlacementCanvas" width="580" height="400" aria-label="사용자 건물 선택 및 이동 캔버스" style="display:block;width:100%;height:auto;max-width:100%;background:#071527;touch-action:none;border:1px solid #475569;border-radius:8px"></canvas>
   <div style="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin:8px 0"><span style="color:#cbd5e1">■ 기존 건물 · 고정</span><span style="color:#93c5fd">■ 사용자 건물</span><span style="color:#67e8f9">■ 선택한 건물 · 이동 가능</span></div>
   <label for="editPlacementSelect" style="font-size:13px">이 필지의 사용자 건물</label><select id="editPlacementSelect" style="width:100%;min-height:44px;margin:6px 0;font-size:16px" aria-label="배치 캔버스에서 선택할 사용자 건물"></select>
+  <section id="editPlacementEditor" style="margin-top:10px;padding:12px;border:1px solid #475569;border-radius:9px;background:#0b1c30">
+   <div style="display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:space-between;margin-bottom:10px"><b id="editPlacementEditorTitle" style="font-size:13px">선택한 건물 편집</b><span id="editPlacementEditorSummary" style="font-size:12px;color:#cbd5e1"></span></div>
+   <div class="placement-editor-fields">
+    <label>가로 (m)<input id="editPlacementWidth" type="number" min="0.5" max="500" step="0.01" disabled></label>
+    <label>세로 (m)<input id="editPlacementDepth" type="number" min="0.5" max="500" step="0.01" disabled></label>
+    <label>높이 (m)<input id="editPlacementHeight" type="number" min="1" max="500" step="0.5" disabled></label>
+    <label>시계방향 회전 (°)<input id="editPlacementAngle" type="number" min="-360" max="360" step="1" disabled></label>
+   </div>
+   <div class="row"><button type="button" id="editPlacementApply" class="primary" disabled>선택 건물에 적용</button><button type="button" id="editPlacementDelete" disabled>선택 건물 삭제</button></div>
+   <div id="editPlacementEditorResult" style="font-size:12px;line-height:1.6;margin-top:8px" role="status" aria-live="polite"></div>
+  </section>
   <div id="editPlacementMetrics" style="font-size:13px;line-height:1.7;margin-top:8px;color:#d1fae5"></div>
   <div id="editPlacementStatus" style="font-size:13px;line-height:1.7;margin-top:8px" role="status" aria-live="polite">건물을 선택한 뒤 끌어서 이동하세요.</div>
   <div class="hint" style="margin-top:6px">빈 곳 드래그: 화면 이동 · 두 손가락/마우스 휠: 확대·축소 · 겹침은 경고만 표시하며 필지 밖 이동은 적용하지 않습니다. 거리값은 표시된 건물과 필지 경계 기준 참고값입니다. 되돌리기는 현재 필지의 최근 30단계를 지원합니다.</div>
@@ -549,7 +565,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.19-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -993,7 +1009,7 @@ function prepareStaticBuildings(fc){
 // Building selection is independent of parcel ownership/PNU: never use PNU as a building ID.
 let EDIT_MODELS=[],EDIT_SELECTED_MODEL_ID='',EDIT_MODEL_SEQ=0,EDIT_MODEL_SELECT_TOKEN=0;
 const EDIT_MODEL_PARCELS=new Map();
-let EDIT_PLACEMENT_DRAG=null;
+let EDIT_PLACEMENT_DRAG=null,EDIT_PLACEMENT_EDITOR_FEATURE=undefined;
 let EDIT_PLACEMENT_VIEW={key:'',zoom:1,x:0,y:0},EDIT_PLACEMENT_TOOL='move';
 let EDIT_PLACEMENT_UNDO=[],EDIT_PLACEMENT_REDO=[],EDIT_PLACEMENT_HISTORY_SCOPE='';
 let WORKSPACE_READY=false,WORKSPACE_ACTIVE='',WORKSPACE_LAST_MODE=false,WORKSPACE_LAST_TARGET='',WORKSPACE_BUILD_JOB=null;
@@ -3491,9 +3507,49 @@ function editPlacementModels(){
   return /^\d{19}$/.test(pnu)?modelPnu===pnu:JSON.stringify(parcel.geometry)===JSON.stringify(EDIT_PARCEL.geometry);
  });
 }
+function editPlacementRectangle(model){return model?.geometry?.type==='Polygon'&&model.geometry.coordinates.length===1&&model.geometry.coordinates[0].length===5}
+function editRefreshPlacementEditor(){
+ const model=editPlacementModels().find(f=>f.properties.model_id===EDIT_SELECTED_MODEL_ID)||null;
+ if(EDIT_PLACEMENT_EDITOR_FEATURE===model)return;EDIT_PLACEMENT_EDITOR_FEATURE=model;
+ const rectangle=editPlacementRectangle(model);
+ for(const id of ['editPlacementWidth','editPlacementDepth','editPlacementAngle'])$(id).disabled=!model||!rectangle;
+ for(const id of ['editPlacementHeight','editPlacementApply','editPlacementDelete'])$(id).disabled=!model;
+ $('editPlacementEditorTitle').textContent=model?editModelLabel(model)+' 편집':'선택한 건물 편집';
+ $('editPlacementEditorSummary').textContent=model?'바닥면적 '+turf.area(model).toFixed(1)+'㎡ · 높이 '+Number(model.properties.model_height).toFixed(1)+'m':'';
+ const dims=model?editFootprintDimensions(model):[0,0],rotation=Number(model?.properties?.model_rotation)||0;
+ $('editPlacementWidth').value=model?dims[0].toFixed(2):'';$('editPlacementDepth').value=model?dims[1].toFixed(2):'';
+ $('editPlacementHeight').value=model?Number(model.properties.model_height):'';$('editPlacementAngle').value=model?((rotation+180)%360+360)%360-180:'';
+ $('editPlacementEditorResult').textContent=model?'크기·회전은 건물 중심을 기준으로 적용합니다.':'캔버스 또는 목록에서 사용자 건물을 선택하세요.';
+}
+function editPlacementApplyEdit(){
+ if(EDIT_PLACEMENT_DRAG)return false;
+ const model=editPlacementModels().find(f=>f.properties.model_id===EDIT_SELECTED_MODEL_ID),parcel=editModelParcel(model),result=$('editPlacementEditorResult');
+ if(!model||!parcel){result.textContent='편집할 사용자 건물을 선택하세요.';return false}
+ const fields=['editPlacementWidth','editPlacementDepth','editPlacementHeight','editPlacementAngle'],raw=fields.map(id=>String($(id).value).trim()),[width,depth,height,angle]=raw.map(Number);
+ if(raw.some(v=>v==='')||![width,depth,height,angle].every(Number.isFinite)||Math.min(width,depth)<.5||Math.max(width,depth)>500||height<1||height>500||Math.abs(angle)>360){result.textContent='가로·세로 0.5~500m, 높이 1~500m, 회전 −360~360°로 입력하세요.';return false}
+ const dims=editFootprintDimensions(model),rotation=((angle%360)+360)%360,priorRotation=((Number(model.properties.model_rotation)||0)%360+360)%360;
+ const geometryChanged=width!==Number(dims[0].toFixed(2))||depth!==Number(dims[1].toFixed(2))||Math.abs(rotation-priorRotation)>1e-8;
+ let next=JSON.parse(JSON.stringify(model));
+ if(geometryChanged){
+  if(!editPlacementRectangle(model)){result.textContent='이 건물의 평면은 직사각형 크기 편집을 지원하지 않습니다.';return false}
+  const center=turf.centroid(model).geometry.coordinates,a=rotation*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
+  const ring=[[-width/2,-depth/2],[width/2,-depth/2],[width/2,depth/2],[-width/2,depth/2]].map(([x,y])=>{
+   const east=x*c+y*s,north=-x*s+y*c;
+   return turf.destination(center,Math.hypot(east,north)/1000,Math.atan2(east,north)*180/Math.PI,{units:'kilometers'}).geometry.coordinates;
+  });ring.push([...ring[0]]);next.geometry={type:'Polygon',coordinates:[ring]};if(next.bbox)delete next.bbox;
+ }
+ if(!editModelFits(next,parcel)){result.textContent='변경한 크기·회전이 필지 경계 밖으로 나갑니다. 위치나 수치를 조정하세요. 현재 건물은 유지됩니다.';return false}
+ next.properties={...model.properties,model_height:height,model_rotation:rotation};
+ if(!geometryChanged&&height===Number(model.properties.model_height)){result.textContent='변경된 값이 없습니다.';return true}
+ const index=EDIT_MODELS.findIndex(f=>f.properties?.model_id===model.properties.model_id);if(index<0)return false;
+ const history=editPlacementHistoryCapture();EDIT_MODELS[index]=next;EDIT_CUSTOM=next;
+ editUpdateModel();editModelSummary();workspaceUpdate();editPlacementRecord(history,'건물 크기·높이·회전 수정');
+ result.textContent='선택 건물에 적용했습니다. 3D 지도와 그림자에 반영되며 되돌릴 수 있습니다.';return true;
+}
+
 function editRenderPlacementCanvas(){
  if(!EDIT_PARCEL)return;
- editPlacementEnsureView();editPlacementHistoryControls();
+ editPlacementEnsureView();editPlacementHistoryControls();editRefreshPlacementEditor();
  editRenderCanvas({placement:true});
  const select=$('editPlacementSelect'),models=editPlacementModels();select.replaceChildren();
  const first=document.createElement('option');first.value='';first.textContent=models.length?'이동할 건물 선택 ('+models.length+'동)':'사용자 건물이 없습니다. 위 버튼으로 추가하세요.';select.appendChild(first);
@@ -3568,7 +3624,9 @@ function setupPlacementCanvas(){
  canvas.addEventListener('pointercancel',e=>{if(pointers.has(e.pointerId))cancel()});
  canvas.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))cancel()});
  canvas.addEventListener('wheel',e=>{e.preventDefault();if(pointers.size)return;editPlacementZoom(Math.exp(-Math.max(-200,Math.min(200,e.deltaY))*.003),pos(e))},{passive:false});
- $('editPlacementSelect').addEventListener('change',e=>{if(e.target.value){cancel();editSelectModel(e.target.value);editRenderPlacementCanvas()}});
+ $('editPlacementApply').onclick=editPlacementApplyEdit;
+ $('editPlacementDelete').onclick=()=>{cancel();editDeleteSelected()};
+ $('editPlacementSelect').addEventListener('change',e=>{const id=e.target.value;if(id){cancel();editSelectModel(id);editRenderPlacementCanvas()}});
  for(const [id,tool] of [['editPlacementMove','move'],['editPlacementPan','pan']])$(id).onclick=()=>{cancel();EDIT_PLACEMENT_TOOL=tool;$('editPlacementMove').setAttribute('aria-pressed',String(tool==='move'));$('editPlacementPan').setAttribute('aria-pressed',String(tool==='pan'))};
  for(const [id,factor] of [['editPlacementZoomIn',1.25],['editPlacementZoomOut',.8]])$(id).onclick=()=>{cancel();editPlacementZoom(factor)};
  $('editPlacementFit').onclick=()=>{cancel();EDIT_PLACEMENT_VIEW={key:editPlacementScope(),zoom:1,x:0,y:0};draw()};
