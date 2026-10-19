@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-01</title>
+<title>Jinju3D Local · v2026.10.19-02</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -114,7 +114,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-01</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-02</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -384,6 +384,8 @@
  <div class="row" style="justify-content:space-between"><b>직사각형 건물 그리기</b><button id="editCloseDraw">닫기</button></div>
  <p style="font-size:12px">필지 안에서 드래그해 건물 바닥 면적을 그립니다. 입력 길이로도 다시 그릴 수 있습니다.</p>
  <canvas id="editDrawCanvas" width="580" height="400" style="display:block;width:100%;height:auto;max-width:100%;background:#071527;touch-action:none;cursor:crosshair;border:1px solid #475569;border-radius:8px"></canvas>
+ <div style="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin-top:8px"><span style="color:#cbd5e1">■ 기존 건물</span><span style="color:#93c5fd">■ 사용자 건물</span><span style="color:#fdba74">■ 새로 그리는 건물</span></div>
+ <div id="editDrawContext" class="hint" role="status"></div>
  <div id="editDrawDims" style="font-size:13px;margin:8px 0">마우스 또는 터치로 드래그하세요.</div>
  <div class="row"><button id="editSizeInCanvas">입력한 가로·세로로 배치</button><button id="editConfirmDraw" class="primary">치수 확인 · 다음</button></div>
  </div></div>
@@ -495,7 +497,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.19-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -3239,25 +3241,36 @@ function editLngLatToXY(pt){
 function editRectMeters(rect){
  const b=turf.bbox(rect),w=turf.distance([b[0],b[1]],[b[2],b[1]],{units:'kilometers'})*1000,h=turf.distance([b[0],b[1]],[b[0],b[3]],{units:'kilometers'})*1000;return [w,h];
 }
+function editCanvasExistingBuildings(){
+ if(!EDIT_PARCEL)return [];
+ const index=buildingRecords(),bounds=turf.bbox(EDIT_PARCEL);
+ return index.records.filter(record=>!buildingSuppressed(record)&&(record.source!=='osm'||smartOsm)&&!buildingIsHidden(record.f,index)&&buildingInParcel(record,EDIT_PARCEL,bounds));
+}
 function editRenderCanvas(){
  if(!EDIT_PARCEL)return;
  const c=$('editDrawCanvas'),g=c.getContext('2d');
  g.clearRect(0,0,c.width,c.height);g.fillStyle='#071527';g.fillRect(0,0,c.width,c.height);
- function shape(ft,fill,stroke){
+ function path(ft){
   const polygons=ft.geometry.type==='Polygon'?[ft.geometry.coordinates]:ft.geometry.type==='MultiPolygon'?ft.geometry.coordinates:[];
-  for(const polygon of polygons){
-   g.beginPath();
-   for(const ring of polygon){
-    ring.forEach((pt,i)=>{const xy=editLngLatToXY(pt);if(i===0)g.moveTo(...xy);else g.lineTo(...xy)});
-    g.closePath();
-   }
-   g.fillStyle=fill;g.fill('evenodd');g.lineWidth=2;g.strokeStyle=stroke;g.stroke();
+  g.beginPath();
+  for(const polygon of polygons)for(const ring of polygon){
+   ring.forEach((pt,i)=>{const xy=editLngLatToXY(pt);if(i===0)g.moveTo(...xy);else g.lineTo(...xy)});
+   g.closePath();
   }
  }
-
+ function shape(ft,fill,stroke){
+  path(ft);g.fillStyle=fill;g.fill('evenodd');g.lineWidth=2;g.strokeStyle=stroke;g.stroke();
+ }
  shape(EDIT_PARCEL,'#164e63','#67e8f9');
- for(const model of editCustomModels()){try{if(turf.booleanIntersects(model,EDIT_PARCEL))shape(model,model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#22d3ee66':'#64748b66',model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#67e8f9':'#94a3b8')}catch(e){}}
+ // Use the same per-building visibility as the map; clip cross-boundary footprints to this parcel.
+ const existing=editCanvasExistingBuildings();
+ g.save();path(EDIT_PARCEL);g.clip('evenodd');
+ for(const record of existing)shape(record.f,'#94a3b877','#cbd5e1');
+ for(const model of editCustomModels()){try{if(turf.booleanIntersects(model,EDIT_PARCEL))shape(model,model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#22d3ee66':'#3b82f655',model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#67e8f9':'#93c5fd')}catch(e){}}
+ g.restore();
+ $('editDrawContext').textContent='기존 건물 '+existing.length+'동 표시 · 숨긴 건물은 제외합니다.';
  if(EDIT_RECT){shape(EDIT_RECT,'#ea580c88','#fdba74');const [w,h]=editRectMeters(EDIT_RECT);$('editDrawDims').textContent='가로 '+w.toFixed(2)+'m × 세로 '+h.toFixed(2)+'m · 면적 '+(w*h).toFixed(1)+'㎡';}
+ else $('editDrawDims').textContent='마우스 또는 터치로 드래그하세요.';
 }
 function editSizedRectangle(){
  if(!EDIT_PARCEL)return;
