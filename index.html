@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-04</title>
+<title>Jinju3D Local · v2026.10.19-05</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -114,7 +114,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-04</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-05</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -201,11 +201,9 @@
   </details>
  </section>
 
- <div class="drawer-sec"><h3>새 동 추가 · 평면과 높이</h3>
- <label>건물 높이 (m) <input id="editHeight" type="number" min="1" max="500" step="0.5" value="12"></label>
- <label>가로 길이 (m) <input id="editWidth" type="number" min="1" max="500" step="0.5" value="12"></label>
- <label>세로 길이 (m) <input id="editLength" type="number" min="1" max="500" step="0.5" value="10"></label>
- <div class="row"><button id="editOpenDraw" class="primary">직사각형 그리기</button><button id="editCreateSize">길이 입력으로 생성</button></div>
+ <div class="drawer-sec"><h3>건물 생성·배치</h3>
+ <button type="button" id="editOpenPlacement" class="primary" style="width:100%;margin-bottom:8px">배치 캔버스 열기</button>
+ <div class="row"><button type="button" id="editOpenDraw">직접 그려 추가</button><button type="button" id="editOpenSize">치수 입력으로 추가</button></div>
  <button id="editClearCustom" style="margin-top:8px">선택한 사용자 건물 삭제</button>
  <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div><div id="editModelDetails" style="padding:8px;margin-top:8px;border:1px solid #334155;border-radius:8px;font-size:12px">생성된 사용자 건물이 없습니다.</div>
  </div></details>
@@ -390,15 +388,37 @@
   </div>
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
+<div id="editPlacementModal" role="dialog" aria-modal="true" aria-labelledby="editPlacementTitle" style="display:none;position:fixed;z-index:190;inset:0;background:#030712ee;padding:8px;align-items:center;justify-content:center;overflow-y:auto">
+ <div style="width:min(720px,100%);max-height:calc(100dvh - 16px);overflow-y:auto;background:#101f33;border:1px solid #64748b;border-radius:14px;padding:12px;color:#e2e8f0">
+  <div class="row" style="justify-content:space-between"><b id="editPlacementTitle">사용자 건물 배치</b><button type="button" id="editPlacementClose">닫기</button></div>
+  <div class="row" style="margin:10px 0"><button type="button" id="editPlacementDraw">직접 그려 추가</button><button type="button" id="editPlacementSize">치수 입력으로 추가</button></div>
+  <canvas id="editPlacementCanvas" width="580" height="400" aria-label="사용자 건물 선택 및 이동 캔버스" style="display:block;width:100%;height:auto;max-width:100%;background:#071527;touch-action:none;border:1px solid #475569;border-radius:8px"></canvas>
+  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin:8px 0"><span style="color:#cbd5e1">■ 기존 건물 · 고정</span><span style="color:#93c5fd">■ 사용자 건물</span><span style="color:#67e8f9">■ 선택한 건물 · 이동 가능</span></div>
+  <label for="editPlacementSelect" style="font-size:13px">이 필지의 사용자 건물</label><select id="editPlacementSelect" style="width:100%;min-height:44px;margin:6px 0;font-size:16px" aria-label="배치 캔버스에서 선택할 사용자 건물"></select>
+  <div id="editPlacementStatus" style="font-size:13px;line-height:1.7;margin-top:8px" role="status" aria-live="polite">건물을 선택한 뒤 끌어서 이동하세요.</div>
+  <div class="hint" style="margin-top:6px">빈 곳을 끌어도 새 건물이 그려지지 않습니다. 새 건물은 위 버튼으로 추가합니다. 필지 밖에 놓으면 기존 위치가 유지됩니다.</div>
+ </div>
+</div>
+<div id="editSizeModal" role="dialog" aria-modal="true" aria-labelledby="editSizeTitle" style="display:none;position:fixed;z-index:205;inset:0;background:#030712ee;padding:12px;align-items:center;justify-content:center;overflow-y:auto">
+ <div style="width:min(380px,100%);max-height:calc(100dvh - 24px);overflow-y:auto;background:#101f33;border:1px solid #64748b;border-radius:14px;padding:16px;color:#e2e8f0">
+  <h3 id="editSizeTitle" style="margin:0 0 10px">치수 입력으로 건물 추가</h3>
+  <label>가로 길이 (m)<input id="editWidth" type="number" min="1" max="500" step="0.5" value="12" style="width:100%;font-size:16px;margin:6px 0 10px"></label>
+  <label>세로 길이 (m)<input id="editLength" type="number" min="1" max="500" step="0.5" value="10" style="width:100%;font-size:16px;margin:6px 0 10px"></label>
+  <label>건물 높이 (m)<input id="editHeight" type="number" min="1" max="500" step="0.5" value="12" style="width:100%;font-size:16px;margin:6px 0 10px"></label>
+  <div id="editSizeStatus" class="hint" style="margin:6px 0 12px" role="status">필지 중앙에 추가한 뒤 배치 캔버스에서 옮길 수 있습니다.</div>
+  <div class="row"><button type="button" id="editSizeClose">취소</button><button type="button" id="editCreateSize" class="primary">건물 추가</button></div>
+ </div>
+</div>
+
 <div id="editDrawModal" style="display:none;position:fixed;z-index:200;inset:0;background:#030712ee;padding:8px;align-items:center;justify-content:center;overflow-y:auto">
  <div style="width:min(540px,100%);max-height:calc(100dvh - 16px);overflow-y:auto;background:#101f33;border:1px solid #64748b;border-radius:14px;padding:10px;color:#e2e8f0">
  <div class="row" style="justify-content:space-between"><b>직사각형 건물 그리기</b><button id="editCloseDraw">닫기</button></div>
- <p style="font-size:12px">필지 안에서 드래그해 건물 바닥 면적을 그립니다. 입력 길이로도 다시 그릴 수 있습니다.</p>
+ <p style="font-size:12px">새 건물의 바닥 면적만 그리는 창입니다. 높이를 정해 추가한 뒤 배치 캔버스에서 이동할 수 있습니다.</p>
  <canvas id="editDrawCanvas" width="580" height="400" style="display:block;width:100%;height:auto;max-width:100%;background:#071527;touch-action:none;cursor:crosshair;border:1px solid #475569;border-radius:8px"></canvas>
  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin-top:8px"><span style="color:#cbd5e1">■ 기존 건물</span><span style="color:#93c5fd">■ 사용자 건물</span><span style="color:#fdba74">■ 새로 그리는 건물</span></div>
  <div id="editDrawContext" class="hint" role="status"></div>
  <div id="editDrawDims" style="font-size:13px;margin:8px 0">마우스 또는 터치로 드래그하세요.</div>
- <div class="row"><button id="editSizeInCanvas">입력한 가로·세로로 배치</button><button id="editConfirmDraw" class="primary">치수 확인 · 다음</button></div>
+ <div class="row"><button id="editSizeInCanvas">치수 입력으로 전환</button><button id="editConfirmDraw" class="primary">치수 확인 · 다음</button></div>
  </div></div>
 <div id="editHeightModal" style="display:none;position:fixed;z-index:210;inset:0;background:#030712eF;padding:12px;align-items:center;justify-content:center">
  <div style="width:min(360px,100%);background:#101f33;border:1px solid #64748b;border-radius:14px;padding:16px;color:#e2e8f0">
@@ -508,7 +528,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.19-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -527,7 +547,7 @@ function setupMapKeyboard(){
  const editable=target=>!!(target?.isContentEditable||target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  function blocked(target=document.activeElement){
   if(document.hidden||precisionMode||editable(target)||editable(document.activeElement))return true;
-  return ['editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','sourceModal'].some(id=>{
+  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal'].some(id=>{
    const el=$(id);if(!el)return false;const style=getComputedStyle(el);return style.display!=='none'&&style.visibility!=='hidden';
   });
  }
@@ -952,6 +972,7 @@ function prepareStaticBuildings(fc){
 // Building selection is independent of parcel ownership/PNU: never use PNU as a building ID.
 let EDIT_MODELS=[],EDIT_SELECTED_MODEL_ID='',EDIT_MODEL_SEQ=0,EDIT_MODEL_SELECT_TOKEN=0;
 const EDIT_MODEL_PARCELS=new Map();
+let EDIT_PLACEMENT_DRAG=null;
 let WORKSPACE_READY=false,WORKSPACE_ACTIVE='',WORKSPACE_LAST_MODE=false,WORKSPACE_LAST_TARGET='',WORKSPACE_BUILD_JOB=null;
 let PARCEL_MODE_TOKEN=0,BUILDING_PARCEL_CONTEXT=false;
 let BUILDING_PICK_MODE=true,BUILDING_SELECTED_KEY='',BUILDING_SELECT_TOKEN=0,BUILDING_CACHE=null,BUILDING_VISIBILITY_REV=0;
@@ -1269,7 +1290,7 @@ function editStartAdditionalModel(){
  if(!parcel){editNotice('배치할 필지를 먼저 선택하세요.');return}
  EDIT_PARCEL=JSON.parse(JSON.stringify(parcel));WORKSPACE_BUILD_JOB=null;EDIT_RECT=null;
  if(WORKSPACE_READY){WORKSPACE_ACTIVE='model';workspaceUpdate()}
- editNotice('기존 사용자 건물은 유지됩니다. 아래에서 새 동의 평면과 높이를 지정하세요.');
+ editNotice('기존 사용자 건물은 유지됩니다. 직접 그리기 또는 치수 입력 버튼으로 새 동을 추가하세요.');
 }
 function editModelFits(model,parcel){
  try{const area=turf.area(model),inside=turf.intersect(turf.featureCollection([model,parcel]));return area>0&&!!inside&&area-turf.area(inside)<=Math.max(.005,area*1e-7)}catch(e){return false}
@@ -3271,6 +3292,7 @@ function editUpdateModel(){
  const source=editModelSource();
  source.setData(editCustomCollection());
  refreshSolarPreview();editRefreshModelControls();
+ if($('editPlacementModal')?.style.display==='flex')editRenderPlacementCanvas();
  if(editCustomModels().length){
   map.setLayoutProperty('edit-custom-model-3d','visibility','visible');
   map.setLayoutProperty('edit-custom-model-outline','visibility','visible');
@@ -3305,9 +3327,9 @@ function editCanvasExistingBuildings(){
  const index=buildingRecords(),bounds=turf.bbox(EDIT_PARCEL);
  return index.records.filter(record=>!buildingSuppressed(record)&&(record.source!=='osm'||smartOsm)&&!buildingIsHidden(record.f,index)&&buildingInParcel(record,EDIT_PARCEL,bounds));
 }
-function editRenderCanvas(){
+function editRenderCanvas({placement=false}={}){
  if(!EDIT_PARCEL)return;
- const c=$('editDrawCanvas'),g=c.getContext('2d');
+ const c=$(placement?'editPlacementCanvas':'editDrawCanvas'),g=c.getContext('2d');if(!g)return;
  g.clearRect(0,0,c.width,c.height);g.fillStyle='#071527';g.fillRect(0,0,c.width,c.height);
  function path(ft){
   const polygons=ft.geometry.type==='Polygon'?[ft.geometry.coordinates]:ft.geometry.type==='MultiPolygon'?ft.geometry.coordinates:[];
@@ -3325,12 +3347,92 @@ function editRenderCanvas(){
  const existing=editCanvasExistingBuildings();
  g.save();path(EDIT_PARCEL);g.clip('evenodd');
  for(const record of existing)shape(record.f,'#94a3b877','#cbd5e1');
- for(const model of editCustomModels()){try{if(turf.booleanIntersects(model,EDIT_PARCEL))shape(model,model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#22d3ee66':'#3b82f655',model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#67e8f9':'#93c5fd')}catch(e){}}
+ for(const model of editCustomModels()){try{
+  const preview=placement&&EDIT_PLACEMENT_DRAG?.model.properties.model_id===model.properties?.model_id?EDIT_PLACEMENT_DRAG.candidate:null,feature=preview||model,invalid=preview&&!EDIT_PLACEMENT_DRAG.valid;
+  if(turf.booleanIntersects(model,EDIT_PARCEL))shape(feature,invalid?'#ef444466':model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#22d3ee66':'#3b82f655',invalid?'#fca5a5':model.properties?.model_id===EDIT_SELECTED_MODEL_ID?'#67e8f9':'#93c5fd');
+ }catch(e){}}
  g.restore();
+ if(placement)return;
  $('editDrawContext').textContent='기존 건물 '+existing.length+'동 표시 · 숨긴 건물은 제외합니다.';
  if(EDIT_RECT){shape(EDIT_RECT,'#ea580c88','#fdba74');const [w,h]=editRectMeters(EDIT_RECT);$('editDrawDims').textContent='가로 '+w.toFixed(2)+'m × 세로 '+h.toFixed(2)+'m · 면적 '+(w*h).toFixed(1)+'㎡';}
  else $('editDrawDims').textContent='마우스 또는 터치로 드래그하세요.';
 }
+function editPlacementModels(){
+ if(!EDIT_PARCEL)return [];
+ const pnu=String(parcelPnu(EDIT_PARCEL.properties||{}));
+ return editCustomModels().filter(f=>{
+  const parcel=editModelParcel(f);if(!parcel)return false;
+  const modelPnu=String(parcelPnu(parcel.properties||{}));
+  return /^\d{19}$/.test(pnu)?modelPnu===pnu:JSON.stringify(parcel.geometry)===JSON.stringify(EDIT_PARCEL.geometry);
+ });
+}
+function editRenderPlacementCanvas(){
+ if(!EDIT_PARCEL)return;
+ editRenderCanvas({placement:true});
+ const select=$('editPlacementSelect'),models=editPlacementModels();select.replaceChildren();
+ const first=document.createElement('option');first.value='';first.textContent=models.length?'이동할 건물 선택 ('+models.length+'동)':'사용자 건물이 없습니다. 위 버튼으로 추가하세요.';select.appendChild(first);
+ for(const model of models){const o=document.createElement('option');o.value=model.properties.model_id;o.textContent=editModelLabel(model)+' · '+Number(model.properties.model_height).toFixed(1)+'m';select.appendChild(o)}
+ const model=models.find(f=>f.properties.model_id===EDIT_SELECTED_MODEL_ID);select.value=model?.properties.model_id||'';
+ $('editPlacementStatus').textContent=model?editModelLabel(model)+' 선택 · 건물을 끌어서 이동하세요.':models.length?'사용자 건물을 누르거나 목록에서 선택한 뒤 이동하세요.':'직접 그리거나 치수를 입력해 건물을 추가하세요.';
+}
+function editOpenPlacement(){
+ if(!EDIT_PARCEL){editNotice('먼저 배치할 필지를 선택하세요.');return}
+ EDIT_PLACEMENT_DRAG=null;EDIT_BOX=editCanvasBounds();$('editPlacementModal').style.display='flex';editRenderPlacementCanvas();
+}
+function editOpenSize(){
+ if(!EDIT_PARCEL){editNotice('먼저 배치할 필지를 선택하세요.');return}
+ EDIT_PLACEMENT_DRAG=null;EDIT_RECT=null;
+ $('editSizeStatus').textContent='필지 중앙에 추가한 뒤 배치 캔버스에서 옮길 수 있습니다.';$('editSizeModal').style.display='flex';
+}
+function editCreateFromSize(){
+ const w=Number($('editWidth').value),d=Number($('editLength').value),h=Number($('editHeight').value);
+ if(!EDIT_PARCEL||![w,d,h].every(Number.isFinite)||Math.min(w,d,h)<1||Math.max(w,d,h)>500){$('editSizeStatus').textContent='가로·세로·높이를 1~500m로 입력하세요.';return}
+ EDIT_BOX=editCanvasBounds();editSizedRectangle();
+ if(!EDIT_RECT||!editModelFits(EDIT_RECT,EDIT_PARCEL)){$('editSizeStatus').textContent='입력한 크기는 필지 중앙에 들어가지 않습니다. 크기를 줄이거나 직접 그리기를 사용하세요.';return}
+ $('editHeightConfirm').value=h;editCommitModel();
+}
+function setupPlacementCanvas(){
+ const canvas=$('editPlacementCanvas');
+ const pos=e=>{const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height]};
+ function cancel(){EDIT_PLACEMENT_DRAG=null;if($('editPlacementModal').style.display==='flex')editRenderPlacementCanvas()}
+ function preview(e){
+  const drag=EDIT_PLACEMENT_DRAG;if(!drag||e.pointerId!==drag.pointerId)return;
+  const xy=pos(e),east=(xy[0]-drag.start[0])/EDIT_BOX.scale,north=-(xy[1]-drag.start[1])/EDIT_BOX.scale;
+  drag.moved=Math.hypot(xy[0]-drag.start[0],xy[1]-drag.start[1])>=1;
+  drag.candidate=turf.transformTranslate(drag.model,Math.hypot(east,north)/1000,Math.atan2(east,north)*180/Math.PI,{units:'kilometers',mutate:false});
+  const valid=editModelFits(drag.candidate,drag.parcel);
+  if(valid!==drag.valid)$('editPlacementStatus').textContent=valid?'필지 안 · 놓으면 위치가 적용됩니다.':'필지 경계 밖입니다. 이 위치에 놓으면 원래 위치가 유지됩니다.';
+  drag.valid=valid;editRenderCanvas({placement:true});
+ }
+ canvas.addEventListener('pointerdown',e=>{
+  if(e.button!==0||EDIT_PLACEMENT_DRAG||!EDIT_PARCEL)return;
+  e.preventDefault();const point=turf.point(editXYToLngLat(...pos(e)));
+  if(!turf.booleanPointInPolygon(point,EDIT_PARCEL))return;
+  const model=editPlacementModels().reverse().find(f=>turf.booleanPointInPolygon(point,f));
+  if(!model){$('editPlacementStatus').textContent='이곳에는 이동할 사용자 건물이 없습니다. 새 건물은 위 버튼으로 추가하세요.';return}
+  editSelectModel(model.properties.model_id);EDIT_BOX=editCanvasBounds();
+  EDIT_PLACEMENT_DRAG={pointerId:e.pointerId,model,parcel:editModelParcel(model),start:pos(e),candidate:model,valid:true,moved:false};
+  canvas.setPointerCapture(e.pointerId);editRenderCanvas({placement:true});
+ });
+ canvas.addEventListener('pointermove',preview);
+ canvas.addEventListener('pointerup',e=>{
+  const active=EDIT_PLACEMENT_DRAG;if(!active||e.pointerId!==active.pointerId)return;
+  preview(e);const drag=EDIT_PLACEMENT_DRAG;EDIT_PLACEMENT_DRAG=null;
+  if(!drag.moved){editRenderPlacementCanvas();return}
+  if(!drag.valid){editRenderPlacementCanvas();$('editPlacementStatus').textContent='필지 밖으로 이동할 수 없어 원래 위치를 유지했습니다.';return}
+  const id=drag.model.properties.model_id,index=EDIT_MODELS.findIndex(f=>f.properties?.model_id===id);
+  if(index<0||EDIT_MODELS[index]!==drag.model||EDIT_SELECTED_MODEL_ID!==id){editRenderPlacementCanvas();return}
+  EDIT_MODELS[index]=drag.candidate;EDIT_CUSTOM=drag.candidate;
+  editUpdateModel();editModelSummary();workspaceUpdate();
+  $('editPlacementStatus').textContent=editModelLabel(drag.candidate)+' 이동 완료 · 높이와 다른 건물은 유지됩니다.';
+ });
+ canvas.addEventListener('pointercancel',e=>{if(EDIT_PLACEMENT_DRAG?.pointerId===e.pointerId)cancel()});
+ canvas.addEventListener('lostpointercapture',e=>{if(EDIT_PLACEMENT_DRAG?.pointerId===e.pointerId)cancel()});
+ $('editPlacementSelect').addEventListener('change',e=>{if(e.target.value){EDIT_PLACEMENT_DRAG=null;editSelectModel(e.target.value);EDIT_BOX=editCanvasBounds();editRenderPlacementCanvas()}});
+ $('editPlacementDraw').onclick=()=>{cancel();editOpenDraw()};$('editPlacementSize').onclick=()=>{cancel();editOpenSize()};
+ $('editPlacementClose').onclick=()=>{EDIT_PLACEMENT_DRAG=null;$('editPlacementModal').style.display='none';workspaceCancelPlacement()};
+}
+
 function editSizedRectangle(){
  if(!EDIT_PARCEL)return;
  const w=Number($('editWidth').value),h=Number($('editLength').value);if(!(w>0&&h>0&&w<=500&&h<=500)){editNotice('가로·세로 길이를 1~500m로 입력하세요.');return}
@@ -3366,7 +3468,7 @@ function editCommitModel(){
  if(!editModelFits(EDIT_RECT,EDIT_PARCEL)){editNotice('직사각형이 필지 바깥으로 나갑니다. 위치나 길이를 조정하세요.');return}
  const created=editRegisterModel(EDIT_RECT,height),createdCenter=turf.centroid(created).geometry.coordinates;
  $('editHeight').value=height;editUpdateModel();editModelSummary();workspaceCommitPlacement();
- editSelectModel(created.properties.model_id,{openEditor:true});$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';EDIT_PICKING=false;
+ editSelectModel(created.properties.model_id,{openEditor:true});$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';$('editSizeModal').style.display='none';EDIT_PICKING=false;editOpenPlacement();
  map.easeTo({center:createdCenter,zoom:Math.max(map.getZoom(),18),pitch:70,duration:650});
  editNotice('새 건물 '+height+'m 생성 완료. 원본 데이터는 보존됩니다.');
 }
@@ -3378,18 +3480,22 @@ function setupBuildingEditor(){
  $('editModelSelect').addEventListener('change',e=>{if(e.target.value)editSelectModel(e.target.value,{openEditor:true})});
  $('editNewModel').addEventListener('click',editStartAdditionalModel);
  $('editApplySelected').addEventListener('click',editApplySelected);
- $('editOpenDraw').onclick=editOpenDraw;
- $('editCreateSize').onclick=()=>{if(!EDIT_PARCEL){editNotice('필지를 선택하세요.');return}EDIT_BOX=editCanvasBounds();editSizedRectangle();if(EDIT_RECT)editNextHeight()};
- $('editCloseDraw').onclick=()=>$('editDrawModal').style.display='none';
- $('editSizeInCanvas').onclick=editSizedRectangle;
+ $('editOpenPlacement').onclick=editOpenPlacement;
+ $('editOpenDraw').onclick=editOpenDraw;$('editOpenSize').onclick=editOpenSize;
+ setupPlacementCanvas();
+ $('editCreateSize').onclick=editCreateFromSize;
+ $('editCloseDraw').onclick=()=>{$('editDrawModal').style.display='none';EDIT_DRAG_START=null};
+ $('editSizeInCanvas').onclick=()=>{$('editDrawModal').style.display='none';EDIT_DRAG_START=null;editOpenSize()};
+ $('editSizeClose').onclick=()=>{$('editSizeModal').style.display='none';workspaceCancelPlacement()};
  $('editConfirmDraw').onclick=editNextHeight;
  $('editHeightBack').onclick=()=>{$('editHeightModal').style.display='none';$('editDrawModal').style.display='flex';editRenderCanvas()};
  $('editHeightCreate').onclick=editCommitModel;
  const canvas=$('editDrawCanvas');
  function pos(e){const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height]}
- canvas.addEventListener('pointerdown',e=>{e.preventDefault();canvas.setPointerCapture(e.pointerId);EDIT_DRAG_START=editXYToLngLat(...pos(e));EDIT_RECT=null});
+ canvas.addEventListener('pointerdown',e=>{if(e.button!==0||EDIT_DRAG_START)return;e.preventDefault();canvas.setPointerCapture(e.pointerId);EDIT_DRAG_START=editXYToLngLat(...pos(e));EDIT_RECT=null});
  canvas.addEventListener('pointermove',e=>{if(!EDIT_DRAG_START)return;EDIT_RECT=editBoxFromCoords(EDIT_DRAG_START,editXYToLngLat(...pos(e)));editRenderCanvas()});
  canvas.addEventListener('pointerup',e=>{if(!EDIT_DRAG_START)return;EDIT_RECT=editBoxFromCoords(EDIT_DRAG_START,editXYToLngLat(...pos(e)));EDIT_DRAG_START=null;editRenderCanvas()});
+ canvas.addEventListener('pointercancel',()=>{EDIT_DRAG_START=null;EDIT_RECT=null;editRenderCanvas()});
 }
 setupBuildingEditor();
 function editedBuildingCollection(original){
