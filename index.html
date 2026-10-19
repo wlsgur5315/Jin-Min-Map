@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-07</title>
+<title>Jinju3D Local · v2026.10.19-08</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -125,10 +125,39 @@
 #editPlacementEditor label{font-size:12px;min-width:0}
 #editPlacementEditor input{display:block;width:100%;min-width:0;margin-top:5px;font-size:16px;min-height:44px}
 @media(max-width:540px){#editPlacementEditor .placement-editor-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Near-fullscreen placement workspace: the canvas stays visible while tools scroll. */
+#editPlacementModal{position:fixed;z-index:190;inset:0;padding:8px;background:#030712ee;align-items:center;justify-content:center;overflow:hidden}
+#editPlacementWindow{width:100%;height:calc(100vh - 16px);height:calc(100dvh - 16px);min-height:0;display:flex;flex-direction:column;background:#101f33;border:1px solid #64748b;border-radius:12px;color:#e2e8f0;overflow:hidden}
+#editPlacementHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-bottom:1px solid #334155;flex:0 0 auto}
+#editPlacementHeader b{font-size:15px}
+#editPlacementBody{display:grid;grid-template-columns:minmax(0,1fr) clamp(280px,24vw,320px);flex:1;min-height:0;min-width:0}
+#editPlacementMapPane{display:flex;flex-direction:column;min-height:0;min-width:0;padding:10px;background:#071527;overflow:hidden}
+#editPlacementViewport{flex:1;min-height:0;min-width:0;overflow:hidden;border:1px solid #475569;border-radius:8px}
+#editPlacementCanvas{display:block;width:100%;height:100%;background:#071527;touch-action:none}
+#editPlacementLegend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;padding-top:9px;flex:0 0 auto}
+#editPlacementTools{min-height:0;min-width:0;padding:12px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-left:1px solid #334155}
+#editPlacementTools h3{font-size:13px;margin:0 0 8px}
+#editPlacementTools .placement-create-actions,#editPlacementTools .placement-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:0 0 12px}
+#editPlacementTools .placement-create-actions button,#editPlacementTools .placement-tool-grid button{min-width:0;width:100%}
+#editPlacementFit{grid-column:1/-1}
+#editPlacementTools .placement-options{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:8px 0 12px;font-size:13px}
+#editPlacementTools .placement-options label{display:flex;align-items:center;gap:5px;min-height:36px}
+#editPlacementEditor .placement-editor-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+#editPlacementEditor .row{display:grid;grid-template-columns:minmax(0,1fr)}
+#editPlacementEditorSummary{display:block;width:100%}
+@media(max-width:740px), (orientation:portrait){
+ #editPlacementBody{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(150px,48%) minmax(0,1fr)}
+ #editPlacementTools{border-left:0;border-top:1px solid #334155}
+ #editPlacementTools .placement-tool-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #editPlacementFit{grid-column:auto}
+ #editPlacementMapPane{padding:6px}
+ #editPlacementLegend{gap:4px 10px;font-size:11px;padding-top:6px}
+}
+
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-07</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-08</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -402,23 +431,28 @@
   </div>
 </div>
 <div id="vbadge" class="vbadge">VWorld 정밀 모드</div><div id="msg" class="message">진주시 공간정보 준비 중…</div><div id="bar" class="bar"><i></i></div>
-<div id="editPlacementModal" role="dialog" aria-modal="true" aria-labelledby="editPlacementTitle" style="display:none;position:fixed;z-index:190;inset:0;background:#030712ee;padding:8px;align-items:center;justify-content:center;overflow-y:auto">
- <div style="width:min(720px,100%);max-height:calc(100dvh - 16px);overflow-y:auto;background:#101f33;border:1px solid #64748b;border-radius:14px;padding:12px;color:#e2e8f0">
-  <div class="row" style="justify-content:space-between"><b id="editPlacementTitle">사용자 건물 배치</b><button type="button" id="editPlacementClose">닫기</button></div>
-  <div class="row" style="margin:10px 0"><button type="button" id="editPlacementDraw">직접 그려 추가</button><button type="button" id="editPlacementSize">치수 입력으로 추가</button></div>
-  <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0">
+<div id="editPlacementModal" role="dialog" aria-modal="true" aria-labelledby="editPlacementTitle" style="display:none">
+ <div id="editPlacementWindow">
+  <header id="editPlacementHeader"><b id="editPlacementTitle">사용자 건물 배치·편집</b><button type="button" id="editPlacementClose">닫기</button></header>
+  <div id="editPlacementBody">
+   <div id="editPlacementMapPane"><div id="editPlacementViewport">
+  <canvas id="editPlacementCanvas" width="580" height="400" aria-label="사용자 건물 선택 및 이동 캔버스"></canvas>
+   </div>
+  <div id="editPlacementLegend"><span style="color:#cbd5e1">■ 기존 건물 · 고정</span><span style="color:#93c5fd">■ 사용자 건물</span><span style="color:#67e8f9">■ 선택한 건물 · 이동 가능</span></div>
+</div>
+   <aside id="editPlacementTools" aria-label="건물 배치 작업 도구"><h3>새 건물 추가</h3>
+  <div class="placement-create-actions"><button type="button" id="editPlacementDraw">직접 그려 추가</button><button type="button" id="editPlacementSize">치수 입력으로 추가</button></div>
+  <h3>캔버스 조작</h3><div class="placement-tool-grid">
    <button type="button" id="editPlacementMove" aria-pressed="true">선택·이동</button><button type="button" id="editPlacementPan" aria-pressed="false">화면 이동</button>
    <button type="button" id="editPlacementZoomIn" aria-label="배치 캔버스 확대">확대 ＋</button><button type="button" id="editPlacementZoomOut" aria-label="배치 캔버스 축소">축소 −</button><button type="button" id="editPlacementFit">전체 보기</button>
    <button type="button" id="editPlacementUndo" disabled>되돌리기</button><button type="button" id="editPlacementRedo" disabled>다시 실행</button>
   </div>
-  <div style="display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0;font-size:13px">
+  <div class="placement-options">
    <label style="min-height:36px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementSnap" checked>격자 맞춤</label>
    <select id="editPlacementGrid" aria-label="맞춤 격자 간격" style="width:auto;font-size:16px;min-height:40px"><option value="0.1">0.1m</option><option value="0.5" selected>0.5m</option><option value="1">1m</option></select>
    <label style="min-height:36px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementDistances" checked>거리 표시</label>
    <span id="editPlacementScale" style="color:#cbd5e1"></span>
   </div>
-  <canvas id="editPlacementCanvas" width="580" height="400" aria-label="사용자 건물 선택 및 이동 캔버스" style="display:block;width:100%;height:auto;max-width:100%;background:#071527;touch-action:none;border:1px solid #475569;border-radius:8px"></canvas>
-  <div style="display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin:8px 0"><span style="color:#cbd5e1">■ 기존 건물 · 고정</span><span style="color:#93c5fd">■ 사용자 건물</span><span style="color:#67e8f9">■ 선택한 건물 · 이동 가능</span></div>
   <label for="editPlacementSelect" style="font-size:13px">이 필지의 사용자 건물</label><select id="editPlacementSelect" style="width:100%;min-height:44px;margin:6px 0;font-size:16px" aria-label="배치 캔버스에서 선택할 사용자 건물"></select>
   <section id="editPlacementEditor" style="margin-top:10px;padding:12px;border:1px solid #475569;border-radius:9px;background:#0b1c30">
    <div style="display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:space-between;margin-bottom:10px"><b id="editPlacementEditorTitle" style="font-size:13px">선택한 건물 편집</b><span id="editPlacementEditorSummary" style="font-size:12px;color:#cbd5e1"></span></div>
@@ -434,6 +468,8 @@
   <div id="editPlacementMetrics" style="font-size:13px;line-height:1.7;margin-top:8px;color:#d1fae5"></div>
   <div id="editPlacementStatus" style="font-size:13px;line-height:1.7;margin-top:8px" role="status" aria-live="polite">건물을 선택한 뒤 끌어서 이동하세요.</div>
   <div class="hint" style="margin-top:6px">빈 곳 드래그: 화면 이동 · 두 손가락/마우스 휠: 확대·축소 · 겹침은 경고만 표시하며 필지 밖 이동은 적용하지 않습니다. 거리값은 표시된 건물과 필지 경계 기준 참고값입니다. 되돌리기는 현재 필지의 최근 30단계를 지원합니다.</div>
+   </aside>
+  </div>
  </div>
 </div>
 <div id="editSizeModal" role="dialog" aria-modal="true" aria-labelledby="editSizeTitle" style="display:none;position:fixed;z-index:205;inset:0;background:#030712ee;padding:12px;align-items:center;justify-content:center;overflow-y:auto">
@@ -565,7 +601,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.19-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1010,7 +1046,7 @@ function prepareStaticBuildings(fc){
 let EDIT_MODELS=[],EDIT_SELECTED_MODEL_ID='',EDIT_MODEL_SEQ=0,EDIT_MODEL_SELECT_TOKEN=0;
 const EDIT_MODEL_PARCELS=new Map();
 let EDIT_PLACEMENT_DRAG=null,EDIT_PLACEMENT_EDITOR_FEATURE=undefined;
-let EDIT_PLACEMENT_VIEW={key:'',zoom:1,x:0,y:0},EDIT_PLACEMENT_TOOL='move';
+let EDIT_PLACEMENT_VIEW={key:'',zoom:1,x:0,y:0},EDIT_PLACEMENT_TOOL='move',EDIT_PLACEMENT_CANCEL=null;
 let EDIT_PLACEMENT_UNDO=[],EDIT_PLACEMENT_REDO=[],EDIT_PLACEMENT_HISTORY_SCOPE='';
 let WORKSPACE_READY=false,WORKSPACE_ACTIVE='',WORKSPACE_LAST_MODE=false,WORKSPACE_LAST_TARGET='',WORKSPACE_BUILD_JOB=null;
 let PARCEL_MODE_TOKEN=0,BUILDING_PARCEL_CONTEXT=false;
@@ -3376,8 +3412,8 @@ function editBoxFromCoords(a,b){
  const x1=Math.min(a[0],b[0]),x2=Math.max(a[0],b[0]),y1=Math.min(a[1],b[1]),y2=Math.max(a[1],b[1]);
  return turf.polygon([[[x1,y1],[x2,y1],[x2,y2],[x1,y2],[x1,y1]]]);
 }
-function editCanvasBounds(){
- const bounds=turf.bbox(EDIT_PARCEL),canvas=$('editDrawCanvas');
+function editCanvasBounds(canvas=$('editDrawCanvas')){
+ const bounds=turf.bbox(EDIT_PARCEL);
  const refLon=(bounds[0]+bounds[2])/2,refLat=(bounds[1]+bounds[3])/2;
  const metersLon=111320*Math.cos(refLat*Math.PI/180),metersLat=111132;
  const width=Math.max(1,(bounds[2]-bounds[0])*metersLon),height=Math.max(1,(bounds[3]-bounds[1])*metersLat);
@@ -3429,20 +3465,34 @@ function editRenderCanvas({placement=false}={}){
  if(EDIT_RECT){shape(EDIT_RECT,'#ea580c88','#fdba74');const [w,h]=editRectMeters(EDIT_RECT);$('editDrawDims').textContent='가로 '+w.toFixed(2)+'m × 세로 '+h.toFixed(2)+'m · 면적 '+(w*h).toFixed(1)+'㎡';}
  else $('editDrawDims').textContent='마우스 또는 터치로 드래그하세요.';
 }
+function editResizePlacementCanvas(){
+ if($('editPlacementModal')?.style.display!=='flex')return false;
+ const canvas=$('editPlacementCanvas'),viewport=$('editPlacementViewport'),rect=viewport?.getBoundingClientRect?.();
+ const width=viewport?.clientWidth||Math.max(0,(rect?.width||0)-2),height=viewport?.clientHeight||Math.max(0,(rect?.height||0)-2);
+ if(width<1||height<1)return false;
+ const density=Math.max(1,Math.min(2,Number(window.devicePixelRatio)||1)),nextWidth=Math.round(width*density),nextHeight=Math.round(height*density);
+ if(canvas.width===nextWidth&&canvas.height===nextHeight)return false;
+ const prior=editPlacementBaseBox();canvas.width=nextWidth;canvas.height=nextHeight;
+ const ratio=editPlacementBaseBox().scale/prior.scale;EDIT_PLACEMENT_VIEW.x*=ratio;EDIT_PLACEMENT_VIEW.y*=ratio;
+ if(EDIT_PLACEMENT_CANCEL)EDIT_PLACEMENT_CANCEL();else editRenderPlacementCanvas();
+ return true;
+}
+
+function editPlacementBaseBox(){return editCanvasBounds($('editPlacementCanvas'))}
 function editPlacementEnsureView(){
  const key=editPlacementScope();
  if(EDIT_PLACEMENT_VIEW.key!==key)EDIT_PLACEMENT_VIEW={key,zoom:1,x:0,y:0};
  if(EDIT_PLACEMENT_HISTORY_SCOPE!==key){EDIT_PLACEMENT_UNDO=[];EDIT_PLACEMENT_REDO=[];EDIT_PLACEMENT_HISTORY_SCOPE=key;editPlacementHistoryControls()}
 }
-function editPlacementBox(){const b=editCanvasBounds();return {...b,scale:b.scale*EDIT_PLACEMENT_VIEW.zoom,cx:b.cx+EDIT_PLACEMENT_VIEW.x,cy:b.cy+EDIT_PLACEMENT_VIEW.y}}
+function editPlacementBox(){const b=editPlacementBaseBox();return {...b,scale:b.scale*EDIT_PLACEMENT_VIEW.zoom,cx:b.cx+EDIT_PLACEMENT_VIEW.x,cy:b.cy+EDIT_PLACEMENT_VIEW.y}}
 function editPlacementToXY(pt){const b=editPlacementBox();return [b.cx+(pt[0]-b.refLon)*b.metersLon*b.scale,b.cy-(pt[1]-b.refLat)*b.metersLat*b.scale]}
 function editPlacementToLngLat(x,y){const b=editPlacementBox();return [b.refLon+(x-b.cx)/(b.scale*b.metersLon),b.refLat-(y-b.cy)/(b.scale*b.metersLat)]}
 function editPlacementZoom(factor,anchor=null){
- const c=$('editPlacementCanvas'),b=editPlacementBox(),p=anchor||[c.width/2,c.height/2],zoom=Math.max(.5,Math.min(8,EDIT_PLACEMENT_VIEW.zoom*factor)),ratio=zoom/EDIT_PLACEMENT_VIEW.zoom,base=editCanvasBounds();
+ const c=$('editPlacementCanvas'),b=editPlacementBox(),p=anchor||[c.width/2,c.height/2],zoom=Math.max(.5,Math.min(8,EDIT_PLACEMENT_VIEW.zoom*factor)),ratio=zoom/EDIT_PLACEMENT_VIEW.zoom,base=editPlacementBaseBox();
  EDIT_PLACEMENT_VIEW.x=p[0]+(b.cx-p[0])*ratio-base.cx;EDIT_PLACEMENT_VIEW.y=p[1]+(b.cy-p[1])*ratio-base.cy;EDIT_PLACEMENT_VIEW.zoom=zoom;editRenderCanvas({placement:true});
 }
 function editPlacementTranslate(model,east,north){
- const b=editCanvasBounds(),next=JSON.parse(JSON.stringify(model));
+ const b=editPlacementBaseBox(),next=JSON.parse(JSON.stringify(model));
  const shift=coordinates=>typeof coordinates[0]==='number'?[coordinates[0]+east/b.metersLon,coordinates[1]+north/b.metersLat,...coordinates.slice(2)]:coordinates.map(shift);
  next.geometry.coordinates=shift(next.geometry.coordinates);if(next.bbox)delete next.bbox;return next;
 }
@@ -3457,7 +3507,7 @@ function editPlacementDrawGrid(g,c){
  $('editPlacementScale').textContent=Math.round(EDIT_PLACEMENT_VIEW.zoom*100)+'% · 표시 격자 '+Number(display.toFixed(3))+'m';
 }
 function editPlacementRings(f){
- const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates,b=editCanvasBounds();
+ const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates,b=editPlacementBaseBox();
  return polys.flat().map(ring=>ring.map(p=>[(p[0]-b.refLon)*b.metersLon,(p[1]-b.refLat)*b.metersLat]));
 }
 function editPlacementNearest(a,b){
@@ -3473,7 +3523,7 @@ function editPlacementNearest(a,b){
 function editPlacementAnalysis(){
  const model=editSelectedModel();if(!model||!editPlacementModels().includes(model))return null;
  const feature=EDIT_PLACEMENT_DRAG?.candidate||model,rings=editPlacementRings(feature),others=[...editCanvasExistingBuildings().map(r=>r.f),...editCustomModels().filter(f=>f.properties?.model_id!==model.properties.model_id&&turf.booleanIntersects(f,EDIT_PARCEL))];
- let nearest=null,overlaps=0;const bounds=turf.bbox(feature),base=editCanvasBounds();
+ let nearest=null,overlaps=0;const bounds=turf.bbox(feature),base=editPlacementBaseBox();
  for(const other of others){
   const bb=turf.bbox(other),lower=Math.hypot(Math.max(0,bounds[0]-bb[2],bb[0]-bounds[2])*base.metersLon,Math.max(0,bounds[1]-bb[3],bb[1]-bounds[3])*base.metersLat);if(nearest&&lower>nearest.distance)continue;
   let overlap=false;try{if(bounds[0]<=bb[2]&&bounds[2]>=bb[0]&&bounds[1]<=bb[3]&&bounds[3]>=bb[1]){const intersection=turf.intersect(turf.featureCollection([feature,other]));overlap=!!intersection&&turf.area(intersection)>.01}}catch(e){}
@@ -3559,7 +3609,7 @@ function editRenderPlacementCanvas(){
 }
 function editOpenPlacement(){
  if(!EDIT_PARCEL){editNotice('먼저 배치할 필지를 선택하세요.');return}
- EDIT_PLACEMENT_DRAG=null;EDIT_BOX=editCanvasBounds();editPlacementEnsureView();$('editPlacementModal').style.display='flex';editRenderPlacementCanvas();
+ EDIT_PLACEMENT_DRAG=null;EDIT_BOX=editCanvasBounds();editPlacementEnsureView();$('editPlacementModal').style.display='flex';editResizePlacementCanvas();editRenderPlacementCanvas();
 }
 function editOpenSize(){
  if(!EDIT_PARCEL){editNotice('먼저 배치할 필지를 선택하세요.');return}
@@ -3578,6 +3628,7 @@ function setupPlacementCanvas(){
  const pos=e=>{const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height]};
  const draw=()=>editRenderCanvas({placement:true});
  function cancel(){pointers.clear();gesture=null;EDIT_PLACEMENT_DRAG=null;if($('editPlacementModal').style.display==='flex')editRenderPlacementCanvas()}
+ EDIT_PLACEMENT_CANCEL=cancel;
  function preview(e){
   const drag=EDIT_PLACEMENT_DRAG;if(!drag||e.pointerId!==drag.pointerId)return;
   const xy=pos(e),b=editPlacementBox(),origin=turf.centroid(drag.model).geometry.coordinates;
@@ -3603,7 +3654,7 @@ function setupPlacementCanvas(){
  canvas.addEventListener('pointermove',e=>{
   if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,pos(e));if(!gesture)return;
   if(gesture.type==='pinch'&&pointers.size===2){
-   const [a,b]=[...pointers.values()],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],zoom=Math.max(.5,Math.min(8,gesture.view.zoom*Math.hypot(a[0]-b[0],a[1]-b[1])/gesture.distance)),ratio=zoom/gesture.view.zoom,base=editCanvasBounds();
+   const [a,b]=[...pointers.values()],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],zoom=Math.max(.5,Math.min(8,gesture.view.zoom*Math.hypot(a[0]-b[0],a[1]-b[1])/gesture.distance)),ratio=zoom/gesture.view.zoom,base=editPlacementBaseBox();
    EDIT_PLACEMENT_VIEW.zoom=zoom;EDIT_PLACEMENT_VIEW.x=mid[0]+(gesture.box.cx-gesture.mid[0])*ratio-base.cx;EDIT_PLACEMENT_VIEW.y=mid[1]+(gesture.box.cy-gesture.mid[1])*ratio-base.cy;draw();return;
   }
   if(gesture.type==='pan'&&gesture.id===e.pointerId){const xy=pos(e);EDIT_PLACEMENT_VIEW.x=gesture.x+xy[0]-gesture.start[0];EDIT_PLACEMENT_VIEW.y=gesture.y+xy[1]-gesture.start[1];draw();return}
@@ -3635,6 +3686,9 @@ function setupPlacementCanvas(){
  $('editPlacementDraw').onclick=()=>{cancel();editOpenDraw()};$('editPlacementSize').onclick=()=>{cancel();editOpenSize()};
  $('editPlacementClose').onclick=()=>{cancel();$('editPlacementModal').style.display='none';workspaceCancelPlacement()};
  window.addEventListener('blur',cancel);document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel()});
+ let resizeFrame=0;const scheduleResize=()=>{if(resizeFrame)return;resizeFrame=requestAnimationFrame(()=>{resizeFrame=0;editResizePlacementCanvas()})};
+ window.addEventListener('resize',scheduleResize);
+ if(typeof ResizeObserver!=='undefined')new ResizeObserver(scheduleResize).observe($('editPlacementViewport'));
 }
 
 function editSizedRectangle(){
