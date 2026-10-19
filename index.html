@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-02</title>
+<title>Jinju3D Local · v2026.10.19-03</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -114,7 +114,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-02</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-03</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -305,6 +305,17 @@
     </section>
 
 <section id="tab-settings" class="tab-pane">
+ <details id="mapKeyboardHelp" class="drawer-sec work-fold"><summary>키보드 지도 조작 안내</summary>
+  <table style="width:100%;font-size:12px;border-spacing:0 7px"><tbody>
+   <tr><th scope="row" style="text-align:left">W·A·S·D / 방향키</th><td>화면 기준 상하좌우 이동</td></tr>
+   <tr><th scope="row" style="text-align:left">Q / E</th><td>왼쪽 / 오른쪽 회전</td></tr>
+   <tr><th scope="row" style="text-align:left">R / F</th><td>더 기울이기 / 위에서 보기</td></tr>
+   <tr><th scope="row" style="text-align:left">+ / −</th><td>확대 / 축소</td></tr>
+   <tr><th scope="row" style="text-align:left">Shift 함께 누르기</th><td>빠르게 조작</td></tr>
+   <tr><th scope="row" style="text-align:left">N</th><td>북쪽이 위로 오도록 정렬</td></tr>
+  </tbody></table>
+  <div class="hint">키를 누르는 동안 움직이고 놓으면 멈춥니다. 입력칸·건물 그리기·검증실에서는 작동하지 않습니다. iPad는 외장 키보드로 사용할 수 있습니다.</div>
+ </details>
  <div class="drawer-sec" style="border:1px solid #64748b55;border-radius:9px;padding:10px;margin:9px 0">
   <h3>지도 디자인</h3>
   <select id="mapDesignMode" aria-label="지도 디자인 선택">
@@ -497,18 +508,66 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.19-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
 const districtOsmCache=new Map(),REGISTER_BY_PNU=new Map(),REGISTER_BY_SHORT=new Map(),REGISTER_BY_FULL=new Map(),REGISTER_BY_DISTRICT=new Map(),$=id=>document.getElementById(id),sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const map=new maplibregl.Map({container:'map',center:[128.1076,35.1802],zoom:10.5,pitch:0,bearing:0,minZoom:9.7,maxPitch:82,antialias:true,style:STYLE_URL});
+const map=new maplibregl.Map({container:'map',keyboard:false,center:[128.1076,35.1802],zoom:10.5,pitch:0,bearing:0,minZoom:9.7,maxPitch:82,antialias:true,style:STYLE_URL});
 const scanMap=new maplibregl.Map({container:'scanMap',center:[128.1076,35.1802],zoom:15,pitch:0,bearing:0,interactive:false,attributionControl:false,fadeDuration:0,style:STYLE_URL});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
-let terrainRefreshDone=false;
+let terrainRefreshDone=false,lawMapSyncTimer=0;
 map.on('idle',()=>{if(!terrainRefreshDone&&currentBuildings&&terrainSourceReady()){terrainRefreshDone=true;setTimeout(refreshTerrainBuildings,0)}});
-map.on('moveend',()=>{if(lawMode)setTimeout(()=>syncLawModeToMapCenter().catch(console.warn),120)});
+map.on('moveend',()=>{clearTimeout(lawMapSyncTimer);if(lawMode)lawMapSyncTimer=setTimeout(()=>syncLawModeToMapCenter().catch(console.warn),120)});
 map.on('sourcedata',e=>{if(e.sourceId==='terrain'&&currentBuildings&&terrainSourceReady()){terrainRefreshDone=true;setTimeout(refreshTerrainBuildings,0)}});
+// Continuous keyboard camera controls; native keyboard handling is disabled to avoid duplicate steps.
+function setupMapKeyboard(){
+ const held=new Set();let frame=0,last=0,fast=false;
+ const codes=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowLeft','ArrowDown','ArrowRight','KeyQ','KeyE','KeyR','KeyF','Equal','Minus','NumpadAdd','NumpadSubtract']);
+ const editable=target=>!!(target?.isContentEditable||target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
+ function blocked(target=document.activeElement){
+  if(document.hidden||precisionMode||editable(target)||editable(document.activeElement))return true;
+  return ['editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','sourceModal'].some(id=>{
+   const el=$(id);if(!el)return false;const style=getComputedStyle(el);return style.display!=='none'&&style.visibility!=='hidden';
+  });
+ }
+ function stop(){held.clear();fast=false;if(frame)cancelAnimationFrame(frame);frame=0;last=0}
+ function tick(now){
+  frame=0;if(!held.size||blocked()){stop();return}
+  const dt=Math.min(.05,Math.max(0,(now-last)/1000)),speed=fast?2.5:1;last=now;
+  const has=(...keys)=>keys.some(key=>held.has(key))?1:0;
+  const x=has('KeyD','ArrowRight')-has('KeyA','ArrowLeft'),y=has('KeyS','ArrowDown')-has('KeyW','ArrowUp');
+  const turn=has('KeyE')-has('KeyQ'),tilt=has('KeyR')-has('KeyF'),zoom=has('Equal','NumpadAdd')-has('Minus','NumpadSubtract');
+  const camera={};
+  if(x||y){
+   const length=Math.hypot(x,y),distance=280*dt*speed,center=map.project(map.getCenter());
+   camera.center=map.unproject([center.x+x/length*distance,center.y+y/length*distance]);
+  }
+  if(turn)camera.bearing=map.getBearing()+turn*55*dt*speed;
+  if(tilt)camera.pitch=Math.max(map.getMinPitch(),Math.min(map.getMaxPitch(),map.getPitch()+tilt*32*dt*speed));
+  if(zoom)camera.zoom=Math.max(map.getMinZoom(),Math.min(map.getMaxZoom(),map.getZoom()+zoom*1.2*dt*speed));
+  if(Object.keys(camera).length)map.jumpTo(camera);
+  frame=requestAnimationFrame(tick);
+ }
+ document.addEventListener('keydown',e=>{
+  if(e.defaultPrevented||e.isComposing||e.ctrlKey||e.metaKey||e.altKey||blocked(e.target)){stop();return}
+  fast=e.shiftKey;
+  if(e.code==='KeyN'){
+   e.preventDefault();if(!e.repeat){stop();map.easeTo({bearing:0,duration:300})}return;
+  }
+  if(!codes.has(e.code))return;
+  e.preventDefault();if(e.repeat&&!held.has(e.code))return;
+  if(!held.size){map.stop();last=performance.now()}
+  held.add(e.code);if(!frame)frame=requestAnimationFrame(tick);
+ });
+ document.addEventListener('keyup',e=>{fast=e.shiftKey;held.delete(e.code);if(!held.size)stop()});
+ document.addEventListener('focusin',e=>{if(editable(e.target))stop()});
+ document.addEventListener('pointerdown',stop,{passive:true});
+ document.addEventListener('visibilitychange',stop);
+ window.addEventListener('blur',stop);window.addEventListener('pagehide',stop);
+}
+setupMapKeyboard();
+
 $('latestBtn').onclick=()=>openLatestVersion();
 function openLatestVersion(){const u=new URL(location.href);u.searchParams.set('v',APP_VERSION.replace(/^v/,'').replace(/\./g,'').replace(/-/g,''));u.searchParams.set('refresh',Date.now().toString());location.href=u.toString()}
 function message(t){$('msg').textContent=t}function loading(v){$('bar').classList.toggle('on',v)}
