@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.20-05</title>
+<title>Jinju3D Local · v2026.10.20-06</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -249,9 +249,32 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 #editPlacementL,#editPlacementPolygon{grid-column:auto}
 @media(max-width:740px),(orientation:portrait){#editPolygonBody{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(160px,52%) minmax(0,1fr)}#editPolygonTools{border-left:0;border-top:1px solid #334155;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px}#editPolygonTools h3,#editPolygonStats,#editPolygonTools>.row{grid-column:1/-1}#editPolygonFooter{flex-wrap:wrap}#editPolygonFooter>div:last-child{margin-left:auto}}
 </style>
+<style id="solarBuildingPickerStyles">
+#solarPickModal{position:fixed;inset:0;z-index:260;padding:8px;background:#030712ec;align-items:center;justify-content:center}
+#solarPickWindow{width:min(1360px,100%);height:min(820px,100%);background:#0c1b2c;color:#e2e8f0;border:1px solid #475569;border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+#solarPickHeader,#solarPickFooter{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;flex:none;background:#122338}
+#solarPickBody{display:grid;grid-template-columns:minmax(0,1fr) 290px;min-height:0;flex:1}
+#solarPickPlan{min-width:0;min-height:0;display:flex;flex-direction:column;padding:10px;gap:8px}
+#solarPickToolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}#solarPickToolbar button{width:auto!important}
+#solarPickViewport{min-height:100px;flex:1;position:relative;background:#071527;overflow:hidden;border:1px solid #334155;border-radius:8px}
+#solarPickCanvas{width:100%;height:100%;display:block;touch-action:none}
+#solarPickAside{min-width:0;min-height:0;padding:10px;border-left:1px solid #334155;display:flex;flex-direction:column;gap:7px}
+#solarPickList{display:grid;gap:5px;min-height:0;flex:1;grid-auto-rows:minmax(44px,1fr)}
+#solarPickList button{width:100%;min-width:0;text-align:left;display:flex;align-items:center;gap:8px;padding:6px 9px!important;background:#142b42;border:1px solid #475569}
+#solarPickList button[aria-pressed=true]{background:#164e63;border:2px solid #67e8f9}
+#solarPickList .solar-pick-number{min-width:30px;text-align:center;color:#a5f3fc;font-weight:600}
+#solarPickList .solar-pick-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#solarPickList .solar-pick-info{display:block;font-size:12px;color:#cbd5e1}
+#solarPickPager button{width:auto;min-width:60px}#solarPickPager{display:flex;align-items:center;justify-content:space-between;gap:6px}
+#solarPickChosen{font-size:13px;line-height:1.5;padding:7px 9px;background:#16374b;border-radius:6px;min-height:52px}
+#solarPickModal button{min-height:44px;font-size:13px;margin:0}#solarPickFooter>div:last-child{display:flex;gap:7px;flex:none}#solarPickStatus{flex:1;min-width:0}#solarPickFooter button{width:auto}#solarPickStatus{font-size:13px}#solarPickModal button:disabled{opacity:.45}
+#solarSurfacePickGroup{display:grid;gap:6px;margin-top:7px}#solarSurfacePickGroup select{margin:0!important}#solarSurfacePickSummary{font-size:12px;color:#cbd5e1;line-height:1.5}#solarSurfacePickOpen{min-height:44px;margin:0;border-color:#67e8f9;background:#14374d}
+@media(max-height:650px) and (min-width:701px){#solarPickWindow{height:100%}#solarPickHeader,#solarPickFooter{padding:6px 10px}#solarPickAside{gap:5px}#solarPickChosen{min-height:40px;padding:4px 8px}#solarPickList .solar-pick-info{font-size:11px}}
+@media(max-width:700px){#solarPickBody{grid-template-columns:1fr;grid-template-rows:minmax(140px,1fr) auto}#solarPickAside{border-left:0;border-top:1px solid #334155;gap:5px}#solarPickList{grid-template-columns:1fr 1fr;grid-auto-rows:54px;flex:none}#solarPickHeader{flex-wrap:wrap;gap:2px}#solarPickHeader span,#solarPickLegend{font-size:11px}#solarPickHeader,#solarPickFooter{padding:6px 9px}#solarPickFooter{align-items:center;gap:6px}#solarPickStatus{font-size:12px}#solarPickChosen{min-height:35px;padding:4px 8px}#solarPickPlan{padding:6px;gap:4px}#solarPickToolbar button{min-height:36px;padding:5px 8px}#solarPickToolbar label{font-size:12px}}
+</style>
+
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-05</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-06</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -400,7 +423,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
  <div class="settings-label">비교 방식</div><select id="solarSurfaceScenario"><option value="addition">현재 상태 / 사용자 건물 추가 비교</option><option value="removal">선택한 기존 건물 한 동 제거 비교</option></select>
  <div id="solarSurfaceScenarioInfo" class="hint" style="margin-top:6px">제거 비교는 ①에서 제거할 건물을 먼저 선택하세요.</div>
  <div class="settings-label">일조 변화를 확인할 건물</div>
- <select id="solarSurfaceTarget" aria-label="표면 일조 분석 건물" style="margin-top:7px"><option value="">그림자 보기를 켜세요.</option></select>
+ <div id="solarSurfacePickGroup"><select id="solarSurfaceTarget" aria-label="표면 일조 분석 건물"><option value="">그림자 보기를 켜세요.</option></select><div id="solarSurfacePickSummary" role="status" aria-live="polite">그림자 보기를 켜면 지도에서 건물을 고를 수 있습니다.</div><button type="button" id="solarSurfacePickOpen" disabled>지도에서 쉽게 선택</button></div>
  <label style="display:block;margin-top:7px;font-size:10px"><input type="checkbox" id="solarSurfaceTerrain" style="width:auto;margin-right:5px">산·언덕 차폐도 검사 (DEM 미확보 구역은 회색)</label>
  <div class="settings-label">분석 간격</div>
  <select id="solarSurfaceStep" aria-label="표면 분석 시간 간격"><option value="10" selected>10분 · 기본 분석</option><option value="30">30분 · 빠른 분석</option><option value="60">1시간 · 미리보기</option></select>
@@ -576,6 +599,16 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
   </div>
  </div>
 </div>
+<div id="solarPickModal" role="dialog" aria-modal="true" aria-labelledby="solarPickTitle" style="display:none">
+ <div id="solarPickWindow">
+  <header id="solarPickHeader"><b id="solarPickTitle">일조 변화를 확인할 건물 선택</b><span style="font-size:12px;color:#cbd5e1">평면의 건물 또는 번호 목록에서 선택</span></header>
+  <div id="solarPickBody"><section id="solarPickPlan"><div id="solarPickToolbar"><button type="button" id="solarPickZoomIn" aria-label="선택 지도 확대">＋</button><button type="button" id="solarPickZoomOut" aria-label="선택 지도 축소">−</button><button type="button" id="solarPickFit">전체 보기</button><label style="display:flex;align-items:center;gap:5px"><input type="checkbox" id="solarPickFaint" style="width:auto">주변 건물 옅게</label></div><div id="solarPickViewport"><canvas id="solarPickCanvas" width="800" height="520" aria-label="실제 건물 평면 선택 지도. 건물을 누르면 번호 목록에서 확인할 수 있습니다."></canvas></div><div id="solarPickLegend" style="font-size:12px;color:#cbd5e1">번호: 선택 후보 · 청록: 선택한 한 동 · 끌기: 화면 이동 · 두 손가락: 확대·축소</div></section>
+   <aside id="solarPickAside"><div id="solarPickCount" style="font-size:13px"></div><div id="solarPickList"></div><div id="solarPickPager"><button type="button" id="solarPickPrev">이전</button><span id="solarPickPage" style="font-size:12px"></span><button type="button" id="solarPickNext">다음</button></div><div id="solarPickChosen" aria-live="polite">건물을 선택하세요.</div></aside>
+  </div>
+  <footer id="solarPickFooter"><div id="solarPickStatus" role="status" aria-live="polite">지도에서 원하는 건물 주변을 누르면 가까운 후보부터 표시합니다.</div><div><button type="button" id="solarPickCancel">취소</button><button type="button" id="solarPickConfirm" class="primary" disabled>이 건물로 확정</button></div></footer>
+ </div>
+</div>
+
 <div id="editPolygonModal" role="dialog" aria-modal="true" aria-labelledby="editPolygonTitle" style="display:none">
  <div id="editPolygonWindow">
   <header id="editPolygonHeader"><b id="editPolygonTitle">다각형 건물 추가</b><span style="font-size:12px;color:#cbd5e1">모서리 선택 → 평면 완성 → 높이 입력</span></header>
@@ -723,7 +756,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.20-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.20-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -742,7 +775,7 @@ function setupMapKeyboard(){
  const editable=target=>!!(target?.isContentEditable||target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  function blocked(target=document.activeElement){
   if(document.hidden||precisionMode||editable(target)||editable(document.activeElement))return true;
-  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal'].some(id=>{
+  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal','solarPickModal'].some(id=>{
    const el=$(id);if(!el)return false;const style=getComputedStyle(el);return style.display!=='none'&&style.visibility!=='hidden';
   });
  }
@@ -2881,6 +2914,87 @@ for(const id of ['solarSeason','solarCustomDate','solarMode','solarTerrainOcclus
 for(const el of document.querySelectorAll('[data-solar-season],input[name="solarCustomType"]'))el.addEventListener('click',solarExposureInvalidate);
 document.getElementById('solarCustomFold')?.addEventListener('toggle',solarExposureInvalidate);
 
+// Independent analysis-target picker. Draft selection never changes the removal subject or scene materials.
+let SOLAR_SURFACE_PICK_KEY='',SOLAR_PICK=null;
+function solarPickKey(f){return f?JSON.stringify([selectedId,f.properties?.model_id||[f.id??'',f.properties?.building_uid??f.properties?.osm_id??'',f.geometry]]):''}
+function solarPickName(entry){const p=entry.f.properties||{};return entry.custom?editModelLabel(entry.f):[p.building_name,p.register_dong].filter((v,i,a)=>v&&a.indexOf(v)===i).join(' · ')||'기존 건물'}
+function solarPickInfo(entry){const p=entry.f.properties||{},floors=p.floors_above;return (entry.custom?'사용자 건물 · ':floors!=null?floors+'층 · ':'')+'높이 '+Number(entry.h).toFixed(1)+'m · '+turf.area(entry.f).toFixed(0)+'㎡'}
+function solarPickOptions(){const state=SOLAR_THREE_MAP;if(!state?.production)return [];return [...$('solarSurfaceTarget').options].filter(o=>o.value!==''&&state.entries[Number(o.value)]).map(o=>({entry:state.entries[Number(o.value)],i:Number(o.value)}))}
+function solarPickSync(){
+ const state=SOLAR_THREE_MAP,select=$('solarSurfaceTarget'),entry=select?.value!==''?state?.entries[Number(select?.value)]:null,summary=$('solarSurfacePickSummary'),button=$('solarSurfacePickOpen');
+ if(button)button.disabled=!state?.production||!solarPickOptions().length;
+ if(summary)summary.textContent=entry?'현재 대상: '+solarPickName(entry)+(SOLAR_SURFACE_PICK_KEY?' · 대상 고정':''):!state?.production?'그림자 보기를 켜면 지도에서 건물을 고를 수 있습니다.':SOLAR_SURFACE_PICK_KEY?'선택한 대상이 현재 분석 범위에 없습니다. 다시 선택하세요.':'분석 가능한 건물이 없습니다.';
+}
+function solarPickPageSize(){return window.innerWidth<=700?4:6}
+function solarPickValid(){return !!SOLAR_PICK&&SOLAR_THREE_MAP===SOLAR_PICK.state&&SOLAR_THREE_MAP?.production&&solarPickOptions().some(x=>x.i===SOLAR_PICK.chosen)}
+function solarPickOpen(){
+ const candidates=solarPickOptions();if(!candidates.length){solarPickSync();return}
+ solarPlaybackStop();const state=SOLAR_THREE_MAP,features=state.entries.map(e=>e.f),bbox=turf.bbox(turf.featureCollection(features)),ref=[(bbox[0]+bbox[2])/2,(bbox[1]+bbox[3])/2],mx=111320*Math.cos(ref[1]*Math.PI/180);
+ const xy=p=>[(p[0]-ref[0])*mx,(p[1]-ref[1])*111320];
+ const entries=state.entries.map((entry,i)=>({entry,i,center:xy(turf.centroid(entry.f).geometry.coordinates),polys:(entry.f.geometry.type==='Polygon'?[entry.f.geometry.coordinates]:entry.f.geometry.coordinates).map(poly=>poly.map(r=>r.map(xy)))}));
+ SOLAR_PICK={state,candidates,order:candidates.map(x=>x.i),entries,ref,mx,width:Math.max(10,(bbox[2]-bbox[0])*mx),height:Math.max(10,(bbox[3]-bbox[1])*111320),x:0,y:0,zoom:1,page:0,chosen:$('solarSurfaceTarget').value===''?null:Number($('solarSurfaceTarget').value),pointers:new Map(),gesture:null,focus:document.activeElement};
+ const pos=SOLAR_PICK.order.indexOf(SOLAR_PICK.chosen);SOLAR_PICK.page=Math.max(0,Math.floor(pos/solarPickPageSize()));
+ $('solarPickModal').style.display='flex';$('solarPickFaint').checked=false;solarPickResize();solarPickRender();$('solarPickCancel').focus?.({preventScroll:true});
+}
+function solarPickClose(){if(!SOLAR_PICK)return;const focus=SOLAR_PICK.focus;SOLAR_PICK=null;$('solarPickModal').style.display='none';focus?.focus?.({preventScroll:true})}
+function solarPickBox(){const s=SOLAR_PICK,c=$('solarPickCanvas');return {scale:Math.min((c.width-40)/s.width,(c.height-40)/s.height)*s.zoom,cx:c.width/2,cy:c.height/2}}
+function solarPickPixel(p){const s=SOLAR_PICK,b=solarPickBox();return [b.cx+(p[0]-s.x)*b.scale,b.cy-(p[1]-s.y)*b.scale]}
+function solarPickWorld(pixel){const s=SOLAR_PICK,b=solarPickBox();return [s.x+(pixel[0]-b.cx)/b.scale,s.y-(pixel[1]-b.cy)/b.scale]}
+function solarPickEvent(e){const c=$('solarPickCanvas'),r=c.getBoundingClientRect();return [(e.clientX-r.left)/r.width*c.width,(e.clientY-r.top)/r.height*c.height]}
+function solarPickZoom(factor,pixel=null){if(!SOLAR_PICK)return;const s=SOLAR_PICK,c=$('solarPickCanvas'),p=pixel||[c.width/2,c.height/2],anchor=solarPickWorld(p);s.zoom=Math.max(.5,Math.min(32,s.zoom*factor));const b=solarPickBox();s.x=anchor[0]-(p[0]-b.cx)/b.scale;s.y=anchor[1]+(p[1]-b.cy)/b.scale;solarPickDraw()}
+function solarPickResize(){if(!SOLAR_PICK)return;const r=$('solarPickViewport').getBoundingClientRect(),c=$('solarPickCanvas'),d=Math.min(2,window.devicePixelRatio||1);if(r.width>1&&r.height>1){c.width=Math.round(r.width*d);c.height=Math.round(r.height*d)}SOLAR_PICK.pointers.clear();SOLAR_PICK.gesture=null;solarPickRender()}
+function solarPickRender(){
+ if(!SOLAR_PICK)return;const s=SOLAR_PICK,size=solarPickPageSize(),pages=Math.max(1,Math.ceil(s.order.length/size));s.page=Math.max(0,Math.min(pages-1,s.page));
+ $('solarPickCount').textContent='선택 가능한 건물 '+s.order.length+'동';$('solarPickList').replaceChildren();
+ for(const i of s.order.slice(s.page*size,(s.page+1)*size)){
+  const entry=s.state.entries[i],b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String(i===s.chosen));
+  const number=document.createElement('span');number.className='solar-pick-number';number.textContent=String(i+1);const text=document.createElement('span');text.style.minWidth='0';const name=document.createElement('span');name.className='solar-pick-name';name.textContent=solarPickName(entry);name.title=name.textContent;const info=document.createElement('span');info.className='solar-pick-info';info.textContent=solarPickInfo(entry);text.append(name,info);b.append(number,text);b.setAttribute('aria-label',(i+1)+'번 '+name.textContent+' · '+info.textContent);b.onclick=()=>{s.chosen=i;solarPickRender()};$('solarPickList').appendChild(b);
+ }
+ $('solarPickPage').textContent=(s.page+1)+' / '+pages;$('solarPickPrev').disabled=s.page===0;$('solarPickNext').disabled=s.page===pages-1;
+ const chosen=s.chosen==null?null:s.state.entries[s.chosen];$('solarPickChosen').textContent=chosen?(s.chosen+1)+'번 · '+solarPickName(chosen)+' / '+solarPickInfo(chosen):'지도 또는 목록에서 건물을 선택하세요.';
+ $('solarPickConfirm').disabled=!solarPickValid();$('solarPickStatus').textContent=s.state!==SOLAR_THREE_MAP?'분석 장면이 변경됐습니다. 창을 닫고 다시 열어 주세요.':'건물을 눌러 선택 · 빈 곳을 누르면 가까운 후보 순서 · 확정 전에는 적용하지 않습니다.';
+ solarPickDraw();
+}
+function solarPickDraw(){
+ if(!SOLAR_PICK)return;const s=SOLAR_PICK,c=$('solarPickCanvas'),g=c.getContext('2d');if(!g)return;const b=solarPickBox(),d=c.width/(c.getBoundingClientRect().width||c.width),allowed=new Set(s.order),page=new Set(s.order.slice(s.page*solarPickPageSize(),(s.page+1)*solarPickPageSize()));
+ g.clearRect(0,0,c.width,c.height);g.fillStyle='#071527';g.fillRect(0,0,c.width,c.height);
+ const path=polys=>{g.beginPath();for(const poly of polys)for(const ring of poly){ring.forEach((p,j)=>j?g.lineTo(...solarPickPixel(p)):g.moveTo(...solarPickPixel(p)));g.closePath()}};
+ if(EDIT_PARCEL){const polys=EDIT_PARCEL.geometry.type==='Polygon'?[EDIT_PARCEL.geometry.coordinates]:EDIT_PARCEL.geometry.coordinates;path(polys.map(poly=>poly.map(r=>r.map(p=>[(p[0]-s.ref[0])*s.mx,(p[1]-s.ref[1])*111320]))));g.fillStyle='#123c45';g.fill('evenodd');g.strokeStyle='#387b86';g.lineWidth=d;g.stroke()}
+ for(const item of [...s.entries.filter(e=>e.i!==s.chosen),...s.entries.filter(e=>e.i===s.chosen)]){
+  const active=item.i===s.chosen;g.globalAlpha=(!active&&$('solarPickFaint').checked)?0.3:1;path(item.polys);g.fillStyle=active?'#1991ac':allowed.has(item.i)?'#536b82':'#27384a';g.fill('evenodd');g.strokeStyle=active?'#a5f3fc':page.has(item.i)?'#cbd5e1':'#738699';g.lineWidth=(active?3:1)*d;g.stroke();g.globalAlpha=1;
+ }
+ // Keep labels separate from footprints. The chosen number takes priority in dense areas.
+ const labels=[],ordered=s.entries.filter(e=>allowed.has(e.i)).sort((a,z)=>Number(z.i===s.chosen)-Number(a.i===s.chosen)||Number(page.has(z.i))-Number(page.has(a.i)));
+ g.font=13*d+'px system-ui';g.textAlign='center';g.textBaseline='middle';
+ for(const item of ordered){const [x,y]=solarPickPixel(item.center),text=String(item.i+1),w=Math.max(24*d,g.measureText(text).width+10*d),h=24*d;if(x<w/2||x>c.width-w/2||y<h/2||y>c.height-h/2)continue;if(labels.some(r=>Math.abs(r.x-x)<(r.w+w)/2+3*d&&Math.abs(r.y-y)<h+3*d))continue;labels.push({x,y,w});g.fillStyle=item.i===s.chosen?'#a5f3fc':'#102336';g.fillRect(x-w/2,y-h/2,w,h);g.fillStyle=item.i===s.chosen?'#071527':'#f1f5f9';g.fillText(text,x,y)}
+ const len=Math.pow(10,Math.floor(Math.log10(90*d/b.scale))),meters=[1,2,5,10].map(v=>v*len).filter(v=>v*b.scale<=100*d).pop()||len;g.strokeStyle='#e2e8f0';g.lineWidth=2*d;g.beginPath();g.moveTo(14*d,c.height-18*d);g.lineTo(14*d+meters*b.scale,c.height-18*d);g.stroke();g.fillStyle='#e2e8f0';g.textAlign='left';g.fillText(meters+'m',14*d,c.height-31*d);g.textAlign='right';g.fillText('북 ↑',c.width-12*d,18*d);
+}
+function solarPickTap(pixel){
+ const s=SOLAR_PICK,world=solarPickWorld(pixel),ll=[s.ref[0]+world[0]/s.mx,s.ref[1]+world[1]/111320],hits=[];
+ s.order.sort((a,b)=>{const dist=i=>Math.hypot(s.entries[i].center[0]-world[0],s.entries[i].center[1]-world[1]);return dist(a)-dist(b)});
+ for(const i of s.order)if(turf.booleanPointInPolygon(turf.point(ll),s.state.entries[i].f))hits.push(i);
+ if(hits.length)s.chosen=hits.sort((a,b)=>turf.area(s.state.entries[a].f)-turf.area(s.state.entries[b].f))[0];
+ else{const first=s.order[0],p=first==null?null:solarPickPixel(s.entries[first].center),d=$('solarPickCanvas').width/$('solarPickCanvas').getBoundingClientRect().width;if(p&&Math.hypot(p[0]-pixel[0],p[1]-pixel[1])<24*d)s.chosen=first}
+ s.page=0;if(hits.length){s.order=s.order.filter(i=>i!==s.chosen);s.order.unshift(s.chosen)}solarPickRender();
+}
+function solarPickConfirm(){
+ if(!solarPickValid()){solarPickRender();return}const i=SOLAR_PICK.chosen,entry=SOLAR_THREE_MAP.entries[i];$('solarSurfaceTarget').value=String(i);$('solarSurfaceTarget').dispatchEvent(new Event('change',{bubbles:true}));
+ solarPickClose();$('solarSurfaceFace').value='all';solarSurfaceSyncControls();solarSurfaceFocusFace();solarPickSync();
+}
+function setupSolarBuildingPicker(){
+ $('solarSurfacePickOpen').onclick=solarPickOpen;$('solarPickCancel').onclick=solarPickClose;$('solarPickConfirm').onclick=solarPickConfirm;
+ $('solarPickPrev').onclick=()=>{if(SOLAR_PICK){SOLAR_PICK.page--;solarPickRender()}};$('solarPickNext').onclick=()=>{if(SOLAR_PICK){SOLAR_PICK.page++;solarPickRender()}};
+ $('solarPickZoomIn').onclick=()=>solarPickZoom(1.5);$('solarPickZoomOut').onclick=()=>solarPickZoom(1/1.5);$('solarPickFit').onclick=()=>{if(SOLAR_PICK){SOLAR_PICK.zoom=1;SOLAR_PICK.x=0;SOLAR_PICK.y=0;solarPickDraw()}};$('solarPickFaint').onchange=solarPickDraw;
+ const c=$('solarPickCanvas');c.addEventListener('wheel',e=>{if(!SOLAR_PICK)return;e.preventDefault();solarPickZoom(Math.exp(-Math.max(-200,Math.min(200,e.deltaY))*.003),solarPickEvent(e))},{passive:false});
+ const begin=()=>{const s=SOLAR_PICK,p=[...s.pointers.values()];s.gesture=p.length===1?{type:'pan',start:p[0],x:s.x,y:s.y,moved:false}:p.length>=2?{type:'pinch',distance:Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]),zoom:s.zoom,anchor:solarPickWorld([(p[0][0]+p[1][0])/2,(p[0][1]+p[1][1])/2])}:null};
+ c.addEventListener('pointerdown',e=>{if(!SOLAR_PICK||e.button!==0)return;e.preventDefault();SOLAR_PICK.pointers.set(e.pointerId,solarPickEvent(e));c.setPointerCapture(e.pointerId);begin()});
+ c.addEventListener('pointermove',e=>{const s=SOLAR_PICK;if(!s?.pointers.has(e.pointerId))return;s.pointers.set(e.pointerId,solarPickEvent(e));const g=s.gesture,p=[...s.pointers.values()],b=solarPickBox();if(g?.type==='pan'){const delta=[p[0][0]-g.start[0],p[0][1]-g.start[1]],density=c.width/c.getBoundingClientRect().width;if(Math.hypot(...delta)>6*density)g.moved=true;if(g.moved){s.x=g.x-delta[0]/b.scale;s.y=g.y+delta[1]/b.scale}}else if(g?.type==='pinch'&&p.length>=2){s.zoom=Math.max(.5,Math.min(32,g.zoom*Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1])/Math.max(1,g.distance)));const next=solarPickBox(),mid=[(p[0][0]+p[1][0])/2,(p[0][1]+p[1][1])/2];s.x=g.anchor[0]-(mid[0]-next.cx)/next.scale;s.y=g.anchor[1]+(mid[1]-next.cy)/next.scale}solarPickDraw()});
+ const end=(e,cancel)=>{const s=SOLAR_PICK;if(!s?.pointers.has(e.pointerId))return;const tap=!cancel&&s.gesture?.type==='pan'&&!s.gesture.moved,point=solarPickEvent(e);s.pointers.delete(e.pointerId);if(s.pointers.size){begin();if(s.gesture)s.gesture.moved=true}else s.gesture=null;if(tap)solarPickTap(point)};
+ c.addEventListener('pointerup',e=>end(e,false));c.addEventListener('pointercancel',e=>end(e,true));c.addEventListener('lostpointercapture',e=>end(e,true));
+ $('solarPickModal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();solarPickClose()}if(e.key==='Tab'){const buttons=[...$('solarPickModal').querySelectorAll('button,input')].filter(n=>!n.disabled);const first=buttons[0],last=buttons[buttons.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
+ window.addEventListener('resize',solarPickResize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(solarPickResize).observe($('solarPickViewport'));
+}
+
 // Daily surface sunlight: ray-test actual geometry; keep the verified lighting unchanged.
 let SOLAR_SURFACE_TOKEN=0,SOLAR_SURFACE_JOB=null,SOLAR_SURFACE_SELECTED_F=null;
 function solarSurfaceKey(){
@@ -2931,7 +3045,7 @@ function solarSurfaceTargets(){
  const select=$('solarSurfaceTarget');if(!select)return;
  select.replaceChildren();
  const state=SOLAR_THREE_MAP;
- if(!state?.production){const o=document.createElement('option');o.value='';o.textContent='그림자 보기를 켜세요.';select.appendChild(o);return}
+ if(!state?.production){const o=document.createElement('option');o.value='';o.textContent='그림자 보기를 켜세요.';select.appendChild(o);solarPickSync();return}
  const removal=$('solarSurfaceScenario')?.value==='removal',removed=editSelectedModel()?{f:editSelectedModel()}:buildingSelected();
  const order=state.entries.map((entry,i)=>{
   let selected=false;try{selected=turf.booleanIntersects(entry.f,EDIT_PARCEL)}catch(e){}
@@ -2945,9 +3059,11 @@ function solarSurfaceTargets(){
  }
  const previous=order.find(x=>x.entry.f===SOLAR_SURFACE_SELECTED_F);
  if(previous)select.value=String(previous.i);
- const chosen=!removal&&order.find(x=>x.entry.f===(editSelectedModel()||buildingSelected()?.f));if(chosen)select.value=String(chosen.i);
- SOLAR_SURFACE_SELECTED_F=state.entries[Number(select.value)]?.f||null;
- solarSurfaceModeOptions();solarSurfaceSyncControls();
+ const locked=SOLAR_SURFACE_PICK_KEY&&order.find(x=>solarPickKey(x.entry.f)===SOLAR_SURFACE_PICK_KEY);
+ if(SOLAR_SURFACE_PICK_KEY){if(locked)select.value=String(locked.i);else{const o=document.createElement('option');o.value='';o.textContent='선택한 대상이 현재 분석 범위에 없습니다.';select.appendChild(o);select.value=''}}
+ else{const chosen=!removal&&order.find(x=>x.entry.f===(editSelectedModel()||buildingSelected()?.f));if(chosen)select.value=String(chosen.i)}
+ SOLAR_SURFACE_SELECTED_F=select.value===''?null:state.entries[Number(select.value)]?.f||null;
+ solarSurfaceModeOptions();solarSurfaceSyncControls();solarPickSync();
 }
 function solarSurfaceModeOptions(){
  const state=SOLAR_THREE_MAP,value=$('solarSurfaceTarget')?.value,entry=value===''?null:state?.entries[Number(value)];
@@ -3107,7 +3223,7 @@ async function solarSurfaceRun(){
 document.getElementById('solarSurfaceRun')?.addEventListener('click',solarSurfaceRun);
 document.getElementById('solarSurfaceTarget')?.addEventListener('change',()=>{
  const value=$('solarSurfaceTarget').value;SOLAR_SURFACE_SELECTED_F=value===''?null:SOLAR_THREE_MAP?.entries[Number(value)]?.f;
- solarSurfaceModeOptions();solarSurfaceInvalidate(true);
+ SOLAR_SURFACE_PICK_KEY=solarPickKey(SOLAR_SURFACE_SELECTED_F);solarSurfaceModeOptions();solarSurfaceInvalidate(true);solarPickSync();
 });
 document.getElementById('solarSurfaceScenario')?.addEventListener('change',()=>{solarSurfaceTargets();$('solarSurfaceView').value='after';solarSurfaceSyncControls()});
 document.getElementById('solarSurfaceTerrain')?.addEventListener('change',()=>solarSurfaceInvalidate(true));
@@ -4055,7 +4171,7 @@ function setupPlacementKeyboard(){
  let command=null,modelId='',lastRepeat=0;
  const editable=el=>!!(el?.isContentEditable||el?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  const reset=()=>{held.clear();command=null;modelId='';lastRepeat=0};
- const blocked=target=>document.hidden||$('editPlacementModal').style.display!=='flex'||editable(target)||editable(document.activeElement)||['editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal'].some(id=>$(id)?.style.display==='flex');
+ const blocked=target=>document.hidden||$('editPlacementModal').style.display!=='flex'||editable(target)||editable(document.activeElement)||['editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal','solarPickModal'].some(id=>$(id)?.style.display==='flex');
  document.addEventListener('keydown',e=>{
   if(!codes.has(e.code))return;
   if(e.defaultPrevented||e.isComposing||e.ctrlKey||e.metaKey||e.altKey||blocked(e.target)){reset();return}
@@ -4332,6 +4448,7 @@ function setupBuildingEditor(){
  for(const id of ['editSizeShape','editWidth','editLength','editLWingX','editLWingY','editLCorner'])$(id).addEventListener('input',editUpdateSizeShapePreview);
  setupPlacementCanvas();
  setupPolygonEditor();
+ setupSolarBuildingPicker();
  $('editCreateSize').onclick=editCreateFromSize;
  $('editCloseDraw').onclick=()=>{$('editDrawModal').style.display='none';EDIT_DRAG_START=null};
  $('editSizeInCanvas').onclick=()=>{$('editDrawModal').style.display='none';EDIT_DRAG_START=null;editOpenSize()};
