@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.20-02</title>
+<title>Jinju3D Local · v2026.10.20-03</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -198,9 +198,34 @@
  #editSizeFooter{padding:6px 14px}
 }
 </style>
+<style id="screenUIStyles">
+body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
+.screen-ui #map{top:var(--screen-top);bottom:var(--screen-bottom);right:var(--screen-width);width:auto;height:auto}
+.screen-ui.screen-menu-closed #map{right:0}
+.screen-ui .top{position:absolute;inset:0 0 auto;width:100%;max-width:none;height:var(--screen-top);border-radius:0;padding:8px 12px;display:flex;align-items:center;gap:10px;background:#101f33;border:0;border-bottom:1px solid #334155;backdrop-filter:none}
+.screen-ui .top h1{font-size:15px}.screen-ui .top .address-search{margin:0;flex:1;max-width:420px;min-width:140px;width:auto}.screen-ui .top #workspaceMapView{margin:0;display:flex;gap:5px}.screen-ui .top #workspaceRegion{margin:0;position:relative;flex:0 0 auto}.screen-ui #workspaceRegion>div{position:absolute;top:44px;right:0;width:300px;background:#101f33;padding:14px;border:1px solid #64748b;z-index:50}.screen-ui .top #screenSettings{width:auto;min-height:44px;margin-left:auto}
+.screen-ui #drawer{top:var(--screen-top);bottom:var(--screen-bottom);height:auto;width:var(--screen-width);background:#101f33;backdrop-filter:none}.screen-ui #drawer .drawer-head,.screen-ui #drawer .drawer-tabs{display:none}.screen-ui #drawer .drawer-body{padding:0;overflow:hidden;display:flex;flex-direction:column;min-height:0}.screen-ui .drawer-toggle{top:50%;right:0}.screen-ui .drawer-toggle.open{right:var(--screen-width)}
+.screen-ui #screenMapMode{position:absolute;z-index:28;left:12px;top:calc(var(--screen-top) + 10px);max-width:calc(100vw - var(--screen-width) - 32px)}.screen-ui #workspaceModeBar{padding:0;margin:0;background:transparent;border:0}.screen-ui #workspaceModeText{display:none}.screen-ui #workspaceModeButtons{display:flex;gap:6px}.screen-ui #workspaceModeButtons button{width:auto;min-height:44px;padding:8px 12px}
+.screen-ui #screenWorkspace{height:100%;min-height:0;display:flex;flex-direction:column}.screen-ui #screenSelection{padding:10px 14px;border-bottom:1px solid #334155;flex:0 0 auto}.screen-ui #workspaceSummary{padding:0;border:0;border-radius:0;background:transparent;line-height:1.45;font-size:12px;max-height:44px;overflow:hidden}.screen-ui #workspaceSummary b{font-size:14px}.screen-ui #screenMainNav,.screen-ui #screenSubNav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:8px 10px;flex:0 0 auto;border-bottom:1px solid #334155}.screen-ui #screenSubNav{padding:8px 12px;border:0}.screen-ui #screenMainNav button,.screen-ui #screenSubNav button{min-height:44px;font-size:12px;padding:7px 3px}.screen-ui #screenMainNav button[aria-pressed=true],.screen-ui #screenSubNav button[aria-pressed=true],.screen-ui [data-placement-screen][aria-pressed=true]{background:#155e75;border-color:#67e8f9;color:#ecfeff}
+.screen-ui #screenViewport{flex:1;min-height:0;overflow:auto;padding:4px 14px 12px}.screen-ui .screen-page{min-width:0}.screen-ui .screen-page[hidden],.screen-ui [hidden]{display:none!important}.screen-ui #screenViewport .drawer-sec,.screen-ui #screenViewport details{background:transparent;border:0!important;border-radius:0;margin:0!important;padding:0!important}.screen-ui #screenViewport summary{min-height:44px;font-size:13px}.screen-ui .screen-flat>summary{display:none!important}.screen-ui #screenViewport .hint{font-size:11px;line-height:1.5}.screen-ui #screenViewport .mini{font-size:12px;line-height:1.5}.screen-ui #screenViewport h3{font-size:14px;margin:8px 0}.screen-ui #screenViewport .settings-label{font-size:12px;margin:8px 0 4px}.screen-ui #screenViewport button,.screen-ui #screenViewport select,.screen-ui #screenViewport input:not([type=checkbox]):not([type=radio]):not([type=range]){min-height:44px;font-size:13px}.screen-ui #screenViewport input:not([type=checkbox]):not([type=radio]):not([type=range]),.screen-ui #screenViewport select{font-size:16px}.screen-ui #screenViewport input[type=checkbox],.screen-ui #screenViewport input[type=radio]{width:18px;height:18px;padding:0;margin-right:6px}.screen-ui #solarSeasonButtons{margin:6px 0!important}.screen-ui #solarSeasonControls .settings-label{margin-top:6px!important}.screen-ui #solarReadout{font-size:11px!important;margin-top:6px!important}.screen-ui #solarMainStatus{font-size:11px!important;max-height:48px;overflow:hidden}.screen-ui #screenViewport .screen-read-button{margin-top:10px;min-height:44px}.screen-ui #screenViewport .screen-choice{display:grid;gap:10px}.screen-ui #screenViewport .screen-choice button{min-height:48px}.screen-ui #screenViewport .screen-inline-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.screen-ui #screenFooter{position:absolute;bottom:0;left:0;right:0;z-index:40;height:var(--screen-bottom);display:flex;align-items:center;gap:10px;padding:7px 12px;background:#101f33;border-top:1px solid #334155}.screen-ui #screenFooterStatus{flex:1;min-width:0;max-height:42px;overflow:hidden;font-size:12px;color:#cbd5e1;line-height:1.5}.screen-ui #screenFooter button{width:auto;min-height:44px;flex:0 0 auto;font-size:13px}.screen-ui #workspaceClearSelection{margin:0}.screen-ui #screenFooterAction{background:#155e75;border-color:#67e8f9}
+.screen-ui #screenReader{position:fixed;inset:0;z-index:245;padding:12px;background:#030712df;align-items:center;justify-content:center}.screen-ui #screenReaderWindow{width:min(900px,100%);height:min(650px,calc(100dvh - 24px));display:flex;flex-direction:column;background:#101f33;border:1px solid #64748b;border-radius:12px;min-width:0}.screen-ui #screenReaderHeader,.screen-ui #screenReaderFooter{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;flex:0 0 auto}.screen-ui #screenReaderHeader{border-bottom:1px solid #334155}.screen-ui #screenReaderFooter{border-top:1px solid #334155}.screen-ui #screenReader button{width:auto;min-height:44px;font-size:13px}.screen-ui #screenReaderViewport{margin:12px 16px;flex:1;min-height:0;overflow:hidden}.screen-ui #screenReaderFlow{height:100%;column-width:var(--reader-column);column-gap:24px;column-fill:auto;transition:none}.screen-ui #screenReaderFlow>*{margin:0!important;max-width:100%;font-size:13px;line-height:1.65}.screen-ui #screenReaderFlow button,.screen-ui #screenReaderFlow input,.screen-ui #screenReaderFlow select,.screen-ui #screenReaderFlow .row{break-inside:avoid}.screen-ui #screenReaderFlow input,.screen-ui #screenReaderFlow select{font-size:16px;min-height:44px}.screen-ui #screenReaderFlow .hint,.screen-ui #screenReaderFlow .mini{font-size:12px}.screen-ui #screenReaderFlow details>summary{min-height:44px}
+.screen-ui #screenLegacy{display:none!important}.screen-ui .map-info{display:none}.screen-ui .message{bottom:calc(var(--screen-bottom) + 8px);max-width:calc(100vw - var(--screen-width) - 40px);font-size:11px}.screen-ui .info-fab{bottom:calc(var(--screen-bottom) + 65px)}
+.screen-ui #screenFooterStatus #solarMainStatus{margin:0!important;font-size:11px!important;line-height:1.4;max-height:16px}
+.screen-ui #solarStepToggle{min-height:44px;align-items:stretch;justify-content:center;text-align:center}
+.screen-ui #solarStep10,.screen-ui #solarStep60{display:flex;flex:1 1 0;min-width:0;min-height:34px;padding:0 2px;align-items:center;justify-content:center;text-align:center;line-height:1.2;border-radius:16px;white-space:nowrap}
+.screen-ui #screenViewport .workspace-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.screen-ui #screenViewport .workspace-stack{display:grid;gap:8px}
+.screen-ui #screenPlacementFooterStatus{flex:1;min-width:0;max-height:42px;overflow:hidden}
+.screen-ui #screenPlacementFooterStatus #editPlacementEditorResult{font-size:11px!important;line-height:1.4!important;margin:0!important}
+.screen-ui .top button,.screen-ui #workspaceRegion>summary{min-height:44px}
+@media(min-width:741px) and (max-height:700px){body.screen-ui{--screen-top:58px;--screen-bottom:56px}.screen-ui .top{padding:6px 10px}.screen-ui #screenMainNav,.screen-ui #screenSubNav{padding-top:6px;padding-bottom:6px}.screen-ui #screenSelection{padding-top:8px;padding-bottom:8px}.screen-ui #screenFooter{padding-top:5px;padding-bottom:5px}}
+.screen-ui #editPlacementWindow{display:flex;flex-direction:column}.screen-ui #editPlacementBody{flex:1;min-height:0}.screen-ui #editPlacementTools{display:flex;flex-direction:column;padding:10px;overflow:auto;gap:8px}.screen-ui #screenPlacementNav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;flex:0 0 auto}.screen-ui #screenPlacementNav button{min-height:44px;font-size:13px}.screen-ui .screen-placement-page{min-height:0}.screen-ui .screen-placement-page[hidden]{display:none!important}.screen-ui #screenPlacementToolbar{display:flex;flex-wrap:wrap;gap:5px;padding:0 0 8px;flex:0 0 auto}.screen-ui #screenPlacementToolbar button{width:auto;min-height:44px;font-size:12px}.screen-ui #screenPlacementFooter{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-top:1px solid #334155;flex:0 0 auto}.screen-ui #screenPlacementFooter #editPlacementStatus{flex:1;font-size:12px!important;margin:0!important;max-height:38px;overflow:hidden}.screen-ui #screenPlacementFooterActions{display:flex;gap:6px}.screen-ui #screenPlacementFooterActions button{width:auto;min-height:44px;font-size:12px}.screen-ui #editPlacementSelect{flex:0 0 auto;margin:0!important}.screen-ui #editPlacementEditor{margin:0!important;padding:8px!important;border:0!important;background:transparent!important}.screen-ui #editPlacementLFields{margin:8px 0}.screen-ui #editPlacementEditor .placement-editor-fields{gap:8px}.screen-ui #editPlacementEditor label{font-size:12px}.screen-ui #editPlacementEditor input,.screen-ui #editPlacementEditor select{margin-top:3px;min-height:44px}.screen-ui #editPlacementMetrics{font-size:12px!important;line-height:1.5!important;margin-top:4px!important}.screen-ui #editPlacementLegend{padding-top:4px}
+@media(max-width:740px){body.screen-ui{--screen-width:min(360px,92vw);--screen-top:112px}.screen-ui .top{height:var(--screen-top);flex-wrap:wrap;gap:5px}.screen-ui .top h1{flex:1}.screen-ui .top .address-search{order:5;flex-basis:100%;max-width:none}.screen-ui .top #workspaceRegion{display:none}.screen-ui #map{right:0}.screen-ui #screenMapMode{max-width:calc(100vw - 30px)}.screen-ui .message{max-width:90vw}.screen-ui #screenFooterStatus{display:none}.screen-ui #screenFooter{justify-content:flex-end}.screen-ui #screenPlacementFooter{flex-wrap:wrap}.screen-ui #screenPlacementFooterActions{flex-wrap:wrap}.screen-ui #screenPlacementToolbar button{font-size:11px}.screen-ui #editPlacementTools{overflow:auto}}
+</style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-02</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-03</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -661,7 +686,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.20-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.20-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -680,7 +705,7 @@ function setupMapKeyboard(){
  const editable=target=>!!(target?.isContentEditable||target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  function blocked(target=document.activeElement){
   if(document.hidden||precisionMode||editable(target)||editable(document.activeElement))return true;
-  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal'].some(id=>{
+  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader'].some(id=>{
    const el=$(id);if(!el)return false;const style=getComputedStyle(el);return style.display!=='none'&&style.visibility!=='hidden';
   });
  }
@@ -1551,6 +1576,7 @@ function workspaceUpdate(){
  $('solarSurfacePanel').open=['surface','compare'].includes(WORKSPACE_ACTIVE);
  for(const id of ['workspaceLaw','workspaceModel','workspaceSolar'])$(id).open=true;
  if($('workspaceModelIntro'))$('workspaceModelIntro').textContent=WORKSPACE_BUILD_JOB?(WORKSPACE_BUILD_JOB.replace?'새 건물 생성이 완료되면 선택한 한 동만 임시로 숨깁니다.':'연결 필지의 기존 건물을 유지하며 새 건물을 배치합니다.'):'편집 대지 안에 새 건물 평면을 그리고 높이를 지정하세요.';
+ if(SCREEN_UI)screenWorkspaceSync();
 }
 function workspaceAction(action,{start=false}={}){
  if(!WORKSPACE_READY)return;
@@ -1638,6 +1664,185 @@ function setupWorkspaceUI(){
  $('editRestore').textContent='전체 복원';$('editHideBuildings').textContent='기존 건물 전체 숨김';$('editRestore').onclick=workspaceRestoreParcel;
  $('editCloseDraw').addEventListener('click',workspaceCancelPlacement);
  WORKSPACE_READY=true;WORKSPACE_LAST_MODE=lawMode;workspaceUpdate();
+}
+
+// Screen-oriented layout: reuse live nodes so existing handlers and values survive navigation.
+let SCREEN_UI=null;
+function screenNode(tag,id,parent,text=''){
+ const node=document.createElement(tag);if(id)node.id=id;if(text)node.textContent=text;if(parent)parent.appendChild(node);return node;
+}
+function screenMove(node,parent){if(typeof node==='string')node=$(node);if(node&&parent)parent.appendChild(node);return node}
+function screenButton(text,parent,handler){const b=screenNode('button','',parent,text);b.type='button';if(handler)b.onclick=handler;return b}
+function screenPage(key){return SCREEN_UI.pages[key]||(SCREEN_UI.pages[key]=screenNode('section','screenPage-'+key,$('screenViewport')))}
+function screenReadButton(host,label,source){const b=screenButton(label,host,()=>screenReaderOpen(typeof source==='function'?source():$(source),label));b.className='screen-read-button';return b}
+function screenChoose(main,sub){
+ if(!SCREEN_UI)return;
+ SCREEN_UI.routing=true;
+ if(main==='settings'){activateDrawerTab('settings');SCREEN_UI.main=main;SCREEN_UI.sub=sub;SCREEN_UI.routing=false;screenWorkspaceSync();return}
+ activateDrawerTab('law');
+ SCREEN_UI.main=main;SCREEN_UI.sub=sub;
+ const action=main==='info'?(sub==='list'?'list':'law'):main==='place'?'model':sub==='analysis'||sub==='result'?'surface':'shadow';
+ SCREEN_UI.action=action;
+ workspaceAction(action,{start:main==='solar'&&(sub==='analysis'||sub==='result')});
+ SCREEN_UI.routing=false;
+ screenWorkspaceSync();
+}
+function screenWorkspaceSync(){
+ if(!SCREEN_UI||SCREEN_UI.routing)return;
+ const state=SCREEN_UI,selected=lawMode?!!SELECTED_PARCEL:!!(editSelectedModel()||buildingSelected());
+ if(DRAWER_TAB==='settings')state.main='settings';
+ else if(WORKSPACE_ACTIVE&&WORKSPACE_ACTIVE!==state.action){
+  state.action=WORKSPACE_ACTIVE;state.main=WORKSPACE_ACTIVE==='law'||WORKSPACE_ACTIVE==='list'?'info':WORKSPACE_ACTIVE==='model'?'place':'solar';
+  state.sub=WORKSPACE_ACTIVE==='list'?'list':WORKSPACE_ACTIVE==='model'?'launch':WORKSPACE_ACTIVE==='law'?'basic':['surface','compare'].includes(WORKSPACE_ACTIVE)?'analysis':'shadow';
+ }
+ if(state.target!==WORKSPACE_LAST_TARGET){state.target=WORKSPACE_LAST_TARGET;if(state.main!=='settings'){state.main='info';state.sub='basic';state.action=WORKSPACE_ACTIVE}}
+ const isSettings=state.main==='settings';$('screenMainNav').hidden=!selected||isSettings;$('screenSubNav').hidden=!selected&&!isSettings;
+ const routes=isSettings?state.settings.map((item,i)=>[String(i),item.label]):state.main==='info'?[['basic','기본 정보'],['law','규모·법규'],['height','높이·일조'],['list','필지 안 건물']]:state.main==='place'?[['launch','배치'],['single','선택 동 관리'],['parcel','필지 전체']]:[['shadow','그림자'],['analysis','표면 분석'],['result','결과 보기'],['detail','상세 설정']];
+ $('screenSubNav').style.gridTemplateColumns='repeat('+Math.min(4,routes.length)+',minmax(0,1fr))';
+ if(isSettings){
+  const picker=state.settingsPicker;picker.hidden=false;$('screenSubNav').replaceChildren(picker);$('screenSubNav').style.gridTemplateColumns='minmax(0,1fr)';
+  if(!state.settings.some((_,i)=>String(i)===state.sub))state.sub='0';picker.value=state.sub;
+ }else{
+  $('screenSubNav').replaceChildren();for(const [key,label] of routes){const b=screenButton(label,$('screenSubNav'),()=>screenChoose(state.main,key));b.setAttribute('aria-pressed',String(key===state.sub))}
+ }
+ for(const b of document.querySelectorAll('[data-screen-main]'))b.setAttribute('aria-pressed',String(b.dataset.screenMain===state.main));
+ let key=!selected&&!isSettings?'empty':isSettings?'settings-'+state.sub:state.main+'-'+state.sub;
+ if(!state.pages[key])key=state.main==='place'?'place-launch':'info-basic';
+ for(const [name,page] of Object.entries(state.pages)){page.className='screen-page';page.hidden=name!==key}
+ state.page=key;
+ for(const id of ['workspaceBuildingManagement','workspaceCustomManagement','workspaceParcelManagement','editSelectedControls','workspaceExposure','workspaceLabs','workspaceSolarAdvanced','workspaceInfo'])$(id).open=true;
+ // Management eligibility continues to come from workspaceUpdate and model selection.
+ const model=editSelectedModel();$('workspaceBuildingManagement').hidden=lawMode||!!model;$('workspaceCustomManagement').hidden=lawMode||!model;$('workspaceParcelManagement').hidden=key!=='place-parcel'||!EDIT_PARCEL;
+ state.footerTarget=key==='info-law'||key==='info-height'?'printLaw':key==='solar-analysis'?'solarSurfaceRun':key==='solar-result'?'solarSurfaceInspect':null;
+ if(key==='info-basic')state.footerLabel='상세 정보';else if(key==='solar-shadow')state.footerLabel='표면 분석';else if(key==='place-launch'||key==='place-single'&&model)state.footerLabel='배치 편집 열기';else state.footerLabel='';
+ $('screenFooterAction').hidden=!state.footerTarget&&!state.footerLabel;
+ screenFooterSync();
+ $('solarMainStatus').hidden=state.main!=='solar';
+ if(key==='empty')$('workspaceStatus').textContent='건물 또는 필지를 선택하면 작업이 표시됩니다.';
+ else{screenMove($('workspaceStatus'),$('screenFooterStatus'));if(!$('workspaceStatus').textContent)$('workspaceStatus').textContent=isSettings?'지도 설정':state.main==='solar'?'계절·시간·선택 건물 기준':state.main==='place'?'선택 건물·필지 기준 배치':'연결 필지 기준 자동 사전검토'}
+ if(state.pendingFit)cancelAnimationFrame(state.pendingFit);state.pendingFit=requestAnimationFrame(()=>{state.pendingFit=0;screenFit()});
+}
+function screenFooterSync(){
+ if(!SCREEN_UI)return;const source=$(SCREEN_UI.footerTarget),b=$('screenFooterAction');b.disabled=!!source?.disabled;b.textContent=source?.textContent||SCREEN_UI.footerLabel||'적용';
+ const readerSource=$(SCREEN_UI.reader?.action);$('screenReaderApply').hidden=!readerSource;$('screenReaderApply').disabled=!!readerSource?.disabled;if(readerSource)$('screenReaderApply').textContent=readerSource.textContent;
+}
+function screenFit(){
+ if(!SCREEN_UI)return;const page=SCREEN_UI.pages[SCREEN_UI.page],viewport=$('screenViewport');
+ const result=SCREEN_UI.page==='solar-result';$('screenMore').hidden=!!SCREEN_UI.reader||!result&&(!page||page.scrollHeight<=viewport.clientHeight+2);$('screenMore').textContent=result?'결과 상세':'전체 화면';
+ const pane=$('screenPlacementPage-'+SCREEN_UI.placement),tools=$('editPlacementTools');
+ $('screenPlacementMore').hidden=!pane||tools.scrollHeight<=tools.clientHeight+2;
+}
+function screenReaderOpen(node,title){
+ if(!node||!SCREEN_UI)return;if(SCREEN_UI.reader)screenReaderClose();
+ const placeholder=document.createComment('screen reader return');node.before(placeholder);
+ const placement=node.id.startsWith('screenPlacement');
+ SCREEN_UI.reader={node,placeholder,hidden:node.hidden,display:node.style.display,open:node.open,page:0,action:placement&&SCREEN_UI.placement==='edit'?'editPlacementApply':node.id==='editSelectedControls'?'editApplySelected':node.id==='workspaceExposure'?'solarExposureRun':SCREEN_UI.footerTarget};
+ node.hidden=false;node.style.display='block';if(node.tagName==='DETAILS')node.open=true;
+ $('screenReaderTitle').textContent=title;$('screenReaderFlow').appendChild(node);$('screenReader').style.display='flex';screenFooterSync();
+ requestAnimationFrame(screenReaderLayout);
+}
+function screenReaderLayout(){
+ const reader=SCREEN_UI?.reader;if(!reader)return;
+ const viewport=$('screenReaderViewport'),flow=$('screenReaderFlow'),width=viewport.clientWidth;
+ if(!width)return;flow.style.setProperty('--reader-column',width+'px');flow.style.width=width+'px';
+ const count=Math.max(1,Math.ceil((flow.scrollWidth+24)/(width+24)));reader.count=count;reader.page=Math.min(reader.page,count-1);
+ flow.style.transform='translateX('+(-reader.page*(width+24))+'px)';$('screenReaderCount').textContent=(reader.page+1)+' / '+count;
+ $('screenReaderPrev').disabled=reader.page===0;$('screenReaderNext').disabled=reader.page>=count-1;
+}
+function screenReaderClose(){
+ const reader=SCREEN_UI?.reader;if(!reader)return;
+ reader.placeholder.replaceWith(reader.node);reader.node.hidden=reader.hidden;reader.node.style.display=reader.display;if(reader.node.tagName==='DETAILS')reader.node.open=reader.open;
+ SCREEN_UI.reader=null;$('screenReader').style.display='none';$('screenReaderFlow').style.transform='';screenFit();
+}
+function screenPlacementChoose(key){
+ if(!SCREEN_UI)return;SCREEN_UI.placement=key;
+ for(const page of document.querySelectorAll('.screen-placement-page'))page.hidden=page.id!=='screenPlacementPage-'+key;
+ for(const b of document.querySelectorAll('[data-placement-screen]'))b.setAttribute('aria-pressed',String(b.dataset.placementScreen===key));
+ $('editPlacementApply').hidden=key!=='edit';$('editPlacementDelete').hidden=key!=='edit';requestAnimationFrame(screenFit);
+ $('editPlacementEditorResult').hidden=key!=='edit';
+}
+function setupScreenPlacement(){
+ const tools=$('editPlacementTools'),mapPane=$('editPlacementMapPane'),window=$('editPlacementWindow');
+ const children=[...tools.children],nav=screenNode('div','screenPlacementNav');tools.prepend(nav);
+ for(const [key,label] of [['add','추가'],['edit','편집'],['display','표시']]){const b=screenButton(label,nav,()=>screenPlacementChoose(key));b.dataset.placementScreen=key}
+ const pages={};for(const key of ['add','edit','display']){const p=pages[key]=screenNode('section','screenPlacementPage-'+key,tools);p.className='screen-placement-page'}
+ const create=$('editPlacementDraw').parentElement;screenMove(create,pages.add);screenNode('p','',pages.add,'건물을 추가한 뒤 캔버스에서 위치를 조정하세요.').className='hint';
+ const editor=$('editPlacementEditor');screenMove(editor,pages.edit);
+ const select=$('editPlacementSelect'),label=tools.querySelector('label[for="editPlacementSelect"]');if(label)screenMove(label,nav.parentElement);tools.insertBefore(select,pages.add);if(label)tools.insertBefore(label,select);
+ const toolbar=screenNode('div','screenPlacementToolbar');mapPane.prepend(toolbar);
+ for(const id of ['editPlacementMove','editPlacementPan','editPlacementZoomIn','editPlacementZoomOut','editPlacementFit'])screenMove(id,toolbar);
+ screenMove(tools.querySelector('.placement-options'),pages.display);
+ for(const node of children){if(node.parentElement===tools&&node.tagName==='P')screenMove(node,pages.display)}
+ const footer=screenNode('footer','screenPlacementFooter',window),footerStatus=screenNode('div','screenPlacementFooterStatus',footer);screenMove('editPlacementStatus',footerStatus);screenMove('editPlacementEditorResult',footerStatus);
+ const actions=screenNode('div','screenPlacementFooterActions',footer);
+ for(const id of ['editPlacementUndo','editPlacementRedo','editPlacementApply','editPlacementDelete','editPlacementClose'])screenMove(id,actions);
+ const more=screenButton('전체 화면',actions,()=>screenReaderOpen($('screenPlacementPage-'+SCREEN_UI.placement),'건물 배치 · '+SCREEN_UI.placement));more.id='screenPlacementMore';more.hidden=true;
+ screenMove('editPlacementMetrics',mapPane);
+ const archive=screenNode('div','',tools);archive.hidden=true;
+ for(const node of children)if(node.parentElement===tools&&node!==select&&node!==label)screenMove(node,archive);
+ screenPlacementChoose('add');
+}
+function setupScreenUI(){
+ if(SCREEN_UI)return;
+ SCREEN_UI={pages:{},main:'info',sub:'basic',action:'',target:WORKSPACE_LAST_TARGET,settings:[],placement:'add',reader:null};
+ document.body.classList.add('screen-ui');
+ const drawerBody=document.querySelector('.drawer-body'),root=screenNode('div','screenWorkspace'),legacy=screenNode('div','screenLegacy');
+ for(const node of [...drawerBody.children])legacy.appendChild(node);drawerBody.appendChild(root);drawerBody.appendChild(legacy);
+ const selection=screenNode('div','screenSelection',root);screenMove('workspaceSummary',selection);
+ const nav=screenNode('nav','screenMainNav',root);nav.setAttribute('aria-label','선택 대상 작업');
+ for(const [key,label,sub] of [['info','정보·법규','basic'],['solar','일조·그림자','shadow'],['place','건물 배치','launch']]){const b=screenButton(label,nav,()=>screenChoose(key,sub));b.dataset.screenMain=key}
+ screenNode('div','screenSubNav',root);screenNode('div','screenViewport',root);
+ const mapMode=screenNode('div','screenMapMode',document.body);screenMove('workspaceModeBar',mapMode);
+ const settingsButton=screenButton('지도 설정',document.querySelector('.top'),()=>{activateDrawerTab('settings');screenChoose('settings','0');setDrawer(true)});settingsButton.id='screenSettings';
+ const footer=screenNode('footer','screenFooter',document.body);screenNode('div','screenFooterStatus',footer);screenMove('workspaceStatus',$('screenFooterStatus'));
+ const more=screenButton('전체 화면',footer,()=>screenReaderOpen(SCREEN_UI.page==='solar-result'?$('solarSurfaceResult'):SCREEN_UI.pages[SCREEN_UI.page],'선택 대상 작업'));more.id='screenMore';more.hidden=true;
+ screenMove('workspaceClearSelection',footer);const action=screenButton('적용',footer,()=>{
+  if(SCREEN_UI.footerTarget){const target=$(SCREEN_UI.footerTarget);if(target&&!target.disabled)target.click();return}
+  if(SCREEN_UI.page==='info-basic')screenReaderOpen(editSelectedModel()?$('editModelDetails'):$('workspaceInfo'),'선택 대상 상세 정보');
+  else if(SCREEN_UI.page==='solar-shadow')screenChoose('solar','analysis');else if(['place-launch','place-single'].includes(SCREEN_UI.page)){$('editOpenPlacement').click();if(SCREEN_UI.page==='place-single')screenPlacementChoose('edit')}
+ });action.id='screenFooterAction';
+ screenNode('p','',screenPage('empty'),'지도에서 건물 또는 필지를 선택하세요.');
+ const basic=screenPage('info-basic');screenNode('h3','',basic,'선택 대상 정보');
+ screenReadButton(basic,'건물·연결 필지 상세 보기',()=>editSelectedModel()?$('editModelDetails'):$('workspaceInfo'));
+ screenMove('buildingParcelSelect',basic);screenReadButton(basic,'연결 필지 법규 요약','buildingLawSummary');
+ const law=screenPage('info-law');screenNode('label','',law,'용도지역');screenMove('lawZone',law);screenNode('label','',law,'경관지구·추가 높이제한');screenMove('lawLandscape',law);screenReadButton(law,'전체 법규 검토 결과 · 페이지로 보기','lawResult');
+ const height=screenPage('info-height');screenNode('h3','',height,'높이·일조 사전검토');screenNode('p','',height,'연결 필지의 높이·층수·정북일조 검토와 확인 상태를 함께 표시합니다.').className='hint';screenReadButton(height,'높이·정북일조 상세 검토','lawResult');
+ screenMove('workspaceList',screenPage('info-list'));$('workspaceList').hidden=false;
+ const launch=screenPage('place-launch');screenNode('h3','',launch,'건물 생성·배치');
+ for(const id of ['editOpenPlacement','editOpenDraw','editOpenSize','editOpenL'])screenMove(id,launch);
+ screenMove('editParcelInfo',launch);screenReadButton(launch,'사용자 건물 목록·상세 편집','editMultiModels');
+ const single=screenPage('place-single');screenMove('workspaceBuildingManagement',single);screenMove('workspaceCustomManagement',single);screenReadButton(single,'이름·높이·상대 이동 상세 편집','editSelectedControls');
+ for(const id of ['workspaceBuildingManagement','workspaceCustomManagement','editSelectedControls'])$(id).classList.add('screen-flat');
+ $('workspaceCustomEdit').addEventListener('click',()=>{editOpenPlacement();screenPlacementChoose('edit')});
+ for(const id of ['workspaceAdd','workspaceReplace','workspaceCustomAdd'])$(id).addEventListener('click',()=>{editOpenPlacement();screenPlacementChoose('add')});
+ screenMove('workspaceParcelManagement',screenPage('place-parcel'));$('workspaceParcelManagement').classList.add('screen-flat');
+ const shadow=screenPage('solar-shadow');for(const id of ['solarShadowToggle','solarSeasonButtons','solarSeasonControls','solarReadout'])screenMove(id,shadow);screenMove('solarMainStatus',$('screenFooterStatus'));
+ const detail=screenPage('solar-detail');screenMove('solarCustomFold',detail);screenMove('solarManualControls',detail);screenReadButton(detail,'대표일 일조시간 분석','workspaceExposure');
+ const analysis=screenPage('solar-analysis'),surface=$('solarSurfacePanel');
+ const items=[...surface.children],run=$('solarSurfaceRun'),viewLabel=$('solarSurfaceView').previousElementSibling;
+ let inResults=false;
+ for(const node of items){if(node===viewLabel)inResults=true;if(node.tagName==='SUMMARY')continue;if(!inResults)screenMove(node,analysis);else screenMove(node,screenPage('solar-result'))}
+ for(const p of [analysis,screenPage('solar-result')]){for(const hint of [...p.querySelectorAll(':scope > .hint')])if(!hint.id)screenMove(hint,surface)}
+ run.style.display='none'; // The original live button is invoked from the fixed footer.
+ $('solarSurfaceInspect').style.display='none';
+ // Every original settings group remains reachable through one page selector.
+ const settings=$('tab-settings'),groups=[...settings.children].filter(n=>!n.contains($('workspaceLabs'))&&!n.contains($('workspaceSolarAdvanced')));
+ groups.push($('workspaceLabs'),$('workspaceSolarAdvanced'));
+ for(const node of groups){const label=node.querySelector('h3,summary')?.textContent||node.querySelector('button')?.textContent||'기타 설정';const key='settings-'+SCREEN_UI.settings.length;screenMove(node,screenPage(key));SCREEN_UI.settings.push({label,node});if(node.tagName==='DETAILS'){node.open=true;node.classList.add('screen-flat')}}
+ SCREEN_UI.settingsPicker=document.createElement('select');SCREEN_UI.settingsPicker.setAttribute('aria-label','지도 설정 항목');
+ SCREEN_UI.settings.forEach((item,i)=>{const o=screenNode('option','',SCREEN_UI.settingsPicker,item.label);o.value=String(i)});SCREEN_UI.settingsPicker.onchange=e=>screenChoose('settings',e.target.value);
+ const overlay=screenNode('div','screenReader',document.body);overlay.style.display='none';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','screenReaderTitle');
+ const reader=screenNode('div','screenReaderWindow',overlay),head=screenNode('header','screenReaderHeader',reader);screenNode('b','screenReaderTitle',head,'상세 보기');screenButton('닫기',head,screenReaderClose);
+ const viewport=screenNode('div','screenReaderViewport',reader);screenNode('div','screenReaderFlow',viewport);
+ const readerFooter=screenNode('footer','screenReaderFooter',reader);const prev=screenButton('이전',readerFooter,()=>{if(SCREEN_UI.reader){SCREEN_UI.reader.page--;screenReaderLayout()}});prev.id='screenReaderPrev';screenNode('span','screenReaderCount',readerFooter,'1 / 1');const next=screenButton('다음',readerFooter,()=>{if(SCREEN_UI.reader){SCREEN_UI.reader.page++;screenReaderLayout()}});next.id='screenReaderNext';const apply=screenButton('적용',readerFooter,()=>$(SCREEN_UI.reader?.action)?.click());apply.id='screenReaderApply';
+ setupScreenPlacement();
+ const update=()=>{screenFooterSync();screenFit();if(SCREEN_UI.reader)requestAnimationFrame(screenReaderLayout)};
+ if(typeof MutationObserver!=='undefined'){
+  const observer=new MutationObserver(update);for(const id of ['solarSurfaceRun','solarExposureRun','editPlacementApply','editApplySelected','lawResult','solarSurfaceResult','solarExposureResult'])observer.observe($(id),{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['disabled']});SCREEN_UI.observer=observer;
+ }
+ window.addEventListener('resize',()=>{screenReaderLayout();screenFit();map.resize?.()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&SCREEN_UI.reader){e.preventDefault();screenReaderClose()}});
+ setDrawer(true);screenWorkspaceSync();map.resize?.();
 }
 
 let EDIT_PICKING=false,EDIT_PARCEL=null,EDIT_HIDDEN_PARCEL=null,EDIT_RECT=null,EDIT_CUSTOM=null,EDIT_BOX=null,EDIT_DRAG_START=null;
@@ -3769,7 +3974,7 @@ function setupPlacementKeyboard(){
  let command=null,modelId='',lastRepeat=0;
  const editable=el=>!!(el?.isContentEditable||el?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  const reset=()=>{held.clear();command=null;modelId='';lastRepeat=0};
- const blocked=target=>document.hidden||$('editPlacementModal').style.display!=='flex'||editable(target)||editable(document.activeElement)||['editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal'].some(id=>$(id)?.style.display==='flex');
+ const blocked=target=>document.hidden||$('editPlacementModal').style.display!=='flex'||editable(target)||editable(document.activeElement)||['editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader'].some(id=>$(id)?.style.display==='flex');
  document.addEventListener('keydown',e=>{
   if(!codes.has(e.code))return;
   if(e.defaultPrevented||e.isComposing||e.ctrlKey||e.metaKey||e.altKey||blocked(e.target)){reset();return}
@@ -3825,6 +4030,7 @@ function setupPlacementCanvas(){
   const point=turf.point(editPlacementToLngLat(...xy)),model=EDIT_PLACEMENT_TOOL==='move'&&turf.booleanPointInPolygon(point,EDIT_PARCEL)?editPlacementModels().reverse().find(f=>turf.booleanPointInPolygon(point,f)):null;
   if(!model){gesture={type:'pan',id:e.pointerId,start:xy,x:EDIT_PLACEMENT_VIEW.x,y:EDIT_PLACEMENT_VIEW.y};return}
   editSelectModel(model.properties.model_id);
+  if(SCREEN_UI)screenPlacementChoose('edit');
   EDIT_PLACEMENT_DRAG={pointerId:e.pointerId,model,parcel:editModelParcel(model),start:xy,scale:editPlacementBox().scale,candidate:model,valid:true,moved:false};gesture={type:'model'};draw();
  });
  canvas.addEventListener('pointermove',e=>{
@@ -3853,7 +4059,7 @@ function setupPlacementCanvas(){
  canvas.addEventListener('wheel',e=>{e.preventDefault();if(pointers.size)return;editPlacementZoom(Math.exp(-Math.max(-200,Math.min(200,e.deltaY))*.003),pos(e))},{passive:false});
  $('editPlacementApply').onclick=editPlacementApplyEdit;
  $('editPlacementDelete').onclick=()=>{cancel();editDeleteSelected()};
- $('editPlacementSelect').addEventListener('change',e=>{const id=e.target.value;if(id){cancel();editSelectModel(id);editRenderPlacementCanvas()}});
+ $('editPlacementSelect').addEventListener('change',e=>{const id=e.target.value;if(id){cancel();editSelectModel(id);editRenderPlacementCanvas();if(SCREEN_UI)screenPlacementChoose('edit')}});
  for(const [id,tool] of [['editPlacementMove','move'],['editPlacementPan','pan']])$(id).onclick=()=>{cancel();EDIT_PLACEMENT_TOOL=tool;$('editPlacementMove').setAttribute('aria-pressed',String(tool==='move'));$('editPlacementPan').setAttribute('aria-pressed',String(tool==='pan'))};
  for(const [id,factor] of [['editPlacementZoomIn',1.25],['editPlacementZoomOut',.8]])$(id).onclick=()=>{cancel();editPlacementZoom(factor)};
  $('editPlacementFit').onclick=()=>{cancel();EDIT_PLACEMENT_VIEW={key:editPlacementScope(),zoom:1,x:0,y:0};draw()};
@@ -3908,6 +4114,7 @@ function editCommitModel(){
  const history=editPlacementHistoryCapture(),created=editRegisterModel(EDIT_RECT,height),createdCenter=turf.centroid(created).geometry.coordinates;
  $('editHeight').value=height;editUpdateModel();editModelSummary();workspaceCommitPlacement();
  editSelectModel(created.properties.model_id,{openEditor:true});$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';$('editSizeModal').style.display='none';EDIT_PICKING=false;editOpenPlacement();
+ if(SCREEN_UI)screenPlacementChoose('edit');
  map.easeTo({center:createdCenter,zoom:Math.max(map.getZoom(),18),pitch:70,duration:650});
  editNotice('새 건물 '+height+'m 생성 완료. 원본 데이터는 보존됩니다.');editPlacementRecord(history,'건물 추가');
 }
@@ -4163,6 +4370,7 @@ function setDrawer(open){
   $('drawer').classList.toggle('open',DRAWER_OPEN);
   $('drawerToggle').classList.toggle('open',DRAWER_OPEN);
   $('drawerToggle').textContent=DRAWER_OPEN?'›':'‹';
+  if(SCREEN_UI){document.body.classList.toggle('screen-menu-closed',!DRAWER_OPEN);requestAnimationFrame(()=>map.resize?.())}
   setTimeout(()=>map.resize(),260);
 }
 function districtAtMapCenter(){
@@ -4252,6 +4460,7 @@ function activateDrawerTab(tab){
   document.querySelectorAll('.drawer-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id==='tab-'+tab));
   if(tab==='law'&&lawMode)$('lawModeState').textContent='현재 필지 선택 · 지도를 이동해도 자동 전환';
+  if(SCREEN_UI){if(tab==='settings'){SCREEN_UI.main='settings';SCREEN_UI.sub='0'}else if(SCREEN_UI.main==='settings'){SCREEN_UI.main='info';SCREEN_UI.sub='basic'}screenWorkspaceSync()}
 }
 function planningEvidence(){
  const local=!!(CURRENT_PLANNING?.features?.length&&CURRENT_PLANNING_ID===selectedId);
@@ -5228,4 +5437,5 @@ async function waitForMapReady(m,timeout=5000){
   }finally{loading(false)}
 })();
 setupWorkspaceUI();
+setupScreenUI();
 </script></body></html>
