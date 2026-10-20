@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.20-07</title>
+<title>Jinju3D Local · v2026.10.20-08</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -272,12 +272,33 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 @media(max-width:700px){#solarPickBody{grid-template-columns:1fr;grid-template-rows:minmax(140px,1fr) auto}#solarPickAside{border-left:0;border-top:1px solid #334155;gap:5px}#solarPickList{grid-template-columns:1fr 1fr;grid-auto-rows:54px;flex:none}#solarPickHeader{flex-wrap:wrap;gap:2px}#solarPickHeader span,#solarPickLegend{font-size:11px}#solarPickHeader,#solarPickFooter{padding:6px 9px}#solarPickFooter{align-items:center;gap:6px}#solarPickStatus{font-size:12px}#solarPickChosen{min-height:35px;padding:4px 8px}#solarPickPlan{padding:6px;gap:4px}#solarPickToolbar button{min-height:36px;padding:5px 8px}#solarPickToolbar label{font-size:12px}}
 </style>
 
+<style id="headerControlFixStyles">
+.address-search-field{position:relative;display:flex;align-items:center;min-width:0;width:100%}
+.address-search-field input{min-height:44px;padding-right:48px;font-size:16px;line-height:1.25}
+.address-search-field input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.address-search-field .address-search-clear{top:50%;right:0;transform:translateY(-50%);width:44px;height:44px;min-height:44px;padding:0;display:flex;align-items:center;justify-content:center;font-size:24px;line-height:1;margin:0;border:0;border-radius:0 9px 9px 0;background:transparent}
+.address-results{top:calc(100% + 6px)}
+.screen-ui .top{z-index:60}
+.screen-ui #workspaceRegion>summary{display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 12px;border:1px solid #475569;border-radius:9px;background:#111d31;color:#e2e8f0;font-size:13px;line-height:1.25;list-style:none;text-align:center;white-space:nowrap}
+.screen-ui #workspaceRegion>summary::-webkit-details-marker{display:none}
+.screen-ui #workspaceRegion>summary::after{content:'▾';font-size:12px;line-height:1}
+.screen-ui #workspaceRegion[open]>summary{background:#164e63;border-color:#67e8f9}
+.screen-ui #workspaceRegion[open]>summary::after{content:'▴'}
+.screen-ui #workspaceRegion>#screenRegionPopover{position:absolute;top:calc(100% + 8px);right:0;width:320px;max-width:calc(100vw - 24px);margin:0;padding:12px;z-index:70;background:#101f33;border:1px solid #64748b;border-radius:10px;box-shadow:0 10px 24px #02061766}
+#screenRegionHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+#screenRegionHeader h3{font-size:14px;line-height:1.4;margin:0}
+#screenRegionHeader #screenRegionClose{width:auto;min-height:44px;min-width:44px;margin:0;display:flex;align-items:center;justify-content:center;padding:7px 10px;line-height:1}
+#screenRegionPopover #district{font-size:16px;min-height:44px;width:100%;margin:0}
+#screenRegionPopover .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:10px}
+#screenRegionPopover .row button{width:100%;min-height:44px;padding:8px 6px;font-size:13px;display:flex;align-items:center;justify-content:center;line-height:1.3;margin:0}
+</style>
+
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-07</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-08</span></h1>
   <div class="address-search">
-    <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
-    <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
+    <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
+    <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
     <div id="addressResults" class="address-results"></div>
     <div id="addressSearchState" class="address-search-state"></div>
   </div>
@@ -756,7 +777,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.20-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.20-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1885,6 +1906,18 @@ function setupScreenPlacement(){
  for(const node of children)if(node.parentElement===tools&&node!==select&&node!==label)screenMove(node,archive);
  screenPlacementChoose('add');
 }
+function setupScreenHeaderControls(){
+ const region=$('workspaceRegion'),summary=region?.querySelector(':scope > summary'),panel=$('district')?.closest('.drawer-sec');if(!region||!summary||!panel)return;
+ panel.id='screenRegionPopover';summary.setAttribute('aria-controls',panel.id);summary.setAttribute('aria-expanded',String(region.open));
+ const head=screenNode('div','screenRegionHeader'),title=panel.querySelector('h3');if(title)head.appendChild(title);panel.prepend(head);
+ const close=(focus=false)=>{region.open=false;summary.setAttribute('aria-expanded','false');if(focus)summary.focus({preventScroll:true})};
+ screenButton('닫기',head,()=>{if(SCREEN_UI?.reader?.node===panel)screenReaderClose();else close(true)}).id='screenRegionClose';
+ region.addEventListener('toggle',()=>summary.setAttribute('aria-expanded',String(region.open)));
+ document.addEventListener('pointerdown',e=>{if(region.open&&!region.contains(e.target))close()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&region.open){e.preventDefault();close(true)}});
+ for(const id of ['go','home'])$(id).addEventListener('click',()=>close());$('district').addEventListener('change',()=>close());
+}
+
 function setupScreenUI(){
  if(SCREEN_UI)return;
  SCREEN_UI={pages:{},main:'info',sub:'basic',action:'',target:WORKSPACE_LAST_TARGET,settings:[],placement:'add',reader:null};
@@ -1944,7 +1977,7 @@ function setupScreenUI(){
  const reader=screenNode('div','screenReaderWindow',overlay),head=screenNode('header','screenReaderHeader',reader);screenNode('b','screenReaderTitle',head,'상세 보기');screenButton('닫기',head,screenReaderClose);
  const viewport=screenNode('div','screenReaderViewport',reader);screenNode('div','screenReaderFlow',viewport);
  const readerFooter=screenNode('footer','screenReaderFooter',reader);const prev=screenButton('이전',readerFooter,()=>{if(SCREEN_UI.reader){SCREEN_UI.reader.page--;screenReaderLayout()}});prev.id='screenReaderPrev';screenNode('span','screenReaderCount',readerFooter,'1 / 1');const next=screenButton('다음',readerFooter,()=>{if(SCREEN_UI.reader){SCREEN_UI.reader.page++;screenReaderLayout()}});next.id='screenReaderNext';const apply=screenButton('적용',readerFooter,()=>$(SCREEN_UI.reader?.action)?.click());apply.id='screenReaderApply';
- setupScreenPlacement();
+ setupScreenPlacement();setupScreenHeaderControls();
  const update=()=>{screenFooterSync();screenFit();if(SCREEN_UI.reader)requestAnimationFrame(screenReaderLayout)};
  if(typeof MutationObserver!=='undefined'){
   const observer=new MutationObserver(update);for(const id of ['solarSurfaceRun','solarExposureRun','editPlacementApply','editApplySelected','lawResult','solarSurfaceResult','solarExposureResult'])observer.observe($(id),{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['disabled']});SCREEN_UI.observer=observer;
