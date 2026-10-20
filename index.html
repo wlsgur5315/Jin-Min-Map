@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.19-13</title>
+<title>Jinju3D Local · v2026.10.20-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -200,7 +200,7 @@
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.19-13</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-01</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -494,8 +494,8 @@
   <div class="placement-options">
    <label style="min-height:36px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementSnap" checked>격자 맞춤</label>
    <select id="editPlacementGrid" aria-label="맞춤 격자 간격" style="width:auto;font-size:16px;min-height:40px"><option value="0.1">0.1m</option><option value="0.5" selected>0.5m</option><option value="1">1m</option></select>
-   <label style="min-height:36px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementDistances" checked>거리 표시</label>
-   <label style="min-height:44px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementDimensions" checked>치수선 표시</label>
+   <label style="min-height:44px;display:flex;align-items:center;gap:5px"><input type="checkbox" id="editPlacementDistances" checked>건물·경계 거리선</label>
+   <button type="button" id="editPlacementDimensions" aria-pressed="true" aria-label="건물 치수선" style="width:auto;min-height:44px;font-size:13px">치수선 끄기</button>
    <span id="editPlacementScale" style="color:#cbd5e1"></span>
   </div>
   <label for="editPlacementSelect" style="font-size:13px">이 필지의 사용자 건물</label><select id="editPlacementSelect" style="width:100%;min-height:44px;margin:6px 0;font-size:16px" aria-label="배치 캔버스에서 선택할 사용자 건물"></select>
@@ -660,7 +660,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.19-13',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.20-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -3636,7 +3636,7 @@ function editPlacementDrawMeasures(g,c,analysis){
 }
 
 function editPlacementDrawDimensions(g,c,feature,occupied=[]){
- if(!$('editPlacementDimensions')?.checked||!feature)return;
+ if($('editPlacementDimensions')?.getAttribute('aria-pressed')!=='true'||!feature)return;
  const ring=feature.geometry?.type==='Polygon'?feature.geometry.coordinates[0]:null;
  if(!ring||!(editPlacementRectangle(feature)||editIsLShape(feature)))return;
  const points=ring.slice(0,-1).map(editPlacementToXY),area=points.reduce((sum,p,i)=>{const q=points[(i+1)%points.length];return sum+p[0]*q[1]-q[0]*p[1]},0),edges=points.map((a,i)=>({a,b:points[(i+1)%points.length],index:i,length:turf.distance(ring[i],ring[i+1],{units:'meters'})}));
@@ -3822,7 +3822,12 @@ function setupPlacementCanvas(){
  for(const [id,factor] of [['editPlacementZoomIn',1.25],['editPlacementZoomOut',.8]])$(id).onclick=()=>{cancel();editPlacementZoom(factor)};
  $('editPlacementFit').onclick=()=>{cancel();EDIT_PLACEMENT_VIEW={key:editPlacementScope(),zoom:1,x:0,y:0};draw()};
  $('editPlacementUndo').onclick=()=>{cancel();editPlacementHistoryStep(false)};$('editPlacementRedo').onclick=()=>{cancel();editPlacementHistoryStep(true)};
- for(const id of ['editPlacementSnap','editPlacementGrid','editPlacementDistances','editPlacementDimensions'])$(id).addEventListener('change',()=>{cancel();draw()});
+ for(const id of ['editPlacementSnap','editPlacementGrid','editPlacementDistances'])$(id).addEventListener('change',()=>{cancel();draw()});
+ $('editPlacementDimensions').onclick=()=>{
+  const button=$('editPlacementDimensions'),visible=button.getAttribute('aria-pressed')!=='true';
+  button.setAttribute('aria-pressed',String(visible));button.textContent=visible?'치수선 끄기':'치수선 켜기';
+  cancel();draw();
+ };
  $('editPlacementDraw').onclick=()=>{cancel();editOpenDraw()};$('editPlacementSize').onclick=()=>{cancel();editOpenSize()};$('editPlacementL').onclick=()=>{cancel();editOpenSize('l')};
  $('editPlacementClose').onclick=()=>{cancel();$('editPlacementModal').style.display='none';workspaceCancelPlacement()};
  window.addEventListener('blur',cancel);document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel()});
