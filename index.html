@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.20-04</title>
+<title>Jinju3D Local · v2026.10.20-05</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -227,9 +227,31 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 .screen-ui #editPlacementWindow{display:flex;flex-direction:column}.screen-ui #editPlacementBody{flex:1;min-height:0}.screen-ui #editPlacementTools{display:flex;flex-direction:column;padding:10px;overflow:auto;gap:8px}.screen-ui #screenPlacementNav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;flex:0 0 auto}.screen-ui #screenPlacementNav button{min-height:44px;font-size:13px}.screen-ui .screen-placement-page{min-height:0}.screen-ui .screen-placement-page[hidden]{display:none!important}.screen-ui #screenPlacementToolbar{display:flex;flex-wrap:wrap;gap:5px;padding:0 0 8px;flex:0 0 auto}.screen-ui #screenPlacementToolbar button{width:auto;min-height:44px;font-size:12px}.screen-ui #screenPlacementFooter{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-top:1px solid #334155;flex:0 0 auto}.screen-ui #screenPlacementFooter #editPlacementStatus{flex:1;font-size:12px!important;margin:0!important;max-height:38px;overflow:hidden}.screen-ui #screenPlacementFooterActions{display:flex;gap:6px}.screen-ui #screenPlacementFooterActions button{width:auto;min-height:44px;font-size:12px}.screen-ui #editPlacementSelect{flex:0 0 auto;margin:0!important}.screen-ui #editPlacementEditor{margin:0!important;padding:8px!important;border:0!important;background:transparent!important}.screen-ui #editPlacementLFields{margin:8px 0}.screen-ui #editPlacementEditor .placement-editor-fields{gap:8px}.screen-ui #editPlacementEditor label{font-size:12px}.screen-ui #editPlacementEditor input,.screen-ui #editPlacementEditor select{margin-top:3px;min-height:44px}.screen-ui #editPlacementMetrics{font-size:12px!important;line-height:1.5!important;margin-top:4px!important}.screen-ui #editPlacementLegend{padding-top:4px}
 @media(max-width:740px){body.screen-ui{--screen-width:min(360px,92vw);--screen-top:112px}.screen-ui .top{height:var(--screen-top);flex-wrap:wrap;gap:5px}.screen-ui .top h1{flex:1}.screen-ui .top .address-search{order:5;flex-basis:100%;max-width:none}.screen-ui .top #workspaceRegion{display:none}.screen-ui #map{right:0}.screen-ui #screenMapMode{max-width:calc(100vw - 30px)}.screen-ui .message{max-width:90vw}.screen-ui #screenFooterStatus{display:none}.screen-ui #screenFooter{justify-content:flex-end}.screen-ui #screenPlacementFooter{flex-wrap:wrap}.screen-ui #screenPlacementFooterActions{flex-wrap:wrap}.screen-ui #screenPlacementToolbar button{font-size:11px}.screen-ui #editPlacementTools{overflow:auto}}
 </style>
+<style id="polygonEditorStyles">
+#editPolygonModal{position:fixed;inset:0;z-index:207;padding:8px;background:#030712ed;align-items:center;justify-content:center}
+#editPolygonWindow{width:100%;height:calc(100dvh - 16px);background:#101f33;color:#e2e8f0;border:1px solid #64748b;border-radius:12px;display:flex;flex-direction:column;min-width:0}
+#editPolygonHeader,#editPolygonFooter{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;flex:0 0 auto}
+#editPolygonHeader{border-bottom:1px solid #334155}#editPolygonHeader b{font-size:15px}
+#editPolygonBody{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 280px}
+#editPolygonPlan{display:flex;flex-direction:column;padding:10px;min-height:0;min-width:0;background:#071527}
+#editPolygonToolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;flex:0 0 auto}
+#editPolygonToolbar>div{display:flex;gap:5px}#editPolygonViewport{flex:1;min-height:0;position:relative;margin-top:8px}
+#editPolygonCanvas,#editPolygonThree{display:block;width:100%;height:100%;touch-action:none;background:#071527;border:1px solid #334155;border-radius:8px}
+#editPolygonTools{padding:14px;display:flex;flex-direction:column;gap:12px;border-left:1px solid #334155;overflow:auto;min-width:0}
+#editPolygonTools h3{font-size:14px;margin:0}#editPolygonStats{font-size:13px;line-height:1.7;font-variant-numeric:tabular-nums}
+#editPolygonTools .row{margin:0}#editPolygonTools .row button{flex:1}
+#editPolygonModal button{width:auto;min-height:44px;font-size:13px}#editPolygonModal button:disabled{opacity:.45}
+#editPolygonTools label{font-size:13px}#editPolygonHeight{display:block;width:100%;font-size:16px;min-height:44px;margin-top:5px}
+#editPolygonTools .polygon-check{display:flex;align-items:center;gap:8px;min-height:44px}#editPolygonTools input[type=checkbox]{width:18px;height:18px;padding:0}
+#editPolygonLegend{font-size:12px;color:#cbd5e1;padding-top:6px;flex:0 0 auto}
+#editPolygonFooter{border-top:1px solid #334155}#editPolygonStatus{font-size:12px;line-height:1.5;flex:1;min-width:0}#editPolygonFooter>div:last-child{display:flex;gap:7px}
+#editPolygonModal [hidden]{display:none!important}
+#editPlacementL,#editPlacementPolygon{grid-column:auto}
+@media(max-width:740px),(orientation:portrait){#editPolygonBody{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(160px,52%) minmax(0,1fr)}#editPolygonTools{border-left:0;border-top:1px solid #334155;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px}#editPolygonTools h3,#editPolygonStats,#editPolygonTools>.row{grid-column:1/-1}#editPolygonFooter{flex-wrap:wrap}#editPolygonFooter>div:last-child{margin-left:auto}}
+</style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-04</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-05</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -320,6 +342,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
  <button type="button" id="editOpenPlacement" class="primary" style="width:100%;margin-bottom:8px">배치 캔버스 열기</button>
  <div class="row"><button type="button" id="editOpenDraw">직접 그려 추가</button><button type="button" id="editOpenSize">치수 입력으로 추가</button></div>
  <button type="button" id="editOpenL" style="width:100%;margin-top:7px">L자형 건물 추가</button>
+ <button type="button" id="editOpenPolygon" style="width:100%;margin-top:7px">다각형 건물 추가</button>
  <button id="editClearCustom" style="margin-top:8px">선택한 사용자 건물 삭제</button>
  <div id="editStatus" class="hint" style="margin-top:8px">건물은 선택 필지의 경계 안에 배치해야 합니다.</div><div id="editModelDetails" style="padding:8px;margin-top:8px;border:1px solid #334155;border-radius:8px;font-size:12px">생성된 사용자 건물이 없습니다.</div>
  </div></details>
@@ -514,7 +537,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
   <div id="editPlacementLegend"><span style="color:#cbd5e1">■ 기존 건물 · 고정</span><span style="color:#93c5fd">■ 사용자 건물</span><span style="color:#67e8f9">■ 선택한 건물 · 이동 가능</span></div>
 </div>
    <aside id="editPlacementTools" aria-label="건물 배치 작업 도구"><h3>새 건물 추가</h3>
-  <div class="placement-create-actions"><button type="button" id="editPlacementDraw">직접 그려 추가</button><button type="button" id="editPlacementSize">치수 입력으로 추가</button><button type="button" id="editPlacementL">L자형 추가</button></div>
+  <div class="placement-create-actions"><button type="button" id="editPlacementDraw">직접 그려 추가</button><button type="button" id="editPlacementSize">치수 입력으로 추가</button><button type="button" id="editPlacementL">L자형 추가</button><button type="button" id="editPlacementPolygon">다각형 추가</button></div>
   <h3>캔버스 조작</h3><div class="placement-tool-grid">
    <button type="button" id="editPlacementMove" aria-pressed="true">선택·이동</button><button type="button" id="editPlacementPan" aria-pressed="false">화면 이동</button>
    <button type="button" id="editPlacementZoomIn" aria-label="배치 캔버스 확대">확대 ＋</button><button type="button" id="editPlacementZoomOut" aria-label="배치 캔버스 축소">축소 −</button><button type="button" id="editPlacementFit">전체 보기</button>
@@ -542,6 +565,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
     <label>가로 날개 폭 (m)<input id="editPlacementWingY" type="number" min="0.5" max="499.5" step="0.5" disabled></label>
     <label class="l-shape-wide">비워지는 모서리<select id="editPlacementCorner" disabled><option value="ne">오른쪽 위 · └</option><option value="se">오른쪽 아래 · ┌</option><option value="nw">왼쪽 위 · ┘</option><option value="sw">왼쪽 아래 · ┐</option></select></label>
    </div>
+   <button type="button" id="editPlacementPolygonEdit" hidden style="width:100%;margin-top:8px">다각형 꼭짓점 수정</button>
    <div class="row"><button type="button" id="editPlacementApply" class="primary" disabled>선택 건물에 적용</button><button type="button" id="editPlacementDelete" disabled>선택 건물 삭제</button></div>
    <div id="editPlacementEditorResult" style="font-size:12px;line-height:1.6;margin-top:8px" role="status" aria-live="polite"></div>
   </section>
@@ -550,6 +574,15 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
   <div class="hint" style="margin-top:6px">빈 곳 드래그: 화면 이동 · 두 손가락/마우스 휠: 확대·축소 · 겹침은 경고만 표시하며 필지 밖 이동은 적용하지 않습니다. 거리값은 표시된 건물과 필지 경계 기준 참고값입니다. 되돌리기는 현재 필지의 최근 30단계를 지원합니다.</div>
    </aside>
   </div>
+ </div>
+</div>
+<div id="editPolygonModal" role="dialog" aria-modal="true" aria-labelledby="editPolygonTitle" style="display:none">
+ <div id="editPolygonWindow">
+  <header id="editPolygonHeader"><b id="editPolygonTitle">다각형 건물 추가</b><span style="font-size:12px;color:#cbd5e1">모서리 선택 → 평면 완성 → 높이 입력</span></header>
+  <div id="editPolygonBody"><div id="editPolygonPlan"><div id="editPolygonToolbar"><span id="editPolygonHelp">대지 안에 모서리를 순서대로 찍으세요.</span><div><button type="button" id="editPolygonPan" aria-pressed="false">화면 이동</button><button type="button" id="editPolygonZoomIn">＋</button><button type="button" id="editPolygonZoomOut">−</button><button type="button" id="editPolygonFit">전체</button><button type="button" id="editPolygonPlanView" aria-pressed="true">평면</button><button type="button" id="editPolygonThreeView" aria-pressed="false">3D 형상 미리보기</button></div></div><div id="editPolygonViewport"><canvas id="editPolygonCanvas" tabindex="0" width="800" height="520" aria-label="다각형 건물 꼭짓점 그리기 및 수정"></canvas><svg id="editPolygonThree" role="img" aria-label="입력한 다각형 건물의 높이와 형상 미리보기" hidden></svg></div><div id="editPolygonLegend">기존 건물은 회색, 사용자 건물은 파란색으로 표시합니다.</div></div>
+   <aside id="editPolygonTools"><h3>다각형 평면</h3><div id="editPolygonStats" aria-live="polite">꼭짓점 0개</div><div class="row"><button type="button" id="editPolygonNew">새로 그리기</button><button type="button" id="editPolygonUndo">한 점 취소</button></div><label>건물 높이 (m)<input type="number" id="editPolygonHeight" min="1" max="500" step="0.5" value="12"></label><label class="polygon-check"><input type="checkbox" id="editPolygonSnap" checked>0.5m 격자 맞춤</label><label class="polygon-check"><input type="checkbox" id="editPolygonDimensions" checked>변 길이 표시</label><div class="hint" style="font-size:12px">첫 점을 다시 누르거나 하단 버튼으로 평면을 닫습니다. 완성 후 꼭짓점을 끌어 수정할 수 있습니다.</div></aside>
+  </div>
+  <footer id="editPolygonFooter"><div id="editPolygonStatus" role="status" aria-live="polite">세 점 이상 선택하세요.</div><div><button type="button" id="editPolygonClose">취소</button><button type="button" id="editPolygonCommit" class="primary" disabled>평면 완성</button></div></footer>
  </div>
 </div>
 <div id="editSizeModal" role="dialog" aria-modal="true" aria-labelledby="editSizeTitle" style="display:none">
@@ -690,7 +723,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.20-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.20-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -709,7 +742,7 @@ function setupMapKeyboard(){
  const editable=target=>!!(target?.isContentEditable||target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  function blocked(target=document.activeElement){
   if(document.hidden||precisionMode||editable(target)||editable(document.activeElement))return true;
-  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader'].some(id=>{
+  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal'].some(id=>{
    const el=$(id);if(!el)return false;const style=getComputedStyle(el);return style.display!=='none'&&style.visibility!=='hidden';
   });
  }
@@ -1436,6 +1469,30 @@ function editLGeometry(center,p,rotation=0){
 }
 
 // Multiple proposed buildings. EDIT_CUSTOM remains the last active feature for legacy callers.
+function editIsPolygon(f){return f?.properties?.model_shape==='polygon'&&f.geometry?.type==='Polygon'&&f.geometry.coordinates.length===1}
+function editPolygonXY(points){
+ const ref=points[0]||[0,0],mx=111320*Math.cos(ref[1]*Math.PI/180);
+ return points.map(p=>[(p[0]-ref[0])*mx,(p[1]-ref[1])*111320]);
+}
+function editPolygonValidation(points,closed=true){
+ if(points.some(p=>!Array.isArray(p)||p.length<2||!p.every(Number.isFinite)))return '꼭짓점 좌표를 확인하세요.';
+ if(closed&&points.length<3)return '세 점 이상 선택하세요.';
+ const xy=editPolygonXY(points),n=xy.length,edges=closed?n:Math.max(0,n-1),cross=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+ const on=(a,b,p)=>Math.abs(cross(a,b,p))<=.001*Math.hypot(b[0]-a[0],b[1]-a[1])&&p[0]>=Math.min(a[0],b[0])-.001&&p[0]<=Math.max(a[0],b[0])+.001&&p[1]>=Math.min(a[1],b[1])-.001&&p[1]<=Math.max(a[1],b[1])+.001;
+ for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(Math.hypot(xy[i][0]-xy[j][0],xy[i][1]-xy[j][1])<.05)return '겹치는 꼭짓점을 분리하세요.';
+ for(let i=0;i<edges;i++){
+  const a=xy[i],b=xy[(i+1)%n];if(Math.hypot(a[0]-b[0],a[1]-b[1])<.5)return '변 길이를 0.5m 이상으로 그리세요.';
+  // Consecutive collinear edges may continue straight, but may not retrace each other.
+  if(closed||i+1<edges){const c=xy[(i+2)%n];if(Math.abs(cross(a,b,c))<=.001*Math.hypot(b[0]-a[0],b[1]-a[1])&&(a[0]-b[0])*(c[0]-b[0])+(a[1]-b[1])*(c[1]-b[1])>0)return '되짚는 선을 수정하세요.'}
+  for(let j=i+1;j<edges;j++){
+   if(j===i+1||closed&&i===0&&j===edges-1)continue;
+   const c=xy[j],d=xy[(j+1)%n];if(cross(a,b,c)*cross(a,b,d)<0&&cross(c,d,a)*cross(c,d,b)<0||on(a,b,c)||on(a,b,d)||on(c,d,a)||on(c,d,b))return '선이 교차합니다. 점의 순서나 위치를 수정하세요.';
+  }
+ }
+ if(closed&&turf.area(turf.polygon([[...points,points[0]]]))<1)return '바닥면적이 1㎡ 이상이어야 합니다.';
+ return '';
+}
+function editPolygonFeature(points){const error=editPolygonValidation(points);if(error)throw Error(error);return turf.polygon([[...points.map(p=>p.slice()),points[0].slice()]],{model_shape:'polygon'})}
 function editCustomModels(){
  const models=[...EDIT_MODELS];
  if(EDIT_CUSTOM&&!models.some(f=>f===EDIT_CUSTOM||(f.properties?.model_id&&f.properties.model_id===EDIT_CUSTOM.properties?.model_id)))models.push(EDIT_CUSTOM);
@@ -1466,12 +1523,13 @@ function editModelParcel(f){return EDIT_MODEL_PARCELS.get(f?.properties?.model_i
 function editModelLabel(f){return f?.properties?.model_name||'사용자 건물'}
 function editFootprintDimensions(f){
  if(editIsLShape(f)){const p=editLParams(f);return [p.w,p.d]}
+ if(editIsPolygon(f)){const xy=editPolygonXY(f.geometry.coordinates[0].slice(0,-1)),a=(Number(f.properties.model_rotation)||0)*Math.PI/180,c=Math.cos(a),s=Math.sin(a),points=xy.map(([x,y])=>[x*c-y*s,x*s+y*c]),xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);return [Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)]}
  const ring=f?.geometry?.coordinates?.[0];if(!ring||ring.length<3)return [0,0];
  return [turf.distance(ring[0],ring[1],{units:'meters'}),turf.distance(ring[1],ring[2],{units:'meters'})];
 }
 function editRegisterModel(rect,height){
  const id='model-'+Date.now().toString(36)+'-'+(++EDIT_MODEL_SEQ),name='사용자 건물 '+EDIT_MODEL_SEQ;
- const f={type:'Feature',id,geometry:JSON.parse(JSON.stringify(rect.geometry)),properties:{...(editIsLShape(rect)?editLShapeProperties(editLParams(rect)):{model_shape:'rectangle'}),model_id:id,model_name:name,model_height:height,model_rotation:0,model_parcel_pnu:String(parcelPnu(EDIT_PARCEL?.properties||{})),model_district_id:String(selectedId||''),editor_generated:true}};
+ const f={type:'Feature',id,geometry:JSON.parse(JSON.stringify(rect.geometry)),properties:{...(editIsLShape(rect)?editLShapeProperties(editLParams(rect)):{model_shape:editIsPolygon(rect)?'polygon':'rectangle'}),model_id:id,model_name:name,model_height:height,model_rotation:0,model_parcel_pnu:String(parcelPnu(EDIT_PARCEL?.properties||{})),model_district_id:String(selectedId||''),editor_generated:true}};
  // Adopt a legacy single model once, preserving its original feature and geometry.
  if(EDIT_CUSTOM&&!EDIT_MODELS.includes(EDIT_CUSTOM)&&!EDIT_CUSTOM.properties?.model_id){
   const prior=EDIT_CUSTOM;prior.properties={...prior.properties,model_id:'legacy-'+(++EDIT_MODEL_SEQ),model_name:'사용자 건물 '+EDIT_MODEL_SEQ};EDIT_MODELS.push(prior);
@@ -1823,7 +1881,8 @@ function setupScreenUI(){
  const height=screenPage('info-height');screenNode('h3','',height,'높이·일조 사전검토');screenNode('p','',height,'연결 필지의 높이·층수·정북일조 검토와 확인 상태를 함께 표시합니다.').className='hint';screenReadButton(height,'높이·정북일조 상세 검토','lawResult');
  screenMove('workspaceList',screenPage('info-list'));$('workspaceList').hidden=false;
  const launch=screenPage('place-launch');screenNode('h3','',launch,'건물 생성·배치');
- for(const id of ['editOpenPlacement','editOpenDraw','editOpenSize','editOpenL'])screenMove(id,launch);
+ screenMove('editOpenPlacement',launch);const shapeButtons=screenNode('div','screenLaunchShapes',launch);shapeButtons.className='workspace-grid';
+ for(const id of ['editOpenDraw','editOpenSize','editOpenL','editOpenPolygon'])screenMove(id,shapeButtons);
  screenMove('editParcelInfo',launch);screenReadButton(launch,'사용자 건물 목록·상세 편집','editMultiModels');
  const single=screenPage('place-single');screenMove('workspaceBuildingManagement',single);screenMove('workspaceCustomManagement',single);screenReadButton(single,'이름·높이·상대 이동 상세 편집','editSelectedControls');
  for(const id of ['workspaceBuildingManagement','workspaceCustomManagement','editSelectedControls'])$(id).classList.add('screen-flat');
@@ -3861,7 +3920,7 @@ function editPlacementDrawMeasures(g,c,analysis){
 function editPlacementDrawDimensions(g,c,feature,occupied=[]){
  if($('editPlacementDimensions')?.getAttribute('aria-pressed')!=='true'||!feature)return;
  const ring=feature.geometry?.type==='Polygon'?feature.geometry.coordinates[0]:null;
- if(!ring||!(editPlacementRectangle(feature)||editIsLShape(feature)))return;
+ if(!ring||!(editPlacementRectangle(feature)||editIsLShape(feature)||editIsPolygon(feature)))return;
  const points=ring.slice(0,-1).map(editPlacementToXY),area=points.reduce((sum,p,i)=>{const q=points[(i+1)%points.length];return sum+p[0]*q[1]-q[0]*p[1]},0),edges=points.map((a,i)=>({a,b:points[(i+1)%points.length],index:i,length:turf.distance(ring[i],ring[i+1],{units:'meters'})}));
  let dimensions;
  if(editIsLShape(feature)){
@@ -3871,7 +3930,7 @@ function editPlacementDrawDimensions(g,c,feature,occupied=[]){
    const candidates=edges.filter(e=>{const a=local[e.index],b=local[(e.index+1)%local.length];return !used.has(e.index)&&(Math.abs(b[0]-a[0])>=Math.abs(b[1]-a[1]))===horizontal}).sort((a,b)=>Math.abs(a.length-value)-Math.abs(b.length-value));
    const edge=candidates[0];if(!edge)return null;used.add(edge.index);return {...edge,label,value};
   }).filter(Boolean);
- }else dimensions=edges.slice(0,2).map((edge,i)=>({...edge,label:i?'세로':'가로',value:edge.length}));
+ }else dimensions=(editIsPolygon(feature)?edges:edges.slice(0,2)).map((edge,i)=>({...edge,label:editIsPolygon(feature)?'변 '+(i+1):i?'세로':'가로',value:edge.length}));
  const density=c.width/(c.getBoundingClientRect().width||c.width),font=14*density,padding=6*density,placed=(occupied||[]).map(p=>({x:p.x,y:p.y,w:p.w,h:font*1.5}));
  g.save();g.font=font+'px system-ui';g.textAlign='center';g.textBaseline='middle';g.strokeStyle='#bae6fd';g.lineWidth=density;g.setLineDash([]);
  for(const dim of dimensions){
@@ -3899,17 +3958,20 @@ function editPlacementModels(){
   return /^\d{19}$/.test(pnu)?modelPnu===pnu:JSON.stringify(parcel.geometry)===JSON.stringify(EDIT_PARCEL.geometry);
  });
 }
-function editPlacementRectangle(model){return model?.geometry?.type==='Polygon'&&model.geometry.coordinates.length===1&&model.geometry.coordinates[0].length===5}
+function editPlacementRectangle(model){return !editIsPolygon(model)&&model?.geometry?.type==='Polygon'&&model.geometry.coordinates.length===1&&model.geometry.coordinates[0].length===5}
 function editRefreshPlacementEditor(){
  const model=editPlacementModels().find(f=>f.properties.model_id===EDIT_SELECTED_MODEL_ID)||null;
  if(EDIT_PLACEMENT_EDITOR_FEATURE===model)return;EDIT_PLACEMENT_EDITOR_FEATURE=model;
- const isL=editIsLShape(model),rectangle=editPlacementRectangle(model);
+ const isL=editIsLShape(model),rectangle=editPlacementRectangle(model),polygon=editIsPolygon(model);
+ $('editPlacementPolygonEdit').hidden=!polygon;
+ for(const id of ['editPlacementWidth','editPlacementDepth'])$(id).closest('label').hidden=polygon;
  $('editPlacementLFields').hidden=!isL;
  for(const id of ['editPlacementWingX','editPlacementWingY','editPlacementCorner'])$(id).disabled=!isL;
  if(isL){const p=editLParams(model);$('editPlacementWingX').value=p.a;$('editPlacementWingY').value=p.b;$('editPlacementCorner').value=p.corner}
  for(const id of ['editPlacementWidth','editPlacementDepth','editPlacementAngle'])$(id).disabled=!model||!(rectangle||isL);
+ $('editPlacementAngle').disabled=!model||!(rectangle||isL||polygon);
  for(const id of ['editPlacementHeight','editPlacementApply','editPlacementDelete'])$(id).disabled=!model;
- $('editPlacementEditorTitle').textContent=model?editModelLabel(model)+(isL?' · L자형 편집':' 편집'):'선택한 건물 편집';
+ $('editPlacementEditorTitle').textContent=model?editModelLabel(model)+(isL?' · L자형 편집':polygon?' · 다각형 편집':' 편집'):'선택한 건물 편집';
  $('editPlacementEditorSummary').textContent=model?'바닥면적 '+turf.area(model).toFixed(1)+'㎡ · 높이 '+Number(model.properties.model_height).toFixed(1)+'m':'';
  const dims=model?editFootprintDimensions(model):[0,0],rotation=Number(model?.properties?.model_rotation)||0;
  $('editPlacementWidth').value=model?dims[0].toFixed(2):'';$('editPlacementDepth').value=model?dims[1].toFixed(2):'';
@@ -3921,14 +3983,16 @@ function editPlacementApplyEdit(){
  const model=editPlacementModels().find(f=>f.properties.model_id===EDIT_SELECTED_MODEL_ID),parcel=editModelParcel(model),result=$('editPlacementEditorResult');
  if(!model||!parcel){result.textContent='편집할 사용자 건물을 선택하세요.';return false}
  const fields=['editPlacementWidth','editPlacementDepth','editPlacementHeight','editPlacementAngle'],raw=fields.map(id=>String($(id).value).trim()),[width,depth,height,angle]=raw.map(Number);
- if(raw.some(v=>v==='')||![width,depth,height,angle].every(Number.isFinite)||Math.min(width,depth)<.5||Math.max(width,depth)>500||height<1||height>500||Math.abs(angle)>360){result.textContent='가로·세로 0.5~500m, 높이 1~500m, 회전 −360~360°로 입력하세요.';return false}
+ const polygon=editIsPolygon(model);
+ if((polygon?raw.slice(2):raw).some(v=>v==='')||!(polygon?[height,angle]:[width,depth,height,angle]).every(Number.isFinite)||!polygon&&(Math.min(width,depth)<.5||Math.max(width,depth)>500)||height<1||height>500||Math.abs(angle)>360){result.textContent='가로·세로 0.5~500m, 높이 1~500m, 회전 −360~360°로 입력하세요.';return false}
  const dims=editFootprintDimensions(model),rotation=((angle%360)+360)%360,priorRotation=((Number(model.properties.model_rotation)||0)%360+360)%360;
  const isL=editIsLShape(model),prior=isL?editLParams(model):null,lParams=isL?{w:width===Number(dims[0].toFixed(2))?prior.w:width,d:depth===Number(dims[1].toFixed(2))?prior.d:depth,a:Number($('editPlacementWingX').value),b:Number($('editPlacementWingY').value),corner:$('editPlacementCorner').value}:null;
  if(isL&&!editLValid(lParams)){result.textContent='날개 폭은 0.5m 이상, 전체 가로·세로보다 작아야 합니다.';return false}
- const geometryChanged=width!==Number(dims[0].toFixed(2))||depth!==Number(dims[1].toFixed(2))||Math.abs(rotation-priorRotation)>1e-8||isL&&(lParams.a!==prior.a||lParams.b!==prior.b||lParams.corner!==prior.corner);
+ const geometryChanged=!polygon&&(width!==Number(dims[0].toFixed(2))||depth!==Number(dims[1].toFixed(2)))||Math.abs(rotation-priorRotation)>1e-8||isL&&(lParams.a!==prior.a||lParams.b!==prior.b||lParams.corner!==prior.corner);
  let next=JSON.parse(JSON.stringify(model));
  if(geometryChanged){
-  if(isL)next.geometry=editLGeometry(turf.centroid(model).geometry.coordinates,lParams,rotation).geometry;
+  if(polygon)next=turf.transformRotate(next,rotation-priorRotation,{pivot:turf.centroid(model).geometry.coordinates,mutate:false});
+  else if(isL)next.geometry=editLGeometry(turf.centroid(model).geometry.coordinates,lParams,rotation).geometry;
   else{
   if(!editPlacementRectangle(model)){result.textContent='이 건물의 평면은 크기 편집을 지원하지 않습니다.';return false}
   const center=turf.centroid(model).geometry.coordinates,a=rotation*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
@@ -3991,7 +4055,7 @@ function setupPlacementKeyboard(){
  let command=null,modelId='',lastRepeat=0;
  const editable=el=>!!(el?.isContentEditable||el?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  const reset=()=>{held.clear();command=null;modelId='';lastRepeat=0};
- const blocked=target=>document.hidden||$('editPlacementModal').style.display!=='flex'||editable(target)||editable(document.activeElement)||['editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader'].some(id=>$(id)?.style.display==='flex');
+ const blocked=target=>document.hidden||$('editPlacementModal').style.display!=='flex'||editable(target)||editable(document.activeElement)||['editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal'].some(id=>$(id)?.style.display==='flex');
  document.addEventListener('keydown',e=>{
   if(!codes.has(e.code))return;
   if(e.defaultPrevented||e.isComposing||e.ctrlKey||e.metaKey||e.altKey||blocked(e.target)){reset();return}
@@ -4075,6 +4139,7 @@ function setupPlacementCanvas(){
  canvas.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))cancel()});
  canvas.addEventListener('wheel',e=>{e.preventDefault();if(pointers.size)return;editPlacementZoom(Math.exp(-Math.max(-200,Math.min(200,e.deltaY))*.003),pos(e))},{passive:false});
  $('editPlacementApply').onclick=editPlacementApplyEdit;
+ $('editPlacementPolygonEdit').onclick=()=>editPolygonOpen(true);
  $('editPlacementDelete').onclick=()=>{cancel();editDeleteSelected()};
  $('editPlacementSelect').addEventListener('change',e=>{const id=e.target.value;if(id){cancel();editSelectModel(id);editRenderPlacementCanvas();if(SCREEN_UI)screenPlacementChoose('edit')}});
  for(const [id,tool] of [['editPlacementMove','move'],['editPlacementPan','pan']])$(id).onclick=()=>{cancel();EDIT_PLACEMENT_TOOL=tool;$('editPlacementMove').setAttribute('aria-pressed',String(tool==='move'));$('editPlacementPan').setAttribute('aria-pressed',String(tool==='pan'))};
@@ -4088,11 +4153,125 @@ function setupPlacementCanvas(){
   cancel();draw();
  };
  $('editPlacementDraw').onclick=()=>{cancel();editOpenDraw()};$('editPlacementSize').onclick=()=>{cancel();editOpenSize()};$('editPlacementL').onclick=()=>{cancel();editOpenSize('l')};
+ $('editPlacementPolygon').onclick=()=>{cancel();editPolygonOpen()};
  $('editPlacementClose').onclick=()=>{cancel();$('editPlacementModal').style.display='none';workspaceCancelPlacement()};
  window.addEventListener('blur',cancel);document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel()});
  let resizeFrame=0;const scheduleResize=()=>{if(resizeFrame)return;resizeFrame=requestAnimationFrame(()=>{resizeFrame=0;editResizePlacementCanvas()})};
  window.addEventListener('resize',scheduleResize);
  if(typeof ResizeObserver!=='undefined')new ResizeObserver(scheduleResize).observe($('editPlacementViewport'));
+}
+
+let EDIT_POLYGON={points:[],closed:false,view:'plan',editId:'',original:null,scope:'',drag:null,zoom:1,x:0,y:0,pan:false,pointer:null};
+function editPolygonBox(){const b=editCanvasBounds($('editPolygonCanvas'));return {...b,scale:b.scale*(EDIT_POLYGON.zoom||1),cx:b.cx+(EDIT_POLYGON.x||0),cy:b.cy+(EDIT_POLYGON.y||0)}}
+function editPolygonZoom(factor,anchor=null){const c=$('editPolygonCanvas'),b=editPolygonBox(),base=editCanvasBounds(c),p=anchor||[c.width/2,c.height/2],zoom=Math.max(.5,Math.min(16,EDIT_POLYGON.zoom*factor)),ratio=zoom/EDIT_POLYGON.zoom;EDIT_POLYGON.x=p[0]+(b.cx-p[0])*ratio-base.cx;EDIT_POLYGON.y=p[1]+(b.cy-p[1])*ratio-base.cy;EDIT_POLYGON.zoom=zoom;editPolygonRender()}
+function editPolygonToXY(pt){const b=editPolygonBox();return [b.cx+(pt[0]-b.refLon)*b.metersLon*b.scale,b.cy-(pt[1]-b.refLat)*b.metersLat*b.scale]}
+function editPolygonPointer(e){
+ const c=$('editPolygonCanvas'),r=c.getBoundingClientRect(),b=editPolygonBox(),x=(e.clientX-r.left)/r.width*c.width,y=(e.clientY-r.top)/r.height*c.height;
+ let east=(x-b.cx)/b.scale,north=(b.cy-y)/b.scale;
+ if($('editPolygonSnap').checked){east=Math.round(east/.5)*.5;north=Math.round(north/.5)*.5}
+ return [b.refLon+east/b.metersLon,b.refLat+north/b.metersLat];
+}
+function editPolygonError(closed=EDIT_POLYGON.closed){
+ const points=EDIT_POLYGON.points,error=editPolygonValidation(points,closed);if(error)return error;
+ if(points.some(p=>!turf.booleanPointInPolygon(turf.point(p),EDIT_PARCEL)))return '꼭짓점이 필지 경계 밖입니다. 안쪽으로 옮기세요.';
+ if(closed&&!editModelFits(editPolygonFeature(points),EDIT_PARCEL))return '평면이 필지 경계 밖이나 필지의 빈 공간을 통과합니다.';
+ return '';
+}
+function editPolygonOpen(edit=false){
+ const model=edit?editSelectedModel():null;
+ if(edit&&(!model||!editIsPolygon(model))){editNotice('수정할 다각형 사용자 건물을 선택하세요.');return}
+ if(!EDIT_PARCEL){editNotice('먼저 건물을 배치할 필지를 선택하세요.');return}
+ if(EDIT_PLACEMENT_CANCEL)EDIT_PLACEMENT_CANCEL();
+ EDIT_POLYGON={points:model?model.geometry.coordinates[0].slice(0,-1).map(p=>p.slice()):[],closed:!!model,view:'plan',editId:model?.properties.model_id||'',original:model,scope:editPlacementScope(),drag:null,zoom:1,x:0,y:0,pan:false,pointer:null};
+ $('editPolygonHeight').value=model?Number(model.properties.model_height):Number($('editHeight').value)||12;
+ $('editPolygonTitle').textContent=model?'다각형 건물 평면 수정':'다각형 건물 추가';$('editPolygonModal').style.display='flex';editPolygonResize();editPolygonRender();
+}
+function editPolygonResize(){
+ if($('editPolygonModal').style.display!=='flex')return;
+ const c=$('editPolygonCanvas'),host=$('editPolygonViewport'),r=host.getBoundingClientRect(),density=Math.min(2,Math.max(1,Number(window.devicePixelRatio)||1));
+ if(r.width>1&&r.height>1){const old=editCanvasBounds(c).scale;c.width=Math.round(r.width*density);c.height=Math.round(r.height*density);const ratio=editCanvasBounds(c).scale/old;EDIT_POLYGON.x*=ratio;EDIT_POLYGON.y*=ratio}
+ EDIT_POLYGON.drag=null;EDIT_POLYGON.pointer=null;editPolygonRender();
+}
+function editPolygonRender(){
+ if($('editPolygonModal').style.display!=='flex')return;
+ const state=EDIT_POLYGON,points=state.points,c=$('editPolygonCanvas'),g=c.getContext('2d');if(!g)return;
+ const height=Number($('editPolygonHeight').value),heightValid=Number.isFinite(height)&&height>=1&&height<=500,error=editPolygonError(),closedError=points.length>=3?editPolygonError(true):'세 점 이상 선택하세요.';
+ $('editPolygonCanvas').hidden=state.view!=='plan';$('editPolygonThree').hidden=state.view!=='three';
+ $('editPolygonPlanView').setAttribute('aria-pressed',String(state.view==='plan'));$('editPolygonThreeView').setAttribute('aria-pressed',String(state.view==='three'));
+ $('editPolygonPan').setAttribute('aria-pressed',String(state.pan));$('editPolygonUndo').disabled=!points.length;$('editPolygonCommit').textContent=!state.closed?'평면 완성':state.editId?'변경 적용':'건물 생성';
+ $('editPolygonCommit').disabled=state.closed?!!error||!heightValid:!!closedError;
+ const area=state.closed&&!error?turf.area(editPolygonFeature(points)):null;
+ $('editPolygonStats').textContent='꼭짓점 '+points.length+'개'+(area===null?' · 그리는 중':' · 바닥면적 '+area.toFixed(1)+'㎡');
+ $('editPolygonStatus').textContent=error||(!heightValid?'높이는 1~500m로 입력하세요.':state.closed?'평면 완성 · 꼭짓점을 끌어 수정하거나 하단 버튼으로 적용하세요.':'첫 점을 다시 누르거나 평면 완성 버튼을 누르세요.');
+ $('editPolygonStatus').style.color=error||!heightValid?'#fda4af':'#cbd5e1';
+ $('editPolygonHelp').textContent=state.view==='three'?'3D 형상 미리보기 · 실제 일조·그림자는 생성 후 지도에서 확인':state.pan?'빈 화면을 끌어 이동하세요.':state.closed?'꼭짓점을 끌어 평면을 수정하세요.':'대지 안에 모서리를 순서대로 찍으세요.';
+ if(state.view==='three'){editPolygonRenderThree(heightValid?height:0);return}
+ const density=c.width/(c.getBoundingClientRect().width||c.width),b=editPolygonBox();g.clearRect(0,0,c.width,c.height);g.fillStyle='#071527';g.fillRect(0,0,c.width,c.height);
+ const path=f=>{g.beginPath();const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;for(const poly of polys)for(const ring of poly){ring.forEach((p,i)=>{const xy=editPolygonToXY(p);if(!i)g.moveTo(...xy);else g.lineTo(...xy)});g.closePath()}};
+ path(EDIT_PARCEL);g.fillStyle='#164e63';g.fill('evenodd');g.lineWidth=1.5*density;g.strokeStyle='#67e8f9';g.stroke();g.save();path(EDIT_PARCEL);g.clip('evenodd');
+ let step=.5;while(step*b.scale<18*density)step*=2;const space=step*b.scale;g.beginPath();g.strokeStyle='#64748b55';g.lineWidth=density*.5;
+ for(let x=((b.cx%space)+space)%space;x<c.width;x+=space){g.moveTo(x,0);g.lineTo(x,c.height)}for(let y=((b.cy%space)+space)%space;y<c.height;y+=space){g.moveTo(0,y);g.lineTo(c.width,y)}g.stroke();
+ const existing=editCanvasExistingBuildings();for(const record of existing){path(record.f);g.fillStyle='#94a3b877';g.fill('evenodd');g.strokeStyle='#cbd5e1';g.stroke()}
+ for(const model of editPlacementModels())if(model.properties.model_id!==state.editId){path(model);g.fillStyle='#3b82f655';g.fill('evenodd');g.strokeStyle='#93c5fd';g.stroke()}g.restore();
+ $('editPolygonLegend').textContent='기존 건물 '+existing.length+'동 · 숨긴 건물 제외 · 표시 격자 '+step+'m';
+ if(points.length){
+  const xy=points.map(editPolygonToXY),signed=xy.reduce((s,p,i)=>{const q=xy[(i+1)%xy.length];return s+p[0]*q[1]-q[0]*p[1]},0),center=xy.reduce((sum,p)=>[sum[0]+p[0]/xy.length,sum[1]+p[1]/xy.length],[0,0]);
+  g.beginPath();xy.forEach((p,i)=>i?g.lineTo(...p):g.moveTo(...p));if(state.closed)g.closePath();g.fillStyle='#22d3ee55';g.strokeStyle=error?'#fda4af':'#67e8f9';g.lineWidth=2*density;if(state.closed)g.fill();g.stroke();
+  g.font=12*density+'px system-ui';g.textAlign='center';g.textBaseline='middle';
+  if($('editPolygonDimensions').checked)for(let i=0;i<(state.closed?xy.length:xy.length-1);i++){
+   const p=xy[i],q=xy[(i+1)%xy.length],dx=q[0]-p[0],dy=q[1]-p[1],length=Math.hypot(dx,dy);if(length<55*density)continue;
+   const sign=signed>0?1:-1,x=Math.max(35*density,Math.min(c.width-35*density,(p[0]+q[0])/2+sign*dy/length*18*density)),y=Math.max(12*density,Math.min(c.height-12*density,(p[1]+q[1])/2-sign*dx/length*18*density)),text=turf.distance(points[i],points[(i+1)%points.length],{units:'meters'}).toFixed(2)+'m',w=g.measureText(text).width+8*density;
+   g.fillStyle='#071527ee';g.fillRect(x-w/2,y-9*density,w,18*density);g.fillStyle='#e0f2fe';g.fillText(text,x,y);
+  }
+  for(let i=0;i<xy.length;i++){const [x,y]=xy[i],d=Math.max(1,Math.hypot(center[0]-x,center[1]-y));g.beginPath();g.arc(x,y,(i===0&&!state.closed?7:5)*density,0,Math.PI*2);g.fillStyle=i===0&&!state.closed?'#67e8f9':'#071527';g.fill();g.strokeStyle='#67e8f9';g.stroke();g.fillStyle='#e2e8f0';g.fillText(String(i+1),x+(center[0]-x)/d*18*density,y+(center[1]-y)/d*18*density)}
+ }
+}
+function editPolygonRenderThree(height){
+ const svg=$('editPolygonThree'),r=$('editPolygonViewport').getBoundingClientRect(),w=Math.max(240,r.width),h=Math.max(150,r.height),points=editPolygonXY(EDIT_POLYGON.points);svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.replaceChildren();
+ const add=(tag,attrs,text)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);if(text)n.textContent=text;svg.appendChild(n);return n};
+ if(!EDIT_POLYGON.closed||points.length<3||editPolygonError()){add('text',{x:w/2,y:h/2,'text-anchor':'middle',fill:'#e2e8f0','font-size':14},'유효한 평면을 먼저 완성하세요.');return}
+ const project=(p,z=0)=>[p[0]*.84-p[1]*.62,p[0]*.35+p[1]*.38-z*.85],samples=[...points.map(p=>project(p)),...points.map(p=>project(p,height))],xs=samples.map(p=>p[0]),ys=samples.map(p=>p[1]),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys),scale=Math.min((w-70)/(maxX-minX||1),(h-60)/(maxY-minY||1)),pos=(p,z=0)=>{const q=project(p,z);return [w/2+(q[0]-(minX+maxX)/2)*scale,h/2+(q[1]-(minY+maxY)/2)*scale]},polygon=(points,fill,stroke)=>add('polygon',{points:points.map(p=>p.join(',')).join(' '),fill,stroke,'stroke-width':1});
+ const faces=points.map((p,i)=>{const q=points[(i+1)%points.length];return {depth:(pos(p)[1]+pos(q)[1])/2,points:[pos(p),pos(q),pos(q,height),pos(p,height)]}}).sort((a,b)=>a.depth-b.depth);
+ for(const face of faces)polygon(face.points,'#285975','#476d83');polygon(points.map(p=>pos(p,height)),'#61a9c3','#a5e7f5');add('text',{x:18,y:24,fill:'#e2e8f0','font-size':14},'높이 '+height+'m · 면적 '+turf.area(editPolygonFeature(EDIT_POLYGON.points)).toFixed(1)+'㎡');
+}
+function editPolygonCommit(){
+ if(!EDIT_POLYGON.closed){const error=editPolygonError(true);if(error){$('editPolygonStatus').textContent=error;return}EDIT_POLYGON.closed=true;editPolygonRender();return}
+ const height=Number($('editPolygonHeight').value),error=editPolygonError();if(error||!Number.isFinite(height)||height<1||height>500){$('editPolygonStatus').textContent=error||'높이는 1~500m로 입력하세요.';return}
+ if(editPlacementScope()!==EDIT_POLYGON.scope){$('editPolygonStatus').textContent='편집 필지가 변경됐습니다. 창을 닫고 다시 선택하세요.';return}
+ const feature=editPolygonFeature(EDIT_POLYGON.points);
+ if(EDIT_POLYGON.editId){
+  const model=editFindModel(EDIT_POLYGON.editId);if(model!==EDIT_POLYGON.original){$('editPolygonStatus').textContent='선택 건물이 변경됐습니다. 다시 열어 주세요.';return}
+  const geometryChanged=JSON.stringify(model.geometry)!==JSON.stringify(feature.geometry);
+  const next={...model,geometry:feature.geometry,properties:{...model.properties,model_height:height,model_rotation:geometryChanged?0:model.properties.model_rotation,model_shape:'polygon'}};delete next.bbox;
+  const history=editPlacementHistoryCapture(),index=EDIT_MODELS.indexOf(model);if(index<0)return;
+  EDIT_MODELS[index]=next;EDIT_CUSTOM=next;EDIT_SELECTED_MODEL_ID=next.properties.model_id;EDIT_RECT=null;editUpdateModel();editModelSummary();workspaceUpdate();editPlacementRecord(history,'다각형 평면 수정');$('editPolygonModal').style.display='none';editOpenPlacement();if(SCREEN_UI)screenPlacementChoose('edit');return;
+ }
+ EDIT_RECT=feature;$('editHeightConfirm').value=height;editCommitModel();
+}
+function setupPolygonEditor(){
+ const canvas=$('editPolygonCanvas');
+ canvas.addEventListener('pointerdown',e=>{
+  if(e.button!==0||EDIT_POLYGON.view!=='plan'||EDIT_POLYGON.pointer!==null)return;e.preventDefault();canvas.focus?.({preventScroll:true});
+  EDIT_POLYGON.pointer=e.pointerId;canvas.setPointerCapture(e.pointerId);
+  const r=canvas.getBoundingClientRect(),pixel=[(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height],radius=22*canvas.width/r.width;
+  if(EDIT_POLYGON.pan){EDIT_POLYGON.drag={id:e.pointerId,type:'pan',start:pixel,x:EDIT_POLYGON.x,y:EDIT_POLYGON.y};canvas.setPointerCapture(e.pointerId);return}
+  let hit=-1,best=radius;EDIT_POLYGON.points.forEach((p,i)=>{const q=editPolygonToXY(p),d=Math.hypot(q[0]-pixel[0],q[1]-pixel[1]);if(d<best){hit=i;best=d}});
+  if(!EDIT_POLYGON.closed){if(hit===0&&EDIT_POLYGON.points.length>=3){editPolygonCommit();return}EDIT_POLYGON.points.push(editPolygonPointer(e));editPolygonRender();return}
+  if(hit>=0){EDIT_POLYGON.drag={id:e.pointerId,type:'point',index:hit,original:EDIT_POLYGON.points[hit].slice()};canvas.setPointerCapture(e.pointerId)}
+ });
+ canvas.addEventListener('pointermove',e=>{const drag=EDIT_POLYGON.drag;if(!drag||drag.id!==e.pointerId)return;if(drag.type==='pan'){const r=canvas.getBoundingClientRect();EDIT_POLYGON.x=drag.x+(e.clientX-r.left)/r.width*canvas.width-drag.start[0];EDIT_POLYGON.y=drag.y+(e.clientY-r.top)/r.height*canvas.height-drag.start[1]}else EDIT_POLYGON.points[drag.index]=editPolygonPointer(e);editPolygonRender()});
+ const end=(e,cancel=false)=>{if(EDIT_POLYGON.pointer===e.pointerId)EDIT_POLYGON.pointer=null;const drag=EDIT_POLYGON.drag;if(!drag||drag.id!==e.pointerId)return;if(cancel&&drag.type==='point')EDIT_POLYGON.points[drag.index]=drag.original;EDIT_POLYGON.drag=null;editPolygonRender()};
+ canvas.addEventListener('pointerup',e=>end(e));canvas.addEventListener('pointercancel',e=>end(e,true));canvas.addEventListener('lostpointercapture',e=>end(e,true));
+ $('editPolygonPan').onclick=()=>{EDIT_POLYGON.pan=!EDIT_POLYGON.pan;editPolygonRender()};
+ $('editPolygonZoomIn').onclick=()=>editPolygonZoom(1.4);$('editPolygonZoomOut').onclick=()=>editPolygonZoom(1/1.4);$('editPolygonFit').onclick=()=>{EDIT_POLYGON.zoom=1;EDIT_POLYGON.x=0;EDIT_POLYGON.y=0;editPolygonRender()};
+ canvas.addEventListener('wheel',e=>{e.preventDefault();const r=canvas.getBoundingClientRect();editPolygonZoom(Math.exp(-Math.max(-200,Math.min(200,e.deltaY))*.003),[(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height])},{passive:false});
+ $('editPolygonNew').onclick=()=>{EDIT_POLYGON.points=[];EDIT_POLYGON.closed=false;EDIT_POLYGON.view='plan';EDIT_POLYGON.pan=false;EDIT_POLYGON.drag=null;EDIT_POLYGON.pointer=null;editPolygonRender()};
+ $('editPolygonUndo').onclick=()=>{EDIT_POLYGON.points.pop();EDIT_POLYGON.closed=false;EDIT_POLYGON.view='plan';editPolygonRender()};
+ $('editPolygonCommit').onclick=editPolygonCommit;
+ $('editPolygonClose').onclick=()=>{EDIT_POLYGON.drag=null;$('editPolygonModal').style.display='none';workspaceCancelPlacement()};
+ for(const [id,view] of [['editPolygonPlanView','plan'],['editPolygonThreeView','three']])$(id).onclick=()=>{EDIT_POLYGON.view=view;editPolygonRender()};
+ for(const id of ['editPolygonHeight','editPolygonSnap','editPolygonDimensions'])$(id).addEventListener('input',editPolygonRender);
+ window.addEventListener('resize',editPolygonResize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(editPolygonResize).observe($('editPolygonViewport'));
 }
 
 function editSizedRectangle(){
@@ -4112,6 +4291,7 @@ function editModelSummary(){
  if(!models.length){el.textContent='생성된 사용자 건물이 없습니다.';return}
  if(!model){el.textContent='사용자 건물 '+models.length+'동 · 목록 또는 지도에서 편집할 동을 선택하세요.';return}
  const dims=editFootprintDimensions(model),h=Number(model.properties.model_height);
+ if(editIsPolygon(model)){el.textContent=editModelLabel(model)+' · 다각형 · 꼭짓점 '+(model.geometry.coordinates[0].length-1)+'개 · 높이 '+h.toFixed(2)+'m · 바닥면적 '+turf.area(model).toFixed(1)+'㎡ · 전체 '+models.length+'동';return}
  el.textContent=editModelLabel(model)+(editIsLShape(model)?' · L자형 · 전체 가로 ':' · 가로 ')+dims[0].toFixed(2)+'m · 세로 '+dims[1].toFixed(2)+'m · 높이 '+h.toFixed(2)+'m · 바닥면적 '+turf.area(model).toFixed(1)+'㎡ · 전체 '+models.length+'동';
 }
 function editNextHeight(){
@@ -4131,6 +4311,7 @@ function editCommitModel(){
  const history=editPlacementHistoryCapture(),created=editRegisterModel(EDIT_RECT,height),createdCenter=turf.centroid(created).geometry.coordinates;
  $('editHeight').value=height;editUpdateModel();editModelSummary();workspaceCommitPlacement();
  editSelectModel(created.properties.model_id,{openEditor:true});$('editDrawModal').style.display='none';$('editHeightModal').style.display='none';$('editSizeModal').style.display='none';EDIT_PICKING=false;editOpenPlacement();
+ $('editPolygonModal').style.display='none';
  if(SCREEN_UI)screenPlacementChoose('edit');
  map.easeTo({center:createdCenter,zoom:Math.max(map.getZoom(),18),pitch:70,duration:650});
  editNotice('새 건물 '+height+'m 생성 완료. 원본 데이터는 보존됩니다.');editPlacementRecord(history,'건물 추가');
@@ -4145,10 +4326,12 @@ function setupBuildingEditor(){
  $('editApplySelected').addEventListener('click',editApplySelected);
  $('editOpenPlacement').onclick=editOpenPlacement;
  $('editOpenDraw').onclick=editOpenDraw;$('editOpenSize').onclick=()=>editOpenSize();$('editOpenL').onclick=()=>editOpenSize('l');
+ $('editOpenPolygon').onclick=()=>editPolygonOpen();
  $('editSizeRectangle').onclick=()=>{$('editSizeShape').value='rectangle';editUpdateSizeShapePreview()};
  $('editSizeLShape').onclick=()=>{$('editSizeShape').value='l';editUpdateSizeShapePreview()};
  for(const id of ['editSizeShape','editWidth','editLength','editLWingX','editLWingY','editLCorner'])$(id).addEventListener('input',editUpdateSizeShapePreview);
  setupPlacementCanvas();
+ setupPolygonEditor();
  $('editCreateSize').onclick=editCreateFromSize;
  $('editCloseDraw').onclick=()=>{$('editDrawModal').style.display='none';EDIT_DRAG_START=null};
  $('editSizeInCanvas').onclick=()=>{$('editDrawModal').style.display='none';EDIT_DRAG_START=null;editOpenSize()};
