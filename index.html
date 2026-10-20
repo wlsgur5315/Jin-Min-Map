@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.20-03</title>
+<title>Jinju3D Local · v2026.10.20-04</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -216,6 +216,10 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 .screen-ui #solarStep10,.screen-ui #solarStep60{display:flex;flex:1 1 0;min-width:0;min-height:34px;padding:0 2px;align-items:center;justify-content:center;text-align:center;line-height:1.2;border-radius:16px;white-space:nowrap}
 .screen-ui #screenViewport .workspace-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .screen-ui #screenViewport .workspace-stack{display:grid;gap:8px}
+.screen-ui #screenSettingsHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid #334155;flex:0 0 auto;flex-wrap:wrap}
+.screen-ui #screenSettingsHeader strong{font-size:14px}.screen-ui #screenSettingsHeader button{width:auto;min-height:44px;font-size:12px}
+.screen-ui #screenSettingsHomeGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.screen-ui #screenSettingsHomeGrid button{min-height:48px;padding:8px;font-size:13px;text-align:left}
 .screen-ui #screenPlacementFooterStatus{flex:1;min-width:0;max-height:42px;overflow:hidden}
 .screen-ui #screenPlacementFooterStatus #editPlacementEditorResult{font-size:11px!important;line-height:1.4!important;margin:0!important}
 .screen-ui .top button,.screen-ui #workspaceRegion>summary{min-height:44px}
@@ -225,7 +229,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 </style>
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-03</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-04</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -686,7 +690,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.20-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.20-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1677,6 +1681,7 @@ function screenPage(key){return SCREEN_UI.pages[key]||(SCREEN_UI.pages[key]=scre
 function screenReadButton(host,label,source){const b=screenButton(label,host,()=>screenReaderOpen(typeof source==='function'?source():$(source),label));b.className='screen-read-button';return b}
 function screenChoose(main,sub){
  if(!SCREEN_UI)return;
+ if(main==='settings'&&SCREEN_UI.main!=='settings')SCREEN_UI.returnRoute={main:SCREEN_UI.main,sub:SCREEN_UI.sub,action:SCREEN_UI.action};
  SCREEN_UI.routing=true;
  if(main==='settings'){activateDrawerTab('settings');SCREEN_UI.main=main;SCREEN_UI.sub=sub;SCREEN_UI.routing=false;screenWorkspaceSync();return}
  activateDrawerTab('law');
@@ -1686,6 +1691,11 @@ function screenChoose(main,sub){
  workspaceAction(action,{start:main==='solar'&&(sub==='analysis'||sub==='result')});
  SCREEN_UI.routing=false;
  screenWorkspaceSync();
+}
+function screenReturnToWorkspace(){
+ if(!SCREEN_UI)return;const route=SCREEN_UI.returnRoute||{main:'info',sub:'basic',action:WORKSPACE_ACTIVE};
+ SCREEN_UI.routing=true;activateDrawerTab('law');SCREEN_UI.main=route.main;SCREEN_UI.sub=route.sub;SCREEN_UI.action=route.action;SCREEN_UI.routing=false;
+ screenWorkspaceSync();setDrawer(true);
 }
 function screenWorkspaceSync(){
  if(!SCREEN_UI||SCREEN_UI.routing)return;
@@ -1697,11 +1707,13 @@ function screenWorkspaceSync(){
  }
  if(state.target!==WORKSPACE_LAST_TARGET){state.target=WORKSPACE_LAST_TARGET;if(state.main!=='settings'){state.main='info';state.sub='basic';state.action=WORKSPACE_ACTIVE}}
  const isSettings=state.main==='settings';$('screenMainNav').hidden=!selected||isSettings;$('screenSubNav').hidden=!selected&&!isSettings;
+ $('screenSettingsHeader').hidden=!isSettings;$('screenSelection').hidden=isSettings;$('workspaceClearSelection').hidden=isSettings||!selected;
  const routes=isSettings?state.settings.map((item,i)=>[String(i),item.label]):state.main==='info'?[['basic','기본 정보'],['law','규모·법규'],['height','높이·일조'],['list','필지 안 건물']]:state.main==='place'?[['launch','배치'],['single','선택 동 관리'],['parcel','필지 전체']]:[['shadow','그림자'],['analysis','표면 분석'],['result','결과 보기'],['detail','상세 설정']];
  $('screenSubNav').style.gridTemplateColumns='repeat('+Math.min(4,routes.length)+',minmax(0,1fr))';
  if(isSettings){
   const picker=state.settingsPicker;picker.hidden=false;$('screenSubNav').replaceChildren(picker);$('screenSubNav').style.gridTemplateColumns='minmax(0,1fr)';
-  if(!state.settings.some((_,i)=>String(i)===state.sub))state.sub='0';picker.value=state.sub;
+  if(state.sub!=='home'&&!state.settings.some((_,i)=>String(i)===state.sub))state.sub='home';
+  $('screenSubNav').hidden=state.sub==='home';$('screenSettingsList').hidden=state.sub==='home';picker.value=state.sub;
  }else{
   $('screenSubNav').replaceChildren();for(const [key,label] of routes){const b=screenButton(label,$('screenSubNav'),()=>screenChoose(state.main,key));b.setAttribute('aria-pressed',String(key===state.sub))}
  }
@@ -1714,7 +1726,7 @@ function screenWorkspaceSync(){
  // Management eligibility continues to come from workspaceUpdate and model selection.
  const model=editSelectedModel();$('workspaceBuildingManagement').hidden=lawMode||!!model;$('workspaceCustomManagement').hidden=lawMode||!model;$('workspaceParcelManagement').hidden=key!=='place-parcel'||!EDIT_PARCEL;
  state.footerTarget=key==='info-law'||key==='info-height'?'printLaw':key==='solar-analysis'?'solarSurfaceRun':key==='solar-result'?'solarSurfaceInspect':null;
- if(key==='info-basic')state.footerLabel='상세 정보';else if(key==='solar-shadow')state.footerLabel='표면 분석';else if(key==='place-launch'||key==='place-single'&&model)state.footerLabel='배치 편집 열기';else state.footerLabel='';
+ if(isSettings)state.footerLabel='지도 작업으로 돌아가기';else if(key==='info-basic')state.footerLabel='상세 정보';else if(key==='solar-shadow')state.footerLabel='표면 분석';else if(key==='place-launch'||key==='place-single'&&model)state.footerLabel='배치 편집 열기';else state.footerLabel='';
  $('screenFooterAction').hidden=!state.footerTarget&&!state.footerLabel;
  screenFooterSync();
  $('solarMainStatus').hidden=state.main!=='solar';
@@ -1788,15 +1800,17 @@ function setupScreenUI(){
  document.body.classList.add('screen-ui');
  const drawerBody=document.querySelector('.drawer-body'),root=screenNode('div','screenWorkspace'),legacy=screenNode('div','screenLegacy');
  for(const node of [...drawerBody.children])legacy.appendChild(node);drawerBody.appendChild(root);drawerBody.appendChild(legacy);
+ const settingsHeader=screenNode('div','screenSettingsHeader',root);screenNode('strong','',settingsHeader,'지도 설정');const list=screenButton('설정 목록',settingsHeader,()=>screenChoose('settings','home'));list.id='screenSettingsList';screenButton('지도 작업으로 돌아가기',settingsHeader,screenReturnToWorkspace).id='screenSettingsBack';
  const selection=screenNode('div','screenSelection',root);screenMove('workspaceSummary',selection);
  const nav=screenNode('nav','screenMainNav',root);nav.setAttribute('aria-label','선택 대상 작업');
  for(const [key,label,sub] of [['info','정보·법규','basic'],['solar','일조·그림자','shadow'],['place','건물 배치','launch']]){const b=screenButton(label,nav,()=>screenChoose(key,sub));b.dataset.screenMain=key}
  screenNode('div','screenSubNav',root);screenNode('div','screenViewport',root);
  const mapMode=screenNode('div','screenMapMode',document.body);screenMove('workspaceModeBar',mapMode);
- const settingsButton=screenButton('지도 설정',document.querySelector('.top'),()=>{activateDrawerTab('settings');screenChoose('settings','0');setDrawer(true)});settingsButton.id='screenSettings';
+ const settingsButton=screenButton('지도 설정',document.querySelector('.top'),()=>{screenChoose('settings','home');setDrawer(true)});settingsButton.id='screenSettings';
  const footer=screenNode('footer','screenFooter',document.body);screenNode('div','screenFooterStatus',footer);screenMove('workspaceStatus',$('screenFooterStatus'));
  const more=screenButton('전체 화면',footer,()=>screenReaderOpen(SCREEN_UI.page==='solar-result'?$('solarSurfaceResult'):SCREEN_UI.pages[SCREEN_UI.page],'선택 대상 작업'));more.id='screenMore';more.hidden=true;
  screenMove('workspaceClearSelection',footer);const action=screenButton('적용',footer,()=>{
+  if(SCREEN_UI.main==='settings'){screenReturnToWorkspace();return}
   if(SCREEN_UI.footerTarget){const target=$(SCREEN_UI.footerTarget);if(target&&!target.disabled)target.click();return}
   if(SCREEN_UI.page==='info-basic')screenReaderOpen(editSelectedModel()?$('editModelDetails'):$('workspaceInfo'),'선택 대상 상세 정보');
   else if(SCREEN_UI.page==='solar-shadow')screenChoose('solar','analysis');else if(['place-launch','place-single'].includes(SCREEN_UI.page)){$('editOpenPlacement').click();if(SCREEN_UI.page==='place-single')screenPlacementChoose('edit')}
@@ -1829,6 +1843,9 @@ function setupScreenUI(){
  const settings=$('tab-settings'),groups=[...settings.children].filter(n=>!n.contains($('workspaceLabs'))&&!n.contains($('workspaceSolarAdvanced')));
  groups.push($('workspaceLabs'),$('workspaceSolarAdvanced'));
  for(const node of groups){const label=node.querySelector('h3,summary')?.textContent||node.querySelector('button')?.textContent||'기타 설정';const key='settings-'+SCREEN_UI.settings.length;screenMove(node,screenPage(key));SCREEN_UI.settings.push({label,node});if(node.tagName==='DETAILS'){node.open=true;node.classList.add('screen-flat')}}
+ const regionPage=screenPage('settings-'+SCREEN_UI.settings.length);screenNode('h3','',regionPage,'지역 이동');screenReadButton(regionPage,'읍·면·동 선택 및 진주시 전체 보기',()=>$('district').closest('.drawer-sec'));SCREEN_UI.settings.push({label:'지역 이동',node:regionPage});
+ const home=screenPage('settings-home'),homeGrid=screenNode('div','screenSettingsHomeGrid',home);
+ SCREEN_UI.settings.forEach((item,i)=>{const b=screenButton(item.label,homeGrid,()=>screenChoose('settings',String(i)));b.dataset.settingsItem=String(i);if(!item.node.querySelector('h3'))screenNode('h3','',item.node,item.label)});
  SCREEN_UI.settingsPicker=document.createElement('select');SCREEN_UI.settingsPicker.setAttribute('aria-label','지도 설정 항목');
  SCREEN_UI.settings.forEach((item,i)=>{const o=screenNode('option','',SCREEN_UI.settingsPicker,item.label);o.value=String(i)});SCREEN_UI.settingsPicker.onchange=e=>screenChoose('settings',e.target.value);
  const overlay=screenNode('div','screenReader',document.body);overlay.style.display='none';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','screenReaderTitle');
@@ -4456,11 +4473,12 @@ async function enterLawWorkspace(){
   message('필지 선택 모드 ON · 지도를 이동해 다른 동으로 넘어가도 자동 전환됩니다');
 }
 function activateDrawerTab(tab){
+  const previousTab=DRAWER_TAB;
   DRAWER_TAB=tab;
   document.querySelectorAll('.drawer-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id==='tab-'+tab));
   if(tab==='law'&&lawMode)$('lawModeState').textContent='현재 필지 선택 · 지도를 이동해도 자동 전환';
-  if(SCREEN_UI){if(tab==='settings'){SCREEN_UI.main='settings';SCREEN_UI.sub='0'}else if(SCREEN_UI.main==='settings'){SCREEN_UI.main='info';SCREEN_UI.sub='basic'}screenWorkspaceSync()}
+  if(SCREEN_UI){if(tab==='settings'){if(previousTab!=='settings'){if(SCREEN_UI.main!=='settings')SCREEN_UI.returnRoute={main:SCREEN_UI.main,sub:SCREEN_UI.sub,action:SCREEN_UI.action};SCREEN_UI.sub='home'}SCREEN_UI.main='settings'}else if(SCREEN_UI.main==='settings'){SCREEN_UI.main='info';SCREEN_UI.sub='basic'}screenWorkspaceSync()}
 }
 function planningEvidence(){
  const local=!!(CURRENT_PLANNING?.features?.length&&CURRENT_PLANNING_ID===selectedId);
