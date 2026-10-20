@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.20-08</title>
+<title>Jinju3D Local · v2026.10.20-09</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -293,9 +293,19 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 #screenRegionPopover .row button{width:100%;min-height:44px;padding:8px 6px;font-size:13px;display:flex;align-items:center;justify-content:center;line-height:1.3;margin:0}
 </style>
 
+<style id="selectionModeSwitchStyles">
+#workspaceModeButtons{width:224px;max-width:100%;gap:0!important}
+#workspaceModeButtons #workspaceModeLegacy{display:none!important}
+#workspaceModeButtons #workspaceModeToggle{display:flex;align-items:stretch;justify-content:center;gap:2px;width:100%;min-width:0;min-height:44px;margin:0;padding:3px;border:1px solid #64748b;border-radius:22px;background:#111d31;font-size:13px;line-height:1.2}
+#workspaceModeToggle span{display:flex;flex:1 1 0;align-items:center;justify-content:center;min-width:0;min-height:36px;padding:0 6px;border-radius:18px;white-space:nowrap;text-align:center}
+#workspaceModeToggle span[data-active=true]{background:#475569;color:#fff;font-weight:700}
+#workspaceModeToggle span[data-active=false]{background:transparent;color:#cbd5e1;font-weight:400}
+.screen-ui #screenSelection>#workspaceModeBar{margin:0 0 8px;width:224px;max-width:100%}
+</style>
+
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-08</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-09</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -777,7 +787,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.20-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.20-09',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1654,9 +1664,26 @@ function editClearModelSelection(){
 }
 
 // Workspace composition reuses the original form nodes, including playback controls.
+function workspaceModeSwitchSync(){
+ const toggle=$('workspaceModeToggle');if(!toggle)return;
+ toggle.setAttribute('aria-checked',String(lawMode));toggle.setAttribute('aria-label','건물·필지 선택 전환 · 현재 '+(lawMode?'필지 선택':'건물 선택'));
+ $('workspaceModeBuilding').dataset.active=String(!lawMode);$('workspaceModeParcel').dataset.active=String(lawMode);
+}
+function screenModeSwitchLayout(){
+ const bar=$('workspaceModeBar'),host=window.innerWidth<=740?$('screenSelection'):$('screenMapMode');if(!bar||!host)return;
+ if(bar.parentElement!==host){if(window.innerWidth<=740)host.prepend(bar);else host.appendChild(bar)}
+}
+function setupWorkspaceModeSwitch(){
+ const host=$('workspaceModeButtons'),legacy=document.createElement('div');legacy.id='workspaceModeLegacy';legacy.hidden=true;legacy.append($('buildingMode'),$('lawMode'));host.appendChild(legacy);
+ const toggle=document.createElement('button');toggle.id='workspaceModeToggle';toggle.type='button';toggle.setAttribute('role','switch');
+ for(const [id,text]of [['workspaceModeBuilding','건물 선택'],['workspaceModeParcel','필지 선택']]){const span=document.createElement('span');span.id=id;span.textContent=text;toggle.appendChild(span)}
+ toggle.onclick=()=>$(lawMode?'buildingMode':'lawMode').click();host.appendChild(toggle);workspaceModeSwitchSync();
+}
+
 function workspaceStatus(text){if($('workspaceStatus'))$('workspaceStatus').textContent=text;message(text)}
 function workspaceUpdate(){
  if(!WORKSPACE_READY)return;
+ workspaceModeSwitchSync();
  const record=buildingSelected(),model=editSelectedModel(),parcelMode=lawMode,parcel=parcelMode?SELECTED_PARCEL:EDIT_PARCEL;
  if(WORKSPACE_BUILD_JOB&&WORKSPACE_BUILD_JOB.key!==record?.key)WORKSPACE_BUILD_JOB=null;
  WORKSPACE_LAST_MODE=parcelMode;
@@ -1742,7 +1769,7 @@ function setupWorkspaceUI(){
  const shell=$('workspaceShell');if(!shell||WORKSPACE_READY)return;
  const move=(node,host)=>{if(node&&host)host.appendChild(node)};
  const legacy=$('workspaceLegacySelection'),selectedPanel=$('selectedBuildingPanel');
- move($('buildingMode'),$('workspaceModeButtons'));move($('lawMode'),$('workspaceModeButtons'));
+ setupWorkspaceModeSwitch();
  move($('buildingModeState'),shell);move($('lawModeState'),shell);
  const views=document.createElement('div');views.id='workspaceMapView';move($('view2d'),views);move($('view3d'),views);move(views,document.querySelector('.top'));
  move($('buildingInParcel'),$('workspaceBuildingList'));legacy.remove();
@@ -1929,7 +1956,7 @@ function setupScreenUI(){
  const nav=screenNode('nav','screenMainNav',root);nav.setAttribute('aria-label','선택 대상 작업');
  for(const [key,label,sub] of [['info','정보·법규','basic'],['solar','일조·그림자','shadow'],['place','건물 배치','launch']]){const b=screenButton(label,nav,()=>screenChoose(key,sub));b.dataset.screenMain=key}
  screenNode('div','screenSubNav',root);screenNode('div','screenViewport',root);
- const mapMode=screenNode('div','screenMapMode',document.body);screenMove('workspaceModeBar',mapMode);
+ const mapMode=screenNode('div','screenMapMode',document.body);screenMove('workspaceModeBar',mapMode);screenModeSwitchLayout();
  const settingsButton=screenButton('지도 설정',document.querySelector('.top'),()=>{screenChoose('settings','home');setDrawer(true)});settingsButton.id='screenSettings';
  const footer=screenNode('footer','screenFooter',document.body);screenNode('div','screenFooterStatus',footer);screenMove('workspaceStatus',$('screenFooterStatus'));
  const more=screenButton('전체 화면',footer,()=>screenReaderOpen(SCREEN_UI.page==='solar-result'?$('solarSurfaceResult'):SCREEN_UI.pages[SCREEN_UI.page],'선택 대상 작업'));more.id='screenMore';more.hidden=true;
@@ -1982,7 +2009,7 @@ function setupScreenUI(){
  if(typeof MutationObserver!=='undefined'){
   const observer=new MutationObserver(update);for(const id of ['solarSurfaceRun','solarExposureRun','editPlacementApply','editApplySelected','lawResult','solarSurfaceResult','solarExposureResult'])observer.observe($(id),{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['disabled']});SCREEN_UI.observer=observer;
  }
- window.addEventListener('resize',()=>{screenReaderLayout();screenFit();map.resize?.()});
+ window.addEventListener('resize',()=>{screenModeSwitchLayout();screenReaderLayout();screenFit();map.resize?.()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&SCREEN_UI.reader){e.preventDefault();screenReaderClose()}});
  setDrawer(true);screenWorkspaceSync();map.resize?.();
 }
