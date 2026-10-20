@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.20-06</title>
+<title>Jinju3D Local · v2026.10.20-07</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -274,7 +274,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-06</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-07</span></h1>
   <div class="address-search">
     <input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기">×</button>
@@ -756,7 +756,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.20-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.20-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -2731,7 +2731,36 @@ function solarThreeSyncSources(){
  if(osm)map.getSource('smart-osm')?.setData(editedBuildingCollection({type:'FeatureCollection',features:[...(osm.kept||[]),...(osm.facilities||[])]}));
  map.getSource('edit-custom-model')?.setData(editCustomCollection({excludeReplaced:true}));
 }
+// Map tiles do not receive Three.js light. Apply dusk to the shared scene canvas,
+// so terrain, imagery and buildings follow the same sun without changing materials.
+let SOLAR_SCENE_APPEARANCE=null;
+function solarSceneTwilight(alt,enabled){
+ if(!enabled||!Number.isFinite(alt))return {night:0,brightness:1,saturation:1};
+ const t=Math.max(0,Math.min(1,(8-alt)/12)),night=t*t*(3-2*t);
+ return {night,brightness:1-.70*night,saturation:1-.22*night};
+}
+function solarSceneAppearanceRestore(){
+ const saved=SOLAR_SCENE_APPEARANCE;if(!saved)return;
+ // Do not overwrite a filter replaced independently while the scene was active.
+ if(saved.canvas.style?.getPropertyValue('filter')===saved.applied){
+  if(saved.filter)saved.canvas.style.setProperty('filter',saved.filter,saved.priority);
+  else saved.canvas.style.removeProperty('filter');
+ }
+ SOLAR_SCENE_APPEARANCE=null;
+}
+function solarUpdateSceneAppearance(a,enabled){
+ const canvas=map?.getCanvas?.(),tone=solarSceneTwilight(a?.alt,enabled);
+ if(!canvas?.style?.setProperty)return;
+ if(SOLAR_SCENE_APPEARANCE?.canvas!==canvas)solarSceneAppearanceRestore();
+ if(!tone.night){solarSceneAppearanceRestore();return}
+ if(!SOLAR_SCENE_APPEARANCE)SOLAR_SCENE_APPEARANCE={canvas,filter:canvas.style.getPropertyValue('filter'),priority:canvas.style.getPropertyPriority('filter'),applied:''};
+ const saved=SOLAR_SCENE_APPEARANCE,base=saved.filter&&saved.filter!=='none'?saved.filter+' ':'';
+ const filter=base+'brightness('+Number(tone.brightness.toFixed(4))+') saturate('+Number(tone.saturation.toFixed(4))+')';
+ if(saved.applied!==filter||canvas.style.getPropertyValue('filter')!==filter){canvas.style.setProperty('filter',filter,saved.priority);saved.applied=canvas.style.getPropertyValue('filter')}
+}
+
 function solarShadowButtonSync(){
+ solarUpdateSceneAppearance(solarAngles(),SOLAR_SHADOW_ON);
  const b=$('solarShadowToggle');if(!b)return;
  b.textContent=SOLAR_SHADOW_ON?'그림자 보기 끄기':'그림자 보기 켜기';
  b.setAttribute('aria-pressed',String(SOLAR_SHADOW_ON));
@@ -3648,6 +3677,7 @@ function refreshSolarPreview(){
  $('solarManualAltLabel').textContent=$('solarManualAlt').value+'°';
  $('solarManualAzLabel').textContent=$('solarManualAz').value+'°';
  const a=solarAngles(),daylight=a.alt>0;
+ solarUpdateSceneAppearance(a,SOLAR_SHADOW_ON);
  if(SOLAR_THREE_MAP)map.triggerRepaint();
  let dayInfo='';
  if(mode==='season'){
