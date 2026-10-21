@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.21-03</title>
+<title>Jinju3D Local · v2026.10.21-04</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -305,7 +305,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.21-03</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.21-04</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -788,7 +788,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.21-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.21-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -3428,14 +3428,43 @@ function solarSurfaceRaster(data,face,width=640,height=400,options={}){
 }
 
 // Reports consume an immutable calculation snapshot; no scene, camera or view changes.
+// Resolve the receiver's address, independently of the selected shadow/removal subject.
+function solarSurfaceReportAddress(data){
+ const f=data.entry.f,p=f.properties||{},clean=v=>typeof v==='string'&&!/^(?:-|미확인|없음|null|undefined)$/i.test(v.trim())?v.trim():'';
+ const parts=props=>{try{return typeof parcelAddressParts==='function'?parcelAddressParts(props):null}catch(e){return null}};
+ const full=props=>{
+  const direct=clean(props.road_address)||clean(props.address);if(direct)return direct;
+  const ap=parts(props),legal=clean(props.legal_name)||clean(ap?.legal),lot=clean(ap?.lot);
+  return legal&&lot?legal+' '+lot:'';
+ };
+ const direct=full(p);
+ if(direct)return {address:direct,addressSource:clean(p.road_address)?'분석 건물 도로명주소':clean(p.address)?'분석 건물 주소 속성':'분석 건물 법정동·지번 / PNU',addressNote:''};
+ const candidates=[],seen=new Set();
+ const add=parcel=>{
+  if(!parcel?.geometry||seen.has(parcel))return;seen.add(parcel);
+  try{const overlap=turf.area(turf.intersect(turf.featureCollection([f,parcel])));if(overlap>Math.max(.1,turf.area(f)*.005))candidates.push({f:parcel,overlap,address:full(parcel.properties||{})})}catch(e){}
+ };
+ if(typeof currentParcels!=='undefined'&&currentParcels?.features){
+  try{const ids=typeof currentParcelGrid!=='undefined'&&currentParcelGrid?candidatesFor(f,currentParcelGrid):currentParcels.features.map((_,i)=>i);for(const i of ids)add(currentParcels.features[i])}catch(e){}
+ }
+ if(data.entry.custom&&typeof editModelParcel==='function')add(editModelParcel(f));
+ if(typeof SELECTED_PARCEL!=='undefined')add(SELECTED_PARCEL);
+ if(typeof EDIT_PARCEL!=='undefined')add(EDIT_PARCEL);
+ candidates.sort((a,b)=>Math.abs(b.overlap-a.overlap)>.01?b.overlap-a.overlap:Number(!!b.address)-Number(!!a.address));
+ // Do not substitute a minor overlapping lot merely because its address is present.
+ const best=candidates[0],names=[...new Set(candidates.map(c=>c.address).filter(Boolean))];
+ if(best?.address)return {address:best.address,addressSource:'분석 건물과 최대 면적으로 중첩하는 필지 주소',addressNote:names.length>1?'복수 필지 중첩 · 대표 주소 표시 · '+names.slice(1,3).join(' / ')+(names.length>3?' 외 '+(names.length-3)+'개 주소':''):''};
+ const ap=parts(p);
+ return {address:'주소 미확인',addressSource:'건물 주소 및 연결 필지 확인 불가',addressNote:ap?.lot&&ap.lot!=='-'?'지번 '+ap.lot+' · 법정동 정보 미확인':'분석 위치는 좌표로 표시합니다.'};
+}
 function solarSurfaceReportMetadata(state,data){
  const p=data.entry.f.properties||{},f=data.entry.f;
- let footprint=null,location='좌표 미확인',address=String(p.address||p.road_address||'');
+ let footprint=null,location='좌표 미확인';
+ const addressInfo=solarSurfaceReportAddress(data);
  try{footprint=turf.area(f);const c=turf.centroid(f).geometry.coordinates;location=c[1].toFixed(6)+'°N, '+c[0].toFixed(6)+'°E'}catch(e){}
- if(!address&&typeof parcelAddressParts==='function'){try{const a=parcelAddressParts(f).address;if(a&&a!=='-')address=a}catch(e){}}
  const changed=[...new Set((data.changing||[]).map(m=>m.userData.solarFeature).filter(Boolean))];
  const label=f=>{const p=f?.properties||{};return String(p.building_name||p.model_name||p.name||p.register_dong||'이름 미지정 건물')};
- return {name:typeof solarPickName==='function'?solarPickName(data.entry):label(f),address:address||'주소 미확인',location,footprint,height:data.entry.h,floors:p.floors_above||null,custom:!!data.entry.custom,version:typeof APP_VERSION==='string'?APP_VERSION:'',calculated:new Date().toISOString(),changed:changed.map(label),buildings:new Set(state.shadowMeshes.map(m=>m.userData.solarFeature).filter(Boolean)).size,source:data.entry.custom?'사용자 작성 형상·입력 높이':'지도에 표시된 GIS / OSM 건물 형상·높이',year:2026};
+ return {name:typeof solarPickName==='function'?solarPickName(data.entry):label(f),...addressInfo,location,footprint,height:data.entry.h,floors:p.floors_above||null,custom:!!data.entry.custom,version:typeof APP_VERSION==='string'?APP_VERSION:'',calculated:new Date().toISOString(),changed:changed.map(label),buildings:new Set(state.shadowMeshes.map(m=>m.userData.solarFeature).filter(Boolean)).size,source:data.entry.custom?'사용자 작성 형상·입력 높이':'지도에 표시된 GIS / OSM 건물 형상·높이',year:2026};
 }
 function solarSurfaceReportStats(cells,field){
  let area=0,knownArea=0,total=0,min=Infinity,max=-Infinity,zero=0;
@@ -3455,7 +3484,7 @@ async function solarSurfacePrintReport(){
  if(!w){message('보고서 창을 열 수 없습니다. 브라우저의 팝업 허용 설정을 확인하세요.');return}
  w.document.write('<!doctype html><html lang="ko"><meta charset="utf-8"><title>일조 보고서 준비</title><body style="font-family:sans-serif;padding:32px">분석 결과와 표면 이미지를 보고서로 정리하고 있습니다…</body></html>');w.document.close();
  try{
-  const T=state.THREE,snapshot={...data,entry:null,changing:null,vertexWeights:null,cells:data.cells.map(c=>({...c,p:c.p.clone(),n:c.n.clone(),vertices:c.vertices.map(v=>v.clone())})),reportMeta:{...(data.reportMeta||solarSurfaceReportMetadata(state,data))}};
+  const T=state.THREE,snapshot={...data,entry:null,changing:null,vertexWeights:null,cells:data.cells.map(c=>({...c,p:c.p.clone(),n:c.n.clone(),vertices:c.vertices.map(v=>v.clone())})),reportMeta:{...(data.reportMeta||solarSurfaceReportMetadata(state,data)),...solarSurfaceReportAddress(data)}};
   const views=snapshot.compare?['before','after']:['after'],images={},faces=['roof','north','east','south','west'];
   const stats=Object.fromEntries(faces.map(face=>[face,{before:solarSurfaceReportStats(snapshot.cells.filter(c=>c.group===face),'before'),after:solarSurfaceReportStats(snapshot.cells.filter(c=>c.group===face),'after'),delta:solarSurfaceReportDelta(snapshot.cells.filter(c=>c.group===face),snapshot.scenario)}]));
   const detailed=['roof',...['south','east','north','west'].filter(f=>stats[f].after.area>0).sort((a,b)=>stats[b].after.area-stats[a].after.area).slice(0,2)].filter(f=>stats[f].after.area>0);
@@ -3503,7 +3532,7 @@ function solarSurfaceReportHTML(data,stats,detailed,images,gradient){
  <section class="report-page">${header('지붕·외벽 상세',2)}<h2>표면별 분석 결과</h2><p class="caption">면적 가중 평균 · 최솟값과 최댓값은 분석 구역의 표본값입니다.</p><table><thead><tr><th>표면</th><th>면적 m²</th>${compare?`<th>${before}</th><th>${after}</th><th>변화</th>`:'<th>평균</th><th>최소</th><th>최대</th>'}</tr></thead><tbody>${tableRows}<tr><th>전체</th><td>${n(total.area)}</td>${compare?`<td>${mean(base)}</td><td>${mean(total)}</td><td>${delta.complete?signed(delta.mean):'미확정'}</td>`:`<td>${mean(total)}</td><td>${total.complete?hours(total.min):'미확정'}</td><td>${total.complete?hours(total.max):'미확정'}</td>`}</tr></tbody></table>
  <h2>주요 면 펼쳐보기</h2><p class="caption">지붕과 면적이 큰 외벽 최대 2면 · 실제 비율 및 중정·빈 공간 유지</p>${detailed.map(face=>`<div class="face-row"><h3>${solarSurfaceFaceLabel(face)}<small>${n(stats[face].after.area)} m²</small></h3><div class="visuals">${views.map(view=>`<div class="visual"><b>${view==='before'?before:after} · ${mean(stats[face][view])}</b>${image(view,face)}</div>`).join('')}</div></div>`).join('')}${legend}<p class="caption">${compare?'변화 = '+after+' − '+before+' · 양수는 증가, 음수는 감소. ':''}회색 및 ‘미확정’은 지형 정보가 부족한 구역입니다. 면적이 없는 면은 —로 표시합니다.</p></section>
  <section class="report-page">${header('검토·계산 조건',3)}<h2>분석 요약</h2><div class="summary"><p>${compare?`${before} 평균 ${mean(base)}, ${after} 평균 ${mean(total)}입니다. 동일 표면의 평균 변화는 ${delta.complete?signed(delta.mean):'미확정'}입니다.`:`현재 배치에서 전체 표면의 평균 직접 일조시간은 ${mean(total)}입니다.`}</p><p>${available.length?`확인된 면 중 평균 일조시간이 가장 긴 면은 ${best}(${hours(available[0][1].after.mean)})입니다.`:'면별 평균 일조시간을 확정할 수 없어 추가 데이터 확인이 필요합니다.'}</p><p>${esc(noteUnknown)}</p></div>
- <h2>계산 및 데이터 조건</h2><table class="conditions small-table"><tbody><tr><th>형상·높이</th><td>${esc(m.source)} · 분석에 포함된 표시 건물 ${m.buildings}동</td></tr><tr><th>표본·시간</th><td>약 ${n(data.spacing)} m 간격 · ${data.cells.length}개 삼각 표면 구역<br>${esc(date)} 06:00–19:00 KST · ${data.step}분 구간 중간 시각 근사</td></tr><tr><th>차폐 범위</th><td>선택 필지 주변 약 200 m 내 표시된 건물 · ${data.terrain?'DEM 지형 차폐 포함':'산·언덕의 지형 차폐 제외'} · 유리 투과·반사광 미반영</td></tr>${compare?`<tr><th>비교 변경</th><td>${esc(changeDescription)} (${m.changed.length}동) · ${esc(m.changed.slice(0,3).join(', '))}${m.changed.length>3?' 외 '+(m.changed.length-3)+'동':''}<br>분석 대상 표면·기타 건물·기존 숨김 설정은 동일</td></tr>`:''}<tr><th>미확정 처리</th><td>${n(total.unknownArea)} m² (${after})${compare?' · '+n(base.unknownArea)+' m² ('+before+')':''}<br>미확정 구역은 0시간으로 처리하지 않으며 해당 면·전체 평균을 확정하지 않습니다. 변화는 양쪽 값이 확인된 동일 구역만 사용합니다.</td></tr><tr><th>색상·계산값</th><td>0–13 h 동일 척도 · 인접 표본 색상만 보간 · 표·통계는 보간하지 않은 표본과 면적을 사용</td></tr><tr><th>기록</th><td>계산 ${esc(timestamp(m.calculated))} KST<br>보고서 ${esc(issued)} KST · ${esc(m.version)}</td></tr></tbody></table>
+ <h2>계산 및 데이터 조건</h2><table class="conditions small-table"><tbody><tr><th>대상 주소</th><td>${esc(m.address)}<br>${esc(m.addressSource||'주소 근거 미확인')}${m.addressNote?'<br>'+esc(m.addressNote):''}</td></tr><tr><th>형상·높이</th><td>${esc(m.source)} · 분석에 포함된 표시 건물 ${m.buildings}동</td></tr><tr><th>표본·시간</th><td>약 ${n(data.spacing)} m 간격 · ${data.cells.length}개 삼각 표면 구역<br>${esc(date)} 06:00–19:00 KST · ${data.step}분 구간 중간 시각 근사</td></tr><tr><th>차폐 범위</th><td>선택 필지 주변 약 200 m 내 표시된 건물 · ${data.terrain?'DEM 지형 차폐 포함':'산·언덕의 지형 차폐 제외'} · 유리 투과·반사광 미반영</td></tr>${compare?`<tr><th>비교 변경</th><td>${esc(changeDescription)} (${m.changed.length}동) · ${esc(m.changed.slice(0,3).join(', '))}${m.changed.length>3?' 외 '+(m.changed.length-3)+'동':''}<br>분석 대상 표면·기타 건물·기존 숨김 설정은 동일</td></tr>`:''}<tr><th>미확정 처리</th><td>${n(total.unknownArea)} m² (${after})${compare?' · '+n(base.unknownArea)+' m² ('+before+')':''}<br>미확정 구역은 0시간으로 처리하지 않으며 해당 면·전체 평균을 확정하지 않습니다. 변화는 양쪽 값이 확인된 동일 구역만 사용합니다.</td></tr><tr><th>색상·계산값</th><td>0–13 h 동일 척도 · 인접 표본 색상만 보간 · 표·통계는 보간하지 않은 표본과 면적을 사용</td></tr><tr><th>기록</th><td>계산 ${esc(timestamp(m.calculated))} KST<br>보고서 ${esc(issued)} KST · ${esc(m.version)}</td></tr></tbody></table>
  <h2>설계 검토 메모</h2><textarea class="notes" maxlength="200" aria-label="설계 검토 메모" placeholder="배치·높이 조정 방향과 추가 검토 사항을 입력하세요. (최대 200자)"></textarea><div class="signatures"><label>작성 <input maxlength="20" aria-label="작성자"></label><label>검토 <input maxlength="20" aria-label="검토자"></label></div><p class="warning">이 결과는 건물 외표면의 직접 일조시간을 추정한 설계 사전검토 자료입니다. 창문·실내의 일조시간, 법적 일조 충족 여부 또는 일사 에너지(kWh/m²)를 의미하지 않습니다. 건물 데이터의 누락·높이 오차, 지형 해상도와 시간·공간 표본 간격에 따라 결과가 달라질 수 있습니다.</p></section></main></body></html>`;
 }
 document.getElementById('solarSurfacePrint')?.addEventListener('click',solarSurfacePrintReport);
