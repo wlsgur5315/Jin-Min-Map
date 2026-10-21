@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.20-09</title>
+<title>Jinju3D Local · v2026.10.21-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -305,7 +305,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.20-09</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.21-01</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -787,7 +787,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.20-09',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.21-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -2809,7 +2809,7 @@ function solarSceneAppearanceRestore(){
  SOLAR_SCENE_APPEARANCE=null;
 }
 function solarUpdateSceneAppearance(a,enabled){
- const canvas=map?.getCanvas?.(),tone=solarSceneTwilight(a?.alt,enabled);
+ const canvas=map?.getCanvas?.(),tone=solarSceneTwilight(a?.alt,enabled&&!SOLAR_THREE_MAP?.surfaceMesh?.visible);
  if(!canvas?.style?.setProperty)return;
  if(SOLAR_SCENE_APPEARANCE?.canvas!==canvas)solarSceneAppearanceRestore();
  if(!tone.night){solarSceneAppearanceRestore();return}
@@ -3116,7 +3116,7 @@ function solarSurfaceRemove(state=SOLAR_THREE_MAP){
  if(!state)return;
  solarSurfaceScenario(state,false,true);
  if(state.surfaceMesh){state.scene.remove(state.surfaceMesh);state.surfaceMesh.geometry.dispose();state.surfaceMesh.material.dispose();state.surfaceMesh=null}
- state.surfaceResult=null;state.surfaceRaster=null;solarSurfaceSyncControls();
+ state.surfaceResult=null;state.surfaceRaster=null;solarSurfaceSyncControls();solarUpdateSceneAppearance(solarAngles(),SOLAR_SHADOW_ON);
  const legend=$('solarSurfaceLegend');if(legend)legend.style.display='none';
  const toggle=$('solarSurfaceToggle');if(toggle){toggle.disabled=true;toggle.textContent='표면 색상 숨기기';toggle.setAttribute('aria-pressed','false')}
  map?.triggerRepaint();
@@ -3228,12 +3228,12 @@ function solarSurfaceShow(){
  }
  const geometry=state.surfaceMesh.geometry,index=geometry.getIndex();let count=0;
  data.cells.forEach((cell,i)=>{if(face==='all'||cell.group===face)for(let j=0;j<3;j++)index.array[count++]=i*3+j});
- index.needsUpdate=true;geometry.setDrawRange(0,count);state.surfaceMesh.visible=true;
+ index.needsUpdate=true;geometry.setDrawRange(0,count);state.surfaceMesh.visible=true;solarUpdateSceneAppearance(solarAngles(),SOLAR_SHADOW_ON);
  $('solarSurfaceToggle').disabled=false;$('solarSurfaceInspect').disabled=false;
  $('solarSurfaceToggle').textContent='표면 색상 숨기기';$('solarSurfaceToggle').setAttribute('aria-pressed','true');
  const removal=data.scenario==='removal';
  const title=removal?(mode==='loss'?'선택 건물 제거로 늘어난 일조시간':mode==='before'?'선택 건물 제거 전 일조시간':'선택 건물 제거 후 일조시간'):mode==='loss'?'가상건물로 인한 일조 감소':mode==='before'?'사용자 건물 전체 배치 전 일조시간':data.compare?'사용자 건물 전체 배치 후 일조시간':'현재 건물 표면 일조시간';
- const gradient=mode==='loss'&&removal?'#e2e8f0 0%,#c8e6d5 12.5%,#8dceb0 25%,#4aa78e 50%,#20756c 100%':mode==='loss'?'#e2e8f0 0%,#f1dfb3 12.5%,#edbd79 25%,#e29560 50%,#b8584c 100%':'#3b6485 0%,#63a7b5 15.38%,#a9cfbd 30.77%,#eadca6 46.15%,#e9ab6a 61.54%,#ca714a 100%';
+ const gradient=mode==='loss'&&removal?'#e2e8f0 0%,#c8e6d5 12.5%,#8dceb0 25%,#4aa78e 50%,#20756c 100%':mode==='loss'?'#e2e8f0 0%,#f1dfb3 12.5%,#edbd79 25%,#e29560 50%,#b8584c 100%':solarSurfacePaletteGradient(T);
  const ticks=mode==='loss'?[0,1,2,3,4]:[0,2,4,6,8,13],max=mode==='loss'?4:13;
  const legend=$('solarSurfaceLegend');legend.style.display='block';
  legend.innerHTML='<b>'+solarSurfaceFaceLabel(face)+' · '+title+'</b><div style="height:10px;border-radius:5px;margin:8px 0 4px;background:linear-gradient(90deg,'+gradient+')"></div><div style="position:relative;height:13px;font-size:9px">'+ticks.map((t,i)=>'<span style="position:absolute;'+(i===ticks.length-1?'right:0':i===0?'left:0':'left:'+(t/max*100)+'%;transform:translateX(-50%)')+'">'+t+(mode==='loss'&&t===max?'+':'')+'h</span>').join('')+'</div><div style="font-size:9px;margin-top:5px">'+data.date[0]+'/'+data.date[1]+' · 06~19시 · '+data.step+'분 간격'+(data.terrain?' · 회색: DEM 미확정':' · 건물 차폐 기준')+'</div>';
@@ -3320,12 +3320,16 @@ document.getElementById('solarSurfaceView')?.addEventListener('change',solarSurf
 document.getElementById('solarSurfaceFocus')?.addEventListener('click',solarSurfaceFocusFace);
 document.getElementById('solarSurfaceToggle')?.addEventListener('click',()=>{
  const state=SOLAR_THREE_MAP;if(!state?.surfaceMesh)return;
- if(state.surfaceMesh.visible){state.surfaceMesh.visible=false;solarSurfaceScenario(state,false,true);$('solarSurfaceLegend').style.display='none';$('solarSurfaceToggle').textContent='표면 색상 다시 보기';$('solarSurfaceToggle').setAttribute('aria-pressed','false');map.triggerRepaint()}
+ if(state.surfaceMesh.visible){state.surfaceMesh.visible=false;solarUpdateSceneAppearance(solarAngles(),SOLAR_SHADOW_ON);solarSurfaceScenario(state,false,true);$('solarSurfaceLegend').style.display='none';$('solarSurfaceToggle').textContent='표면 색상 다시 보기';$('solarSurfaceToggle').setAttribute('aria-pressed','false');map.triggerRepaint()}
  else solarSurfaceShow();
 });
 
+function solarSurfacePaletteGradient(T){
+ // Sample the same linear-light palette used by Three.js, then encode the legend in sRGB.
+ return Array.from({length:65},(_,i)=>solarSurfacePalette(T,13*i/64).getStyle()+' '+(100*i/64)+'%').join(',');
+}
 function solarSurfacePalette(T,hours,difference=false){
- const stops=difference==='gain'?[[0,'#e2e8f0'],[.5,'#c8e6d5'],[1,'#8dceb0'],[2,'#4aa78e'],[4,'#20756c']]:difference?[[0,'#e2e8f0'],[.5,'#f1dfb3'],[1,'#edbd79'],[2,'#e29560'],[4,'#b8584c']]:[[0,'#3b6485'],[2,'#63a7b5'],[4,'#a9cfbd'],[6,'#eadca6'],[8,'#e9ab6a'],[13,'#ca714a']];
+ const stops=difference==='gain'?[[0,'#e2e8f0'],[.5,'#c8e6d5'],[1,'#8dceb0'],[2,'#4aa78e'],[4,'#20756c']]:difference?[[0,'#e2e8f0'],[.5,'#f1dfb3'],[1,'#edbd79'],[2,'#e29560'],[4,'#b8584c']]:[[0.0,'#0d0887'],[1.625,'#4c02a1'],[3.25,'#7e03a8'],[4.875,'#aa2395'],[6.5,'#cc4778'],[8.125,'#e66c5c'],[9.75,'#f89540'],[11.375,'#fdc527'],[13.0,'#f0f921']];
  const h=Math.max(0,Math.min(difference?4:13,hours));
  for(let i=1;i<stops.length;i++)if(h<=stops[i][0])return new T.Color(stops[i-1][1]).lerp(new T.Color(stops[i][1]),(h-stops[i-1][0])/(stops[i][0]-stops[i-1][0]));
  return new T.Color(stops[stops.length-1][1]);
