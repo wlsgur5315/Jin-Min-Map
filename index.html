@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.21-02</title>
+<title>Jinju3D Local · v2026.10.21-03</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -305,7 +305,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.21-02</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.21-03</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -788,7 +788,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.21-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.21-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -5017,24 +5017,116 @@ function parcelHeightReview(){
  const result=landscapeScreening();
  return {rows,numeric:result.numeric,summary:result.numeric!==null?'경관지구 기본 높이 '+result.numeric+'m 확인 · 기타 제한 미검증 (최종 높이 아님)':result.detail};
 }
-function printLawReport(){
-  if(!SELECTED_PARCEL){message('먼저 필지를 선택해 주세요');return}
-  const p=SELECTED_PARCEL.properties||{},ap=parcelAddressParts(p),zone=$('lawZone').value||'확인 필요',rule=ZONING_RULES[zone];
-  const area=turf.area(SELECTED_PARCEL),maxFoot=rule?area*rule.bcr/100:null,maxFloor=rule?area*rule.far/100:null;
-  const district=selectedDistrict?.properties?.district_name||'진주시';
-  const zoneShares=AUTO_ZONE_SHARES?.length?AUTO_ZONE_SHARES.map(x=>x.name+' '+(x.ratio*100).toFixed(1)+'%').join(' / '):AUTO_ZONE_SOURCE||'-';
-  const evidence=planningEvidence();
-  const w=window.open('','_blank','width=860,height=1000');
-  if(!w){message('팝업이 차단되었습니다. 팝업 허용 후 다시 시도해 주세요');return}
-  const esc=v=>String(v??'-').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-  w.document.write(`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>Jin-Min-Map 자동 사전검토 결과</title><style>
-  body{font-family:Arial,"Noto Sans KR",sans-serif;color:#111827;margin:36px;line-height:1.55}h1{font-size:22px;margin-bottom:4px}.sub{color:#6b7280;font-size:11px;margin-bottom:24px}.box{border:1px solid #d1d5db;border-radius:10px;padding:14px;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left}th{width:34%;background:#f9fafb}.note{font-size:10px;color:#6b7280;margin-top:16px}@media print{body{margin:18mm}.no-print{display:none}}</style></head><body>
-  <h1>Jin-Min-Map 자동 사전검토 결과</h1><div class="sub">${esc(district)} · ${new Date().toLocaleString('ko-KR')} · ${APP_VERSION}</div>
-  <div class="box"><table><tr><th>지번주소</th><td>${esc(ap.address)}</td></tr><tr><th>도로명주소</th><td>${esc(ROAD_ADDRESS||'해당 필지 도로명주소 없음 / 미확인')}${ROAD_ADDRESS_SOURCE?' · '+esc(ROAD_ADDRESS_SOURCE):''}</td></tr><tr><th>지번</th><td>${esc(ap.lot)}</td></tr><tr><th>지목</th><td>${esc(ap.landClass)}</td></tr><tr><th>PNU</th><td>${esc(ap.pnu)}</td></tr><tr><th>대지면적</th><td>${fmt(area)}㎡</td></tr><tr><th>용도지역</th><td>${esc(zone)}</td></tr><tr><th>용도지역 판정</th><td>${esc(zoneShares)}</td></tr><tr><th>건폐율</th><td>${rule?rule.bcr+'%':'확인 필요'}${rule?' · 최대 건축면적 약 '+fmt(maxFoot)+'㎡':''}</td></tr><tr><th>용적률</th><td>${rule?rule.far+'%':'확인 필요'}${rule?' · 최대 연면적 약 '+fmt(maxFloor)+'㎡':''}</td></tr><tr><th>용도지역 판정 근거</th><td>${esc(evidence.zone)}</td></tr><tr><th>경관지구 판정</th><td>${esc(evidence.landscape)}</td></tr><tr><th>고도지구 판정</th><td>${esc(evidence.height)}</td></tr><tr><th>건축물 높이 제한 종합</th><td>${esc(parcelHeightReview().summary)}<hr>${parcelHeightReview().rows.map(x=>'<strong>'+esc(x[0])+'</strong>: '+esc(x[1])+' <small>['+esc(x[2])+']</small>').join('<br>')}</td></tr><tr><th>인접 도시계획도로(참고)</th><td>${esc(plannedRoadDetail(SELECTED_PARCEL))}</td></tr><tr><th>정북일조 표본 시뮬레이션</th><td>${esc(northDaylightSimulation(SELECTED_PARCEL,zone))}</td></tr><tr><th>정북일조</th><td>${/주거/.test(zone)?'10m 이하 북측 1.5m 이상, 10m 초과 부분 H≤2D 기준 사전검토 필요':'건축물 용도 및 지역에 따른 적용 여부 추가 확인'}</td></tr></table></div>
-  <div class="note">본 결과는 건축허가 가능 여부를 확정하는 문서가 아니라 초기설계를 위한 자동 사전검토 자료입니다. 건축선·접도·대지 안의 공지·지구단위계획·문화재·교육환경 등 개별 규제는 별도 확인이 필요합니다.<br>주요 자료: GIS건물통합정보, 건축물대장, 연속지적도/PNU, 국토교통부 토지이음 용도지역정보, OpenStreetMap, Overture, Terrarium DEM.</div>
-  <button class="no-print" onclick="window.print()" style="margin-top:20px;padding:10px 18px">인쇄 / PDF 저장</button></body></html>`);
-  w.document.close();
+
+// Law reports are local snapshots of the current parcel and displayed geometry.
+// Reference ratios never certify legal floor area, planning exceptions or permission.
+function lawReportSnapshot(parcel=SELECTED_PARCEL){
+ if(!parcel)throw Error('먼저 필지를 선택해 주세요.');
+ const area=turf.area(parcel);if(!(area>0))throw Error('필지 면적을 계산할 수 없습니다.');
+ const index=buildingRecords(),bounds=turf.bbox(parcel),buildings=[];
+ let errors=0,hidden=0,crossing=0;
+ const add=(f,name,height,custom,selected)=>{
+  try{
+   const clipped=turf.intersect(turf.featureCollection([parcel,f]));if(!clipped)return;
+   const footprint=turf.area(clipped);if(footprint<=.1)return;
+   const full=turf.area(f),p=f.properties||{},raw=p.floors_above??p.levels??p['building:levels'];
+   const floors=Number(raw),known=raw!==undefined&&raw!==null&&String(raw).trim()!==''&&Number.isInteger(floors)&&floors>0;
+   const crosses=full-footprint>Math.max(.5,full*.005);if(crosses)crossing++;
+   buildings.push({name:String(name),height:Number(height)||null,custom,selected,footprint,floors:known?floors:null,floorArea:known?footprint*floors:null,crosses,geometry:clipped.geometry});
+  }catch(e){errors++}
+ };
+ const selectedModel=editSelectedModel(),selectedRecord=buildingSelected();
+ for(const r of index.records){
+  if(buildingSuppressed(r)||(r.source==='osm'&&!smartOsm))continue;
+  // Bbox rejection only: a geometry failure must not silently become zero area.
+  const b=r.bbox;if(b[2]<bounds[0]||b[0]>bounds[2]||b[3]<bounds[1]||b[1]>bounds[3])continue;
+  if(buildingIsHidden(r.f,index)){if(buildingInParcel(r,parcel,bounds))hidden++;continue}
+  add(r.f,buildingLabel(r),buildingHeight(r),false,!selectedModel&&r.key===selectedRecord?.key);
+ }
+ for(const f of editCustomModels())if(Number(f.properties?.model_height)>0)add(f,editModelLabel(f),f.properties.model_height,true,f===selectedModel);
+ const ready=!!currentBuildings?.features&&!errors,footprint=buildings.reduce((n,b)=>n+b.footprint,0),unknownFloors=buildings.filter(b=>b.floors===null).length;
+ const floorArea=buildings.reduce((n,b)=>n+(b.floorArea||0),0),zone=$('lawZone').value||'',rule=ZONING_RULES[zone]||null;
+ const planHits=[],facilityHits=[];
+ for(const [fc,list,kind] of [[ADV_DISTRICT_PLAN,planHits,'district_plan'],[ADV_FACILITIES,facilityHits,'facility']])for(const f of fc?.features||[]){
+  if(!['Polygon','MultiPolygon'].includes(f.geometry?.type))continue;
+  try{const a=turf.intersect(turf.featureCollection([parcel,f]));if(a&&turf.area(a)>.01)list.push({name:advancedFeatureName(f.properties||{},kind),ratio:turf.area(a)/area})}catch(e){list.error=true}
+ }
+ planHits.sort((a,b)=>b.ratio-a.ratio);facilityHits.sort((a,b)=>b.ratio-a.ratio);
+ return {parcel:JSON.parse(JSON.stringify(parcel)),address:parcelAddressParts(parcel.properties||{}),roadAddress:ROAD_ADDRESS||'도로명주소 없음 / 미확인',roadSource:ROAD_ADDRESS_SOURCE||'',area,zone,rule:rule?{...rule}:null,zoneEvidence:planningEvidence(),zoneShares:AUTO_ZONE_SHARES.map(x=>({name:x.name,ratio:x.ratio})),height:parcelHeightReview(),roads:plannedRoadDetail(parcel),north:northDaylightSimulation(parcel,zone),buildings,hidden,crossing,errors,ready,footprint,floorArea,unknownFloors,bcr:ready?footprint/area*100:null,far:ready&&!unknownFloors?floorArea/area*100:null,planHits,facilityHits,planReady:!!ADV_DISTRICT_PLAN&&!planHits.error,facilityReady:!!ADV_FACILITIES&&!facilityHits.error,version:APP_VERSION,issued:new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul',hour12:false}),district:selectedDistrict?.properties?.district_name||'진주시',target:buildings.find(b=>b.selected)||null};
 }
+function lawReportPlan(data){
+ const bbox=turf.bbox(data.parcel),lat=(bbox[1]+bbox[3])/2,mx=111320*Math.cos(lat*Math.PI/180),my=111132;
+ const width=Math.max(.1,(bbox[2]-bbox[0])*mx),height=Math.max(.1,(bbox[3]-bbox[1])*my),scale=Math.min(600/width,260/height);
+ const at=p=>[330+(p[0]-(bbox[0]+bbox[2])/2)*mx*scale,160-(p[1]-(bbox[1]+bbox[3])/2)*my*scale];
+ const path=g=>(g.type==='Polygon'?[g.coordinates]:g.coordinates).map(poly=>poly.map(r=>r.map((p,i)=>{const v=at(p);return(i?'L':'M')+v[0].toFixed(2)+' '+v[1].toFixed(2)}).join(' ')+' Z').join(' ')).join(' ');
+ const parcelPath=path(data.parcel.geometry),esc=escapeHtml;
+ const svgBuildings=data.buildings.map((b,i)=>{
+  const p=at(turf.pointOnFeature({type:'Feature',properties:{},geometry:b.geometry}).geometry.coordinates);
+  return '<path d="'+path(b.geometry)+'" fill="'+(b.custom?'#a182ad':'#d0ccd5')+'" stroke="'+(b.selected?'#4f2c60':'#aaa0b3')+'" stroke-width="'+(b.selected?3:1)+'" fill-rule="evenodd"/>'+(data.buildings.length<=24?'<text x="'+p[0]+'" y="'+p[1]+'" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#342c3e">'+(i+1)+'</text>':'');
+ }).join('');
+ const meters=10**Math.floor(Math.log10(Math.max(.1,width/4))),bar=meters*scale;
+ return '<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="선택 필지 및 포함 건물 배치도, 북쪽이 위" viewBox="0 0 660 330"><defs><clipPath id="parcel-clip"><path d="'+parcelPath+'" clip-rule="evenodd"/></clipPath></defs><rect width="660" height="330" fill="#faf9fc"/><path d="'+parcelPath+'" fill="#f1ebf5" stroke="#765583" stroke-width="2" fill-rule="evenodd"/><g clip-path="url(#parcel-clip)">'+svgBuildings+'</g><path d="M625 62V25M620 35L625 25L630 35" fill="none" stroke="#51445b" stroke-width="1.6"/><text x="625" y="18" text-anchor="middle" font-size="12" fill="#51445b">N</text><path d="M25 300h'+bar.toFixed(2)+'m-'+bar.toFixed(2)+' -4v8m'+bar.toFixed(2)+' -8v8" fill="none" stroke="#51445b" stroke-width="1.5"/><text x="25" y="289" font-size="11" fill="#51445b">약 '+esc(meters)+' m</text></svg>';
+}
+function lawReportHTML(d){
+ const e=escapeHtml,n=v=>v===null||!Number.isFinite(v)?'미확정':v.toLocaleString('ko-KR',{maximumFractionDigits:1,minimumFractionDigits:1}),pct=v=>v===null?'미확정':n(v)+'%',short=(s,max=130)=>String(s||'').length>max?String(s).slice(0,max)+'… (상세 기록 참조)':String(s||'미확인');
+ const rule=d.rule,footMax=rule?d.area*rule.bcr/100:null,floorMax=rule?d.area*rule.far/100:null;
+ const scope='기존 '+d.buildings.filter(b=>!b.custom).length+'동 + 사용자 '+d.buildings.filter(b=>b.custom).length+'동';
+ const status=(value,limit)=>value===null?'산정 미확정':!rule?'기준 확인 필요':value>limit?'설정값 초과 (참고)':'설정값 범위 내 (참고)';
+ const head=section=>'<header><b>JIN-MIN-MAP</b><span>건축 법규 사전검토 / '+section+'</span></header>';
+ const title=(no,label)=>'<h2><small>'+no+'</small>'+label+'</h2>';
+ const table=(heads,rows,cls='')=>'<table class="'+cls+'">'+(heads?'<thead><tr>'+heads.map(h=>'<th>'+e(h)+'</th>').join('')+'</tr></thead>':'')+'<tbody>'+rows.map(r=>'<tr>'+r.map((v,i)=>'<'+(i===0?'th':'td')+'>'+v+'</'+(i===0?'th':'td')+'>').join('')+'</tr>').join('')+'</tbody></table>';
+ const unknownNote=!d.ready?'기존 건물 자료 미로드 또는 형상 계산 실패로 전체 합산이 미확정입니다.':d.unknownFloors?'층수 미확인 '+d.unknownFloors+'동으로 전체 용적률은 미확정입니다.':'확인된 지상층수를 사용한 형상 면적의 단순 합산입니다.';
+ const mix=d.zoneShares.length>1,zoneNote=mix?'복수 용도지역: 단일 선택 기준의 참고값이며 지역별 적용·가중기준 미검토.':'';
+ const planStatus=d.planHits.length?'중첩 검출 · 세부기준 확인 필요':d.planReady?'자료 기준 중첩 미검출 · 최신 고시 확인 필요':'자료 미로드 / 계산 미확인';
+ const facilityStatus=d.facilityHits.length?'중첩 검출 · 저촉 검토 필요':d.facilityReady?'자료 기준 중첩 미검출 · 자료 완전성 확인 필요':'자료 미로드 / 계산 미확인';
+ const sources=[['연속지적도 / PNU','필지 경계·지번·지목',d.address.pnu,'도형 면적 사용 · 공부상 면적 별도 확인'],['용도지역 공간정보',d.zoneEvidence.zone,d.zoneShares.map(s=>s.name+' '+n(s.ratio*100)+'%').join(' / ')||'중첩 비율 미확인','자료 기준일·최신성 별도 확인'],['프로그램 설정 기준','선택 용도지역의 건폐율·용적률',rule?'건폐율 '+rule.bcr+'% / 용적률 '+rule.far+'%':'선택 기준 없음','관계 법령·조례·시행일·특례 확인 필요'],['경관 / 고도지구',d.zoneEvidence.landscape,d.zoneEvidence.height,'중첩 미검출은 법적 비대상 확정이 아님'],['지구단위계획',planStatus,d.planHits.map(h=>h.name+' '+n(h.ratio*100)+'%').join(' / ')||'중첩 구역 미확인','결정도·시행지침·후속 고시 확인 필요'],['도시계획시설',facilityStatus,d.facilityHits.map(h=>h.name+' '+n(h.ratio*100)+'%').join(' / ')||'중첩 시설 미확인','시설별 저촉·집행 상태 별도 확인'],['건물 형상 / 층수','GIS·OSM 보완 및 사용자 모델',scope+' · 숨김 제외 '+d.hidden+'동',unknownNote]];
+ const details=[['높이 제한 종합',d.height.summary],...d.height.rows.map(r=>[r[0]+' / '+r[2],r[1]]),['인접 도시계획도로',d.roads],['정북일조 표본 모형',d.north],...sources.filter(r=>r.slice(1).join(' · ').length>135).map(r=>[r[0],r.slice(1).join(' · ')]),['필지 주소 / 도로명주소',d.address.address+' / '+d.roadAddress],...d.buildings.filter(b=>b.name.length>60).map(b=>['건물 전체 명칭',b.name])];
+ const buildingRows=d.buildings.map((b,i)=>[String(i+1),e(short(b.name,60))+(b.selected?' <b>선택 대상</b>':''),b.custom?'사용자':'기존',n(b.footprint),b.floors===null?'미확인':String(b.floors),b.height===null?'미확인':n(b.height),b.crosses?'필지 경계 교차':'필지 내']);
+ return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${e(d.address.address)} · 건축 법규 자동 사전검토 보고서</title><style>
+ *{box-sizing:border-box}body{margin:0;background:#e8e9ed;color:#302b39;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:10pt;line-height:1.55}.toolbar{position:sticky;top:0;z-index:3;background:#302637;color:white;display:flex;align-items:center;gap:14px;padding:12px 20px}.toolbar span{flex:1;font-size:13px}.toolbar button{background:white;color:#51365d;border:0;border-radius:6px;padding:10px 18px;min-height:44px;font-weight:700;cursor:pointer}.pages{padding:20px;overflow:auto}.report-page{width:210mm;height:297mm;padding:16mm 17mm 18mm;margin:0 auto 20px;background:white;position:relative}.page-content{height:252mm;overflow:hidden}header{border-bottom:1px solid #ded8e2;padding-bottom:9px;display:flex;justify-content:space-between;font-size:8pt;color:#79647f}header b{letter-spacing:1px}h1{font-size:24pt;line-height:1.35;margin:20px 0 9px;letter-spacing:-1px}h2{font-size:12.5pt;margin:20px 0 9px;color:#51365d}h2 small{font-size:9pt;margin-right:14px;color:#80638a}h3{font-size:10pt;color:#71527d;margin:8px 0}p{margin:7px 0}.subtitle{font-size:9pt;color:#7c7184;overflow-wrap:anywhere}.eyebrow{font-size:9pt;letter-spacing:1px;color:#8b6c91;margin-top:22px}.callout{background:#f5f1f7;padding:10px 12px;border-left:3px solid #9676a4;font-size:8.5pt;margin:14px 0}.fine{font-size:8pt;color:#7c7184;line-height:1.6}.warning{background:#fbf6ee;padding:10px 12px;color:#8b652f;font-size:8pt}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.metric{background:#f5f1f7;border-top:3px solid #80638a;padding:12px 10px;min-height:92px}.metric label{display:block;font-size:8pt;color:#7c7184}.metric strong{display:block;font-size:18pt;color:#71527d;line-height:1.4;margin:8px 0}.metric small{font-size:7.5pt;color:#7c7184}.plan-layout{display:grid;grid-template-columns:1.6fr 1fr;gap:15px;align-items:start}.plan-layout svg{display:block;width:100%;height:auto;border:1px solid #eee7f1;border-radius:5px}table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:8.5pt}th,td{text-align:left;vertical-align:top;padding:7px 8px;border-bottom:1px solid #e7e2e9;overflow-wrap:anywhere}th{font-weight:600}thead{background:#f5f1f7;color:#604b69}.conditions tr>:nth-child(odd){width:18%;background:#f5f1f7;font-weight:600}.conditions tr>:nth-child(even){width:32%}.review thead th:nth-child(1){width:19%}.review thead th:nth-child(2){width:60%}.review thead th:nth-child(3){width:21%}.review td:nth-child(2){width:60%}.review td:last-child{width:21%;color:#92622f}.sources{font-size:8pt}.sources th:first-child{width:24%}.sources td{width:76%}.detail-block{padding:7px 0;border-bottom:1px solid #e7e2e9;font-size:8.5pt;overflow-wrap:anywhere;white-space:pre-wrap}.detail-block b{display:block;color:#71527d;margin-bottom:3px}.notes{width:100%;height:29mm;padding:10px;border:1px solid #ded5e4;border-radius:4px;font:inherit;font-size:9pt;resize:none;overflow:auto;color:#302b39;background:white}.signatures{display:flex;gap:25px;margin:13px 0;font-size:9pt}.signatures input{width:125px;border:0;border-bottom:1px solid #cfc5d4;border-radius:0;font:inherit;background:white}footer{position:absolute;bottom:11mm;left:17mm;right:17mm;border-top:1px solid #e4dde8;padding-top:7px;display:flex;justify-content:space-between;font-size:7.5pt;color:#8a7e90}.appendix .page-content>h2{margin-top:15px}.building-list{font-size:8pt}.building-list th:nth-child(2){width:25%}.building-list th:last-child{width:16%}.building-list th:first-child{width:6%}.building-list td{font-weight:400}@page{size:A4 portrait;margin:0}@media print{body{background:white}.toolbar{display:none}.pages{padding:0;overflow:visible}.report-page{margin:0;break-after:page;page-break-after:always;print-color-adjust:exact;-webkit-print-color-adjust:exact}.report-page:last-child{break-after:auto;page-break-after:auto}.notes{overflow:hidden}input::placeholder,textarea::placeholder{color:transparent}}
+ </style></head><body><div class="toolbar"><span>건축 법규 자동 사전검토 · A4 기본 3쪽 + 상세 기록<br>작성·검토 메모를 입력한 뒤 인쇄 창에서 PDF로 저장하세요.</span><button id="reportPrint" type="button" onclick="window.print()" disabled>보고서 준비 중…</button></div><main class="pages">
+ <section class="report-page"><div class="page-content">${head('대상과 핵심 수치')}<div class="eyebrow">REGULATORY PRE-CHECK</div><h1>건축 법규 자동 사전검토<br>보고서</h1><p class="subtitle">${e(short(d.address.address,100))} · ${e(d.district)} · ${e(d.target?short(d.target.name,80)+' 선택 / 필지 전체 합산':'선택 필지 전체 검토')}</p><div class="callout">표시된 기준은 현재 프로그램의 선택 설정값입니다. 관계 법령·개별 계획과 예외의 최종 적용은 별도로 확인하세요.</div>
+ ${title('01','대상 필지 및 검토 범위')}${table(null,[["지번주소",e(short(d.address.address,100)),'검토 범위',e(d.target?short(d.target.name,60)+' / 필지 전체':'필지 전체')],['도형 면적',n(d.area)+' m²','지목',e(d.address.landClass)],['용도지역',e(d.zone||'확인 필요'),'포함 건물',e(scope)],['도로명주소',e(short(d.roadAddress,100)),'합산 방식','필지 내 표시 형상 기준']],'conditions')}
+ ${title('02','핵심 검토 수치')}<div class="metrics"><div class="metric"><label>형상 합산 건폐율 (참고)</label><strong>${pct(d.bcr)}</strong><small>설정 상한 ${rule?pct(rule.bcr):'미확인'}<br>형상 면적 ${n(d.footprint)} m²</small></div><div class="metric"><label>층수 기반 용적률 (참고)</label><strong>${pct(d.far)}</strong><small>설정 상한 ${rule?pct(rule.far):'미확인'}<br>${d.far===null?'층수·자료 확인 필요':'추정 연면적 '+n(d.floorArea)+' m²'}</small></div><div class="metric"><label>높이·정북일조</label><strong style="font-size:14pt;color:#9b6a2e">확인 필요</strong><small>개별 기준과 경계 조건 검토<br>최종 높이·허가 판정 아님</small></div></div>
+ ${title('03','선택 필지와 건물 배치')}<div class="plan-layout"><div>${lawReportPlan(d)}<p class="fine">북쪽이 위 · 필지 내 형상 · ${d.buildings.length<=24?'번호는 건물 목록과 대응':'건물이 많아 도면 번호 생략'}</p></div><div><h3>검토 범위</h3><p class="fine">기존 건물은 회색, 사용자 건물은 보라색, 선택 대상은 굵은 윤곽으로 구분합니다. 숨긴 기존 건물 ${d.hidden}동은 합산에서 제외했습니다.</p><p class="fine">${e(unknownNote)}${d.crossing?' 경계 교차 '+d.crossing+'동: 필지 내 면적만 포함.':''}</p></div></div><p class="fine">면적은 표시 형상의 단순 합산이며 겹침 면적을 중복 포함할 수 있습니다. 법정 건축면적·연면적, 제외 면적·특례 및 공부상 대지면적과 다를 수 있습니다. ${e(zoneNote)}</p></div></section>
+ <section class="report-page"><div class="page-content">${head('항목별 검토')}${title('04','면적 및 높이 검토')}${table(['검토 항목','기준 / 계산 결과','상태'],[['건폐율','프로그램 설정 '+(rule?pct(rule.bcr):'미확인')+' · 최대 건축면적 참고 '+n(footMax)+' m²<br>형상 합산 '+pct(d.bcr)+' · '+n(d.footprint)+' ÷ '+n(d.area)+' × 100',e(status(d.bcr,rule?.bcr))],['용적률','프로그램 설정 '+(rule?pct(rule.far):'미확인')+' · 최대 연면적 참고 '+n(floorMax)+' m²<br>층수 기반 '+pct(d.far)+' · '+e(unknownNote),e(status(d.far,rule?.far))],...d.height.rows.map(r=>[e(r[0]),e(short(r[1],105))+'<br><span class="fine">'+e(r[2])+'</span>','확인 필요'])],'review')}
+ ${title('05','도시계획 및 대지 조건')}${table(['검토 항목','공간 데이터 / 확인 범위','상태'],[['용도지역',e(short(d.zoneEvidence.zone,85)),mix?'복수 지역 확인':'적용 기준 확인'],['경관·고도지구',e(short(d.zoneEvidence.landscape+' / '+d.zoneEvidence.height,95)),'최신 고시 확인'],['지구단위계획',e(short(planStatus+(d.planHits[0]?' · '+d.planHits[0].name:''),85)),'세부기준 확인'],['도시계획시설',e(short(facilityStatus+(d.facilityHits.length?' · '+d.facilityHits.length+'건':''),85)),'저촉 검토'],['건축선·접도',e(short(d.roads,100)),'법정 조건 별도 확인'],['대지 안의 공지','용도·규모별 이격거리 및 관련 기준 미연결','별도 확인']],'review')}<p class="warning">자료 미확인과 해당 없음은 구분합니다. 공간자료의 중첩 미검출만으로 법적 적용 대상이 아니라고 확정하지 않습니다. 긴 설명과 원문 근거는 상세 기록에 수록합니다.</p></div></section>
+ <section class="report-page"><div class="page-content">${head('근거와 검토 메모')}${title('06','근거 및 자료 확인 기록')}${table(['검토 근거 / 자료','확인할 내용과 상태'],sources.map(r=>[e(r[0]),e(short(r.slice(1).join(' · '),135))]),'sources')}
+ ${title('07','설계 진행 전 추가 확인')}<div class="detail-block"><b>01 대지와 도로 조건</b>공부상 면적, 도로 폭·법정 도로 여부, 건축선과 대지 경계를 확인합니다.</div><div class="detail-block"><b>02 개별 계획 및 높이 기준</b>결정도·고시·시행지침에서 대지에 적용되는 세부 기준과 최신 시행일을 확인합니다.</div><div class="detail-block"><b>03 법정 면적과 정북일조</b>산정 제외 면적과 특례를 반영하고, 인접 대지의 실제 경계 조건을 별도로 검토합니다.</div>
+ ${title('08','검토 메모 및 확인')}<textarea class="notes" maxlength="180" aria-label="검토 메모" placeholder="배치·규모 조정 방향과 적용 기준 확인 내용을 기록하세요. (최대 180자)"></textarea><div class="signatures"><label>작성자 <input maxlength="20" aria-label="작성자"></label><label>검토자 <input maxlength="20" aria-label="검토자"></label></div><p class="fine">${e(d.issued)} KST · ${e(d.version)} · PNU ${e(d.address.pnu)}</p><p class="fine">초기설계용 자동 사전검토 자료입니다. ‘설정값 범위 내’는 프로그램 설정에 대한 참고 비교이며, 건축허가 가능 여부 또는 관계 법령의 최종 적합 판정이 아닙니다.</p></div></section>
+ <section class="report-page appendix"><div class="page-content">${head('상세 기록')}${title('09','건물 목록 · 필지 내 포함 형상')}${table(['번호','건물','구분','면적 m²','지상층','높이 m','범위'],buildingRows,'building-list')}<p class="fine">면적은 필지 내부에 포함된 형상 면적입니다. 지상층수가 없는 사용자 건물은 높이에서 층수를 역산하지 않습니다. ${d.errors?'형상 계산 실패 '+d.errors+'건 · 전체 합산 미확정.':''} ${!d.ready?'자료 미확인: 표시 목록은 전체 건물의 완전한 목록이 아닙니다.':''}</p>${title('10','상세 근거 및 계산 기록')}${details.flatMap(([label,value])=>{const text=String(value||'미확인'),chunks=[];for(let i=0;i<text.length;i+=550)chunks.push('<div class="detail-block"><b>'+e(label+(i?' (계속)':''))+'</b>'+e(text.slice(i,i+550))+'</div>');return chunks}).join('')}</div></section>
+ </main><script>
+ // Paginate overflowing tables and blocks before printing; retain every detail.
+ function paginate(){
+  const pages=document.querySelector('.pages');
+  for(let index=0;index<pages.children.length;index++){
+   const page=pages.children[index],content=page.querySelector('.page-content');let guard=0;
+   while(content.scrollHeight>content.clientHeight+1&&guard++<300){
+    let next=page.nextElementSibling;
+    if(!next||!next.dataset.continuation){next=document.createElement('section');next.className='report-page appendix';next.dataset.continuation='true';next.innerHTML='<div class="page-content"><header><b>JIN-MIN-MAP</b><span>건축 법규 사전검토 / 계속</span></header></div>';page.after(next)}
+    const dst=next.querySelector('.page-content'),tail=content.lastElementChild;
+    if(!tail||tail.tagName==='HEADER')break;
+    if(tail.tagName==='TABLE'&&tail.tBodies[0]?.rows.length>1){
+     let target=dst.children[1];if(!target||target.tagName!=='TABLE'||target.dataset.from!==String(index)){target=tail.cloneNode(false);target.dataset.from=String(index);if(tail.tHead)target.append(tail.tHead.cloneNode(true));target.append(document.createElement('tbody'));dst.insertBefore(target,dst.children[1]||null)}
+     target.tBodies[0].prepend(tail.tBodies[0].lastElementChild);
+    }else{dst.insertBefore(tail,dst.children[1]||null)}
+   }
+   if(content.lastElementChild?.tagName==='H2'&&page.nextElementSibling?.dataset.continuation){const dst=page.nextElementSibling.querySelector('.page-content');dst.insertBefore(content.lastElementChild,dst.children[1]||null)}
+  }
+  const all=Array.from(pages.children);all.forEach((page,i)=>{const footer=document.createElement('footer');const left=document.createElement('span');left.textContent='설계 사전검토용 · ${e(d.version)}';const right=document.createElement('span');right.textContent=(i+1)+' / '+all.length;footer.append(left,right);page.append(footer)});
+  const b=document.getElementById('reportPrint');b.disabled=false;b.textContent='인쇄 / PDF 저장';
+ }
+ document.fonts.ready.then(()=>requestAnimationFrame(paginate));
+ <\/script></body></html>`;
+}
+function printLawReport(){
+ if(!SELECTED_PARCEL){message('먼저 필지를 선택해 주세요');return}
+ const w=window.open('','_blank','width=980,height=1100');
+ if(!w){message('팝업이 차단되었습니다. 팝업 허용 후 다시 시도해 주세요');return}
+ try{const data=lawReportSnapshot();w.document.open();w.document.write(lawReportHTML(data));w.document.close()}
+ catch(e){console.warn('Law report failed',e);w.document.body.textContent='보고서 생성 실패: '+(e?.message||e);message('법규 보고서를 생성하지 못했습니다. 필지 자료를 확인해 주세요.')}
+}
+
 $('drawerToggle').onclick=()=>setDrawer(!DRAWER_OPEN);
 document.querySelectorAll('.drawer-tab').forEach(b=>b.onclick=()=>activateDrawerTab(b.dataset.tab));
 $('printLaw').onclick=printLawReport;
