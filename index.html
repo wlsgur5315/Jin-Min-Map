@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.21-04</title>
+<title>Jinju3D Local · v2026.10.28-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -232,17 +232,18 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 #editPolygonWindow{width:100%;height:calc(100dvh - 16px);background:#101f33;color:#e2e8f0;border:1px solid #64748b;border-radius:12px;display:flex;flex-direction:column;min-width:0}
 #editPolygonHeader,#editPolygonFooter{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;flex:0 0 auto}
 #editPolygonHeader{border-bottom:1px solid #334155}#editPolygonHeader b{font-size:15px}
-#editPolygonBody{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 280px}
+#editPolygonBody{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 280px;grid-template-rows:minmax(0,1fr);overflow:hidden}
 #editPolygonPlan{display:flex;flex-direction:column;padding:10px;min-height:0;min-width:0;background:#071527}
 #editPolygonToolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;flex:0 0 auto}
 #editPolygonToolbar>div{display:flex;gap:5px}#editPolygonViewport{flex:1;min-height:0;position:relative;margin-top:8px}
 #editPolygonCanvas,#editPolygonThree{display:block;width:100%;height:100%;touch-action:none;background:#071527;border:1px solid #334155;border-radius:8px}
-#editPolygonTools{padding:14px;display:flex;flex-direction:column;gap:12px;border-left:1px solid #334155;overflow:auto;min-width:0}
+#editPolygonTools{padding:14px;display:flex;flex-direction:column;gap:12px;border-left:1px solid #334155;overflow:auto;min-width:0;min-height:0}
 #editPolygonTools h3{font-size:14px;margin:0}#editPolygonStats{font-size:13px;line-height:1.7;font-variant-numeric:tabular-nums}
-#editPolygonTools .row{margin:0}#editPolygonTools .row button{flex:1}
+#editPolygonTools .row{margin:0}#editPolygonTools .row button{flex:1}#editPolygonTools>.row{display:grid;grid-template-columns:1fr 1fr}#editPolygonTools #editPolygonNew{grid-column:1/-1}
 #editPolygonModal button{width:auto;min-height:44px;font-size:13px}#editPolygonModal button:disabled{opacity:.45}
 #editPolygonTools label{font-size:13px}#editPolygonHeight{display:block;width:100%;font-size:16px;min-height:44px;margin-top:5px}
 #editPolygonTools .polygon-check{display:flex;align-items:center;gap:8px;min-height:44px}#editPolygonTools input[type=checkbox]{width:18px;height:18px;padding:0}
+#editPolygonPick,#editPolygonDimensionValue{display:block;width:100%;min-height:44px;font-size:16px;margin-top:5px}#editPolygonDimensionPanel{padding:10px;border:1px solid #38bdf8;border-radius:8px;display:flex;flex-direction:column;gap:8px}#editPolygonDimensionState,#editPolygonLocksSummary{font-size:12px;line-height:1.5;color:#a5f3fc}#editPolygonDimensionPanel .row{display:flex;gap:6px}#editPolygonDimensionPanel button{flex:1}#editPolygonTools .polygon-full{grid-column:1/-1}
 #editPolygonLegend{font-size:12px;color:#cbd5e1;padding-top:6px;flex:0 0 auto}
 #editPolygonFooter{border-top:1px solid #334155}#editPolygonStatus{font-size:12px;line-height:1.5;flex:1;min-width:0}#editPolygonFooter>div:last-child{display:flex;gap:7px}
 #editPolygonModal [hidden]{display:none!important}
@@ -305,7 +306,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.21-04</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.28-01</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -643,9 +644,11 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 
 <div id="editPolygonModal" role="dialog" aria-modal="true" aria-labelledby="editPolygonTitle" style="display:none">
  <div id="editPolygonWindow">
-  <header id="editPolygonHeader"><b id="editPolygonTitle">다각형 건물 추가</b><span style="font-size:12px;color:#cbd5e1">모서리 선택 → 평면 완성 → 높이 입력</span></header>
+  <header id="editPolygonHeader"><b id="editPolygonTitle">다각형 건물 추가</b><span style="font-size:12px;color:#cbd5e1">점 찍기 → 평면 완성 → 치수·각도 편집</span></header>
   <div id="editPolygonBody"><div id="editPolygonPlan"><div id="editPolygonToolbar"><span id="editPolygonHelp">대지 안에 모서리를 순서대로 찍으세요.</span><div><button type="button" id="editPolygonPan" aria-pressed="false">화면 이동</button><button type="button" id="editPolygonZoomIn">＋</button><button type="button" id="editPolygonZoomOut">−</button><button type="button" id="editPolygonFit">전체</button><button type="button" id="editPolygonPlanView" aria-pressed="true">평면</button><button type="button" id="editPolygonThreeView" aria-pressed="false">3D 형상 미리보기</button></div></div><div id="editPolygonViewport"><canvas id="editPolygonCanvas" tabindex="0" width="800" height="520" aria-label="다각형 건물 꼭짓점 그리기 및 수정"></canvas><svg id="editPolygonThree" role="img" aria-label="입력한 다각형 건물의 높이와 형상 미리보기" hidden></svg></div><div id="editPolygonLegend">기존 건물은 회색, 사용자 건물은 파란색으로 표시합니다.</div></div>
-   <aside id="editPolygonTools"><h3>다각형 평면</h3><div id="editPolygonStats" aria-live="polite">꼭짓점 0개</div><div class="row"><button type="button" id="editPolygonNew">새로 그리기</button><button type="button" id="editPolygonUndo">한 점 취소</button></div><label>건물 높이 (m)<input type="number" id="editPolygonHeight" min="1" max="500" step="0.5" value="12"></label><label class="polygon-check"><input type="checkbox" id="editPolygonSnap" checked>0.5m 격자 맞춤</label><label class="polygon-check"><input type="checkbox" id="editPolygonDimensions" checked>변 길이 표시</label><div class="hint" style="font-size:12px">첫 점을 다시 누르거나 하단 버튼으로 평면을 닫습니다. 완성 후 꼭짓점을 끌어 수정할 수 있습니다.</div></aside>
+   <aside id="editPolygonTools"><h3>다각형 평면</h3><div id="editPolygonStats" aria-live="polite">꼭짓점 0개</div><div class="row"><button type="button" id="editPolygonNew">새로 그리기</button><button type="button" id="editPolygonUndo">되돌리기</button><button type="button" id="editPolygonRedo" disabled>다시 실행</button></div><label class="polygon-full">치수 선택<select id="editPolygonPick" disabled><option value="">평면을 먼저 완성하세요</option></select></label>
+    <div id="editPolygonDimensionPanel" class="polygon-full" hidden><label><span id="editPolygonDimensionTitle">변 길이 (m)</span><input type="number" id="editPolygonDimensionValue" step="0.01" inputmode="decimal"></label><div id="editPolygonDimensionState"></div><label class="polygon-check"><input type="checkbox" id="editPolygonDimensionLock" checked>적용한 치수 고정</label><div class="row"><button type="button" id="editPolygonDimensionApply">치수 적용</button><button type="button" id="editPolygonDimensionUnlock">고정 해제</button></div></div>
+    <div id="editPolygonLocksSummary" class="polygon-full"></div><label>건물 높이 (m)<input type="number" id="editPolygonHeight" min="1" max="500" step="0.5" value="12"></label><label class="polygon-check"><input type="checkbox" id="editPolygonSnap" checked>0.5m 격자 맞춤</label><label class="polygon-check"><input type="checkbox" id="editPolygonDimensions" checked>변 길이 표시</label><div class="hint" style="font-size:12px">첫 점이나 평면 완성을 눌러 닫으세요. 완성 후 길이 숫자를 누르면 길이, 모서리를 누르면 내부 각도를 입력합니다. 모서리를 끌어도 고정한 치수는 유지됩니다. 오목한 모서리는 180°보다 큽니다.</div></aside>
   </div>
   <footer id="editPolygonFooter"><div id="editPolygonStatus" role="status" aria-live="polite">세 점 이상 선택하세요.</div><div><button type="button" id="editPolygonClose">취소</button><button type="button" id="editPolygonCommit" class="primary" disabled>평면 완성</button></div></footer>
  </div>
@@ -788,7 +791,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.21-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.28-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1594,7 +1597,7 @@ function editFootprintDimensions(f){
 }
 function editRegisterModel(rect,height){
  const id='model-'+Date.now().toString(36)+'-'+(++EDIT_MODEL_SEQ),name='사용자 건물 '+EDIT_MODEL_SEQ;
- const f={type:'Feature',id,geometry:JSON.parse(JSON.stringify(rect.geometry)),properties:{...(editIsLShape(rect)?editLShapeProperties(editLParams(rect)):{model_shape:editIsPolygon(rect)?'polygon':'rectangle'}),model_id:id,model_name:name,model_height:height,model_rotation:0,model_parcel_pnu:String(parcelPnu(EDIT_PARCEL?.properties||{})),model_district_id:String(selectedId||''),editor_generated:true}};
+ const f={type:'Feature',id,geometry:JSON.parse(JSON.stringify(rect.geometry)),properties:{...(editIsLShape(rect)?editLShapeProperties(editLParams(rect)):{model_shape:editIsPolygon(rect)?'polygon':'rectangle',...(editIsPolygon(rect)?{model_polygon_constraints:rect.properties.model_polygon_constraints}: {})}),model_id:id,model_name:name,model_height:height,model_rotation:0,model_parcel_pnu:String(parcelPnu(EDIT_PARCEL?.properties||{})),model_district_id:String(selectedId||''),editor_generated:true}};
  // Adopt a legacy single model once, preserving its original feature and geometry.
  if(EDIT_CUSTOM&&!EDIT_MODELS.includes(EDIT_CUSTOM)&&!EDIT_CUSTOM.properties?.model_id){
   const prior=EDIT_CUSTOM;prior.properties={...prior.properties,model_id:'legacy-'+(++EDIT_MODEL_SEQ),model_name:'사용자 건물 '+EDIT_MODEL_SEQ};EDIT_MODELS.push(prior);
@@ -4485,9 +4488,142 @@ function setupPlacementCanvas(){
  if(typeof ResizeObserver!=='undefined')new ResizeObserver(scheduleResize).observe($('editPlacementViewport'));
 }
 
-let EDIT_POLYGON={points:[],closed:false,view:'plan',editId:'',original:null,scope:'',drag:null,zoom:1,x:0,y:0,pan:false,pointer:null};
+// Polygon dimensions use metres in a local frame and true spherical edge lengths.
+// Keep this block independent of the DOM so constraint regressions can run in Node.
+function editPolygonFrame(points){
+ const origin=points.reduce((s,p)=>[s[0]+p[0]/points.length,s[1]+p[1]/points.length],[0,0]),my=6371008.8*Math.PI/180;
+ return {origin,mx:my*Math.cos(origin[1]*Math.PI/180),my};
+}
+function editPolygonLocal(points,frame){return points.map(p=>[(p[0]-frame.origin[0])*frame.mx,(p[1]-frame.origin[1])*frame.my])}
+function editPolygonGeographic(points,frame){return points.map(p=>[frame.origin[0]+p[0]/frame.mx,frame.origin[1]+p[1]/frame.my])}
+function editPolygonWinding(points){return Math.sign(points.reduce((s,p,i)=>{const q=points[(i+1)%points.length];return s+p[0]*q[1]-q[0]*p[1]},0))||1}
+function editPolygonLength(a,b){
+ const rad=Math.PI/180,lat=(b[1]-a[1])*rad,lon=(b[0]-a[0])*rad,h=Math.sin(lat/2)**2+Math.cos(a[1]*rad)*Math.cos(b[1]*rad)*Math.sin(lon/2)**2;
+ return 12742017.6*Math.asin(Math.sqrt(Math.min(1,h)));
+}
+function editPolygonAngle(points,index,winding=editPolygonWinding(points)){
+ const n=points.length,a=points[(index+n-1)%n],b=points[index],c=points[(index+1)%n],u=[b[0]-a[0],b[1]-a[1]],v=[c[0]-b[0],c[1]-b[1]];
+ return 180-winding*Math.atan2(u[0]*v[1]-u[1]*v[0],u[0]*v[0]+u[1]*v[1])*180/Math.PI;
+}
+function editPolygonLocks(raw,n){
+ const result={lengths:{},angles:{}};
+ if(typeof raw==='string'){try{raw=JSON.parse(raw)}catch{return result}}
+ for(const type of ['lengths','angles'])for(const [key,value] of Object.entries(raw?.[type]||{})){
+  const i=Number(key);if(Number.isInteger(i)&&i>=0&&i<n&&Number.isFinite(value)&&(type==='lengths'?value>=.5&&value<=500:value>=1&&value<=359))result[type][i]=value;
+ }
+ return result;
+}
+function editPolygonLocksError(points,locks){
+ if(!points.length)return '';
+ const xy=editPolygonLocal(points,editPolygonFrame(points));
+ for(const [i,value] of Object.entries(locks.lengths))if(Math.abs(editPolygonLength(points[+i],points[(+i+1)%points.length])-value)>.002)return '고정한 변 길이를 유지할 수 없습니다. 해당 치수를 선택해 고정을 해제하세요.';
+ for(const [i,value] of Object.entries(locks.angles))if(Math.abs(editPolygonAngle(xy,+i)-value)>.02)return '고정한 모서리 각도를 유지할 수 없습니다. 해당 치수를 선택해 고정을 해제하세요.';
+ return '';
+}
+function editPolygonLinearSolve(matrix,vector){
+ const n=vector.length,a=matrix.map((row,i)=>[...row,vector[i]]);
+ for(let k=0;k<n;k++){
+  let pivot=k;for(let i=k+1;i<n;i++)if(Math.abs(a[i][k])>Math.abs(a[pivot][k]))pivot=i;
+  if(Math.abs(a[pivot][k])<1e-12)return null;
+  [a[k],a[pivot]]=[a[pivot],a[k]];const d=a[k][k];for(let j=k;j<=n;j++)a[k][j]/=d;
+  for(let i=0;i<n;i++)if(i!==k){const f=a[i][k];for(let j=k;j<=n;j++)a[i][j]-=f*a[k][j]}
+ }
+ return a.map(row=>row[n]);
+}
+function editPolygonSolve(points,locks,pin=null){
+ const frame=editPolygonFrame(points),initial=editPolygonLocal(points,frame),n=points.length,winding=editPolygonWinding(initial),angleScale=10*Math.PI/180,rows=[];
+ for(const [i,value] of Object.entries(locks.lengths))rows.push({type:'length',i:+i,value});
+ for(const [i,value] of Object.entries(locks.angles))rows.push({type:'angle',i:+i,value});
+ if(pin){const target=editPolygonLocal([pin.point],frame)[0];rows.push({type:'x',i:pin.index,value:target[0]},{type:'y',i:pin.index,value:target[1]})}
+ if(!rows.length)return points.map(p=>p.slice());
+ const residual=flat=>{
+  const xy=Array.from({length:n},(_,i)=>[flat[2*i],flat[2*i+1]]),geo=editPolygonGeographic(xy,frame);
+  return rows.map(r=>r.type==='length'?editPolygonLength(geo[r.i],geo[(r.i+1)%n])-r.value:r.type==='angle'?(editPolygonAngle(xy,r.i,winding)-r.value)*angleScale:xy[r.i][r.type==='x'?0:1]-r.value);
+ };
+ const norm=r=>r.reduce((sum,v)=>sum+v*v,0);let flat=initial.flat(),lambda=1e-5,r=residual(flat),cost=norm(r);
+ // Damped minimum-displacement Newton steps handle redundant dimensions, too.
+ for(let iteration=0;iteration<90;iteration++){
+  if(Math.max(...r.map(Math.abs))<.0001)break;
+  const jac=rows.map(()=>Array(2*n).fill(0)),epsilon=.0001;
+  for(let k=0;k<2*n;k++){const next=flat.slice();next[k]+=epsilon;const shifted=residual(next);for(let j=0;j<rows.length;j++)jac[j][k]=(shifted[j]-r[j])/epsilon}
+  const matrix=jac.map((row,i)=>jac.map((other,j)=>row.reduce((sum,v,k)=>sum+v*other[k],0)+(i===j?lambda:0))),multipliers=editPolygonLinearSolve(matrix,r);
+  if(!multipliers)return null;
+  const delta=flat.map((_,k)=>jac.reduce((sum,row,j)=>sum+row[k]*multipliers[j],0));let accepted=false;
+  for(const fraction of [1,.5,.25,.125,.0625]){
+   const candidate=flat.map((v,k)=>v-fraction*delta[k]),next=residual(candidate),nextCost=norm(next);
+   if(Number.isFinite(nextCost)&&nextCost<cost){flat=candidate;r=next;cost=nextCost;lambda=Math.max(1e-9,lambda/3);accepted=true;break}
+  }
+  if(!accepted){lambda*=10;if(lambda>1e7)break}
+ }
+ const local=Array.from({length:n},(_,i)=>[flat[2*i],flat[2*i+1]]),result=editPolygonGeographic(local,frame);
+ if(flat.some(v=>!Number.isFinite(v))||editPolygonWinding(local)!==winding||Math.max(...r.map(Math.abs))>.001||editPolygonLocksError(result,locks))return null;
+ return result;
+}
+// End polygon dimension core.
+
+let EDIT_POLYGON={points:[],closed:false,view:'plan',editId:'',original:null,scope:'',drag:null,zoom:1,x:0,y:0,pan:false,pointer:null,locks:{lengths:{},angles:{}},undo:[],redo:[],selection:null,labels:[],notice:'',noticeError:false};
+function editPolygonSnapshot(){return JSON.parse(JSON.stringify({points:EDIT_POLYGON.points,closed:EDIT_POLYGON.closed,locks:EDIT_POLYGON.locks}))}
+function editPolygonRecord(before){
+ if(JSON.stringify(before)===JSON.stringify(editPolygonSnapshot()))return;
+ EDIT_POLYGON.undo.push(before);if(EDIT_POLYGON.undo.length>100)EDIT_POLYGON.undo.shift();EDIT_POLYGON.redo=[];
+}
+function editPolygonRestore(snapshot){
+ Object.assign(EDIT_POLYGON,JSON.parse(JSON.stringify(snapshot)),{selection:null,notice:'',noticeError:false,view:'plan',drag:null,pointer:null});
+ $('editPolygonDimensionPanel').hidden=true;editPolygonRender();
+}
+function editPolygonHistory(redo=false){
+ editPolygonCancelDrag();const from=redo?EDIT_POLYGON.redo:EDIT_POLYGON.undo,to=redo?EDIT_POLYGON.undo:EDIT_POLYGON.redo;
+ if(!from.length)return;to.push(editPolygonSnapshot());editPolygonRestore(from.pop());
+}
+function editPolygonMessage(text,error=false){EDIT_POLYGON.notice=text;EDIT_POLYGON.noticeError=error;editPolygonRender()}
+function editPolygonSelect(type,index){
+ if(!EDIT_POLYGON.closed)return;
+ const state=EDIT_POLYGON,points=state.points,locked=state.locks[type][index],value=type==='lengths'?editPolygonLength(points[index],points[(index+1)%points.length]):editPolygonAngle(editPolygonLocal(points,editPolygonFrame(points)),index);
+ state.selection={type,index};state.notice='';state.noticeError=false;
+ $('editPolygonDimensionPanel').hidden=false;$('editPolygonDimensionTitle').textContent=type==='lengths'?'변 '+(index+1)+' 길이 (m)':'모서리 '+(index+1)+' 내부 각도 (°)';
+ const input=$('editPolygonDimensionValue');input.min=type==='lengths'?'.5':'1';input.max=type==='lengths'?'500':'359';input.step='.01';input.value=Number((locked??value).toFixed(2));
+ $('editPolygonDimensionLock').checked=true;
+ editPolygonRender();
+}
+function editPolygonRenderDimensions(){
+ const s=EDIT_POLYGON,pick=$('editPolygonPick'),key=s.selection?s.selection.type+':'+s.selection.index:'';pick.replaceChildren();
+ const option=(value,text)=>{const o=document.createElement('option');o.value=value;o.textContent=text;pick.appendChild(o)};
+ option('','길이 숫자 또는 모서리를 선택하세요');pick.disabled=!s.closed;
+ if(s.closed){
+  const xy=editPolygonLocal(s.points,editPolygonFrame(s.points));
+  for(const type of ['lengths','angles'])for(let i=0;i<s.points.length;i++){
+   const value=type==='lengths'?editPolygonLength(s.points[i],s.points[(i+1)%s.points.length]):editPolygonAngle(xy,i);
+   option(type+':'+i,(type==='lengths'?'변 ':'모서리 ')+(i+1)+' · '+value.toFixed(2)+(type==='lengths'?'m':'°')+(s.locks[type][i]!==undefined?' · 고정':''));
+  }
+ }
+ pick.value=key;
+ $('editPolygonLocksSummary').textContent='고정한 길이 '+Object.keys(s.locks.lengths).length+'개 · 각도 '+Object.keys(s.locks.angles).length+'개';
+ $('editPolygonDimensionPanel').hidden=!s.closed||!s.selection;
+ if(s.selection){const {type,index}=s.selection,locked=s.locks[type][index];$('editPolygonDimensionUnlock').disabled=locked===undefined;$('editPolygonDimensionState').textContent=locked===undefined?'현재 치수는 고정되지 않았습니다.':'고정: '+locked.toFixed(2)+(type==='lengths'?'m':'°')}
+}
+function editPolygonApplyDimension(){
+ const s=EDIT_POLYGON,selection=s.selection;if(!s.closed||!selection||s.drag)return;
+ const {type,index}=selection,value=Number($('editPolygonDimensionValue').value),length=type==='lengths';
+ if(!Number.isFinite(value)||(length?value<.5||value>500:value<1||value>359)){editPolygonMessage(length?'길이는 0.5~500m로 입력하세요.':'내부 각도는 1~359°로 입력하세요. 오목한 모서리는 180°보다 큽니다.',true);return}
+ const before=editPolygonSnapshot(),locks=editPolygonLocks(s.locks,s.points.length);locks[type][index]=value;
+ const next=editPolygonSolve(s.points,locks);
+ if(!next){editPolygonMessage('치수가 서로 충돌하거나 현재 형상에서 계산할 수 없습니다. 다른 고정 치수를 해제하거나 값을 조정하세요. 기존 평면은 유지했습니다.',true);return}
+ const error=editPolygonError(true,next,locks);if(error){editPolygonMessage('치수 적용 불가: '+error+' 기존 평면은 유지했습니다.',true);return}
+ if(!$('editPolygonDimensionLock').checked)delete locks[type][index];
+ s.points=next;s.locks=locks;editPolygonRecord(before);editPolygonMessage('치수를 적용했습니다.'+($('editPolygonDimensionLock').checked?' 다른 부분을 수정해도 이 치수를 유지합니다.':''));
+}
+function editPolygonUnlockDimension(){
+ const s=EDIT_POLYGON;if(!s.selection)return;const {type,index}=s.selection;if(s.locks[type][index]===undefined)return;
+ const before=editPolygonSnapshot();delete s.locks[type][index];editPolygonRecord(before);editPolygonMessage('선택한 치수의 고정을 해제했습니다.');
+}
+function editPolygonCancelDrag(){
+ const s=EDIT_POLYGON,drag=s.drag;
+ if(drag?.type==='point'&&drag.before){s.points=drag.before.points;s.locks=drag.before.locks}
+ s.drag=null;s.pointer=null;
+}
+
 function editPolygonBox(){const b=editCanvasBounds($('editPolygonCanvas'));return {...b,scale:b.scale*(EDIT_POLYGON.zoom||1),cx:b.cx+(EDIT_POLYGON.x||0),cy:b.cy+(EDIT_POLYGON.y||0)}}
-function editPolygonZoom(factor,anchor=null){const c=$('editPolygonCanvas'),b=editPolygonBox(),base=editCanvasBounds(c),p=anchor||[c.width/2,c.height/2],zoom=Math.max(.5,Math.min(16,EDIT_POLYGON.zoom*factor)),ratio=zoom/EDIT_POLYGON.zoom;EDIT_POLYGON.x=p[0]+(b.cx-p[0])*ratio-base.cx;EDIT_POLYGON.y=p[1]+(b.cy-p[1])*ratio-base.cy;EDIT_POLYGON.zoom=zoom;editPolygonRender()}
+function editPolygonZoom(factor,anchor=null){editPolygonCancelDrag();const c=$('editPolygonCanvas'),b=editPolygonBox(),base=editCanvasBounds(c),p=anchor||[c.width/2,c.height/2],zoom=Math.max(.5,Math.min(16,EDIT_POLYGON.zoom*factor)),ratio=zoom/EDIT_POLYGON.zoom;EDIT_POLYGON.x=p[0]+(b.cx-p[0])*ratio-base.cx;EDIT_POLYGON.y=p[1]+(b.cy-p[1])*ratio-base.cy;EDIT_POLYGON.zoom=zoom;editPolygonRender()}
 function editPolygonToXY(pt){const b=editPolygonBox();return [b.cx+(pt[0]-b.refLon)*b.metersLon*b.scale,b.cy-(pt[1]-b.refLat)*b.metersLat*b.scale]}
 function editPolygonPointer(e){
  const c=$('editPolygonCanvas'),r=c.getBoundingClientRect(),b=editPolygonBox(),x=(e.clientX-r.left)/r.width*c.width,y=(e.clientY-r.top)/r.height*c.height;
@@ -4495,8 +4631,9 @@ function editPolygonPointer(e){
  if($('editPolygonSnap').checked){east=Math.round(east/.5)*.5;north=Math.round(north/.5)*.5}
  return [b.refLon+east/b.metersLon,b.refLat+north/b.metersLat];
 }
-function editPolygonError(closed=EDIT_POLYGON.closed){
- const points=EDIT_POLYGON.points,error=editPolygonValidation(points,closed);if(error)return error;
+function editPolygonError(closed=EDIT_POLYGON.closed,points=EDIT_POLYGON.points,locks=EDIT_POLYGON.locks){
+ const error=editPolygonValidation(points,closed);if(error)return error;
+ if(closed){const lockError=editPolygonLocksError(points,locks);if(lockError)return lockError}
  if(points.some(p=>!turf.booleanPointInPolygon(turf.point(p),EDIT_PARCEL)))return '꼭짓점이 필지 경계 밖입니다. 안쪽으로 옮기세요.';
  if(closed&&!editModelFits(editPolygonFeature(points),EDIT_PARCEL))return '평면이 필지 경계 밖이나 필지의 빈 공간을 통과합니다.';
  return '';
@@ -4506,7 +4643,7 @@ function editPolygonOpen(edit=false){
  if(edit&&(!model||!editIsPolygon(model))){editNotice('수정할 다각형 사용자 건물을 선택하세요.');return}
  if(!EDIT_PARCEL){editNotice('먼저 건물을 배치할 필지를 선택하세요.');return}
  if(EDIT_PLACEMENT_CANCEL)EDIT_PLACEMENT_CANCEL();
- EDIT_POLYGON={points:model?model.geometry.coordinates[0].slice(0,-1).map(p=>p.slice()):[],closed:!!model,view:'plan',editId:model?.properties.model_id||'',original:model,scope:editPlacementScope(),drag:null,zoom:1,x:0,y:0,pan:false,pointer:null};
+ EDIT_POLYGON={points:model?model.geometry.coordinates[0].slice(0,-1).map(p=>p.slice()):[],closed:!!model,view:'plan',editId:model?.properties.model_id||'',original:model,scope:editPlacementScope(),drag:null,zoom:1,x:0,y:0,pan:false,pointer:null,locks:editPolygonLocks(model?.properties.model_polygon_constraints,model?model.geometry.coordinates[0].length-1:0),undo:[],redo:[],selection:null,labels:[],notice:'',noticeError:false};
  $('editPolygonHeight').value=model?Number(model.properties.model_height):Number($('editHeight').value)||12;
  $('editPolygonTitle').textContent=model?'다각형 건물 평면 수정':'다각형 건물 추가';$('editPolygonModal').style.display='flex';editPolygonResize();editPolygonRender();
 }
@@ -4514,7 +4651,7 @@ function editPolygonResize(){
  if($('editPolygonModal').style.display!=='flex')return;
  const c=$('editPolygonCanvas'),host=$('editPolygonViewport'),r=host.getBoundingClientRect(),density=Math.min(2,Math.max(1,Number(window.devicePixelRatio)||1));
  if(r.width>1&&r.height>1){const old=editCanvasBounds(c).scale;c.width=Math.round(r.width*density);c.height=Math.round(r.height*density);const ratio=editCanvasBounds(c).scale/old;EDIT_POLYGON.x*=ratio;EDIT_POLYGON.y*=ratio}
- EDIT_POLYGON.drag=null;EDIT_POLYGON.pointer=null;editPolygonRender();
+ editPolygonCancelDrag();editPolygonRender();
 }
 function editPolygonRender(){
  if($('editPolygonModal').style.display!=='flex')return;
@@ -4522,13 +4659,13 @@ function editPolygonRender(){
  const height=Number($('editPolygonHeight').value),heightValid=Number.isFinite(height)&&height>=1&&height<=500,error=editPolygonError(),closedError=points.length>=3?editPolygonError(true):'세 점 이상 선택하세요.';
  $('editPolygonCanvas').hidden=state.view!=='plan';$('editPolygonThree').hidden=state.view!=='three';
  $('editPolygonPlanView').setAttribute('aria-pressed',String(state.view==='plan'));$('editPolygonThreeView').setAttribute('aria-pressed',String(state.view==='three'));
- $('editPolygonPan').setAttribute('aria-pressed',String(state.pan));$('editPolygonUndo').disabled=!points.length;$('editPolygonCommit').textContent=!state.closed?'평면 완성':state.editId?'변경 적용':'건물 생성';
+ $('editPolygonPan').setAttribute('aria-pressed',String(state.pan));$('editPolygonUndo').disabled=!state.undo.length;$('editPolygonRedo').disabled=!state.redo.length;editPolygonRenderDimensions();state.labels=[];$('editPolygonCommit').textContent=!state.closed?'평면 완성':state.editId?'변경 적용':'건물 생성';
  $('editPolygonCommit').disabled=state.closed?!!error||!heightValid:!!closedError;
  const area=state.closed&&!error?turf.area(editPolygonFeature(points)):null;
  $('editPolygonStats').textContent='꼭짓점 '+points.length+'개'+(area===null?' · 그리는 중':' · 바닥면적 '+area.toFixed(1)+'㎡');
- $('editPolygonStatus').textContent=error||(!heightValid?'높이는 1~500m로 입력하세요.':state.closed?'평면 완성 · 꼭짓점을 끌어 수정하거나 하단 버튼으로 적용하세요.':'첫 점을 다시 누르거나 평면 완성 버튼을 누르세요.');
- $('editPolygonStatus').style.color=error||!heightValid?'#fda4af':'#cbd5e1';
- $('editPolygonHelp').textContent=state.view==='three'?'3D 형상 미리보기 · 실제 일조·그림자는 생성 후 지도에서 확인':state.pan?'빈 화면을 끌어 이동하세요.':state.closed?'꼭짓점을 끌어 평면을 수정하세요.':'대지 안에 모서리를 순서대로 찍으세요.';
+ $('editPolygonStatus').textContent=state.notice||error||(!heightValid?'높이는 1~500m로 입력하세요.':state.closed?'길이 숫자나 모서리를 눌러 편집한 뒤 하단 버튼으로 적용하세요.':'첫 점을 다시 누르거나 평면 완성 버튼을 누르세요.');
+ $('editPolygonStatus').style.color=state.noticeError||error||!heightValid?'#fda4af':'#cbd5e1';
+ $('editPolygonHelp').textContent=state.view==='three'?'3D 형상 미리보기 · 실제 일조·그림자는 생성 후 지도에서 확인':state.pan?'빈 화면을 끌어 이동하세요.':state.closed?'길이 숫자 → 길이 입력 · 모서리 → 내부 각도 입력 · 끌기 → 꼭짓점 이동':'대지 안에 모서리를 순서대로 찍으세요.';
  if(state.view==='three'){editPolygonRenderThree(heightValid?height:0);return}
  const density=c.width/(c.getBoundingClientRect().width||c.width),b=editPolygonBox();g.clearRect(0,0,c.width,c.height);g.fillStyle='#071527';g.fillRect(0,0,c.width,c.height);
  const path=f=>{g.beginPath();const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;for(const poly of polys)for(const ring of poly){ring.forEach((p,i)=>{const xy=editPolygonToXY(p);if(!i)g.moveTo(...xy);else g.lineTo(...xy)});g.closePath()}};
@@ -4543,11 +4680,11 @@ function editPolygonRender(){
   g.beginPath();xy.forEach((p,i)=>i?g.lineTo(...p):g.moveTo(...p));if(state.closed)g.closePath();g.fillStyle='#22d3ee55';g.strokeStyle=error?'#fda4af':'#67e8f9';g.lineWidth=2*density;if(state.closed)g.fill();g.stroke();
   g.font=12*density+'px system-ui';g.textAlign='center';g.textBaseline='middle';
   if($('editPolygonDimensions').checked)for(let i=0;i<(state.closed?xy.length:xy.length-1);i++){
-   const p=xy[i],q=xy[(i+1)%xy.length],dx=q[0]-p[0],dy=q[1]-p[1],length=Math.hypot(dx,dy);if(length<55*density)continue;
-   const sign=signed>0?1:-1,x=Math.max(35*density,Math.min(c.width-35*density,(p[0]+q[0])/2+sign*dy/length*18*density)),y=Math.max(12*density,Math.min(c.height-12*density,(p[1]+q[1])/2-sign*dx/length*18*density)),text=turf.distance(points[i],points[(i+1)%points.length],{units:'meters'}).toFixed(2)+'m',w=g.measureText(text).width+8*density;
-   g.fillStyle='#071527ee';g.fillRect(x-w/2,y-9*density,w,18*density);g.fillStyle='#e0f2fe';g.fillText(text,x,y);
+   const p=xy[i],q=xy[(i+1)%xy.length],dx=q[0]-p[0],dy=q[1]-p[1],length=Math.hypot(dx,dy);if(length<1)continue;
+   const sign=signed>0?1:-1,x=Math.max(35*density,Math.min(c.width-35*density,(p[0]+q[0])/2+sign*dy/length*18*density)),y=Math.max(12*density,Math.min(c.height-12*density,(p[1]+q[1])/2-sign*dx/length*18*density)),text=(state.locks.lengths[i]!==undefined?'◆ ':'')+editPolygonLength(points[i],points[(i+1)%points.length]).toFixed(2)+'m',w=g.measureText(text).width+8*density;
+   g.fillStyle=state.selection?.type==='lengths'&&state.selection.index===i?'#075985':'#071527ee';g.fillRect(x-w/2,y-12*density,w,24*density);g.fillStyle=state.locks.lengths[i]!==undefined?'#fde68a':'#e0f2fe';g.fillText(text,x,y);if(state.closed)state.labels.push({index:i,x,y,w:Math.max(w,44*density),h:44*density});
   }
-  for(let i=0;i<xy.length;i++){const [x,y]=xy[i],d=Math.max(1,Math.hypot(center[0]-x,center[1]-y));g.beginPath();g.arc(x,y,(i===0&&!state.closed?7:5)*density,0,Math.PI*2);g.fillStyle=i===0&&!state.closed?'#67e8f9':'#071527';g.fill();g.strokeStyle='#67e8f9';g.stroke();g.fillStyle='#e2e8f0';g.fillText(String(i+1),x+(center[0]-x)/d*18*density,y+(center[1]-y)/d*18*density)}
+  for(let i=0;i<xy.length;i++){const [x,y]=xy[i],d=Math.max(1,Math.hypot(center[0]-x,center[1]-y));g.beginPath();g.arc(x,y,(i===0&&!state.closed?7:5)*density,0,Math.PI*2);g.fillStyle=i===0&&!state.closed?'#67e8f9':'#071527';g.fill();g.strokeStyle=state.locks.angles[i]!==undefined?'#fde68a':'#67e8f9';if(state.selection?.type==='angles'&&state.selection.index===i){g.lineWidth=3*density;g.arc(x,y,10*density,0,Math.PI*2)}g.stroke();g.lineWidth=2*density;g.fillStyle=state.locks.angles[i]!==undefined?'#fde68a':'#e2e8f0';g.fillText(String(i+1),x+(center[0]-x)/d*18*density,y+(center[1]-y)/d*18*density)}
  }
 }
 function editPolygonRenderThree(height){
@@ -4559,14 +4696,14 @@ function editPolygonRenderThree(height){
  for(const face of faces)polygon(face.points,'#285975','#476d83');polygon(points.map(p=>pos(p,height)),'#61a9c3','#a5e7f5');add('text',{x:18,y:24,fill:'#e2e8f0','font-size':14},'높이 '+height+'m · 면적 '+turf.area(editPolygonFeature(EDIT_POLYGON.points)).toFixed(1)+'㎡');
 }
 function editPolygonCommit(){
- if(!EDIT_POLYGON.closed){const error=editPolygonError(true);if(error){$('editPolygonStatus').textContent=error;return}EDIT_POLYGON.closed=true;editPolygonRender();return}
+ if(!EDIT_POLYGON.closed){const error=editPolygonError(true);if(error){$('editPolygonStatus').textContent=error;return}const before=editPolygonSnapshot();EDIT_POLYGON.closed=true;EDIT_POLYGON.notice='';editPolygonRecord(before);editPolygonRender();return}
  const height=Number($('editPolygonHeight').value),error=editPolygonError();if(error||!Number.isFinite(height)||height<1||height>500){$('editPolygonStatus').textContent=error||'높이는 1~500m로 입력하세요.';return}
  if(editPlacementScope()!==EDIT_POLYGON.scope){$('editPolygonStatus').textContent='편집 필지가 변경됐습니다. 창을 닫고 다시 선택하세요.';return}
- const feature=editPolygonFeature(EDIT_POLYGON.points);
+ const feature=editPolygonFeature(EDIT_POLYGON.points);feature.properties.model_polygon_constraints=JSON.stringify(EDIT_POLYGON.locks);
  if(EDIT_POLYGON.editId){
   const model=editFindModel(EDIT_POLYGON.editId);if(model!==EDIT_POLYGON.original){$('editPolygonStatus').textContent='선택 건물이 변경됐습니다. 다시 열어 주세요.';return}
   const geometryChanged=JSON.stringify(model.geometry)!==JSON.stringify(feature.geometry);
-  const next={...model,geometry:feature.geometry,properties:{...model.properties,model_height:height,model_rotation:geometryChanged?0:model.properties.model_rotation,model_shape:'polygon'}};delete next.bbox;
+  const next={...model,geometry:feature.geometry,properties:{...model.properties,model_height:height,model_rotation:geometryChanged?0:model.properties.model_rotation,model_shape:'polygon',model_polygon_constraints:feature.properties.model_polygon_constraints}};delete next.bbox;
   const history=editPlacementHistoryCapture(),index=EDIT_MODELS.indexOf(model);if(index<0)return;
   EDIT_MODELS[index]=next;EDIT_CUSTOM=next;EDIT_SELECTED_MODEL_ID=next.properties.model_id;EDIT_RECT=null;editUpdateModel();editModelSummary();workspaceUpdate();editPlacementRecord(history,'다각형 평면 수정');$('editPolygonModal').style.display='none';editOpenPlacement();if(SCREEN_UI)screenPlacementChoose('edit');return;
  }
@@ -4576,25 +4713,55 @@ function setupPolygonEditor(){
  const canvas=$('editPolygonCanvas');
  canvas.addEventListener('pointerdown',e=>{
   if(e.button!==0||EDIT_POLYGON.view!=='plan'||EDIT_POLYGON.pointer!==null)return;e.preventDefault();canvas.focus?.({preventScroll:true});
-  EDIT_POLYGON.pointer=e.pointerId;canvas.setPointerCapture(e.pointerId);
-  const r=canvas.getBoundingClientRect(),pixel=[(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height],radius=22*canvas.width/r.width;
-  if(EDIT_POLYGON.pan){EDIT_POLYGON.drag={id:e.pointerId,type:'pan',start:pixel,x:EDIT_POLYGON.x,y:EDIT_POLYGON.y};canvas.setPointerCapture(e.pointerId);return}
-  let hit=-1,best=radius;EDIT_POLYGON.points.forEach((p,i)=>{const q=editPolygonToXY(p),d=Math.hypot(q[0]-pixel[0],q[1]-pixel[1]);if(d<best){hit=i;best=d}});
-  if(!EDIT_POLYGON.closed){if(hit===0&&EDIT_POLYGON.points.length>=3){editPolygonCommit();return}EDIT_POLYGON.points.push(editPolygonPointer(e));editPolygonRender();return}
-  if(hit>=0){EDIT_POLYGON.drag={id:e.pointerId,type:'point',index:hit,original:EDIT_POLYGON.points[hit].slice()};canvas.setPointerCapture(e.pointerId)}
+  const s=EDIT_POLYGON,r=canvas.getBoundingClientRect(),pixel=[(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height],radius=22*canvas.width/r.width;
+  s.pointer=e.pointerId;canvas.setPointerCapture(e.pointerId);
+  if(s.pan){s.drag={id:e.pointerId,type:'pan',start:pixel,x:s.x,y:s.y};return}
+  let hit=-1,best=radius;s.points.forEach((p,i)=>{const q=editPolygonToXY(p),d=Math.hypot(q[0]-pixel[0],q[1]-pixel[1]);if(d<best){hit=i;best=d}});
+  if(!s.closed){
+   if(hit===0&&s.points.length>=3){editPolygonCommit();return}
+   const before=editPolygonSnapshot();s.points.push(editPolygonPointer(e));s.notice='';editPolygonRecord(before);editPolygonRender();return;
+  }
+  if(hit>=0){s.drag={id:e.pointerId,type:'point',index:hit,start:pixel,moved:false,before:editPolygonSnapshot()};return}
+  const label=(s.labels||[]).find(p=>Math.abs(p.x-pixel[0])<=p.w/2&&Math.abs(p.y-pixel[1])<=p.h/2);
+  if(label)editPolygonSelect('lengths',label.index);
  });
- canvas.addEventListener('pointermove',e=>{const drag=EDIT_POLYGON.drag;if(!drag||drag.id!==e.pointerId)return;if(drag.type==='pan'){const r=canvas.getBoundingClientRect();EDIT_POLYGON.x=drag.x+(e.clientX-r.left)/r.width*canvas.width-drag.start[0];EDIT_POLYGON.y=drag.y+(e.clientY-r.top)/r.height*canvas.height-drag.start[1]}else EDIT_POLYGON.points[drag.index]=editPolygonPointer(e);editPolygonRender()});
- const end=(e,cancel=false)=>{if(EDIT_POLYGON.pointer===e.pointerId)EDIT_POLYGON.pointer=null;const drag=EDIT_POLYGON.drag;if(!drag||drag.id!==e.pointerId)return;if(cancel&&drag.type==='point')EDIT_POLYGON.points[drag.index]=drag.original;EDIT_POLYGON.drag=null;editPolygonRender()};
+ canvas.addEventListener('pointermove',e=>{
+  const s=EDIT_POLYGON,drag=s.drag;if(!drag||drag.id!==e.pointerId)return;
+  const r=canvas.getBoundingClientRect(),pixel=[(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height];
+  if(drag.type==='pan'){s.x=drag.x+pixel[0]-drag.start[0];s.y=drag.y+pixel[1]-drag.start[1]}
+  else {
+   if(!drag.moved&&Math.hypot(pixel[0]-drag.start[0],pixel[1]-drag.start[1])<5*canvas.width/r.width)return;
+   drag.moved=true;const point=editPolygonPointer(e),locked=Object.keys(s.locks.lengths).length+Object.keys(s.locks.angles).length;
+   const next=locked?editPolygonSolve(drag.before.points,s.locks,{index:drag.index,point}):drag.before.points.map((p,i)=>i===drag.index?point:p.slice());
+   const error=next?editPolygonError(true,next,s.locks):'고정 치수를 유지하면서 이 위치로 옮길 수 없습니다. 치수 고정을 해제하거나 다른 위치로 옮기세요.';
+   if(error){s.notice=error;s.noticeError=true}else{s.points=next;s.notice='';s.noticeError=false}
+  }
+  editPolygonRender();
+ });
+ const end=(e,cancel=false)=>{
+  const s=EDIT_POLYGON;if(s.pointer===e.pointerId)s.pointer=null;const drag=s.drag;if(!drag||drag.id!==e.pointerId)return;s.drag=null;
+  if(drag.type==='point'){
+   if(cancel){s.points=drag.before.points;s.locks=drag.before.locks;s.notice='';s.noticeError=false}
+   else if(drag.moved)editPolygonRecord(drag.before);
+   else {editPolygonSelect('angles',drag.index);return}
+  }
+  editPolygonRender();
+ };
  canvas.addEventListener('pointerup',e=>end(e));canvas.addEventListener('pointercancel',e=>end(e,true));canvas.addEventListener('lostpointercapture',e=>end(e,true));
- $('editPolygonPan').onclick=()=>{EDIT_POLYGON.pan=!EDIT_POLYGON.pan;editPolygonRender()};
- $('editPolygonZoomIn').onclick=()=>editPolygonZoom(1.4);$('editPolygonZoomOut').onclick=()=>editPolygonZoom(1/1.4);$('editPolygonFit').onclick=()=>{EDIT_POLYGON.zoom=1;EDIT_POLYGON.x=0;EDIT_POLYGON.y=0;editPolygonRender()};
+ $('editPolygonPan').onclick=()=>{editPolygonCancelDrag();EDIT_POLYGON.pan=!EDIT_POLYGON.pan;editPolygonRender()};
+ $('editPolygonZoomIn').onclick=()=>editPolygonZoom(1.4);$('editPolygonZoomOut').onclick=()=>editPolygonZoom(1/1.4);$('editPolygonFit').onclick=()=>{editPolygonCancelDrag();EDIT_POLYGON.zoom=1;EDIT_POLYGON.x=0;EDIT_POLYGON.y=0;editPolygonRender()};
  canvas.addEventListener('wheel',e=>{e.preventDefault();const r=canvas.getBoundingClientRect();editPolygonZoom(Math.exp(-Math.max(-200,Math.min(200,e.deltaY))*.003),[(e.clientX-r.left)/r.width*canvas.width,(e.clientY-r.top)/r.height*canvas.height])},{passive:false});
- $('editPolygonNew').onclick=()=>{EDIT_POLYGON.points=[];EDIT_POLYGON.closed=false;EDIT_POLYGON.view='plan';EDIT_POLYGON.pan=false;EDIT_POLYGON.drag=null;EDIT_POLYGON.pointer=null;editPolygonRender()};
- $('editPolygonUndo').onclick=()=>{EDIT_POLYGON.points.pop();EDIT_POLYGON.closed=false;EDIT_POLYGON.view='plan';editPolygonRender()};
+ $('editPolygonNew').onclick=()=>{editPolygonCancelDrag();const before=editPolygonSnapshot();Object.assign(EDIT_POLYGON,{points:[],closed:false,view:'plan',pan:false,selection:null,locks:{lengths:{},angles:{}},notice:'',noticeError:false});editPolygonRecord(before);editPolygonRender()};
+ $('editPolygonUndo').onclick=()=>editPolygonHistory();$('editPolygonRedo').onclick=()=>editPolygonHistory(true);
+ $('editPolygonPick').onchange=e=>{if(!e.target.value){EDIT_POLYGON.selection=null;editPolygonRender();return}const [type,index]=e.target.value.split(':');editPolygonSelect(type,Number(index))};
+ $('editPolygonDimensionApply').onclick=editPolygonApplyDimension;$('editPolygonDimensionUnlock').onclick=editPolygonUnlockDimension;
+ $('editPolygonDimensionValue').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();editPolygonApplyDimension()}});
+ canvas.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();editPolygonHistory(e.shiftKey)}});
  $('editPolygonCommit').onclick=editPolygonCommit;
- $('editPolygonClose').onclick=()=>{EDIT_POLYGON.drag=null;$('editPolygonModal').style.display='none';workspaceCancelPlacement()};
- for(const [id,view] of [['editPolygonPlanView','plan'],['editPolygonThreeView','three']])$(id).onclick=()=>{EDIT_POLYGON.view=view;editPolygonRender()};
+ $('editPolygonClose').onclick=()=>{editPolygonCancelDrag();$('editPolygonModal').style.display='none';workspaceCancelPlacement()};
+ for(const [id,view] of [['editPolygonPlanView','plan'],['editPolygonThreeView','three']])$(id).onclick=()=>{editPolygonCancelDrag();EDIT_POLYGON.view=view;editPolygonRender()};
  for(const id of ['editPolygonHeight','editPolygonSnap','editPolygonDimensions'])$(id).addEventListener('input',editPolygonRender);
+ window.addEventListener('blur',()=>{editPolygonCancelDrag();editPolygonRender()});
  window.addEventListener('resize',editPolygonResize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(editPolygonResize).observe($('editPolygonViewport'));
 }
 

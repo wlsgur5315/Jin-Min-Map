@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'tools/test-polygon-dimensions.cjs'
       - '.github/workflows/validate-index-script.yml'
 permissions:
   contents: read
@@ -24,3 +25,5 @@ jobs:
           Path('/tmp/index-inline.js').write_text('\n'.join(scripts),encoding='utf-8')
           PY
           node --check /tmp/index-inline.js
+      - name: Check polygon dimension constraints
+        run: node tools/test-polygon-dimensions.cjs
