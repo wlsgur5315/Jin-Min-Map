@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'eye-walk.js'
+      - 'eye-walk.css'
+      - 'tools/test-eye-walk.cjs'
       - 'tools/test-polygon-dimensions.cjs'
       - '.github/workflows/validate-index-script.yml'
 permissions:
@@ -27,3 +30,7 @@ jobs:
           node --check /tmp/index-inline.js
       - name: Check polygon dimension constraints
         run: node tools/test-polygon-dimensions.cjs
+      - name: Check eye-level walk and collision
+        run: |
+          node --check eye-walk.js
+          node tools/test-eye-walk.cjs

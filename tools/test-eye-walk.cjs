@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict'),M=require('../eye-walk.js');
+const ring=[[0,0],[10,0],[10,10],[0,10],[0,0]],hole=[[3,3],[7,3],[7,7],[3,7],[3,3]],entries=[{box:[0,0,10,10],polygons:[[ring,hole]]}];
+assert(M.inPolygon(1,1,[ring,hole]));assert(!M.inPolygon(5,5,[ring,hole]));
+assert(M.blocked(1,1,entries));assert(!M.blocked(5,5,entries));assert(M.blocked(-.1,5,entries));assert(!M.blocked(-1,5,entries));
+const grid={n:41,radius:20,step:1,values:Array(41*41).fill(30)};
+assert.equal(M.sampleGrid(grid,0,0),30);assert.equal(M.sampleGrid(grid,21,0),null);
+let next=M.move({x:-5,z:5},20,0,grid,entries);assert(next.x<-.27,'large movement must not tunnel through a wall');
+next=M.move({x:-.4,z:2},.5,2,grid,entries);assert(next.x<0&&next.z>3,'slide along wall');
+const missing={...grid,values:grid.values.slice()};missing.values[20*41+21]=null;assert.equal(M.sampleGrid(missing,.5,.5),null);assert(M.move({x:-1,z:0},3,0,missing,[]).x<0,'do not walk over missing DEM');
+const slope={...grid,values:grid.values.map((_,i)=>30+(i%41)*.1)};assert(Math.abs(M.sampleGrid(slope,.5,0)-32.05)<1e-8);next=M.move({x:0,z:0},2,0,slope,[]);assert(Math.abs(M.sampleGrid(slope,next.x,next.z)-32.2)<1e-8,'follow terrain');
+const cliff={...grid,values:grid.values.map((_,i)=>i%41>20?60:30)};next=M.move({x:0,z:0},3,0,cliff,[]);assert(next.x<.5,'do not step through cliff');
+next=M.move({x:0,z:0},100,0,grid,[]);assert(next.x<20,'stay within sampled scene');
+assert.equal(M.segmentDistance(4,3,[0,0],[10,0]),3);
+console.log('PASS: building/courtyard collision, wall clearance, continuous movement, sliding, terrain interpolation, missing DEM, cliff and scene limits');

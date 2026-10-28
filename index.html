@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.28-01</title>
+<title>Jinju3D Local · v2026.10.28-02</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -304,9 +304,10 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 .screen-ui #screenSelection>#workspaceModeBar{margin:0 0 8px;width:224px;max-width:100%}
 </style>
 
+<link rel="stylesheet" href="eye-walk.css?v=2026.10.28-02">
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.28-01</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.28-02</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -791,7 +792,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.28-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.10.28-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -810,7 +811,7 @@ function setupMapKeyboard(){
  const editable=target=>!!(target?.isContentEditable||target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  function blocked(target=document.activeElement){
   if(document.hidden||precisionMode||editable(target)||editable(document.activeElement))return true;
-  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal','solarPickModal'].some(id=>{
+  return ['editPlacementModal','editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal','solarPickModal','eyeWalkModal'].some(id=>{
    const el=$(id);if(!el)return false;const style=getComputedStyle(el);return style.display!=='none'&&style.visibility!=='hidden';
   });
  }
@@ -1824,11 +1825,13 @@ function screenPage(key){return SCREEN_UI.pages[key]||(SCREEN_UI.pages[key]=scre
 function screenReadButton(host,label,source){const b=screenButton(label,host,()=>screenReaderOpen(typeof source==='function'?source():$(source),label));b.className='screen-read-button';return b}
 function screenChoose(main,sub){
  if(!SCREEN_UI)return;
+ if(main!=='walk')window.EYE_WALK?.cancelPick();
  if(main==='settings'&&SCREEN_UI.main!=='settings')SCREEN_UI.returnRoute={main:SCREEN_UI.main,sub:SCREEN_UI.sub,action:SCREEN_UI.action};
  SCREEN_UI.routing=true;
  if(main==='settings'){activateDrawerTab('settings');SCREEN_UI.main=main;SCREEN_UI.sub=sub;SCREEN_UI.routing=false;screenWorkspaceSync();return}
  activateDrawerTab('law');
  SCREEN_UI.main=main;SCREEN_UI.sub=sub;
+ if(main==='walk'){SCREEN_UI.action=WORKSPACE_ACTIVE;SCREEN_UI.routing=false;screenWorkspaceSync();return}
  const action=main==='info'?(sub==='list'?'list':'law'):main==='place'?'model':sub==='analysis'||sub==='result'?'surface':'shadow';
  SCREEN_UI.action=action;
  workspaceAction(action,{start:main==='solar'&&(sub==='analysis'||sub==='result')});
@@ -1844,14 +1847,14 @@ function screenWorkspaceSync(){
  if(!SCREEN_UI||SCREEN_UI.routing)return;
  const state=SCREEN_UI,selected=lawMode?!!SELECTED_PARCEL:!!(editSelectedModel()||buildingSelected());
  if(DRAWER_TAB==='settings')state.main='settings';
- else if(WORKSPACE_ACTIVE&&WORKSPACE_ACTIVE!==state.action){
+ else if(state.main!=='walk'&&WORKSPACE_ACTIVE&&WORKSPACE_ACTIVE!==state.action){
   state.action=WORKSPACE_ACTIVE;state.main=WORKSPACE_ACTIVE==='law'||WORKSPACE_ACTIVE==='list'?'info':WORKSPACE_ACTIVE==='model'?'place':'solar';
   state.sub=WORKSPACE_ACTIVE==='list'?'list':WORKSPACE_ACTIVE==='model'?'launch':WORKSPACE_ACTIVE==='law'?'basic':['surface','compare'].includes(WORKSPACE_ACTIVE)?'analysis':'shadow';
  }
- if(state.target!==WORKSPACE_LAST_TARGET){state.target=WORKSPACE_LAST_TARGET;if(state.main!=='settings'){state.main='info';state.sub='basic';state.action=WORKSPACE_ACTIVE}}
- const isSettings=state.main==='settings';$('screenMainNav').hidden=!selected||isSettings;$('screenSubNav').hidden=!selected&&!isSettings;
+ if(state.target!==WORKSPACE_LAST_TARGET){state.target=WORKSPACE_LAST_TARGET;if(!['settings','walk'].includes(state.main)){state.main='info';state.sub='basic';state.action=WORKSPACE_ACTIVE}}
+ const isSettings=state.main==='settings';$('screenMainNav').hidden=isSettings;$('screenSubNav').hidden=!selected&&!isSettings&&state.main!=='walk';
  $('screenSettingsHeader').hidden=!isSettings;$('screenSelection').hidden=isSettings;$('workspaceClearSelection').hidden=isSettings||!selected;
- const routes=isSettings?state.settings.map((item,i)=>[String(i),item.label]):state.main==='info'?[['basic','기본 정보'],['law','규모·법규'],['height','높이·일조'],['list','필지 안 건물']]:state.main==='place'?[['launch','배치'],['single','선택 동 관리'],['parcel','필지 전체']]:[['shadow','그림자'],['analysis','표면 분석'],['result','결과 보기'],['detail','상세 설정']];
+ const routes=isSettings?state.settings.map((item,i)=>[String(i),item.label]):state.main==='walk'?[['start','시작 위치'],['records','측정 기록'],['settings','조작 설정']]:state.main==='info'?[['basic','기본 정보'],['law','규모·법규'],['height','높이·일조'],['list','필지 안 건물']]:state.main==='place'?[['launch','배치'],['single','선택 동 관리'],['parcel','필지 전체']]:[['shadow','그림자'],['analysis','표면 분석'],['result','결과 보기'],['detail','상세 설정']];
  $('screenSubNav').style.gridTemplateColumns='repeat('+Math.min(4,routes.length)+',minmax(0,1fr))';
  if(isSettings){
   const picker=state.settingsPicker;picker.hidden=false;$('screenSubNav').replaceChildren(picker);$('screenSubNav').style.gridTemplateColumns='minmax(0,1fr)';
@@ -1860,8 +1863,8 @@ function screenWorkspaceSync(){
  }else{
   $('screenSubNav').replaceChildren();for(const [key,label] of routes){const b=screenButton(label,$('screenSubNav'),()=>screenChoose(state.main,key));b.setAttribute('aria-pressed',String(key===state.sub))}
  }
- for(const b of document.querySelectorAll('[data-screen-main]'))b.setAttribute('aria-pressed',String(b.dataset.screenMain===state.main));
- let key=!selected&&!isSettings?'empty':isSettings?'settings-'+state.sub:state.main+'-'+state.sub;
+ for(const b of document.querySelectorAll('[data-screen-main]')){b.setAttribute('aria-pressed',String(b.dataset.screenMain===state.main));b.disabled=!selected&&b.dataset.screenMain!=='walk'}
+ let key=!selected&&!isSettings&&state.main!=='walk'?'empty':isSettings?'settings-'+state.sub:state.main+'-'+state.sub;
  if(!state.pages[key])key=state.main==='place'?'place-launch':'info-basic';
  for(const [name,page] of Object.entries(state.pages)){page.className='screen-page';page.hidden=name!==key}
  state.page=key;
@@ -1875,6 +1878,7 @@ function screenWorkspaceSync(){
  $('solarMainStatus').hidden=state.main!=='solar';
  if(key==='empty')$('workspaceStatus').textContent='건물 또는 필지를 선택하면 작업이 표시됩니다.';
  else{screenMove($('workspaceStatus'),$('screenFooterStatus'));if(!$('workspaceStatus').textContent)$('workspaceStatus').textContent=isSettings?'지도 설정':state.main==='solar'?'계절·시간·선택 건물 기준':state.main==='place'?'선택 건물·필지 기준 배치':'연결 필지 기준 자동 사전검토'}
+ window.EYE_WALK?.sync();
  if(state.pendingFit)cancelAnimationFrame(state.pendingFit);state.pendingFit=requestAnimationFrame(()=>{state.pendingFit=0;screenFit()});
 }
 function screenFooterSync(){
@@ -4382,7 +4386,7 @@ function setupPlacementKeyboard(){
  let command=null,modelId='',lastRepeat=0;
  const editable=el=>!!(el?.isContentEditable||el?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'));
  const reset=()=>{held.clear();command=null;modelId='';lastRepeat=0};
- const blocked=target=>document.hidden||$('editPlacementModal').style.display!=='flex'||editable(target)||editable(document.activeElement)||['editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal','solarPickModal'].some(id=>$(id)?.style.display==='flex');
+ const blocked=target=>document.hidden||$('editPlacementModal').style.display!=='flex'||editable(target)||editable(document.activeElement)||['editSizeModal','editDrawModal','editHeightModal','solarGISLab','solarThreeDemo','solarSurfaceInspector','sourceModal','screenReader','editPolygonModal','solarPickModal','eyeWalkModal'].some(id=>$(id)?.style.display==='flex');
  document.addEventListener('keydown',e=>{
   if(!codes.has(e.code))return;
   if(e.defaultPrevented||e.isComposing||e.ctrlKey||e.metaKey||e.altKey||blocked(e.target)){reset();return}
@@ -5053,7 +5057,7 @@ async function selectDistrict(id){
 }
 function cinematic(c,l){map.setLayoutProperty('buildings-foundation','visibility','visible');map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-foundation','visibility',smartOsm?'visible':'none');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({center:c,zoom:18,pitch:67,bearing:30,duration:1600});if(currentBuildings)scheduleGroundElevationAfterViewport(currentBuildings,'buildings');message(l+' · 3D 공간 보기')}
 function fmt(n){return Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:1}):'-'}
-map.on('click',e=>{if(precisionMode)return;if(buildingHandleClick(e))return;if(EDIT_PICKING){const pf=map.queryRenderedFeatures(e.point,{layers:['parcel-fill']})[0];if(pf)editSetParcel(pf);else editNotice('필지 경계를 클릭하세요.');return}const ls=['parcel-fill','buildings-2d'];if(smartOsm)ls.push('smart-osm-2d','smart-facility-2d');const fs=map.queryRenderedFeatures(e.point,{layers:ls}),p=fs.find(x=>x.layer.id==='parcel-fill');if(lawMode){if(p)selectParcelForLaw(p);return}const gs=fs.filter(x=>x.layer.id==='buildings-2d'),g=gs.sort((a,b)=>{const ap=a.properties||{},bp=b.properties||{};const aq=(Number(ap.building_area)>0?4:0)+(ap.building_name?3:0)+(ap.building_dong?2:0)+(ap.register_dong||ap.register_name?1:0);const bq=(Number(bp.building_area)>0?4:0)+(bp.building_name?3:0)+(bp.building_dong?2:0)+(bp.register_dong||bp.register_name?1:0);if(aq!==bq)return bq-aq;const aa=Number(ap.building_area)||Number.MAX_SAFE_INTEGER,ba=Number(bp.building_area)||Number.MAX_SAFE_INTEGER;return aa-ba})[0],o=fs.find(x=>x.layer.id==='smart-osm-2d'),fac=fs.find(x=>x.layer.id==='smart-facility-2d');if(g){const a=g.properties;$('info').innerHTML=`<b>${a.building_name||a.register_dong||'GIS 건물'}</b><br>${a.legal_name||''} ${a.jibun||''}<br>지상 ${a.floors_above||'-'}층 · 높이 <b>${fmt(Number(a.render_height))}m</b><br>${a.height_confidence||'-'} · ${a.height_source||''}${a.register_matched?' · 건축물대장 매칭':''}${a.register_dong?`<br>대장 동명칭: <b>${a.register_dong}</b>`:''}${a.register_match_basis?`<br>매칭 근거: ${a.register_match_basis}`:''}${a.verified_override?`<br>검증 보정: <b>${a.verified_override}</b>`:''}${a.building_uid?`<br>UID: ${a.building_uid}`:''}`;cinematic(e.lngLat,a.building_name||'GIS 건물');return}if(o){const a=o.properties;$('info').innerHTML=`<b>${a.building_name||'OSM 보완 건물'}</b><br>${a.floors_above?('지상 '+a.floors_above+'층 · '):''}${a.height_source||'높이정보 없음'}<br>${a.register_matched?'건축물대장 매칭 완료 · ':''}${a.has_3d==='true'||a.has_3d===true?'3D 높이 적용':'높이 정보가 없어 2D만 표시'}`;if(a.has_3d==='true'||a.has_3d===true)cinematic(e.lngLat,'OSM 보완 건물');return}if(fac){$('info').innerHTML='<b>OSM 대형시설</b><br>경기장 등 시설 범위 참고용<br>임의 높이를 적용하지 않고 2D로만 표시';return}if(p&&lawMode){selectParcelForLaw(p);return}const d=map.queryRenderedFeatures(e.point,{layers:['district-fill']})[0];if(d&&String(d.properties.district_id)!==selectedId)selectDistrict(String(d.properties.district_id))});
+map.on('click',e=>{if(window.EYE_WALK?.picking)return;if(precisionMode)return;if(buildingHandleClick(e))return;if(EDIT_PICKING){const pf=map.queryRenderedFeatures(e.point,{layers:['parcel-fill']})[0];if(pf)editSetParcel(pf);else editNotice('필지 경계를 클릭하세요.');return}const ls=['parcel-fill','buildings-2d'];if(smartOsm)ls.push('smart-osm-2d','smart-facility-2d');const fs=map.queryRenderedFeatures(e.point,{layers:ls}),p=fs.find(x=>x.layer.id==='parcel-fill');if(lawMode){if(p)selectParcelForLaw(p);return}const gs=fs.filter(x=>x.layer.id==='buildings-2d'),g=gs.sort((a,b)=>{const ap=a.properties||{},bp=b.properties||{};const aq=(Number(ap.building_area)>0?4:0)+(ap.building_name?3:0)+(ap.building_dong?2:0)+(ap.register_dong||ap.register_name?1:0);const bq=(Number(bp.building_area)>0?4:0)+(bp.building_name?3:0)+(bp.building_dong?2:0)+(bp.register_dong||bp.register_name?1:0);if(aq!==bq)return bq-aq;const aa=Number(ap.building_area)||Number.MAX_SAFE_INTEGER,ba=Number(bp.building_area)||Number.MAX_SAFE_INTEGER;return aa-ba})[0],o=fs.find(x=>x.layer.id==='smart-osm-2d'),fac=fs.find(x=>x.layer.id==='smart-facility-2d');if(g){const a=g.properties;$('info').innerHTML=`<b>${a.building_name||a.register_dong||'GIS 건물'}</b><br>${a.legal_name||''} ${a.jibun||''}<br>지상 ${a.floors_above||'-'}층 · 높이 <b>${fmt(Number(a.render_height))}m</b><br>${a.height_confidence||'-'} · ${a.height_source||''}${a.register_matched?' · 건축물대장 매칭':''}${a.register_dong?`<br>대장 동명칭: <b>${a.register_dong}</b>`:''}${a.register_match_basis?`<br>매칭 근거: ${a.register_match_basis}`:''}${a.verified_override?`<br>검증 보정: <b>${a.verified_override}</b>`:''}${a.building_uid?`<br>UID: ${a.building_uid}`:''}`;cinematic(e.lngLat,a.building_name||'GIS 건물');return}if(o){const a=o.properties;$('info').innerHTML=`<b>${a.building_name||'OSM 보완 건물'}</b><br>${a.floors_above?('지상 '+a.floors_above+'층 · '):''}${a.height_source||'높이정보 없음'}<br>${a.register_matched?'건축물대장 매칭 완료 · ':''}${a.has_3d==='true'||a.has_3d===true?'3D 높이 적용':'높이 정보가 없어 2D만 표시'}`;if(a.has_3d==='true'||a.has_3d===true)cinematic(e.lngLat,'OSM 보완 건물');return}if(fac){$('info').innerHTML='<b>OSM 대형시설</b><br>경기장 등 시설 범위 참고용<br>임의 높이를 적용하지 않고 2D로만 표시';return}if(p&&lawMode){selectParcelForLaw(p);return}const d=map.queryRenderedFeatures(e.point,{layers:['district-fill']})[0];if(d&&String(d.properties.district_id)!==selectedId)selectDistrict(String(d.properties.district_id))});
 
 
 let DRAWER_OPEN=false,DRAWER_TAB='law';
@@ -6223,4 +6227,6 @@ async function waitForMapReady(m,timeout=5000){
 })();
 setupWorkspaceUI();
 setupScreenUI();
-</script></body></html>
+</script>
+<script src="eye-walk.js?v=2026.10.28-02"></script>
+</body></html>
