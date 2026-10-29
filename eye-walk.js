@@ -179,7 +179,7 @@
    if(!entries.length)throw Error('주변에 표시할 건물이 없습니다. 건물 자료를 불러온 지역에서 시작하세요.');
    if(blocked(0,0,entries))throw Error('시작 위치가 건물 벽에 너무 가깝습니다. 도로나 넓은 빈 공간을 선택하세요.');
    for(const id of ['buildings-3d','buildings-foundation','smart-osm-3d','smart-osm-foundation','buildings-2d','smart-osm-2d','edit-custom-model-3d','edit-custom-model-foundation','edit-custom-model-outline','selected-building-fill','selected-building-line','solar-three-map-custom'])if(map.getLayer(id)){hidden.set(id,map.getLayoutProperty(id,'visibility'));map.setLayoutProperty(id,'visibility','none')}
-   const image=await captureMap();if(run!==token)return;
+   const image=await captureMap();if(run!==token)return;if(!image)throw Error('주변 지도를 캡처하지 못해 도로를 표시할 수 없습니다. 지도 타일이 모두 로드된 뒤 다시 시작하세요.');
    hud('실제 건물 형상을 구성하는 중…');
    threeScene=new THREE.Scene();threeScene.background=new THREE.Color('#bfd5e4');threeScene.fog=new THREE.Fog('#bfd5e4',radius*.8,radius*2);
    threeScene.add(new THREE.HemisphereLight('#f1f7ff','#64756a',2.2));const sun=new THREE.DirectionalLight('#fff3dd',2.3);sun.position.set(-50,100,30);threeScene.add(sun);
