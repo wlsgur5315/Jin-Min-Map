@@ -36,13 +36,27 @@
   }
   return{coverage,filled,flatFallback};
  }
+ function footprintGroundMax(grid,polygons){
+  let maximum=-Infinity;
+  const include=(x,z)=>{const y=sampleGrid(grid,x,z);if(Number.isFinite(y))maximum=Math.max(maximum,y)};
+  for(const rings of polygons){
+   for(const ring of rings)for(let i=0;i<ring.length;i++){
+    const a=ring[i],b=ring[(i+1)%ring.length],length=Math.hypot(b[0]-a[0],b[1]-a[1]),steps=Math.max(1,Math.ceil(length/Math.max(.5,grid.step*.5)));
+    for(let k=0;k<=steps;k++){const t=k/steps;include(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t)}
+   }
+   const points=rings[0],minX=Math.min(...points.map(p=>p[0])),maxX=Math.max(...points.map(p=>p[0])),minZ=Math.min(...points.map(p=>p[1])),maxZ=Math.max(...points.map(p=>p[1]));
+   const i0=Math.max(0,Math.ceil((minX+grid.radius)/grid.step)),i1=Math.min(grid.n-1,Math.floor((maxX+grid.radius)/grid.step)),j0=Math.max(0,Math.ceil((minZ+grid.radius)/grid.step)),j1=Math.min(grid.n-1,Math.floor((maxZ+grid.radius)/grid.step));
+   for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){const x=-grid.radius+i*grid.step,z=-grid.radius+j*grid.step;if(inPolygon(x,z,rings)){const y=grid.values[j*grid.n+i];if(Number.isFinite(y))maximum=Math.max(maximum,y)}}
+  }
+  return Number.isFinite(maximum)?maximum:null;
+ }
  function move(position,dx,dz,grid,entries){
   let {x,z}=position;const n=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.16)),sx=dx/n,sz=dz/n;
   const valid=(a,b)=>{const before=sampleGrid(grid,x,z),after=sampleGrid(grid,a,b);return after!==null&&before!==null&&Math.abs(after-before)<.55&&!blocked(a,b,entries)};
   for(let i=0;i<n;i++){if(valid(x+sx,z+sz)){x+=sx;z+=sz}else if(sx&&valid(x+sx,z))x+=sx;else if(sz&&valid(x,z+sz))z+=sz}
   return {x,z};
  }
- const math={segmentDistance,inRing,inPolygon,blocked,sampleGrid,fillTerrainGaps,move};
+ const math={segmentDistance,inRing,inPolygon,blocked,sampleGrid,fillTerrainGaps,footprintGroundMax,move};
  if(typeof module!=='undefined'&&module.exports)module.exports=math;
  if(!root.document)return;
  root.EYE_WALK_MATH=math;
@@ -171,10 +185,12 @@
    const gapStats=fillTerrainGaps(grid,datum);if(!gapStats)throw Error('지형 표고 자료에 빈 구역이 많아 눈높이 장면을 만들 수 없습니다. 지형 타일이 로드된 뒤 다시 시작하세요.');
    const candidates=collectBuildings(center,local,radius),entries=[];let skipped=0,skippedOutside=0;
    for(const item of candidates){const p=item.f.properties||{};let at;try{at=turf.pointOnFeature(item.f).geometry.coordinates}catch{at=featureGroundAnchor(item.f)||center}const anchorLocal=local(at),elevation=sampleGrid(grid,anchorLocal[0],anchorLocal[1]);if(elevation===null){skipped++;continue}
-    const extra=item.custom?editModelElevation(item.f).render_base:Math.max(0,Number(p.render_base)||0),polygons=(item.f.geometry.type==='Polygon'?[item.f.geometry.coordinates]:item.f.geometry.coordinates).map(poly=>poly.map(r=>r.map(local)));
+    const storedFoundation=item.custom?editModelElevation(item.f).render_base:Math.max(0,Number(p.render_base)||0),polygons=(item.f.geometry.type==='Polygon'?[item.f.geometry.coordinates]:item.f.geometry.coordinates).map(poly=>poly.map(r=>r.map(local)));
     const flat=polygons.flat(2),box=[Math.min(...flat.map(p=>p[0])),Math.min(...flat.map(p=>p[1])),Math.max(...flat.map(p=>p[0])),Math.max(...flat.map(p=>p[1]))];
     if(box[0]<-radius||box[1]<-radius||box[2]>radius||box[3]>radius){skippedOutside++;continue}
-    entries.push({...item,polygons,box,base:elevation-datum+extra,foundation:extra,meshes:[]});
+    const footprintMax=footprintGroundMax(grid,polygons);if(footprintMax===null){skipped++;continue}
+    const terrainFoundation=Math.max(0,footprintMax-elevation+.25),extra=Math.max(storedFoundation,terrainFoundation);
+    entries.push({...item,polygons,box,base:elevation-datum+extra,foundation:extra,terrainFoundation,meshes:[]});
    }
    if(!entries.length)throw Error('주변에 표시할 건물이 없습니다. 건물 자료를 불러온 지역에서 시작하세요.');
    if(blocked(0,0,entries))throw Error('시작 위치가 건물 벽에 너무 가깝습니다. 도로나 넓은 빈 공간을 선택하세요.');
