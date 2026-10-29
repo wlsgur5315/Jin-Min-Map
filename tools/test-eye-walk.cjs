@@ -7,8 +7,10 @@ assert.equal(M.sampleGrid(grid,0,0),30);assert.equal(M.sampleGrid(grid,21,0),nul
 let next=M.move({x:-5,z:5},20,0,grid,entries);assert(next.x<-.27,'large movement must not tunnel through a wall');
 next=M.move({x:-.4,z:2},.5,2,grid,entries);assert(next.x<0&&next.z>3,'slide along wall');
 const missing={...grid,values:grid.values.slice()};missing.values[20*41+21]=null;assert.equal(M.sampleGrid(missing,.5,.5),null);assert(M.move({x:-1,z:0},3,0,missing,[]).x<0,'do not walk over missing DEM');
+const repaired={n:5,radius:2,step:1,values:Array(25).fill(42)};repaired.values[12]=null;const repairInfo=M.fillTerrainGaps(repaired,40);assert.equal(repairInfo.filled,1);assert.equal(repairInfo.flatFallback,0);assert.equal(M.sampleGrid(repaired,0,0),42,'interpolate isolated DEM gaps so ground and map texture stay continuous');
+const unavailable={n:5,radius:2,step:1,values:Array(25).fill(null)};unavailable.values[12]=40;assert.equal(M.fillTerrainGaps(unavailable,40),null,'reject scenes without enough elevation coverage');
 const slope={...grid,values:grid.values.map((_,i)=>30+(i%41)*.1)};assert(Math.abs(M.sampleGrid(slope,.5,0)-32.05)<1e-8);next=M.move({x:0,z:0},2,0,slope,[]);assert(Math.abs(M.sampleGrid(slope,next.x,next.z)-32.2)<1e-8,'follow terrain');
 const cliff={...grid,values:grid.values.map((_,i)=>i%41>20?60:30)};next=M.move({x:0,z:0},3,0,cliff,[]);assert(next.x<.5,'do not step through cliff');
 next=M.move({x:0,z:0},100,0,grid,[]);assert(next.x<20,'stay within sampled scene');
 assert.equal(M.segmentDistance(4,3,[0,0],[10,0]),3);
-console.log('PASS: building/courtyard collision, wall clearance, continuous movement, sliding, terrain interpolation, missing DEM, cliff and scene limits');
+console.log('PASS: building/courtyard collision, wall clearance, continuous movement, sliding, terrain interpolation and gap repair, missing DEM, cliff and scene limits');

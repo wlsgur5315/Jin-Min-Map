@@ -16,13 +16,33 @@
   if(![a,b,c,d].every(Number.isFinite))return null;
   const fx=u-i,fz=v-j;return a*(1-fx)*(1-fz)+b*fx*(1-fz)+c*(1-fx)*fz+d*fx*fz;
  }
+ function fillTerrainGaps(grid,fallbackElevation,maxRadius=4,minCoverage=.8){
+  const values=grid.values,original=values.slice(),n=grid.n,total=values.length,valid=original.reduce((count,v)=>count+Number(Number.isFinite(v)),0),coverage=valid/total;
+  if(!Number.isFinite(fallbackElevation)||coverage<minCoverage)return null;
+  let filled=0,flatFallback=0;
+  for(let index=0;index<total;index++){
+   if(Number.isFinite(original[index]))continue;
+   const x=index%n,y=Math.floor(index/n);let samples=[];
+   for(let r=1;r<=maxRadius&&!samples.length;r++){
+    for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
+     if(Math.max(Math.abs(dx),Math.abs(dy))!==r)continue;
+     const sx=x+dx,sy=y+dy;if(sx<0||sy<0||sx>=n||sy>=n)continue;
+     const value=original[sy*n+sx];if(Number.isFinite(value)){const d2=dx*dx+dy*dy;samples.push([value,1/d2])}
+    }
+   }
+   if(samples.length){const weight=samples.reduce((sum,item)=>sum+item[1],0);values[index]=samples.reduce((sum,item)=>sum+item[0]*item[1],0)/weight}
+   else{values[index]=fallbackElevation;flatFallback++}
+   filled++;
+  }
+  return{coverage,filled,flatFallback};
+ }
  function move(position,dx,dz,grid,entries){
   let {x,z}=position;const n=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.16)),sx=dx/n,sz=dz/n;
   const valid=(a,b)=>{const before=sampleGrid(grid,x,z),after=sampleGrid(grid,a,b);return after!==null&&before!==null&&Math.abs(after-before)<.55&&!blocked(a,b,entries)};
   for(let i=0;i<n;i++){if(valid(x+sx,z+sz)){x+=sx;z+=sz}else if(sx&&valid(x+sx,z))x+=sx;else if(sz&&valid(x,z+sz))z+=sz}
   return {x,z};
  }
- const math={segmentDistance,inRing,inPolygon,blocked,sampleGrid,move};
+ const math={segmentDistance,inRing,inPolygon,blocked,sampleGrid,fillTerrainGaps,move};
  if(typeof module!=='undefined'&&module.exports)module.exports=math;
  if(!root.document)return;
  root.EYE_WALK_MATH=math;
@@ -148,11 +168,12 @@
    const c=map.getCanvas(),topLeft=local(map.unproject([0,0]).toArray()),bottomRight=local(map.unproject([c.clientWidth,c.clientHeight]).toArray()),radius=Math.min(160,-topLeft[0]-3,-topLeft[1]-3,bottomRight[0]-3,bottomRight[1]-3);
    if(radius<20)throw Error('주변 지도를 충분히 확보하지 못했습니다. 창 크기를 늘린 뒤 다시 시작하세요.');
    const n=65,grid={n,radius,step:2*radius/(n-1),values:[]};for(let j=0;j<n;j++)for(let i=0;i<n;i++)grid.values.push(solarTerrainHeight(geo(-radius+i*grid.step,-radius+j*grid.step)));
-   if(sampleGrid(grid,0,0)===null)throw Error('시작 위치 주변의 지형 자료가 부족합니다. 다른 위치를 선택하세요.');
-   const candidates=collectBuildings(center,local,radius),entries=[];let skipped=0;
-   for(const item of candidates){const p=item.f.properties||{},at=featureGroundAnchor(item.f)||center;let elevation=solarTerrainHeight(at);if(elevation===null&&Number.isFinite(p.ground_elevation_m))elevation=p.ground_elevation_m;if(elevation===null){skipped++;continue}
+   const gapStats=fillTerrainGaps(grid,datum);if(!gapStats)throw Error('지형 표고 자료에 빈 구역이 많아 눈높이 장면을 만들 수 없습니다. 지형 타일이 로드된 뒤 다시 시작하세요.');
+   const candidates=collectBuildings(center,local,radius),entries=[];let skipped=0,skippedOutside=0;
+   for(const item of candidates){const p=item.f.properties||{};let at;try{at=turf.pointOnFeature(item.f).geometry.coordinates}catch{at=featureGroundAnchor(item.f)||center}const anchorLocal=local(at),elevation=sampleGrid(grid,anchorLocal[0],anchorLocal[1]);if(elevation===null){skipped++;continue}
     const extra=item.custom?editModelElevation(item.f).render_base:Math.max(0,Number(p.render_base)||0),polygons=(item.f.geometry.type==='Polygon'?[item.f.geometry.coordinates]:item.f.geometry.coordinates).map(poly=>poly.map(r=>r.map(local)));
     const flat=polygons.flat(2),box=[Math.min(...flat.map(p=>p[0])),Math.min(...flat.map(p=>p[1])),Math.max(...flat.map(p=>p[0])),Math.max(...flat.map(p=>p[1]))];
+    if(box[0]<-radius||box[1]<-radius||box[2]>radius||box[3]>radius){skippedOutside++;continue}
     entries.push({...item,polygons,box,base:elevation-datum+extra,foundation:extra,meshes:[]});
    }
    if(!entries.length)throw Error('주변에 표시할 건물이 없습니다. 건물 자료를 불러온 지역에서 시작하세요.');
@@ -174,7 +195,7 @@
    const measurementGroup=new THREE.Group();threeScene.add(measurementGroup);
    const selected=solarAnalysisCenter(),aim=selected?local(selected):[0,-15],bearing=map.getBearing()*Math.PI/180,yaw=Math.hypot(...aim)>2?Math.atan2(-aim[0],-aim[1]):bearing;
    state={THREE,scene:threeScene,renderer,camera,grid,datum,local,geo,entries,meshes,terrain,geometries,materials,texture,highlight,measurementGroup,x:0,z:0,yaw,pitch:0,keys:new Set(),menu:true,target:null,pending:null,frame:0,last:0,dirty:true,miniAt:0,touch:null,ray:new THREE.Raycaster(),lastTarget:''};
-   threeScene.updateMatrixWorld(true);setupCanvasInput(renderer.domElement);$('eyeWalkSceneInfo').textContent='주변'+' '+entries.length+'동 · 반경 '+Math.floor(radius)+'m · '+(image?'배경지도·DEM':'DEM 기준면')+(skipped?' · 고도 미확보 '+skipped+'동 제외':'');
+   threeScene.updateMatrixWorld(true);setupCanvasInput(renderer.domElement);$('eyeWalkSceneInfo').textContent='주변 '+entries.length+'동 · 반경 '+Math.floor(radius)+'m · '+(image?'배경지도·DEM':'DEM 기준면')+(gapStats.filled?' · 지형 결측 '+gapStats.filled+'곳 보간':'')+(gapStats.flatFallback?' · 저신뢰 평면 보정 '+gapStats.flatFallback+'곳':'')+(skippedOutside?' · 지형 범위 밖 '+skippedOutside+'동 제외':'')+(skipped?' · 고도 미확보 '+skipped+'동 제외':'');
    resize();setMenu(true);renderRecords();state.frame=requestAnimationFrame(tick);status('눈높이 장면 준비 완료 · 마우스 또는 터치로 둘러보세요.');
   }catch(error){if(run===token){console.warn('Eye walk:',error);if(!state){renderer?.dispose();if(renderer?.domElement)renderer.domElement.remove();if(threeScene)threeScene.traverse(o=>{o.geometry?.dispose();if(o.material)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose()})}close();status(error.message||'눈높이 장면을 만들지 못했습니다.')}}
   finally{
@@ -183,7 +204,7 @@
   }
  }
  function collectBuildings(center,local,radius){
-  const seen=new Set(),out=[];const add=(f,custom)=>{try{if(!['Polygon','MultiPolygon'].includes(f.geometry?.type)||f.properties?.facility||f.properties?.suppress_render||f.properties?.hidden||!custom&&buildingIsHidden(f))return;const p=f.properties||{},h=custom?Number(p.model_height):buildingHeight({f});if(!(h>0&&h<=600))return;const distance=turf.distance(center,turf.centroid(f),{units:'meters'});if(distance>radius+90)return;const key=(custom?'custom:':'gis:')+JSON.stringify(f.geometry);if(seen.has(key))return;seen.add(key);out.push({f,custom,h,distance,name:custom?editModelLabel(f):[p.building_name||p.register_name,p.building_dong||p.register_dong].filter(Boolean).join(' · ')||'기존 건물'})}catch{}};
+  const seen=new Set(),out=[];const add=(f,custom)=>{try{if(!['Polygon','MultiPolygon'].includes(f.geometry?.type)||f.properties?.facility||f.properties?.suppress_render||f.properties?.hidden||!custom&&buildingIsHidden(f))return;const p=f.properties||{},h=custom?Number(p.model_height):buildingHeight({f});if(!(h>0&&h<=600))return;const distance=turf.distance(center,turf.centroid(f),{units:'meters'});if(distance>radius*Math.SQRT2+10)return;const key=(custom?'custom:':'gis:')+JSON.stringify(f.geometry);if(seen.has(key))return;seen.add(key);out.push({f,custom,h,distance,name:custom?editModelLabel(f):[p.building_name||p.register_name,p.building_dong||p.register_dong].filter(Boolean).join(' · ')||'기존 건물'})}catch{}};
   for(const f of buildingSolarFeatures())add(f,false);for(const f of editCustomModels())add(f,true);out.sort((a,b)=>Number(b.custom)-Number(a.custom)||a.distance-b.distance);return out.slice(0,260);
  }
  function makeTerrain(T,grid,datum,a,b){
