@@ -18,3 +18,10 @@
 .ew-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;background:#101f33;border-top:1px solid #3b526a;flex:0 0 auto;font-size:11px}.ew-choosing .ew-result{left:12px;transform:none;max-width:calc(100% - 24px)}
 .ew-choosing .ew-scene-actions{display:none}
 @media(max-width:740px){.ew-header{flex-wrap:wrap;gap:5px;padding:6px 10px}.ew-header>span{order:3;flex-basis:100%;font-size:11px}.ew-hud{max-width:calc(100% - 110px);font-size:11px;left:8px;top:8px}.ew-mini{width:88px;height:88px;right:8px;top:8px}.ew-menu{position:absolute;inset:0 0 0 auto;width:min(300px,88%);z-index:5;border-left:1px solid #557089}.ew-pad{left:10px;bottom:12px;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,44px);gap:3px}.ew-pad button{width:44px;height:44px}.ew-scene-actions{right:10px;bottom:12px}.ew-scene-actions button{min-width:115px;font-size:12px}.ew-result{bottom:123px;left:50%;max-width:calc(100% - 20px);min-width:180px}.ew-choosing .ew-result{display:none}.ew-footer>span:last-child{display:none}}
+
+/* Height card for the building currently aimed at in eye-level mode. */
+.ew-building-height{position:absolute;z-index:3;left:50%;top:14px;transform:translateX(-50%);min-width:170px;max-width:calc(100% - 220px);padding:9px 16px;background:#082f49ed;border:1px solid #67e8f9;border-radius:10px;text-align:center;box-shadow:0 4px 18px #02061788;pointer-events:none}
+.ew-building-height .ew-building-name{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:#c2cfdd}
+.ew-building-height>b{display:block;margin-top:2px;font-size:20px;color:#f0fdff}
+.ew-building-height small{display:block;margin-top:2px;font-size:9px;color:#a5f3fc}
+@media(max-width:740px){.ew-building-height{top:105px;min-width:142px;max-width:calc(100% - 24px);padding:7px 12px}.ew-building-height>b{font-size:18px}}

@@ -125,6 +125,7 @@
   const modal=node('div',document.body,'','ew-modal');modal.id='eyeWalkModal';modal.hidden=true;modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-labelledby','eyeWalkTitle');
   const head=node('header',modal,'','ew-header');node('b',head,'눈높이로 걷기').id='eyeWalkTitle';node('span',head,'장면 준비 중…','ew-muted').id='eyeWalkMode';button(head,'지도로 복귀',close).id='eyeWalkExit';
   const body=node('div',modal,'','ew-body');body.id='eyeWalkBody';const host=node('div',body,'','ew-canvas-host');host.id='eyeWalkHost';node('div',host,'장면 준비 중…','ew-hud').id='eyeWalkHud';
+  const heightLabel=node('div',host,'','ew-building-height');heightLabel.id='eyeWalkBuildingHeight';heightLabel.hidden=true;heightLabel.setAttribute('aria-live','polite');heightLabel.setAttribute('aria-label','조준한 건물 높이');node('span',heightLabel,'','ew-building-name').id='eyeWalkBuildingName';node('b',heightLabel,'').id='eyeWalkHeightValue';node('small',heightLabel,'지도 모델 기준 높이');
   const cross=node('div',host,'＋','ew-crosshair');cross.id='eyeWalkCrosshair';cross.setAttribute('aria-hidden','true');
   const mapCanvas=node('canvas',host,'','ew-mini');mapCanvas.id='eyeWalkMini';mapCanvas.width=220;mapCanvas.height=220;mapCanvas.setAttribute('aria-label','건물 배치와 현재 위치');
   const pad=node('div',host,'','ew-pad');pad.id='eyeWalkPad';pad.setAttribute('aria-label','이동');
@@ -246,7 +247,10 @@
  }
  function updateTarget(s){
   s.ray.setFromCamera(new s.THREE.Vector2(0,0),s.camera);s.ray.far=s.grid.radius*2;const hit=s.ray.intersectObjects(s.meshes,false)[0],terrainHit=s.ray.intersectObject(s.terrain,false)[0];
-  s.target=null;s.highlight.visible=false;if(hit&&(!terrainHit||terrainHit.distance>hit.distance+.03)){
+  const visibleHit=hit&&(!terrainHit||terrainHit.distance>hit.distance+.03)?hit:null,aimedEntry=!s.menu?visibleHit?.object.userData.entry:null;
+  const heightLabel=$('eyeWalkBuildingHeight');heightLabel.hidden=!aimedEntry;
+  if(aimedEntry){$('eyeWalkBuildingName').textContent=aimedEntry.name;$('eyeWalkHeightValue').textContent='높이 '+aimedEntry.h.toFixed(1)+'m'}
+  s.target=null;s.highlight.visible=false;if(visibleHit){
    const normal=hit.face.normal.clone().transformDirection(hit.object.matrixWorld);if(Math.abs(normal.y)<.25){if(normal.dot(s.camera.position.clone().sub(hit.point))<0)normal.negate();normal.y=0;normal.normalize();s.target={...hit,normal,entry:hit.object.userData.entry};highlightFace(s,s.target)}
   }
   $('eyeWalkMeasure').disabled=!s.target;
