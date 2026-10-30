@@ -50,7 +50,31 @@
   }
   return Number.isFinite(maximum)?maximum:null;
  }
- function move(position,dx,dz,grid,entries){
+ function terrainFoundationGeometry(T,grid,datum,rings,topY,fallbackBottom){
+ const spacing=Math.max(.5,grid.step*.5),loops=[];
+ for(const ring of rings){
+  const source=ring.length>1&&Math.hypot(ring[0][0]-ring[ring.length-1][0],ring[0][1]-ring[ring.length-1][1])<1e-6?ring.slice(0,-1):ring.slice(),sampled=[];
+  if(source.length<3)return null;
+  for(let i=0;i<source.length;i++){
+   const a=source[i],b=source[(i+1)%source.length],length=Math.hypot(b[0]-a[0],b[1]-a[1]),steps=Math.max(1,Math.ceil(length/spacing));
+   for(let k=0;k<steps;k++){const t=k/steps,x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t,last=sampled[sampled.length-1];if(!last||Math.hypot(last[0]-x,last[1]-z)>1e-5)sampled.push([x,z])}
+  }
+  loops.push(sampled);
+ }
+ const contour=loops[0].map(([x,z])=>new T.Vector2(x,-z)),holes=loops.slice(1).map(r=>r.map(([x,z])=>new T.Vector2(x,-z))),faces=T.ShapeUtils.triangulateShape(contour,holes),flat=loops.flat();
+ if(!faces?.length||flat.length<3)return null;
+ const positions=[],indices=[],count=flat.length;
+ for(const [x,z] of flat){const ground=sampleGrid(grid,x,z),y=Number.isFinite(ground)?Math.min(topY-.03,ground-datum):fallbackBottom;positions.push(x,y,z)}
+ for(const [x,z] of flat)positions.push(x,topY,z);
+ for(const face of faces)indices.push(face[0],face[1],face[2]);
+ let offset=0;
+ for(const loop of loops){
+  for(let i=0;i<loop.length;i++){const a=offset+i,b=offset+(i+1)%loop.length,ta=count+a,tb=count+b;indices.push(ta,a,tb,tb,a,b)}
+  offset+=loop.length;
+ }
+ const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setIndex(indices);geometry.computeVertexNormals();return geometry;
+}
+function move(position,dx,dz,grid,entries){
   let {x,z}=position;const n=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.16)),sx=dx/n,sz=dz/n;
   const valid=(a,b)=>{const before=sampleGrid(grid,x,z),after=sampleGrid(grid,a,b);return after!==null&&before!==null&&Math.abs(after-before)<.55&&!blocked(a,b,entries)};
   for(let i=0;i<n;i++){if(valid(x+sx,z+sz)){x+=sx;z+=sz}else if(sx&&valid(x+sx,z))x+=sx;else if(sz&&valid(x,z+sz))z+=sz}
@@ -207,7 +231,7 @@
    const existingMat=new THREE.MeshStandardMaterial({color:'#c9d3db',roughness:.95,side:THREE.DoubleSide}),customMat=new THREE.MeshStandardMaterial({color:'#55a7d5',roughness:.9,side:THREE.DoubleSide}),foundationMat=new THREE.MeshStandardMaterial({color:'#475569',roughness:1,side:THREE.DoubleSide}),customFoundationMat=new THREE.MeshStandardMaterial({color:'#9a5c32',roughness:1,side:THREE.DoubleSide});materials.push(existingMat,customMat,foundationMat,customFoundationMat);const meshes=[];
    for(const entry of entries)for(const rings of entry.polygons){const shape=new THREE.Shape();rings[0].forEach(([x,z],i)=>i?shape.lineTo(x,-z):shape.moveTo(x,-z));for(const ring of rings.slice(1)){const hole=new THREE.Path();ring.forEach(([x,z],i)=>i?hole.lineTo(x,-z):hole.moveTo(x,-z));shape.holes.push(hole)}
     const g=new THREE.ExtrudeGeometry(shape,{depth:entry.h,bevelEnabled:false,steps:1});g.rotateX(-Math.PI/2);geometries.push(g);const mesh=new THREE.Mesh(g,entry.custom?customMat:existingMat);mesh.position.y=entry.base;mesh.userData.entry=entry;entry.meshes.push(mesh);meshes.push(mesh);threeScene.add(mesh);
-    if(entry.foundation>.01){const fg=new THREE.ExtrudeGeometry(shape,{depth:entry.foundation,bevelEnabled:false,steps:1});fg.rotateX(-Math.PI/2);geometries.push(fg);const foundation=new THREE.Mesh(fg,entry.custom?customFoundationMat:foundationMat);foundation.position.y=entry.base-entry.foundation;foundation.userData.entry=entry;entry.meshes.push(foundation);meshes.push(foundation);threeScene.add(foundation)}
+    if(entry.foundation>.01){const conformed=terrainFoundationGeometry(THREE,grid,datum,rings,entry.base,entry.base-entry.foundation),fg=conformed||new THREE.ExtrudeGeometry(shape,{depth:entry.foundation,bevelEnabled:false,steps:1});if(!conformed)fg.rotateX(-Math.PI/2);geometries.push(fg);const foundation=new THREE.Mesh(fg,entry.custom?customFoundationMat:foundationMat);if(!conformed)foundation.position.y=entry.base-entry.foundation;foundation.userData.entry=entry;entry.meshes.push(foundation);meshes.push(foundation);threeScene.add(foundation)}
    }
    const highlight=new THREE.LineLoop(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:'#22d3ee',depthTest:false}));highlight.renderOrder=8;highlight.visible=false;threeScene.add(highlight);
    const measurementGroup=new THREE.Group();threeScene.add(measurementGroup);
