@@ -157,7 +157,7 @@ function move(position,dx,dz,grid,entries){
    const b=button(pad,label,null,cls);b.setAttribute('aria-label',{'KeyW':'앞으로','KeyA':'왼쪽으로','KeyS':'뒤로','KeyD':'오른쪽으로'}[key]);
    b.onpointerdown=e=>{e.preventDefault();if(!state||state.menu)return;b.setPointerCapture(e.pointerId);state.keys.add(key)};for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,()=>state?.keys.delete(key));
   }
-  const actions=node('div',host,'','ew-scene-actions');button(actions,'E · 거리 측정',measure,'primary').id='eyeWalkMeasure';button(actions,'Tab · 기능 선택',()=>setMenu(true)).id='eyeWalkMenuButton';
+  const actions=node('div',host,'','ew-scene-actions');button(actions,'E · 거리 측정',measure,'primary').id='eyeWalkMeasure';button(actions,'Tab · 기능 선택',()=>setMenu(true)).id='eyeWalkMenuButton';const placeNow=button(actions,'사람 모델 놓기',placePerson);placeNow.id='eyeWalkPlacePersonNow';placeNow.hidden=true;
   const result=node('div',host,'','ew-result');result.id='eyeWalkResult';result.hidden=true;node('b',result,'').id='eyeWalkDistance';node('span',result,'정면 이격거리 · 모델 형상 기준');const rr=node('div',result,'','ew-row');button(rr,'측정 고정',pinMeasurement);button(rr,'지우기',clearMeasurement);
   const menu=node('aside',body,'','ew-menu');menu.id='eyeWalkMenu';
   const resume=button(menu,'Tab · 둘러보기',resumeLook,'primary');resume.id='eyeWalkResume';
@@ -279,7 +279,7 @@ function move(position,dx,dz,grid,entries){
    const normal=hit.face.normal.clone().transformDirection(hit.object.matrixWorld);if(Math.abs(normal.y)<.25){if(normal.dot(s.camera.position.clone().sub(hit.point))<0)normal.negate();normal.y=0;normal.normalize();s.target={...hit,normal,entry:hit.object.userData.entry};highlightFace(s,s.target)}
   }
   $('eyeWalkMeasure').disabled=!s.target;
-  if(!s.menu){const activeNotice=s.hudMessage&&performance.now()<s.hudMessageUntil?s.hudMessage:'';const text=activeNotice||(s.placePersonArmed?(s.groundTarget?'땅을 조준했습니다 · P를 눌러 1.7m 사람 모델 배치':'바닥을 조준한 뒤 P를 눌러 사람 모델 배치'):s.target?'조준한 벽면: '+s.target.entry.name+' · E 거리 측정':'벽면을 바라보면 E로 정면 간격을 측정합니다.');if(text!==s.lastTarget||!$('eyeWalkHud').textContent){hud(text);s.lastTarget=text}}
+  if(!s.menu){const activeNotice=s.hudMessage&&performance.now()<s.hudMessageUntil?s.hudMessage:'';const text=activeNotice||(s.placePersonArmed?(s.groundTarget?'땅을 조준했습니다 · P 또는 화면 버튼으로 사람 모델 배치':'바닥을 조준한 뒤 P 또는 화면 버튼으로 배치'):s.target?'조준한 벽면: '+s.target.entry.name+' · E 거리 측정':'벽면을 바라보면 E로 정면 간격을 측정합니다.');if(text!==s.lastTarget||!$('eyeWalkHud').textContent){hud(text);s.lastTarget=text}}
  }
  function highlightFace(s,hit){
   const entry=hit.entry,p=hit.point,n=hit.normal;let segment=null,best=Infinity;
@@ -304,7 +304,7 @@ function move(position,dx,dz,grid,entries){
  function clearLines(group){for(const child of [...group.children]){group.remove(child);child.geometry?.dispose();child.material?.dispose()}}
 
  function flashHud(s,text,ms=2400){s.hudMessage=text;s.hudMessageUntil=performance.now()+ms;s.lastTarget='';s.dirty=true}
- function armPersonPlacement(){const s=state;if(!s)return;s.placePersonArmed=true;flashHud(s,'바닥을 조준한 뒤 P를 눌러 1.7m 사람 모델을 놓으세요.',5000);resumeLook()}
+ function armPersonPlacement(){const s=state;if(!s)return;s.placePersonArmed=true;if($('eyeWalkPlacePersonNow'))$('eyeWalkPlacePersonNow').hidden=false;flashHud(s,'바닥을 조준한 뒤 P 또는 화면 버튼으로 1.7m 사람 모델을 놓으세요.',5000);resumeLook()}
  function clearPersonModel(){const s=state;if(!s?.personModel)return;const model=s.personModel;s.scene.remove(model);model.traverse(o=>{if(o.geometry){o.geometry.dispose();const i=s.geometries.indexOf(o.geometry);if(i>=0)s.geometries.splice(i,1)}if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.dispose();const i=s.materials.indexOf(m);if(i>=0)s.materials.splice(i,1)}}});s.personModel=null;s.dirty=true;if($('eyeWalkClearPerson'))$('eyeWalkClearPerson').disabled=true;if(API.active)flashHud(s,'사람 크기 모델을 지웠습니다.')}
  function placePerson(){const s=state,hit=s?.groundTarget;if(!s)return;if(!hit){flashHud(s,'건물이나 지붕이 아닌 바닥을 조준하세요.');return}clearPersonModel();const T=s.THREE,group=new T.Group();
   const part=(geometry,color,emissive,position)=>{const material=new T.MeshStandardMaterial({color,emissive:emissive||'#000000',emissiveIntensity:emissive?0.16:0,roughness:.82});const mesh=new T.Mesh(geometry,material);mesh.position.set(...position);group.add(mesh);s.geometries.push(geometry);s.materials.push(material)};
@@ -313,7 +313,7 @@ function move(position,dx,dz,grid,entries){
   part(new T.CylinderGeometry(.045,.06,.50,7),'#f28b32','#7c2d12',[-.225,1.10,0]);part(new T.CylinderGeometry(.045,.06,.50,7),'#f28b32','#7c2d12',[.225,1.10,0]);
   part(new T.CylinderGeometry(.065,.065,.12,8),'#e8b98f',null,[0,1.44,0]);part(new T.SphereGeometry(.12,12,8),'#e8b98f',null,[0,1.58,0]);
   part(new T.SphereGeometry(.085,8,6),'#26364d',null,[-.105,.09,-.035]);part(new T.SphereGeometry(.085,8,6),'#26364d',null,[.105,.09,-.035]);
-  group.position.copy(hit.point);group.position.y+=.008;group.rotation.y=s.yaw+Math.PI;s.scene.add(group);s.personModel=group;s.placePersonArmed=false;s.dirty=true;if($('eyeWalkClearPerson'))$('eyeWalkClearPerson').disabled=false;flashHud(s,'1.7m 사람 크기 모델을 바닥에 놓았습니다. 다시 배치하려면 Tab → 기능 선택을 누르세요.')
+  group.position.copy(hit.point);group.position.y+=.008;group.rotation.y=s.yaw+Math.PI;s.scene.add(group);s.personModel=group;s.placePersonArmed=false;s.dirty=true;if($('eyeWalkClearPerson'))$('eyeWalkClearPerson').disabled=false;if($('eyeWalkPlacePersonNow'))$('eyeWalkPlacePersonNow').hidden=true;flashHud(s,'1.7m 사람 크기 모델을 바닥에 놓았습니다. 다시 배치하려면 Tab → 기능 선택을 누르세요.')
  }
  function clearMeasurement(){if(!state)return;clearLines(state.measurementGroup);state.pending=null;state.dirty=true;$('eyeWalkResult').hidden=true}
  function pinMeasurement(){const s=state;if(!s?.pending)return;const record=JSON.parse(JSON.stringify(s.pending));if(!records.some(r=>r.time===record.time)){records.push(record);records=records.slice(-50);persistRecords();renderRecords()}hud('측정 기록에 저장했습니다. Tab → 기록에서 확인하세요.')}
