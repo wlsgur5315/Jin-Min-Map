@@ -163,7 +163,7 @@ function move(position,dx,dz,grid,entries){
   const resume=button(menu,'Tab · 둘러보기',resumeLook,'primary');resume.id='eyeWalkResume';
   const tabs=node('nav',menu,'','ew-tabs');for(const [key,label] of [['walk','걷기'],['records','기록'],['settings','설정']]){const b=button(tabs,label,()=>menuPage(key));b.dataset.ewMenu=key}
   const walk=node('section',menu);walk.dataset.ewPane='walk';node('h3',walk,'기능 선택 모드');node('p',walk,'시선 회전과 이동이 멈췄습니다. 마우스로 기능을 선택하세요.','ew-muted');button(walk,'현재 벽면 거리 측정',measure);button(walk,'시작 위치로 돌아가기',()=>{if(state){state.x=0;state.z=0;state.dirty=true;clearMeasurement();hud('시작 위치로 돌아왔습니다.')}});
-  button(walk,'사람 크기 모델 배치 (1.7m)',armPersonPlacement,'primary').id='eyeWalkPlacePerson';button(walk,'배치한 사람 모델 지우기',clearPersonModel).id='eyeWalkClearPerson';const r=node('section',menu);r.dataset.ewPane='records';recordUI(r);const st=node('section',menu);st.dataset.ewPane='settings';settingsUI(st);menuPage('walk');
+  button(walk,'사람 크기 모델 배치 (1.7m)',armPersonPlacement,'primary').id='eyeWalkPlacePerson';const clearPerson=button(walk,'배치한 사람 모델 지우기',clearPersonModel);clearPerson.id='eyeWalkClearPerson';clearPerson.disabled=true;const r=node('section',menu);r.dataset.ewPane='records';recordUI(r);const st=node('section',menu);st.dataset.ewPane='settings';settingsUI(st);menuPage('walk');
   const footer=node('footer',modal,'','ew-footer');node('span',footer,'','ew-muted').id='eyeWalkSceneInfo';node('span',footer,'WASD 이동 · 마우스 회전 · Tab 기능 선택 · E 측정');
  }
  function menuPage(key){for(const b of document.querySelectorAll('[data-ew-menu]'))b.setAttribute('aria-pressed',String(b.dataset.ewMenu===key));for(const p of document.querySelectorAll('[data-ew-pane]'))p.hidden=p.dataset.ewPane!==key}
