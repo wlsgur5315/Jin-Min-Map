@@ -85,21 +85,26 @@ function move(position,dx,dz,grid,entries){
  if(!root.document)return;
  root.EYE_WALK_MATH=math;
  const $=id=>document.getElementById(id),API=root.EYE_WALK={active:false,picking:false,setup,sync,pick,cancelPick};
- let start=null,marker=null,state=null,busy=false,token=0,scope='',records=[],settings={eye:1.6,speed:1.5,sensitivity:.0022};
- try{const saved=JSON.parse(localStorage.getItem('jinmin_eye_walk_settings')||'null');if(saved){if(saved.eye>=.8&&saved.eye<=2.2)settings.eye=Number(saved.eye);if([.8,1.5,2.5].includes(saved.speed))settings.speed=saved.speed;if(saved.sensitivity>=.0008&&saved.sensitivity<=.004)settings.sensitivity=saved.sensitivity}
+ let start=null,marker=null,state=null,busy=false,token=0,scope='',records=[],keyCapture=null,settings={eye:1.6,speed:1.5,sensitivity:.0022,placeKey:'KeyP',cancelKey:'KeyX'};
+ try{const saved=JSON.parse(localStorage.getItem('jinmin_eye_walk_settings')||'null');if(saved){if(saved.eye>=.8&&saved.eye<=2.2)settings.eye=Number(saved.eye);if([.8,1.5,2.5].includes(saved.speed))settings.speed=saved.speed;if(saved.sensitivity>=.0008&&saved.sensitivity<=.004)settings.sensitivity=saved.sensitivity;if(validBinding(saved.placeKey))settings.placeKey=saved.placeKey;if(validBinding(saved.cancelKey)&&saved.cancelKey!==settings.placeKey)settings.cancelKey=saved.cancelKey}
   records=JSON.parse(localStorage.getItem('jinmin_eye_walk_records')||'[]');if(!Array.isArray(records))records=[];records=records.filter(r=>r&&Number.isFinite(r.distance)&&r.distance>0&&r.a?.length===3&&r.b?.length===3&&[...r.a,...r.b].every(Number.isFinite)).slice(-50);
  }catch{records=[]}
  const node=(tag,parent,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;if(parent)parent.appendChild(n);return n};
  const button=(parent,text,handler,cls)=>{const b=node('button',parent,text,cls);b.type='button';b.onclick=handler;return b};
  function status(text){$('eyeWalkStatus').textContent=text}
+ function validBinding(code){return /^(Key[A-Z]|Digit[0-9])$/.test(code||'')&&!['KeyW','KeyA','KeyS','KeyD','KeyE'].includes(code)}
+ function keyLabel(code){return code?.startsWith('Key')?code.slice(3):code?.startsWith('Digit')?code.slice(5):code||''}
+ function captureBinding(key,btn){keyCapture=key;btn.textContent='키를 누르세요'}
+ function keySettingsNotice(text){if(API.active&&state)flashHud(state,text);else if($('eyeWalkStatus'))status(text)}
  function saveSettings(){try{localStorage.setItem('jinmin_eye_walk_settings',JSON.stringify(settings))}catch{}syncSettings()}
- function syncSettings(){for(const el of document.querySelectorAll('[data-ew-setting]'))el.value=settings[el.dataset.ewSetting];if($('eyeWalkEyeValue'))$('eyeWalkEyeValue').textContent=settings.eye.toFixed(1)+'m';if(state){state.dirty=true;state.keys.clear()}}
+ function syncSettings(){for(const el of document.querySelectorAll('[data-ew-setting]'))el.value=settings[el.dataset.ewSetting];for(const el of document.querySelectorAll('[data-ew-key]'))el.textContent=keyCapture===el.dataset.ewKey?'키 입력 중…':keyLabel(settings[el.dataset.ewKey]);if($('eyeWalkEyeValue'))$('eyeWalkEyeValue').textContent=settings.eye.toFixed(1)+'m';if($('eyeWalkPlacementHelp'))$('eyeWalkPlacementHelp').textContent='배치 '+keyLabel(settings.placeKey)+' 시작 → 같은 키로 확정 · '+keyLabel(settings.cancelKey)+' 취소';if($('eyeWalkHumanPlaceButton'))$('eyeWalkHumanPlaceButton').textContent=state?.placePersonArmed?'배치 확정 · '+keyLabel(settings.placeKey):'사람 배치 · '+keyLabel(settings.placeKey);if($('eyeWalkHumanCancelButton'))$('eyeWalkHumanCancelButton').textContent='취소 · '+keyLabel(settings.cancelKey);if(state){state.dirty=true;state.keys.clear()}}
  function settingsUI(host){
   for(const [key,title,options] of [['eye','눈높이',[[1.2,'1.2m'],[1.6,'1.6m'],[1.8,'1.8m']]],['speed','이동 속도',[[.8,'천천히'],[1.5,'보통'],[2.5,'빠르게']]],['sensitivity','마우스 감도',[[.001,'낮음'],[.0022,'보통'],[.0035,'높음']]]]){
-   const label=node('label',host,title,'ew-field'),select=node('select',label);select.dataset.ewSetting=key;select.setAttribute('aria-label',title);
-   for(const [value,text] of options){const o=node('option',select,text);o.value=value}select.value=settings[key];select.onchange=()=>{settings[key]=Number(select.value);saveSettings()};
+   const label=node('label',host,title,'ew-field'),select=node('select',label);select.dataset.ewSetting=key;select.setAttribute('aria-label',title);for(const [value,text] of options){const o=node('option',select,text);o.value=value}select.value=settings[key];select.onchange=()=>{settings[key]=Number(select.value);saveSettings()};
   }
-  const help=node('div',host,'','ew-help');for(const [key,text] of [['마우스','이동만으로 시선 회전'],['WASD','앞뒤·좌우 이동'],['Tab','회전·이동 정지 / 커서로 기능 선택'],['Tab 다시','둘러보기 복귀 / 커서 숨김'],['E','조준한 벽면의 정면 거리 측정'],['Esc','커서 해제 · 다시 누르면 지도 복귀'],['P','조준한 땅에 사람 크기 모델 배치'],['터치','이동 패드 · 화면 드래그 · 기능 버튼']]){node('b',help,key);node('span',help,text)}
+  node('h3',host,'사람 모델 배치 단축키');for(const [key,title] of [['placeKey','배치 / 확정 키'],['cancelKey','미리보기 취소 키']]){const row=node('div',host,'','ew-field');node('span',row,title);const b=button(row,keyLabel(settings[key]),()=>captureBinding(key,b));b.dataset.ewKey=key;b.setAttribute('aria-label',title+' 변경')}
+  node('p',host,'키 설정 버튼을 누른 뒤 원하는 문자 또는 숫자 키를 입력하세요. 이동·측정·메뉴 키는 지정할 수 없습니다.','ew-muted');
+  const help=node('div',host,'','ew-help');for(const [key,text] of [['마우스','이동만으로 시선 회전'],['WASD','앞뒤·좌우 이동'],['Tab','회전·이동 정지 / 커서로 기능 선택'],['Tab 다시','둘러보기 복귀 / 커서 숨김'],['E','조준한 벽면의 정면 거리 측정'],['Esc','커서 해제 · 다시 누르면 지도 복귀'],['터치','이동 패드 · 화면 드래그 · 기능 버튼']]){node('b',help,key);node('span',help,text)}
  }
  function recordUI(host){host.classList.add('ew-records');host.dataset.ewRecords='true';renderRecords()}
  function renderRecords(){for(const host of document.querySelectorAll('[data-ew-records]')){host.replaceChildren();if(!records.length){node('p',host,'고정한 측정 결과가 없습니다.','ew-muted');continue}
@@ -117,7 +122,7 @@ function move(position,dx,dz,grid,entries){
   node('p',page,'현재 로드된 주변 건물·DEM 지형과 배경지도를 사용합니다.','hint');
   node('h3',screenPage('walk-records'),'측정 기록');recordUI(screenPage('walk-records'));
   node('h3',screenPage('walk-settings'),'조작 설정');settingsUI(screenPage('walk-settings'));
-  buildModal();document.addEventListener('keydown',keydown,true);document.addEventListener('keyup',e=>state?.keys.delete(e.code),true);
+  buildModal();syncSettings();document.addEventListener('keydown',keydown,true);document.addEventListener('keyup',e=>state?.keys.delete(e.code),true);
   document.addEventListener('pointerlockchange',()=>{const s=state;if(!s){if(document.pointerLockElement===$('eyeWalkCanvas'))document.exitPointerLock?.();return}if(document.pointerLockElement===s.renderer.domElement){if(!API.active){document.exitPointerLock?.();return}s.ignoreMouseUntil=performance.now()+100;setMenu(false)}else if(API.active)setMenu(true)});
   document.addEventListener('pointerlockerror',()=>{if(state){setMenu(true);hud('마우스 고정을 시작하지 못했습니다. 둘러보기 버튼을 다시 눌러 주세요.')}});
   document.addEventListener('mousemove',e=>{const s=state;if(!API.active||!s||s.menu||performance.now()<(s.ignoreMouseUntil||0))return;const locked=document.pointerLockElement===s.renderer.domElement;if(!locked&&s.renderer.domElement.requestPointerLock)return;if(!locked&&e.target!==s.renderer.domElement)return;look(e.movementX,e.movementY)});
@@ -157,13 +162,13 @@ function move(position,dx,dz,grid,entries){
    const b=button(pad,label,null,cls);b.setAttribute('aria-label',{'KeyW':'앞으로','KeyA':'왼쪽으로','KeyS':'뒤로','KeyD':'오른쪽으로'}[key]);
    b.onpointerdown=e=>{e.preventDefault();if(!state||state.menu)return;b.setPointerCapture(e.pointerId);state.keys.add(key)};for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,()=>state?.keys.delete(key));
   }
-  const actions=node('div',host,'','ew-scene-actions');button(actions,'E · 거리 측정',measure,'primary').id='eyeWalkMeasure';button(actions,'Tab · 기능 선택',()=>setMenu(true)).id='eyeWalkMenuButton';const placeNow=button(actions,'사람 모델 놓기',placePerson);placeNow.id='eyeWalkPlacePersonNow';placeNow.hidden=true;
+  const actions=node('div',host,'','ew-scene-actions');button(actions,'E · 거리 측정',measure,'primary').id='eyeWalkMeasure';button(actions,'Tab · 기능 선택',()=>setMenu(true)).id='eyeWalkMenuButton';button(actions,'사람 배치 · P',togglePersonPlacement).id='eyeWalkHumanPlaceButton';const humanCancel=button(actions,'취소 · X',cancelPersonPreview);humanCancel.id='eyeWalkHumanCancelButton';humanCancel.hidden=true;
   const result=node('div',host,'','ew-result');result.id='eyeWalkResult';result.hidden=true;node('b',result,'').id='eyeWalkDistance';node('span',result,'정면 이격거리 · 모델 형상 기준');const rr=node('div',result,'','ew-row');button(rr,'측정 고정',pinMeasurement);button(rr,'지우기',clearMeasurement);
   const menu=node('aside',body,'','ew-menu');menu.id='eyeWalkMenu';
   const resume=button(menu,'Tab · 둘러보기',resumeLook,'primary');resume.id='eyeWalkResume';
   const tabs=node('nav',menu,'','ew-tabs');for(const [key,label] of [['walk','걷기'],['records','기록'],['settings','설정']]){const b=button(tabs,label,()=>menuPage(key));b.dataset.ewMenu=key}
   const walk=node('section',menu);walk.dataset.ewPane='walk';node('h3',walk,'기능 선택 모드');node('p',walk,'시선 회전과 이동이 멈췄습니다. 마우스로 기능을 선택하세요.','ew-muted');button(walk,'현재 벽면 거리 측정',measure);button(walk,'시작 위치로 돌아가기',()=>{if(state){state.x=0;state.z=0;state.dirty=true;clearMeasurement();hud('시작 위치로 돌아왔습니다.')}});
-  button(walk,'사람 크기 모델 배치 (1.7m)',armPersonPlacement,'primary').id='eyeWalkPlacePerson';const clearPerson=button(walk,'배치한 사람 모델 지우기',clearPersonModel);clearPerson.id='eyeWalkClearPerson';clearPerson.disabled=true;const r=node('section',menu);r.dataset.ewPane='records';recordUI(r);const st=node('section',menu);st.dataset.ewPane='settings';settingsUI(st);menuPage('walk');
+  node('p',walk,'','ew-muted').id='eyeWalkPlacementHelp';const clearPerson=button(walk,'배치한 사람 모델 지우기',clearPersonModel);clearPerson.id='eyeWalkClearPerson';clearPerson.disabled=true;const r=node('section',menu);r.dataset.ewPane='records';recordUI(r);const st=node('section',menu);st.dataset.ewPane='settings';settingsUI(st);menuPage('walk');
   const footer=node('footer',modal,'','ew-footer');node('span',footer,'','ew-muted').id='eyeWalkSceneInfo';node('span',footer,'WASD 이동 · 마우스 회전 · Tab 기능 선택 · E 측정');
  }
  function menuPage(key){for(const b of document.querySelectorAll('[data-ew-menu]'))b.setAttribute('aria-pressed',String(b.dataset.ewMenu===key));for(const p of document.querySelectorAll('[data-ew-pane]'))p.hidden=p.dataset.ewPane!==key}
@@ -185,10 +190,12 @@ function move(position,dx,dz,grid,entries){
  function pause(){if(API.active&&state)setMenu(true)}
  function look(dx,dy){const s=state;if(!s||s.menu)return;s.yaw-=dx*settings.sensitivity;s.pitch=Math.max(-1.3,Math.min(1.3,s.pitch-dy*settings.sensitivity));s.dirty=true}
  function keydown(e){
-  if(!API.active)return;if(e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();if(state&&!state.menu)setMenu(true);else close();return}
+  if(keyCapture){e.preventDefault();e.stopImmediatePropagation();if(e.code==='Escape'){keyCapture=null;syncSettings();keySettingsNotice('키 지정을 취소했습니다.');return}if(!validBinding(e.code)){keySettingsNotice('문자 또는 숫자 키만 지정할 수 있습니다. WASD와 E는 사용할 수 없습니다.');return}const other=keyCapture==='placeKey'?'cancelKey':'placeKey';if(e.code===settings[other]){keySettingsNotice('배치 키와 취소 키는 서로 다르게 지정하세요.');return}settings[keyCapture]=e.code;keyCapture=null;saveSettings();keySettingsNotice('단축키 설정을 저장했습니다.');return}
+   if(!API.active)return;if(e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();if(state&&!state.menu)setMenu(true);else close();return}
   if(!state||e.ctrlKey||e.metaKey||e.altKey||e.isComposing)return;
   if(e.code==='Tab'){e.preventDefault();e.stopImmediatePropagation();if(e.repeat)return;state.menu?resumeLook():setMenu(true);return}
-  if(e.code==='KeyP'&&state.placePersonArmed&&!state.menu){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)placePerson();return}
+  if(!state.menu&&!e.repeat&&e.code===settings.cancelKey&&state.placePersonArmed){e.preventDefault();e.stopImmediatePropagation();cancelPersonPreview();return}
+   if(!state.menu&&e.code===settings.placeKey){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)togglePersonPlacement();return}
    if(['KeyW','KeyA','KeyS','KeyD','KeyE','ShiftLeft','ShiftRight'].includes(e.code)){
    if(state.menu)return;e.preventDefault();e.stopImmediatePropagation();if(e.code==='KeyE'){if(!e.repeat)measure()}else state.keys.add(e.code);
   }
@@ -237,7 +244,7 @@ function move(position,dx,dz,grid,entries){
    const highlight=new THREE.LineLoop(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:'#22d3ee',depthTest:false}));highlight.renderOrder=8;highlight.visible=false;threeScene.add(highlight);
    const measurementGroup=new THREE.Group();threeScene.add(measurementGroup);
    const selected=solarAnalysisCenter(),aim=selected?local(selected):[0,-15],bearing=map.getBearing()*Math.PI/180,yaw=Math.hypot(...aim)>2?Math.atan2(-aim[0],-aim[1]):bearing;
-   state={THREE,scene:threeScene,renderer,camera,grid,datum,local,geo,entries,meshes,terrain,geometries,materials,texture,highlight,measurementGroup,x:0,z:0,yaw,pitch:0,keys:new Set(),menu:true,target:null,groundTarget:null,placePersonArmed:false,personModel:null,hudMessage:'',hudMessageUntil:0,pending:null,frame:0,last:0,dirty:true,miniAt:0,touch:null,ray:new THREE.Raycaster(),lastTarget:''};
+   state={THREE,scene:threeScene,renderer,camera,grid,datum,local,geo,entries,meshes,terrain,geometries,materials,texture,highlight,measurementGroup,x:0,z:0,yaw,pitch:0,keys:new Set(),menu:true,target:null,groundTarget:null,placePersonArmed:false,personModel:null,personPreview:null,hudMessage:'',hudMessageUntil:0,pending:null,frame:0,last:0,dirty:true,miniAt:0,touch:null,ray:new THREE.Raycaster(),lastTarget:''};
    threeScene.updateMatrixWorld(true);setupCanvasInput(renderer.domElement);$('eyeWalkSceneInfo').textContent='주변 '+entries.length+'동 · 반경 '+Math.floor(radius)+'m · '+(image?'배경지도·DEM':'DEM 기준면')+(gapStats.filled?' · 지형 결측 '+gapStats.filled+'곳 보간':'')+(gapStats.flatFallback?' · 저신뢰 평면 보정 '+gapStats.flatFallback+'곳':'')+(skippedOutside?' · 지형 범위 밖 '+skippedOutside+'동 제외':'')+(skipped?' · 고도 미확보 '+skipped+'동 제외':'');
    resize();setMenu(true);renderRecords();state.frame=requestAnimationFrame(tick);status('눈높이 장면 준비 완료 · 마우스 또는 터치로 둘러보세요.');
   }catch(error){if(run===token){console.warn('Eye walk:',error);if(!state){renderer?.dispose();if(renderer?.domElement)renderer.domElement.remove();if(threeScene)threeScene.traverse(o=>{o.geometry?.dispose();if(o.material)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose()})}close();status(error.message||'눈높이 장면을 만들지 못했습니다.')}}
@@ -272,14 +279,14 @@ function move(position,dx,dz,grid,entries){
  }
  function updateTarget(s){
   s.ray.setFromCamera(new s.THREE.Vector2(0,0),s.camera);s.ray.far=s.grid.radius*2;const hit=s.ray.intersectObjects(s.meshes,false)[0],terrainHit=s.ray.intersectObject(s.terrain,false)[0];
-  const visibleHit=hit&&(!terrainHit||terrainHit.distance>hit.distance+.03)?hit:null,groundHit=terrainHit&&(!hit||terrainHit.distance<hit.distance-.03)?terrainHit:null,aimedEntry=!s.menu?visibleHit?.object.userData.entry:null;s.groundTarget=groundHit;
+  const visibleHit=hit&&(!terrainHit||terrainHit.distance>hit.distance+.03)?hit:null,groundHit=terrainHit&&(!hit||terrainHit.distance<hit.distance-.03)?terrainHit:null,aimedEntry=!s.menu?visibleHit?.object.userData.entry:null;s.groundTarget=groundHit;if(s.placePersonArmed){if(groundHit){if(!s.personPreview)s.personPreview=createPersonModel(s,groundHit.point,true);s.personPreview.visible=true;s.personPreview.position.copy(groundHit.point);s.personPreview.position.y+=.008;s.personPreview.rotation.y=s.yaw+Math.PI}else if(s.personPreview)s.personPreview.visible=false}
   const heightLabel=$('eyeWalkBuildingHeight');heightLabel.hidden=!aimedEntry;
   if(aimedEntry){$('eyeWalkBuildingName').textContent=aimedEntry.name;$('eyeWalkHeightValue').textContent='높이 '+aimedEntry.h.toFixed(1)+'m'}
   s.target=null;s.highlight.visible=false;if(visibleHit){
    const normal=hit.face.normal.clone().transformDirection(hit.object.matrixWorld);if(Math.abs(normal.y)<.25){if(normal.dot(s.camera.position.clone().sub(hit.point))<0)normal.negate();normal.y=0;normal.normalize();s.target={...hit,normal,entry:hit.object.userData.entry};highlightFace(s,s.target)}
   }
   $('eyeWalkMeasure').disabled=!s.target;
-  if(!s.menu){const activeNotice=s.hudMessage&&performance.now()<s.hudMessageUntil?s.hudMessage:'';const text=activeNotice||(s.placePersonArmed?(s.groundTarget?'땅을 조준했습니다 · P 또는 화면 버튼으로 사람 모델 배치':'바닥을 조준한 뒤 P 또는 화면 버튼으로 배치'):s.target?'조준한 벽면: '+s.target.entry.name+' · E 거리 측정':'벽면을 바라보면 E로 정면 간격을 측정합니다.');if(text!==s.lastTarget||!$('eyeWalkHud').textContent){hud(text);s.lastTarget=text}}
+  if(!s.menu){const activeNotice=s.hudMessage&&performance.now()<s.hudMessageUntil?s.hudMessage:'';const text=activeNotice||(s.placePersonArmed?(s.groundTarget?'위치 미리보기 중 · '+keyLabel(settings.placeKey)+' 배치 확정 · '+keyLabel(settings.cancelKey)+' 취소':'바닥을 조준하세요 · '+keyLabel(settings.cancelKey)+' 취소'):s.target?'조준한 벽면: '+s.target.entry.name+' · E 거리 측정':'벽면을 바라보면 E로 정면 간격을 측정합니다.');if(text!==s.lastTarget||!$('eyeWalkHud').textContent){hud(text);s.lastTarget=text}}
  }
  function highlightFace(s,hit){
   const entry=hit.entry,p=hit.point,n=hit.normal;let segment=null,best=Infinity;
@@ -304,17 +311,13 @@ function move(position,dx,dz,grid,entries){
  function clearLines(group){for(const child of [...group.children]){group.remove(child);child.geometry?.dispose();child.material?.dispose()}}
 
  function flashHud(s,text,ms=2400){s.hudMessage=text;s.hudMessageUntil=performance.now()+ms;s.lastTarget='';s.dirty=true}
- function armPersonPlacement(){const s=state;if(!s)return;s.placePersonArmed=true;if($('eyeWalkPlacePersonNow'))$('eyeWalkPlacePersonNow').hidden=false;flashHud(s,'바닥을 조준한 뒤 P 또는 화면 버튼으로 1.7m 사람 모델을 놓으세요.',5000);resumeLook()}
- function clearPersonModel(){const s=state;if(!s?.personModel)return;const model=s.personModel;s.scene.remove(model);model.traverse(o=>{if(o.geometry){o.geometry.dispose();const i=s.geometries.indexOf(o.geometry);if(i>=0)s.geometries.splice(i,1)}if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.dispose();const i=s.materials.indexOf(m);if(i>=0)s.materials.splice(i,1)}}});s.personModel=null;s.dirty=true;if($('eyeWalkClearPerson'))$('eyeWalkClearPerson').disabled=true;if(API.active)flashHud(s,'사람 크기 모델을 지웠습니다.')}
- function placePerson(){const s=state,hit=s?.groundTarget;if(!s)return;if(!hit){flashHud(s,'건물이나 지붕이 아닌 바닥을 조준하세요.');return}clearPersonModel();const T=s.THREE,group=new T.Group();
-  const part=(geometry,color,emissive,position)=>{const material=new T.MeshStandardMaterial({color,emissive:emissive||'#000000',emissiveIntensity:emissive?0.16:0,roughness:.82});const mesh=new T.Mesh(geometry,material);mesh.position.set(...position);group.add(mesh);s.geometries.push(geometry);s.materials.push(material)};
-  part(new T.CylinderGeometry(.065,.085,.68,8),'#26364d',null,[-.105,.42,0]);part(new T.CylinderGeometry(.065,.085,.68,8),'#26364d',null,[.105,.42,0]);
-  part(new T.CylinderGeometry(.17,.21,.62,9),'#f28b32','#7c2d12',[0,1.08,0]);
-  part(new T.CylinderGeometry(.045,.06,.50,7),'#f28b32','#7c2d12',[-.225,1.10,0]);part(new T.CylinderGeometry(.045,.06,.50,7),'#f28b32','#7c2d12',[.225,1.10,0]);
-  part(new T.CylinderGeometry(.065,.065,.12,8),'#e8b98f',null,[0,1.44,0]);part(new T.SphereGeometry(.12,12,8),'#e8b98f',null,[0,1.58,0]);
-  part(new T.SphereGeometry(.085,8,6),'#26364d',null,[-.105,.09,-.035]);part(new T.SphereGeometry(.085,8,6),'#26364d',null,[.105,.09,-.035]);
-  group.position.copy(hit.point);group.position.y+=.008;group.rotation.y=s.yaw+Math.PI;s.scene.add(group);s.personModel=group;s.placePersonArmed=false;s.dirty=true;if($('eyeWalkClearPerson'))$('eyeWalkClearPerson').disabled=false;if($('eyeWalkPlacePersonNow'))$('eyeWalkPlacePersonNow').hidden=true;flashHud(s,'1.7m 사람 크기 모델을 바닥에 놓았습니다. 다시 배치하려면 Tab → 기능 선택을 누르세요.')
- }
+ function togglePersonPlacement(){const s=state;if(!s||s.menu)return;if(!s.placePersonArmed){s.placePersonArmed=true;s.personPreview=null;syncPlacementButtons(s);flashHud(s,'바닥을 조준해 반투명 미리보기를 맞춘 뒤 '+keyLabel(settings.placeKey)+'로 확정하세요. '+keyLabel(settings.cancelKey)+'로 취소할 수 있습니다.',5000);s.dirty=true;return}const hit=s.groundTarget;if(!hit){flashHud(s,'확정하려면 바닥을 조준하세요.');return}if(s.personPreview){disposePersonGroup(s,s.personPreview);s.personPreview=null}if(s.personModel){disposePersonGroup(s,s.personModel);s.personModel=null}s.personModel=createPersonModel(s,hit.point,false);s.placePersonArmed=false;syncPlacementButtons(s);flashHud(s,'1.7m 사람 크기 모델을 배치했습니다. 같은 키로 다시 배치할 수 있습니다.')}
+ function cancelPersonPreview(){const s=state;if(!s?.placePersonArmed)return;s.placePersonArmed=false;if(s.personPreview){disposePersonGroup(s,s.personPreview);s.personPreview=null}syncPlacementButtons(s);flashHud(s,'사람 모델 미리보기를 취소했습니다.')}
+ function syncPlacementButtons(s){if($('eyeWalkHumanPlaceButton'))$('eyeWalkHumanPlaceButton').textContent=s.placePersonArmed?'배치 확정 · '+keyLabel(settings.placeKey):'사람 배치 · '+keyLabel(settings.placeKey);if($('eyeWalkHumanCancelButton'))$('eyeWalkHumanCancelButton').hidden=!s.placePersonArmed;if($('eyeWalkClearPerson'))$('eyeWalkClearPerson').disabled=!s.personModel;s.dirty=true}
+ function disposePersonGroup(s,group){s.scene.remove(group);group.traverse(o=>{if(o.geometry){o.geometry.dispose();const i=s.geometries.indexOf(o.geometry);if(i>=0)s.geometries.splice(i,1)}if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.dispose();const i=s.materials.indexOf(m);if(i>=0)s.materials.splice(i,1)}}})}
+ function createPersonModel(s,point,ghost){const T=s.THREE,group=new T.Group();const part=(geometry,color,position)=>{const material=new T.MeshStandardMaterial({color:ghost?'#5eead4':color,emissive:ghost?'#0f766e':'#000000',emissiveIntensity:ghost ? 0.42 : 0,transparent:ghost,opacity:ghost ? 0.34 : 1,depthWrite:!ghost,roughness:.82});const mesh=new T.Mesh(geometry,material);mesh.position.set(...position);group.add(mesh);s.geometries.push(geometry);s.materials.push(material)};
+  part(new T.CylinderGeometry(.065,.085,.68,8),'#26364d',[-.105,.42,0]);part(new T.CylinderGeometry(.065,.085,.68,8),'#26364d',[.105,.42,0]);part(new T.CylinderGeometry(.17,.21,.62,9),'#f28b32',[0,1.08,0]);part(new T.CylinderGeometry(.045,.06,.50,7),'#f28b32',[-.225,1.10,0]);part(new T.CylinderGeometry(.045,.06,.50,7),'#f28b32',[.225,1.10,0]);part(new T.CylinderGeometry(.065,.065,.12,8),'#e8b98f',[0,1.44,0]);part(new T.SphereGeometry(.12,12,8),'#e8b98f',[0,1.58,0]);part(new T.SphereGeometry(.085,8,6),'#26364d',[-.105,.09,-.035]);part(new T.SphereGeometry(.085,8,6),'#26364d',[.105,.09,-.035]);group.position.copy(point);group.position.y+=.008;group.rotation.y=s.yaw+Math.PI;s.scene.add(group);group.visible=!ghost;group.userData.isHumanScale=true;return group}
+ function clearPersonModel(){const s=state;if(!s?.personModel)return;disposePersonGroup(s,s.personModel);s.personModel=null;syncPlacementButtons(s);if(API.active)flashHud(s,'배치한 사람 크기 모델을 지웠습니다.')}
  function clearMeasurement(){if(!state)return;clearLines(state.measurementGroup);state.pending=null;state.dirty=true;$('eyeWalkResult').hidden=true}
  function pinMeasurement(){const s=state;if(!s?.pending)return;const record=JSON.parse(JSON.stringify(s.pending));if(!records.some(r=>r.time===record.time)){records.push(record);records=records.slice(-50);persistRecords();renderRecords()}hud('측정 기록에 저장했습니다. Tab → 기록에서 확인하세요.')}
  function showRecord(record){if(!state)return;const p=state.local(record.a);if(Math.hypot(...p)>state.grid.radius*2){hud('현재 장면 범위 밖의 측정 기록입니다. 해당 위치에서 다시 시작하세요.');return}showMeasurement(record)}

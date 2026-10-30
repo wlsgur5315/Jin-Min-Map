@@ -25,3 +25,6 @@
 .ew-building-height>b{display:block;margin-top:2px;font-size:20px;color:#f0fdff}
 .ew-building-height small{display:block;margin-top:2px;font-size:9px;color:#a5f3fc}
 @media(max-width:740px){.ew-building-height{top:105px;min-width:142px;max-width:calc(100% - 24px);padding:7px 12px}.ew-building-height>b{font-size:18px}}
+
+.ew-field button{width:auto;min-width:88px;min-height:42px;padding:8px 12px;font-size:12px}
+.ew-scene-actions button[hidden]{display:none!important}
