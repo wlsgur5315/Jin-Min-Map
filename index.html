@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.10.30-09</title>
+<title>Jinju3D Local · v2026.11.01-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -313,7 +313,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 <link rel="stylesheet" href="eye-walk.css?v=2026.10.30-05">
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.10.30-09</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.01-01</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -545,6 +545,14 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
  <div class="hint">2022년 결정도 참고용 다각형입니다. 지도 윤곽선만 변경하며 법적 높이 산정에는 영향을 주지 않습니다.</div>
  <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerLikely" checked> 위치·지번 대조 유력 (평거2 및 변경 획지 후보)</label>
  <label style="display:block;margin:8px 0"><input type="checkbox" id="lawLayerGisOnly" checked> GIS 중첩만 확인 (가좌·가좌2·금산 기타 후보)</label>
+ </div>
+ <div class="drawer-sec" style="border:1px solid #64748b55;border-radius:9px;padding:10px;margin:9px 0">
+  <h3>임시 도로 비교 레이어</h3>
+  <div class="hint">진주시 범위로 분리한 자료를 선택할 때만 불러옵니다. 표시용 자료이며 도로 폭·정확도·법적 기준을 확정하지 않습니다.</div>
+  <label style="display:block;margin:8px 0"><input type="checkbox" id="tempRoadFootprintsToggle"> 실폭도로 면 자료 · 2026년 10월</label>
+  <div id="tempRoadFootprintsStatus" class="hint" aria-live="polite">꺼짐 · 진주시 13,840개 도형</div>
+  <label style="display:block;margin:8px 0"><input type="checkbox" id="tempRoadEntrancesToggle"> 도로 출입구 점 자료 · 2026년 10월</label>
+  <div id="tempRoadEntrancesStatus" class="hint" aria-live="polite">꺼짐 · 진주시 62,773개 위치</div>
  </div>
 <div class="drawer-sec">
         <button id="latestBtn" class="secondary-btn" style="margin-top:7px">최신 버전 다시 열기</button>
@@ -802,7 +810,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.10.30-09',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.01-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -867,6 +875,44 @@ function openLatestVersion(){const u=new URL(location.href);u.searchParams.set('
 function message(t){$('msg').textContent=t}function loading(v){$('bar').classList.toggle('on',v)}
 async function loadJson(url){const sep=url.includes('?')?'&':'?';const r=await fetch(url+sep+'app='+encodeURIComponent(APP_VERSION),{cache:'no-store'});if(!r.ok)throw Error(url);return r.json()}
 async function loadGzipJson(url){const sep=url.includes('?')?'&':'?';const r=await fetch(url+sep+'app='+encodeURIComponent(APP_VERSION),{cache:'no-store'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
+
+const TEMP_ROAD_LAYER_SPECS={
+ footprints:{source:'temporary-road-footprints',url:'data/roads/jinju_road_footprints_202610.geojson.gz',toggle:'tempRoadFootprintsToggle',status:'tempRoadFootprintsStatus',label:'실폭도로 면 자료'},
+ entrances:{source:'temporary-road-entrances',url:'data/roads/jinju_road_entrances_202610.geojson.gz',toggle:'tempRoadEntrancesToggle',status:'tempRoadEntrancesStatus',label:'도로 출입구 점 자료'}
+};
+const TEMP_ROAD_LAYER_DATA=new Map(),TEMP_ROAD_LAYER_LOADS=new Map();
+async function toggleTemporaryRoadLayer(key,visible){
+ const spec=TEMP_ROAD_LAYER_SPECS[key],control=$(spec.toggle),status=$(spec.status);
+ const layerIds=key==='footprints'?['temporary-road-footprints-fill','temporary-road-footprints-outline']:['temporary-road-entrances-circle'];
+ if(!visible){for(const id of layerIds)if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none');status.textContent='꺼짐';return}
+ status.textContent='자료 불러오는 중…';
+ try{
+  let data=TEMP_ROAD_LAYER_DATA.get(key);
+  if(!data){
+   let pending=TEMP_ROAD_LAYER_LOADS.get(key);
+   if(!pending){pending=loadGzipJson(spec.url).then(fc=>{TEMP_ROAD_LAYER_DATA.set(key,fc);return fc}).finally(()=>TEMP_ROAD_LAYER_LOADS.delete(key));TEMP_ROAD_LAYER_LOADS.set(key,pending)}
+   data=await pending;
+  }
+  if(!control.checked){status.textContent='꺼짐';return}
+  if(!map.getSource(spec.source)){
+   map.addSource(spec.source,{type:'geojson',data});
+   if(key==='footprints'){
+    const before=map.getLayer('buildings-3d')?'buildings-3d':undefined;
+    map.addLayer({id:layerIds[0],type:'fill',source:spec.source,paint:{'fill-color':'#f59e0b','fill-opacity':0.25}},before);
+    map.addLayer({id:layerIds[1],type:'line',source:spec.source,paint:{'line-color':'#fbbf24','line-width':['interpolate',['linear'],['zoom'],10,0.35,16,1.1],'line-opacity':0.9}},before);
+   }else{
+    map.addLayer({id:layerIds[0],type:'circle',source:spec.source,paint:{'circle-radius':['interpolate',['linear'],['zoom'],10,1.5,15,3.5],'circle-color':'#22d3ee','circle-stroke-color':'#082f49','circle-stroke-width':0.7,'circle-opacity':0.85}});
+   }
+  }
+  for(const id of layerIds)if(map.getLayer(id))map.setLayoutProperty(id,'visibility','visible');
+  status.textContent=`표시 중 · ${(data.features||[]).length.toLocaleString()}개`;
+ }catch(e){
+  control.checked=false;status.textContent='불러오지 못했습니다. 다시 선택해 주세요.';console.warn(spec.label+' 로드 실패',e);
+ }
+}
+function initTemporaryRoadLayerControls(){
+ for(const [key,spec] of Object.entries(TEMP_ROAD_LAYER_SPECS))$(spec.toggle)?.addEventListener('change',e=>toggleTemporaryRoadLayer(key,e.target.checked));
+}
 function vectorSourceName(m){const s=m.getStyle().sources||{};if(s.openmaptiles?.type==='vector')return'openmaptiles';for(const[k,v]of Object.entries(s))if(v?.type==='vector')return k;return null}
 function hideBaseBuildings(m){for(const l of m.getStyle().layers||[]){const id=String(l.id||'').toLowerCase(),sl=String(l['source-layer']||'').toLowerCase();if(sl==='building'||sl==='building_part'||id.includes('building'))try{m.setLayoutProperty(l.id,'visibility','none')}catch(e){}}}
 function terrainSourceReady(){
@@ -6230,7 +6276,7 @@ async function waitForMapReady(m,timeout=5000){
     hideBaseBuildings(map);
     try{if(scanMap.loaded?.()||scanMap.isStyleLoaded?.()){hideBaseBuildings(scanMap);scanSourceName=vectorSourceName(scanMap)}}catch(e){}
     initTerrain();
-    initAdminLayers();initSelect();initLawControls();initAddressSearch();addSupplementLayers();refreshSolarPreview();
+    initAdminLayers();initTemporaryRoadLayerControls();initSelect();initLawControls();initAddressSearch();addSupplementLayers();refreshSolarPreview();
     message(`준비 완료 · GIS ${MANIFEST.building_count.toLocaleString()}개 · ${APP_VERSION}`);
   }catch(e){
     console.error(e);
