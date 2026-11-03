@@ -127,7 +127,7 @@ function move(position,dx,dz,grid,entries){
   document.addEventListener('pointerlockerror',()=>{if(state){setMenu(true);hud('마우스 고정을 시작하지 못했습니다. 둘러보기 버튼을 다시 눌러 주세요.')}});
   document.addEventListener('mousemove',e=>{const s=state;if(!API.active||!s||s.menu||performance.now()<(s.ignoreMouseUntil||0))return;const locked=document.pointerLockElement===s.renderer.domElement;if(!locked&&s.renderer.domElement.requestPointerLock)return;if(!locked&&e.target!==s.renderer.domElement)return;look(e.movementX,e.movementY)});
   window.addEventListener('blur',pause);document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});window.addEventListener('pagehide',close);
-  map.on('click',e=>{if(API.picking)pick([e.lngLat.lng,e.lngLat.lat])});for(const event of ['input','change'])$('workspaceSolar')?.addEventListener(event,()=>{if(state){state.sunSignature='';state.dirty=true}});
+  map.on('click',e=>{if(API.picking)pick([e.lngLat.lng,e.lngLat.lat])});for(const event of ['input','change','click'])document.addEventListener(event,e=>{if(e.target?.id?.startsWith('solar')||e.target?.closest?.('[data-solar-season]'))if(state){state.sunSignature='';state.dirty=true}});
   window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe($('eyeWalkHost'));sync();screenWorkspaceSync();
  }
  function sync(){
