@@ -205,18 +205,18 @@ function move(position,dx,dz,grid,entries){
  function mapSnapshot(){const c=map.getCenter();return {center:[c.lng,c.lat],zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),padding:{...map.getPadding()}}}
  async function open(){
   if(busy||!start)return;cancelPick();busy=true;API.active=true;const run=++token;sync();$('eyeWalkModal').hidden=false;hud('지도와 지형을 준비하는 중…');$('eyeWalkMenu').hidden=true;$('eyeWalkCrosshair').hidden=true;
-  const original=mapSnapshot(),hidden=new Map();let renderer=null,threeScene=null;
+  const original=mapSnapshot(),hidden=new Map();let renderer=null,threeScene=null,stage='지도 이동';
   try{
    solarPlaybackStop();map.stop();map.jumpTo({center:start,zoom:17,pitch:0,bearing:0,padding:{top:0,bottom:0,left:0,right:0}});
-   const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');await settled();if(run!==token)return;
+   stage='Three.js 불러오기';const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');await settled();if(run!==token)return;
    const center=start.slice(),merc=maplibregl.MercatorCoordinate.fromLngLat(center,0),scale=merc.meterInMercatorCoordinateUnits();
    const local=ll=>{const m=maplibregl.MercatorCoordinate.fromLngLat(ll,0);return [(m.x-merc.x)/scale,(m.y-merc.y)/scale]},geo=(x,z)=>{const ll=new maplibregl.MercatorCoordinate(merc.x+x*scale,merc.y+z*scale,0).toLngLat();return [ll.lng,ll.lat]};
-   const datum=solarTerrainHeight(center);if(datum===null)throw Error('선택 위치의 지표면 높이를 아직 읽지 못했습니다. 지도를 확대하고 지형이 로드된 뒤 다시 시작하세요.');
+   stage='DEM 지형 읽기';const datum=solarTerrainHeight(center);if(datum===null)throw Error('선택 위치의 지표면 높이를 아직 읽지 못했습니다. 지도를 확대하고 지형이 로드된 뒤 다시 시작하세요.');
    const c=map.getCanvas(),topLeft=local(map.unproject([0,0]).toArray()),bottomRight=local(map.unproject([c.clientWidth,c.clientHeight]).toArray()),radius=Math.min(160,-topLeft[0]-3,-topLeft[1]-3,bottomRight[0]-3,bottomRight[1]-3);
    if(radius<20)throw Error('주변 지도를 충분히 확보하지 못했습니다. 창 크기를 늘린 뒤 다시 시작하세요.');
-   const n=65,grid={n,radius,step:2*radius/(n-1),values:[]};for(let j=0;j<n;j++)for(let i=0;i<n;i++)grid.values.push(solarTerrainHeight(geo(-radius+i*grid.step,-radius+j*grid.step)));
+   stage='주변 지형 구성';const n=65,grid={n,radius,step:2*radius/(n-1),values:[]};for(let j=0;j<n;j++)for(let i=0;i<n;i++)grid.values.push(solarTerrainHeight(geo(-radius+i*grid.step,-radius+j*grid.step)));
    const gapStats=fillTerrainGaps(grid,datum);if(!gapStats)throw Error('지형 표고 자료에 빈 구역이 많아 눈높이 장면을 만들 수 없습니다. 지형 타일이 로드된 뒤 다시 시작하세요.');
-   const candidates=collectBuildings(center,local,radius),entries=[];let skipped=0,skippedOutside=0;
+   stage='주변 건물 구성';const candidates=collectBuildings(center,local,radius),entries=[];let skipped=0,skippedOutside=0;
    for(const item of candidates){const p=item.f.properties||{};let at;try{at=turf.pointOnFeature(item.f).geometry.coordinates}catch{at=featureGroundAnchor(item.f)||center}const anchorLocal=local(at),elevation=sampleGrid(grid,anchorLocal[0],anchorLocal[1]);if(elevation===null){skipped++;continue}
     const storedFoundation=item.custom?editModelElevation(item.f).render_base:Math.max(0,Number(p.render_base)||0),polygons=(item.f.geometry.type==='Polygon'?[item.f.geometry.coordinates]:item.f.geometry.coordinates).map(poly=>poly.map(r=>r.map(local)));
     const flat=polygons.flat(2),box=[Math.min(...flat.map(p=>p[0])),Math.min(...flat.map(p=>p[1])),Math.max(...flat.map(p=>p[0])),Math.max(...flat.map(p=>p[1]))];
@@ -228,8 +228,8 @@ function move(position,dx,dz,grid,entries){
    if(!entries.length)throw Error('주변에 표시할 건물이 없습니다. 건물 자료를 불러온 지역에서 시작하세요.');
    if(blocked(0,0,entries))throw Error('시작 위치가 건물 벽에 너무 가깝습니다. 도로나 넓은 빈 공간을 선택하세요.');
    for(const id of ['buildings-3d','buildings-foundation','smart-osm-3d','smart-osm-foundation','buildings-2d','smart-osm-2d','edit-custom-model-3d','edit-custom-model-foundation','edit-custom-model-outline','selected-building-fill','selected-building-line','solar-three-map-custom'])if(map.getLayer(id)){hidden.set(id,map.getLayoutProperty(id,'visibility'));map.setLayoutProperty(id,'visibility','none')}
-   const image=await captureMap();if(run!==token)return;if(!image)throw Error('주변 지도를 캡처하지 못해 도로를 표시할 수 없습니다. 지도 타일이 모두 로드된 뒤 다시 시작하세요.');
-   hud('실제 건물 형상을 구성하는 중…');
+   stage='배경지도 캡처';const image=await captureMap();if(run!==token)return;if(!image)throw Error('주변 지도를 캡처하지 못해 도로를 표시할 수 없습니다. 지도 타일이 모두 로드된 뒤 다시 시작하세요.');
+   stage='3D 장면 생성';hud('실제 건물 형상을 구성하는 중…');
    threeScene=new THREE.Scene();threeScene.background=new THREE.Color('#bfd5e4');threeScene.fog=new THREE.Fog('#bfd5e4',radius*.8,radius*2);
    threeScene.add(new THREE.HemisphereLight('#edf5f7','#64756a',1.05));const sun=new THREE.DirectionalLight('#fff2d8',1.25);sun.position.set(-50,100,30);sun.castShadow=true;sun.shadow.mapSize.set(512,512);sun.shadow.camera.near=.5;sun.shadow.camera.far=radius*3;sun.shadow.camera.left=-radius;sun.shadow.camera.right=radius;sun.shadow.camera.top=radius;sun.shadow.camera.bottom=-radius;sun.shadow.bias=-.00025;sun.shadow.normalBias=.035;threeScene.add(sun);
    renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.shadowMap.enabled=!!settings.shadow;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.setPixelRatio(Math.min(1.5,devicePixelRatio||1));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.domElement.id='eyeWalkCanvas';renderer.domElement.setAttribute('aria-label','눈높이 걷기 장면');$('eyeWalkHost').prepend(renderer.domElement);
@@ -247,7 +247,7 @@ function move(position,dx,dz,grid,entries){
    state={THREE,scene:threeScene,renderer,camera,sun,grid,datum,local,geo,entries,meshes,terrain,geometries,materials,texture,highlight,measurementGroup,x:0,z:0,yaw,pitch:0,keys:new Set(),menu:true,target:null,groundTarget:null,placePersonArmed:false,personModel:null,personPreview:null,hudMessage:'',hudMessageUntil:0,pending:null,frame:0,last:0,dirty:true,miniAt:0,touch:null,ray:new THREE.Raycaster(),lastTarget:''};
    threeScene.updateMatrixWorld(true);setupCanvasInput(renderer.domElement);$('eyeWalkSceneInfo').textContent='주변 '+entries.length+'동 · 반경 '+Math.floor(radius)+'m · '+(image?'배경지도·DEM':'DEM 기준면')+(gapStats.filled?' · 지형 결측 '+gapStats.filled+'곳 보간':'')+(gapStats.flatFallback?' · 저신뢰 평면 보정 '+gapStats.flatFallback+'곳':'')+(skippedOutside?' · 지형 범위 밖 '+skippedOutside+'동 제외':'')+(skipped?' · 고도 미확보 '+skipped+'동 제외':'');
    resize();setMenu(true);renderRecords();state.frame=requestAnimationFrame(tick);status('눈높이 장면 준비 완료 · 마우스 또는 터치로 둘러보세요.');
-  }catch(error){if(run===token){console.warn('Eye walk:',error);if(!state){renderer?.dispose();if(renderer?.domElement)renderer.domElement.remove();if(threeScene)threeScene.traverse(o=>{o.geometry?.dispose();if(o.material)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose()})}close();status(error.message||'눈높이 장면을 만들지 못했습니다.')}}
+  }catch(error){if(run===token){const detail='걷기 시작 실패 · '+stage+' · '+(error?.message||String(error));console.error('Eye walk:',stage,error);if(!state){renderer?.dispose();if(renderer?.domElement)renderer.domElement.remove();if(threeScene)threeScene.traverse(o=>{o.geometry?.dispose();if(o.material)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose()})}close();status(detail);message(detail)}}
   finally{
    for(const [id,visibility] of hidden)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visibility||'visible');
    map.jumpTo(original);busy=false;sync();
