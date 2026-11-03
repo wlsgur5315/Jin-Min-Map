@@ -231,7 +231,7 @@ function move(position,dx,dz,grid,entries){
    const image=await captureMap();if(run!==token)return;if(!image)throw Error('주변 지도를 캡처하지 못해 도로를 표시할 수 없습니다. 지도 타일이 모두 로드된 뒤 다시 시작하세요.');
    hud('실제 건물 형상을 구성하는 중…');
    threeScene=new THREE.Scene();threeScene.background=new THREE.Color('#bfd5e4');threeScene.fog=new THREE.Fog('#bfd5e4',radius*.8,radius*2);
-   threeScene.add(new THREE.HemisphereLight('#edf5f7','#64756a',1.05));const sun=new THREE.DirectionalLight('#fff2d8',1.25);sun.position.set(-50,100,30);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.near=.5;sun.shadow.camera.far=radius*3;sun.shadow.camera.left=-radius;sun.shadow.camera.right=radius;sun.shadow.camera.top=radius;sun.shadow.camera.bottom=-radius;sun.shadow.bias=-.00025;sun.shadow.normalBias=.035;threeScene.add(sun);
+   threeScene.add(new THREE.HemisphereLight('#edf5f7','#64756a',1.05));const sun=new THREE.DirectionalLight('#fff2d8',1.25);sun.position.set(-50,100,30);sun.castShadow=true;sun.shadow.mapSize.set(512,512);sun.shadow.camera.near=.5;sun.shadow.camera.far=radius*3;sun.shadow.camera.left=-radius;sun.shadow.camera.right=radius;sun.shadow.camera.top=radius;sun.shadow.camera.bottom=-radius;sun.shadow.bias=-.00025;sun.shadow.normalBias=.035;threeScene.add(sun);
    renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.shadowMap.enabled=!!settings.shadow;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.setPixelRatio(Math.min(1.5,devicePixelRatio||1));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.domElement.id='eyeWalkCanvas';renderer.domElement.setAttribute('aria-label','눈높이 걷기 장면');$('eyeWalkHost').prepend(renderer.domElement);
    const camera=new THREE.PerspectiveCamera(75,1,.08,radius*3),geometries=[],materials=[];
    const terrainGeometry=makeTerrain(THREE,grid,datum,topLeft,bottomRight);geometries.push(terrainGeometry);let texture=null;if(image){texture=new THREE.CanvasTexture(image);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy())}
@@ -273,18 +273,18 @@ function move(position,dx,dz,grid,entries){
   function configureEyeShadows(s,refresh=false){s.renderer.shadowMap.enabled=!!settings.shadow;s.sun.castShadow=true;if(refresh){s.sunSignature='';s.dirty=true}}
  function updateEyeSun(s){
   const angles=typeof root.solarAngles==='function'?root.solarAngles():{alt:45,az:180},alt=Number(angles.alt),az=Number(angles.az);
-  const signature=[settings.shadow,alt.toFixed(2),az.toFixed(2),s.x.toFixed(1),s.z.toFixed(1)].join('|');
+  const signature=[settings.shadow,alt.toFixed(2),az.toFixed(2)].join('|');
   if(signature===s.sunSignature)return;s.sunSignature=signature;
   s.renderer.shadowMap.enabled=!!settings.shadow&&Number.isFinite(alt)&&alt>0;s.sun.visible=Number.isFinite(alt)&&alt>0;
   if(!s.sun.visible)return;
   const a=az*Math.PI/180,e=alt*Math.PI/180,d=Math.max(80,s.grid.radius*2),ground=sampleGrid(s.grid,s.x,s.z),targetY=(ground??s.datum)-s.datum;
-  s.sun.position.set(s.x+Math.sin(a)*Math.cos(e)*d,targetY+Math.sin(e)*d,s.z-Math.cos(a)*Math.cos(e)*d);
-  s.sun.target.position.set(s.x,targetY,s.z);s.sun.target.updateMatrixWorld();s.sun.shadow.camera.updateProjectionMatrix();
+  s.sun.position.set(Math.sin(a)*Math.cos(e)*d,Math.sin(e)*d,-Math.cos(a)*Math.cos(e)*d);
+  s.sun.target.position.set(0,0,0);s.sun.target.updateMatrixWorld();s.sun.shadow.camera.updateProjectionMatrix();if(s.renderer.shadowMap.enabled)s.renderer.shadowMap.needsUpdate=true;
  }
 function tick(now){
   const s=state;if(!API.active||!s)return;const dt=s.last?Math.min(.05,(now-s.last)/1000):0;s.last=now;
   if(!s.menu&&!document.hidden){let forward=Number(s.keys.has('KeyW'))-Number(s.keys.has('KeyS')),right=Number(s.keys.has('KeyD'))-Number(s.keys.has('KeyA'));const length=Math.hypot(forward,right);if(length){const speed=settings.speed*(s.keys.has('ShiftLeft')||s.keys.has('ShiftRight')?1.7:1),dx=(-Math.sin(s.yaw)*forward+Math.cos(s.yaw)*right)/length*speed*dt,dz=(-Math.cos(s.yaw)*forward-Math.sin(s.yaw)*right)/length*speed*dt,next=move(s,dx,dz,s.grid,s.entries);s.x=next.x;s.z=next.z;s.dirty=true}}
-  if(s.dirty){updateCamera(s);updateEyeSun(s);updateTarget(s);if(s.renderer.shadowMap.enabled)s.renderer.shadowMap.needsUpdate=true;s.renderer.render(s.scene,s.camera);s.dirty=false}
+  if(s.dirty){updateCamera(s);updateEyeSun(s);updateTarget(s);s.renderer.render(s.scene,s.camera);s.dirty=false}
   if(now-s.miniAt>160){drawMini(s);s.miniAt=now}
   s.frame=requestAnimationFrame(tick);
  }
