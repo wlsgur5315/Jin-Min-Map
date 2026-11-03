@@ -85,8 +85,8 @@ function move(position,dx,dz,grid,entries){
  if(!root.document)return;
  root.EYE_WALK_MATH=math;
  const $=id=>document.getElementById(id),API=root.EYE_WALK={active:false,picking:false,setup,sync,pick,cancelPick};
- let start=null,marker=null,state=null,busy=false,token=0,scope='',records=[],keyCapture=null,settings={eye:1.6,speed:1.5,sensitivity:.0022,shadow:false,placeKey:'KeyP',cancelKey:'KeyX'};
- try{const saved=JSON.parse(localStorage.getItem('jinmin_eye_walk_settings')||'null');if(saved){if(saved.eye>=.8&&saved.eye<=2.2)settings.eye=Number(saved.eye);if([.8,1.5,2.5].includes(saved.speed))settings.speed=saved.speed;if(saved.sensitivity>=.0008&&saved.sensitivity<=.004)settings.sensitivity=saved.sensitivity;if(typeof saved.shadow==='boolean')settings.shadow=saved.shadow;if(validBinding(saved.placeKey))settings.placeKey=saved.placeKey;if(validBinding(saved.cancelKey)&&saved.cancelKey!==settings.placeKey)settings.cancelKey=saved.cancelKey}
+ let start=null,marker=null,state=null,busy=false,token=0,scope='',records=[],keyCapture=null,settings={eye:1.6,speed:1.5,sensitivity:.0022,placeKey:'KeyP',cancelKey:'KeyX'};
+ try{const saved=JSON.parse(localStorage.getItem('jinmin_eye_walk_settings')||'null');if(saved){if(saved.eye>=.8&&saved.eye<=2.2)settings.eye=Number(saved.eye);if([.8,1.5,2.5].includes(saved.speed))settings.speed=saved.speed;if(saved.sensitivity>=.0008&&saved.sensitivity<=.004)settings.sensitivity=saved.sensitivity;if(validBinding(saved.placeKey))settings.placeKey=saved.placeKey;if(validBinding(saved.cancelKey)&&saved.cancelKey!==settings.placeKey)settings.cancelKey=saved.cancelKey}
   records=JSON.parse(localStorage.getItem('jinmin_eye_walk_records')||'[]');if(!Array.isArray(records))records=[];records=records.filter(r=>r&&Number.isFinite(r.distance)&&r.distance>0&&r.a?.length===3&&r.b?.length===3&&[...r.a,...r.b].every(Number.isFinite)).slice(-50);
  }catch{records=[]}
  const node=(tag,parent,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;if(parent)parent.appendChild(n);return n};
@@ -96,13 +96,13 @@ function move(position,dx,dz,grid,entries){
  function keyLabel(code){return code?.startsWith('Key')?code.slice(3):code?.startsWith('Digit')?code.slice(5):code||''}
  function captureBinding(key,btn){keyCapture=key;btn.textContent='키를 누르세요'}
  function keySettingsNotice(text){if(API.active&&state)flashHud(state,text);else if($('eyeWalkStatus'))status(text)}
- function saveSettings(){try{localStorage.setItem('jinmin_eye_walk_settings',JSON.stringify(settings))}catch{}syncSettings();if(state)configureEyeShadows(state,true)}
- function syncSettings(){for(const el of document.querySelectorAll('[data-ew-setting]'))el.value=settings[el.dataset.ewSetting];for(const el of document.querySelectorAll('[data-ew-key]'))el.textContent=keyCapture===el.dataset.ewKey?'키 입력 중…':keyLabel(settings[el.dataset.ewKey]);if($('eyeWalkEyeValue'))$('eyeWalkEyeValue').textContent=settings.eye.toFixed(1)+'m';if($('eyeWalkPlacementHelp'))$('eyeWalkPlacementHelp').textContent='배치 '+keyLabel(settings.placeKey)+' 시작 → 같은 키로 확정 · '+keyLabel(settings.cancelKey)+' 취소';if($('eyeWalkHumanPlaceButton'))$('eyeWalkHumanPlaceButton').textContent=state?.placePersonArmed?'배치 확정 · '+keyLabel(settings.placeKey):'사람 배치 · '+keyLabel(settings.placeKey);if($('eyeWalkHumanCancelButton'))$('eyeWalkHumanCancelButton').textContent='취소 · '+keyLabel(settings.cancelKey);for(const el of document.querySelectorAll('[data-ew-shadow]'))el.checked=settings.shadow;if(state){state.dirty=true;state.keys.clear()}}
+ function saveSettings(){try{localStorage.setItem('jinmin_eye_walk_settings',JSON.stringify(settings))}catch{}syncSettings()}
+ function syncSettings(){for(const el of document.querySelectorAll('[data-ew-setting]'))el.value=settings[el.dataset.ewSetting];for(const el of document.querySelectorAll('[data-ew-key]'))el.textContent=keyCapture===el.dataset.ewKey?'키 입력 중…':keyLabel(settings[el.dataset.ewKey]);if($('eyeWalkEyeValue'))$('eyeWalkEyeValue').textContent=settings.eye.toFixed(1)+'m';if($('eyeWalkPlacementHelp'))$('eyeWalkPlacementHelp').textContent='배치 '+keyLabel(settings.placeKey)+' 시작 → 같은 키로 확정 · '+keyLabel(settings.cancelKey)+' 취소';if($('eyeWalkHumanPlaceButton'))$('eyeWalkHumanPlaceButton').textContent=state?.placePersonArmed?'배치 확정 · '+keyLabel(settings.placeKey):'사람 배치 · '+keyLabel(settings.placeKey);if($('eyeWalkHumanCancelButton'))$('eyeWalkHumanCancelButton').textContent='취소 · '+keyLabel(settings.cancelKey);if(state){state.dirty=true;state.keys.clear()}}
  function settingsUI(host){
   for(const [key,title,options] of [['eye','눈높이',[[1.2,'1.2m'],[1.6,'1.6m'],[1.8,'1.8m']]],['speed','이동 속도',[[.8,'천천히'],[1.5,'보통'],[2.5,'빠르게']]],['sensitivity','마우스 감도',[[.001,'낮음'],[.0022,'보통'],[.0035,'높음']]]]){
    const label=node('label',host,title,'ew-field'),select=node('select',label);select.dataset.ewSetting=key;select.setAttribute('aria-label',title);for(const [value,text] of options){const o=node('option',select,text);o.value=value}select.value=settings[key];select.onchange=()=>{settings[key]=Number(select.value);saveSettings()};
   }
-  const shadowLabel=node('label',host,'','ew-shadow-toggle');const shadow=node('input',shadowLabel);shadow.type='checkbox';shadow.dataset.ewShadow='true';shadow.checked=settings.shadow;node('span',shadowLabel,'그림자 보기');shadow.onchange=()=>{settings.shadow=shadow.checked;saveSettings()};node('p',host,'지도에서 선택한 날짜와 시간의 태양 위치를 반영합니다.','ew-muted');node('h3',host,'사람 모델 배치 단축키');for(const [key,title] of [['placeKey','배치 / 확정 키'],['cancelKey','미리보기 취소 키']]){const row=node('div',host,'','ew-field');node('span',row,title);const b=button(row,keyLabel(settings[key]),()=>captureBinding(key,b));b.dataset.ewKey=key;b.setAttribute('aria-label',title+' 변경')}
+  node('h3',host,'사람 모델 배치 단축키');for(const [key,title] of [['placeKey','배치 / 확정 키'],['cancelKey','미리보기 취소 키']]){const row=node('div',host,'','ew-field');node('span',row,title);const b=button(row,keyLabel(settings[key]),()=>captureBinding(key,b));b.dataset.ewKey=key;b.setAttribute('aria-label',title+' 변경')}
   node('p',host,'키 설정 버튼을 누른 뒤 원하는 문자 또는 숫자 키를 입력하세요. 이동·측정·메뉴 키는 지정할 수 없습니다.','ew-muted');
   const help=node('div',host,'','ew-help');for(const [key,text] of [['마우스','이동만으로 시선 회전'],['WASD','앞뒤·좌우 이동'],['Tab','회전·이동 정지 / 커서로 기능 선택'],['Tab 다시','둘러보기 복귀 / 커서 숨김'],['E','조준한 벽면의 정면 거리 측정'],['Esc','커서 해제 · 다시 누르면 지도 복귀'],['터치','이동 패드 · 화면 드래그 · 기능 버튼']]){node('b',help,key);node('span',help,text)}
  }
@@ -127,7 +127,7 @@ function move(position,dx,dz,grid,entries){
   document.addEventListener('pointerlockerror',()=>{if(state){setMenu(true);hud('마우스 고정을 시작하지 못했습니다. 둘러보기 버튼을 다시 눌러 주세요.')}});
   document.addEventListener('mousemove',e=>{const s=state;if(!API.active||!s||s.menu||performance.now()<(s.ignoreMouseUntil||0))return;const locked=document.pointerLockElement===s.renderer.domElement;if(!locked&&s.renderer.domElement.requestPointerLock)return;if(!locked&&e.target!==s.renderer.domElement)return;look(e.movementX,e.movementY)});
   window.addEventListener('blur',pause);document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});window.addEventListener('pagehide',close);
-  map.on('click',e=>{if(API.picking)pick([e.lngLat.lng,e.lngLat.lat])});for(const event of ['input','change','click'])document.addEventListener(event,e=>{if(e.target?.id?.startsWith('solar')||e.target?.closest?.('[data-solar-season]'))if(state){state.sunSignature='';state.dirty=true}});
+  map.on('click',e=>{if(API.picking)pick([e.lngLat.lng,e.lngLat.lat])});
   window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe($('eyeWalkHost'));sync();screenWorkspaceSync();
  }
  function sync(){
@@ -205,18 +205,18 @@ function move(position,dx,dz,grid,entries){
  function mapSnapshot(){const c=map.getCenter();return {center:[c.lng,c.lat],zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),padding:{...map.getPadding()}}}
  async function open(){
   if(busy||!start)return;cancelPick();busy=true;API.active=true;const run=++token;sync();$('eyeWalkModal').hidden=false;hud('지도와 지형을 준비하는 중…');$('eyeWalkMenu').hidden=true;$('eyeWalkCrosshair').hidden=true;
-  const original=mapSnapshot(),hidden=new Map();let renderer=null,threeScene=null,stage='지도 이동';
+  const original=mapSnapshot(),hidden=new Map();let renderer=null,threeScene=null;
   try{
    solarPlaybackStop();map.stop();map.jumpTo({center:start,zoom:17,pitch:0,bearing:0,padding:{top:0,bottom:0,left:0,right:0}});
-   stage='Three.js 불러오기';const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');await settled();if(run!==token)return;
+   const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js');await settled();if(run!==token)return;
    const center=start.slice(),merc=maplibregl.MercatorCoordinate.fromLngLat(center,0),scale=merc.meterInMercatorCoordinateUnits();
    const local=ll=>{const m=maplibregl.MercatorCoordinate.fromLngLat(ll,0);return [(m.x-merc.x)/scale,(m.y-merc.y)/scale]},geo=(x,z)=>{const ll=new maplibregl.MercatorCoordinate(merc.x+x*scale,merc.y+z*scale,0).toLngLat();return [ll.lng,ll.lat]};
-   stage='DEM 지형 읽기';const datum=solarTerrainHeight(center);if(datum===null)throw Error('선택 위치의 지표면 높이를 아직 읽지 못했습니다. 지도를 확대하고 지형이 로드된 뒤 다시 시작하세요.');
+   const datum=solarTerrainHeight(center);if(datum===null)throw Error('선택 위치의 지표면 높이를 아직 읽지 못했습니다. 지도를 확대하고 지형이 로드된 뒤 다시 시작하세요.');
    const c=map.getCanvas(),topLeft=local(map.unproject([0,0]).toArray()),bottomRight=local(map.unproject([c.clientWidth,c.clientHeight]).toArray()),radius=Math.min(160,-topLeft[0]-3,-topLeft[1]-3,bottomRight[0]-3,bottomRight[1]-3);
    if(radius<20)throw Error('주변 지도를 충분히 확보하지 못했습니다. 창 크기를 늘린 뒤 다시 시작하세요.');
-   stage='주변 지형 구성';const n=65,grid={n,radius,step:2*radius/(n-1),values:[]};for(let j=0;j<n;j++)for(let i=0;i<n;i++)grid.values.push(solarTerrainHeight(geo(-radius+i*grid.step,-radius+j*grid.step)));
+   const n=65,grid={n,radius,step:2*radius/(n-1),values:[]};for(let j=0;j<n;j++)for(let i=0;i<n;i++)grid.values.push(solarTerrainHeight(geo(-radius+i*grid.step,-radius+j*grid.step)));
    const gapStats=fillTerrainGaps(grid,datum);if(!gapStats)throw Error('지형 표고 자료에 빈 구역이 많아 눈높이 장면을 만들 수 없습니다. 지형 타일이 로드된 뒤 다시 시작하세요.');
-   stage='주변 건물 구성';const candidates=collectBuildings(center,local,radius),entries=[];let skipped=0,skippedOutside=0;
+   const candidates=collectBuildings(center,local,radius),entries=[];let skipped=0,skippedOutside=0;
    for(const item of candidates){const p=item.f.properties||{};let at;try{at=turf.pointOnFeature(item.f).geometry.coordinates}catch{at=featureGroundAnchor(item.f)||center}const anchorLocal=local(at),elevation=sampleGrid(grid,anchorLocal[0],anchorLocal[1]);if(elevation===null){skipped++;continue}
     const storedFoundation=item.custom?editModelElevation(item.f).render_base:Math.max(0,Number(p.render_base)||0),polygons=(item.f.geometry.type==='Polygon'?[item.f.geometry.coordinates]:item.f.geometry.coordinates).map(poly=>poly.map(r=>r.map(local)));
     const flat=polygons.flat(2),box=[Math.min(...flat.map(p=>p[0])),Math.min(...flat.map(p=>p[1])),Math.max(...flat.map(p=>p[0])),Math.max(...flat.map(p=>p[1]))];
@@ -228,34 +228,34 @@ function move(position,dx,dz,grid,entries){
    if(!entries.length)throw Error('주변에 표시할 건물이 없습니다. 건물 자료를 불러온 지역에서 시작하세요.');
    if(blocked(0,0,entries))throw Error('시작 위치가 건물 벽에 너무 가깝습니다. 도로나 넓은 빈 공간을 선택하세요.');
    for(const id of ['buildings-3d','buildings-foundation','smart-osm-3d','smart-osm-foundation','buildings-2d','smart-osm-2d','edit-custom-model-3d','edit-custom-model-foundation','edit-custom-model-outline','selected-building-fill','selected-building-line','solar-three-map-custom'])if(map.getLayer(id)){hidden.set(id,map.getLayoutProperty(id,'visibility'));map.setLayoutProperty(id,'visibility','none')}
-   stage='배경지도 캡처';const image=await captureMap();if(run!==token)return;if(!image)throw Error('주변 지도를 캡처하지 못해 도로를 표시할 수 없습니다. 지도 타일이 모두 로드된 뒤 다시 시작하세요.');
-   stage='3D 장면 생성';hud('실제 건물 형상을 구성하는 중…');
+   const image=await captureMap();if(run!==token)return;if(!image)throw Error('주변 지도를 캡처하지 못해 도로를 표시할 수 없습니다. 지도 타일이 모두 로드된 뒤 다시 시작하세요.');
+   hud('실제 건물 형상을 구성하는 중…');
    threeScene=new THREE.Scene();threeScene.background=new THREE.Color('#bfd5e4');threeScene.fog=new THREE.Fog('#bfd5e4',radius*.8,radius*2);
-   threeScene.add(new THREE.HemisphereLight('#edf5f7','#64756a',1.05));const sun=new THREE.DirectionalLight('#fff2d8',1.25);sun.position.set(-50,100,30);sun.castShadow=true;sun.shadow.mapSize.set(512,512);sun.shadow.camera.near=.5;sun.shadow.camera.far=radius*3;sun.shadow.camera.left=-radius;sun.shadow.camera.right=radius;sun.shadow.camera.top=radius;sun.shadow.camera.bottom=-radius;sun.shadow.bias=-.00025;sun.shadow.normalBias=.035;threeScene.add(sun);
-   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.shadowMap.enabled=!!settings.shadow;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.setPixelRatio(Math.min(1.5,devicePixelRatio||1));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.domElement.id='eyeWalkCanvas';renderer.domElement.setAttribute('aria-label','눈높이 걷기 장면');$('eyeWalkHost').prepend(renderer.domElement);
+   threeScene.add(new THREE.HemisphereLight('#edf5f7','#64756a',1.05));const sun=new THREE.DirectionalLight('#fff2d8',1.25);sun.position.set(-50,100,30);threeScene.add(sun);
+   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(1.5,devicePixelRatio||1));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.domElement.id='eyeWalkCanvas';renderer.domElement.setAttribute('aria-label','눈높이 걷기 장면');$('eyeWalkHost').prepend(renderer.domElement);
    const camera=new THREE.PerspectiveCamera(75,1,.08,radius*3),geometries=[],materials=[];
    const terrainGeometry=makeTerrain(THREE,grid,datum,topLeft,bottomRight);geometries.push(terrainGeometry);let texture=null;if(image){texture=new THREE.CanvasTexture(image);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy())}
-   const groundMaterial=new THREE.MeshStandardMaterial({map:texture,color:texture?'#ffffff':'#819589',roughness:1,side:THREE.DoubleSide});materials.push(groundMaterial);const terrain=new THREE.Mesh(terrainGeometry,groundMaterial);terrain.receiveShadow=true;threeScene.add(terrain);
+   const groundMaterial=new THREE.MeshStandardMaterial({map:texture,color:texture?'#ffffff':'#819589',roughness:1,side:THREE.DoubleSide});materials.push(groundMaterial);const terrain=new THREE.Mesh(terrainGeometry,groundMaterial);threeScene.add(terrain);
    const existingMat=new THREE.MeshStandardMaterial({color:'#aeb9bd',roughness:.96,side:THREE.DoubleSide}),existingRoofMat=new THREE.MeshStandardMaterial({color:'#87969c',roughness:.98,side:THREE.DoubleSide}),customMat=new THREE.MeshStandardMaterial({color:'#3d8fb9',roughness:.92,side:THREE.DoubleSide}),customRoofMat=new THREE.MeshStandardMaterial({color:'#286a85',roughness:.95,side:THREE.DoubleSide}),foundationMat=new THREE.MeshStandardMaterial({color:'#59656a',roughness:1,side:THREE.DoubleSide}),customFoundationMat=new THREE.MeshStandardMaterial({color:'#80543a',roughness:1,side:THREE.DoubleSide});materials.push(existingMat,existingRoofMat,customMat,customRoofMat,foundationMat,customFoundationMat);const meshes=[];
    for(const entry of entries)for(const rings of entry.polygons){const shape=new THREE.Shape();rings[0].forEach(([x,z],i)=>i?shape.lineTo(x,-z):shape.moveTo(x,-z));for(const ring of rings.slice(1)){const hole=new THREE.Path();ring.forEach(([x,z],i)=>i?hole.lineTo(x,-z):hole.moveTo(x,-z));shape.holes.push(hole)}
-    const g=new THREE.ExtrudeGeometry(shape,{depth:entry.h,bevelEnabled:false,steps:1});g.rotateX(-Math.PI/2);geometries.push(g);const mesh=new THREE.Mesh(g,entry.custom?[customMat,customRoofMat]:[existingMat,existingRoofMat]);mesh.position.y=entry.base;mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData.entry=entry;entry.meshes.push(mesh);meshes.push(mesh);threeScene.add(mesh);
-    if(entry.foundation>.01){const conformed=terrainFoundationGeometry(THREE,grid,datum,rings,entry.base,entry.base-entry.foundation),fg=conformed||new THREE.ExtrudeGeometry(shape,{depth:entry.foundation,bevelEnabled:false,steps:1});if(!conformed)fg.rotateX(-Math.PI/2);geometries.push(fg);const foundation=new THREE.Mesh(fg,entry.custom?customFoundationMat:foundationMat);if(!conformed)foundation.position.y=entry.base-entry.foundation;foundation.castShadow=true;foundation.receiveShadow=true;foundation.userData.entry=entry;entry.meshes.push(foundation);meshes.push(foundation);threeScene.add(foundation)}
+    const g=new THREE.ExtrudeGeometry(shape,{depth:entry.h,bevelEnabled:false,steps:1});g.rotateX(-Math.PI/2);geometries.push(g);const mesh=new THREE.Mesh(g,entry.custom?[customMat,customRoofMat]:[existingMat,existingRoofMat]);mesh.position.y=entry.base;mesh.userData.entry=entry;entry.meshes.push(mesh);meshes.push(mesh);threeScene.add(mesh);
+    if(entry.foundation>.01){const conformed=terrainFoundationGeometry(THREE,grid,datum,rings,entry.base,entry.base-entry.foundation),fg=conformed||new THREE.ExtrudeGeometry(shape,{depth:entry.foundation,bevelEnabled:false,steps:1});if(!conformed)fg.rotateX(-Math.PI/2);geometries.push(fg);const foundation=new THREE.Mesh(fg,entry.custom?customFoundationMat:foundationMat);if(!conformed)foundation.position.y=entry.base-entry.foundation;foundation.userData.entry=entry;entry.meshes.push(foundation);meshes.push(foundation);threeScene.add(foundation)}
    }
    const highlight=new THREE.LineLoop(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:'#22d3ee',depthTest:false}));highlight.renderOrder=8;highlight.visible=false;threeScene.add(highlight);
    const measurementGroup=new THREE.Group();threeScene.add(measurementGroup);
    const selected=solarAnalysisCenter(),aim=selected?local(selected):[0,-15],bearing=map.getBearing()*Math.PI/180,yaw=Math.hypot(...aim)>2?Math.atan2(-aim[0],-aim[1]):bearing;
-   state={THREE,scene:threeScene,renderer,camera,sun,grid,datum,local,geo,entries,meshes,terrain,geometries,materials,texture,highlight,measurementGroup,x:0,z:0,yaw,pitch:0,keys:new Set(),menu:true,target:null,groundTarget:null,placePersonArmed:false,personModel:null,personPreview:null,hudMessage:'',hudMessageUntil:0,pending:null,frame:0,last:0,dirty:true,miniAt:0,touch:null,ray:new THREE.Raycaster(),lastTarget:''};
+   state={THREE,scene:threeScene,renderer,camera,grid,datum,local,geo,entries,meshes,terrain,geometries,materials,texture,highlight,measurementGroup,x:0,z:0,yaw,pitch:0,keys:new Set(),menu:true,target:null,groundTarget:null,placePersonArmed:false,personModel:null,personPreview:null,hudMessage:'',hudMessageUntil:0,pending:null,frame:0,last:0,dirty:true,miniAt:0,touch:null,ray:new THREE.Raycaster(),lastTarget:''};
    threeScene.updateMatrixWorld(true);setupCanvasInput(renderer.domElement);$('eyeWalkSceneInfo').textContent='주변 '+entries.length+'동 · 반경 '+Math.floor(radius)+'m · '+(image?'배경지도·DEM':'DEM 기준면')+(gapStats.filled?' · 지형 결측 '+gapStats.filled+'곳 보간':'')+(gapStats.flatFallback?' · 저신뢰 평면 보정 '+gapStats.flatFallback+'곳':'')+(skippedOutside?' · 지형 범위 밖 '+skippedOutside+'동 제외':'')+(skipped?' · 고도 미확보 '+skipped+'동 제외':'');
    resize();setMenu(true);renderRecords();state.frame=requestAnimationFrame(tick);status('눈높이 장면 준비 완료 · 마우스 또는 터치로 둘러보세요.');
-  }catch(error){if(run===token){const detail='걷기 시작 실패 · '+stage+' · '+(error?.message||String(error));console.error('Eye walk:',stage,error);if(!state){renderer?.dispose();if(renderer?.domElement)renderer.domElement.remove();if(threeScene)threeScene.traverse(o=>{o.geometry?.dispose();if(o.material)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose()})}close();status(detail);message(detail)}}
+  }catch(error){if(run===token){console.warn('Eye walk:',error);if(!state){renderer?.dispose();if(renderer?.domElement)renderer.domElement.remove();if(threeScene)threeScene.traverse(o=>{o.geometry?.dispose();if(o.material)for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose()})}close();status(error.message||'눈높이 장면을 만들지 못했습니다.')}}
   finally{
    for(const [id,visibility] of hidden)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visibility||'visible');
    map.jumpTo(original);busy=false;sync();
   }
  }
  function collectBuildings(center,local,radius){
-  const seen=new Set(),out=[];const add=(f,custom)=>{try{const record=!custom&&typeof buildingRecordFor==='function'?buildingRecordFor(f):null,bb=record?.bbox;if(bb){const lonScale=111320*Math.max(.15,Math.cos(center[1]*Math.PI/180)),dx=Math.max(bb[0]-center[0],0,center[0]-bb[2])*lonScale,dy=Math.max(bb[1]-center[1],0,center[1]-bb[3])*111320;if(Math.hypot(dx,dy)>radius+12)return}if(!['Polygon','MultiPolygon'].includes(f.geometry?.type)||f.properties?.facility||f.properties?.suppress_render||f.properties?.hidden||!custom&&buildingIsHidden(f))return;const p=f.properties||{},h=custom?Number(p.model_height):buildingHeight({f});if(!(h>0&&h<=600))return;const distance=turf.distance(center,turf.centroid(f),{units:'meters'});if(distance>radius*Math.SQRT2+10)return;const key=(custom?'custom:':'gis:')+JSON.stringify(f.geometry);if(seen.has(key))return;seen.add(key);out.push({f,custom,h,distance,name:custom?editModelLabel(f):[p.building_name||p.register_name,p.building_dong||p.register_dong].filter(Boolean).join(' · ')||'기존 건물'})}catch{}};
-  for(const f of buildingSolarFeatures())add(f,false);for(const f of editCustomModels())add(f,true);out.sort((a,b)=>Number(b.custom)-Number(a.custom)||a.distance-b.distance);return out.slice(0,120);
+  const seen=new Set(),out=[];const add=(f,custom)=>{try{if(!['Polygon','MultiPolygon'].includes(f.geometry?.type)||f.properties?.facility||f.properties?.suppress_render||f.properties?.hidden||!custom&&buildingIsHidden(f))return;const p=f.properties||{},h=custom?Number(p.model_height):buildingHeight({f});if(!(h>0&&h<=600))return;const distance=turf.distance(center,turf.centroid(f),{units:'meters'});if(distance>radius*Math.SQRT2+10)return;const key=(custom?'custom:':'gis:')+JSON.stringify(f.geometry);if(seen.has(key))return;seen.add(key);out.push({f,custom,h,distance,name:custom?editModelLabel(f):[p.building_name||p.register_name,p.building_dong||p.register_dong].filter(Boolean).join(' · ')||'기존 건물'})}catch{}};
+  for(const f of buildingSolarFeatures())add(f,false);for(const f of editCustomModels())add(f,true);out.sort((a,b)=>Number(b.custom)-Number(a.custom)||a.distance-b.distance);return out.slice(0,260);
  }
  function makeTerrain(T,grid,datum,a,b){
   const positions=[],uv=[],indices=[];for(let j=0;j<grid.n;j++)for(let i=0;i<grid.n;i++){const x=-grid.radius+i*grid.step,z=-grid.radius+j*grid.step,y=grid.values[j*grid.n+i];positions.push(x,Number.isFinite(y)?y-datum:0,z);uv.push((x-a[0])/(b[0]-a[0]),1-(z-a[1])/(b[1]-a[1]))}
@@ -270,21 +270,10 @@ function move(position,dx,dz,grid,entries){
  }
  function resize(){const s=state;if(!s)return;const host=$('eyeWalkHost'),w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;s.renderer.setSize(w,h,false);s.camera.aspect=w/h;s.camera.updateProjectionMatrix();s.dirty=true}
  function updateCamera(s){const ground=sampleGrid(s.grid,s.x,s.z);s.camera.position.set(s.x,(ground??s.datum)-s.datum+settings.eye,s.z);s.camera.rotation.order='YXZ';s.camera.rotation.set(s.pitch,s.yaw,0);s.camera.updateMatrixWorld()}
-  function configureEyeShadows(s,refresh=false){s.renderer.shadowMap.enabled=!!settings.shadow;s.sun.castShadow=true;if(refresh){s.sunSignature='';s.dirty=true}}
- function updateEyeSun(s){
-  const angles=typeof root.solarAngles==='function'?root.solarAngles():{alt:45,az:180},alt=Number(angles.alt),az=Number(angles.az);
-  const signature=[settings.shadow,alt.toFixed(2),az.toFixed(2)].join('|');
-  if(signature===s.sunSignature)return;s.sunSignature=signature;
-  s.renderer.shadowMap.enabled=!!settings.shadow&&Number.isFinite(alt)&&alt>0;s.sun.visible=Number.isFinite(alt)&&alt>0;
-  if(!s.sun.visible)return;
-  const a=az*Math.PI/180,e=alt*Math.PI/180,d=Math.max(80,s.grid.radius*2),ground=sampleGrid(s.grid,s.x,s.z),targetY=(ground??s.datum)-s.datum;
-  s.sun.position.set(Math.sin(a)*Math.cos(e)*d,Math.sin(e)*d,-Math.cos(a)*Math.cos(e)*d);
-  s.sun.target.position.set(0,0,0);s.sun.target.updateMatrixWorld();s.sun.shadow.camera.updateProjectionMatrix();if(s.renderer.shadowMap.enabled)s.renderer.shadowMap.needsUpdate=true;
- }
-function tick(now){
+ function tick(now){
   const s=state;if(!API.active||!s)return;const dt=s.last?Math.min(.05,(now-s.last)/1000):0;s.last=now;
   if(!s.menu&&!document.hidden){let forward=Number(s.keys.has('KeyW'))-Number(s.keys.has('KeyS')),right=Number(s.keys.has('KeyD'))-Number(s.keys.has('KeyA'));const length=Math.hypot(forward,right);if(length){const speed=settings.speed*(s.keys.has('ShiftLeft')||s.keys.has('ShiftRight')?1.7:1),dx=(-Math.sin(s.yaw)*forward+Math.cos(s.yaw)*right)/length*speed*dt,dz=(-Math.cos(s.yaw)*forward-Math.sin(s.yaw)*right)/length*speed*dt,next=move(s,dx,dz,s.grid,s.entries);s.x=next.x;s.z=next.z;s.dirty=true}}
-  if(s.dirty){updateCamera(s);updateEyeSun(s);updateTarget(s);s.renderer.render(s.scene,s.camera);s.dirty=false}
+  if(s.dirty){updateCamera(s);updateTarget(s);s.renderer.render(s.scene,s.camera);s.dirty=false}
   if(now-s.miniAt>160){drawMini(s);s.miniAt=now}
   s.frame=requestAnimationFrame(tick);
  }
