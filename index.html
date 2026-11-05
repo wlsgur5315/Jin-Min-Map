@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.11.05-01</title>
+<title>Jinju3D Local · v2026.11.05-02</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -313,7 +313,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 <link rel="stylesheet" href="eye-walk.css?v=2026.11.03-05">
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.05-01</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.05-02</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -811,7 +811,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.11.05-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.05-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -5658,8 +5658,8 @@ async function loadLandCharacteristics(pnu){
   const show=v=>v===null||v===undefined||v===''?'미기재':String(v);
   const area=Number(row[3])>0?Number(row[3]).toLocaleString('ko-KR',{maximumFractionDigits:2})+'㎡':'미기재';
   const price=Number(row[10])>0?Number(row[10]).toLocaleString('ko-KR')+'원/㎡':'미기재';
-  const rows=[['지목',show(row[2])],['면적',area],['용도지역',show(row[4])],['이용 상황',show(row[6])],['지형',show(row[7])],['필지 형상',show(row[8])],['도로 접면',show(row[9])],['개별공시지가 · '+show(row[1])+'년',price]];
-  panel.innerHTML='<details><summary>토지특성 정보 · 2026년 5월 자료</summary><div style="margin-top:7px;padding:8px;border:1px solid #ffffff18;border-radius:9px;background:#ffffff06"><div class="lawdim" style="margin-bottom:6px">기준일 '+LAND_CHAR_INDEX.record_date+'</div>'+rows.map(x=>'<div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0"><span>'+escapeHtml(x[0])+'</span><b style="text-align:right">'+escapeHtml(x[1])+'</b></div>').join('')+'<div class="lawdim" style="margin-top:7px">출처: AL_D194_48170_20260520 · 설계 참고용 토지특성 자료입니다. 법적 경계나 건축 가능 여부를 확정하지 않습니다.</div></div></details>';
+  const rows=[['지목',show(row[2])],['토지특성 면적',area],['용도지역',show(row[4])],['이용 상황',show(row[6])],['지형',show(row[7])],['필지 형상',show(row[8])],['도로 접면',show(row[9])],['개별공시지가 · '+show(row[1])+'년',price]];
+  panel.innerHTML='<details><summary>토지특성 정보 · 2026년 5월 자료</summary><div style="margin-top:7px;padding:8px;border:1px solid #ffffff18;border-radius:9px;background:#ffffff06"><div class="lawdim" style="margin-bottom:6px">기준일 '+LAND_CHAR_INDEX.record_date+'</div>'+rows.map(x=>'<div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0"><span>'+escapeHtml(x[0])+'</span><b style="text-align:right">'+escapeHtml(x[1])+'</b></div>').join('')+'<div class="lawdim" style="margin-top:7px">출처: AL_D194_48170_20260520 · 설계 참고용 자료입니다. 토지특성 면적은 프로그램의 필지 경계 계산 면적과 다를 수 있으며, 법적 경계나 건축 가능 여부를 확정하지 않습니다.</div></div></details>';
  }catch(e){
   console.warn('토지특성 정보 불러오기 실패',e);
   if(selectedPnu()===target)panel.innerHTML='<div class="lawdim">토지특성 정보를 불러오지 못했습니다. 네트워크 연결을 확인해 주세요.</div>';
