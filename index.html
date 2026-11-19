@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.11.19-05</title>
+<title>Jinju3D Local · v2026.11.19-06</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -313,7 +313,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 <link rel="stylesheet" href="eye-walk.css?v=2026.11.03-05">
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-05</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-06</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -813,7 +813,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.11.19-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.19-06',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1745,12 +1745,12 @@ function setupWorkspaceModeSwitch(){
 }
 
 let terrainReviewToken=0,terrainReviewTimer=0,TERRAIN_REVIEW_ACTIVE=false,TERRAIN_REVIEW_VISIBILITY=null,TERRAIN_REVIEW_CAMERA=null;
-function terrainReviewColor(q){const palette=['#2865b8','#58a6be','#daca6f','#c97141'],x=Math.max(0,Math.min(.9999,q))*3,i=Math.min(2,Math.floor(x)),u=x-i,A=palette[i],B=palette[i+1];return'#'+[1,3,5].map(k=>Math.round(parseInt(A.slice(k,k+2),16)*(1-u)+parseInt(B.slice(k,k+2),16)*u).toString(16).padStart(2,'0')).join('')}
+function terrainReviewColor(q){const palette=['#176b3a','#7fae38','#f2c230','#e98225','#b83226'],x=Math.max(0,Math.min(.9999,q))*(palette.length-1),i=Math.min(palette.length-2,Math.floor(x)),u=x-i,A=palette[i],B=palette[i+1];return'#'+[1,3,5].map(k=>Math.round(parseInt(A.slice(k,k+2),16)*(1-u)+parseInt(B.slice(k,k+2),16)*u).toString(16).padStart(2,'0')).join('')}
 function terrainReviewSetData(id,data){try{map.getSource(id)?.setData(data)}catch(e){}}
 function terrainReviewEnsureMapLayers(){
  const empty={type:'FeatureCollection',features:[]};
  if(!map.getSource('terrain-review-cells'))map.addSource('terrain-review-cells',{type:'geojson',data:empty});
- if(!map.getLayer('terrain-review-cells-fill'))map.addLayer({id:'terrain-review-cells-fill',type:'fill',source:'terrain-review-cells',paint:{'fill-color':['get','color'],'fill-opacity':.72,'fill-outline-color':'#f8fafc'}});
+ if(!map.getLayer('terrain-review-cells-fill'))map.addLayer({id:'terrain-review-cells-fill',type:'fill',source:'terrain-review-cells',paint:{'fill-color':['get','color'],'fill-opacity':.9}});
  if(!map.getSource('terrain-review-section'))map.addSource('terrain-review-section',{type:'geojson',data:empty});
  if(!map.getLayer('terrain-review-section-line'))map.addLayer({id:'terrain-review-section-line',type:'line',source:'terrain-review-section',paint:{'line-color':'#00e5ff','line-width':4,'line-opacity':1}});
  if(!map.getSource('terrain-review-section-points'))map.addSource('terrain-review-section-points',{type:'geojson',data:empty});
@@ -1806,7 +1806,7 @@ function terrainReviewRender(f,out){
   const a=Math.min(...samples.map(x=>x.z)),b=Math.max(...samples.map(x=>x.z)),d=Math.max(.1,b-a),pts=samples.map(x=>(8+x.i*17)+','+(73-(x.z-a)/d*54)).join(' ');
   chart='<svg viewBox="0 0 224 84" role="img" aria-label="필지 A–B 표고 단면" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="3"/><text x="5" y="12" fill="#dce8f1" font-size="9">A–B 단면</text><text x="5" y="82" fill="#bccbd8" font-size="9">A</text><text x="209" y="82" fill="#bccbd8" font-size="9">B</text></svg>'
  }
- out.innerHTML='<div class="hint">표고 색상 · 낮음 <span style="display:inline-block;width:74px;height:9px;vertical-align:middle;border-radius:5px;background:linear-gradient(90deg,#2865b8,#58a6be,#daca6f,#c97141)"></span> 높음</div><div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">A는 북서쪽, B는 남동쪽을 잇는 기본 단면입니다. '+vals.length+'개 DEM 표본 · 설계 참고값이며 도로 접속 높이와 경사는 측량으로 확인하세요.</div>'
+ out.innerHTML='<div class="hint">표고 색상 · 낮음 <span style="display:inline-block;width:74px;height:9px;vertical-align:middle;border-radius:5px;background:linear-gradient(90deg,#176b3a,#7fae38,#f2c230,#e98225,#b83226)"></span> 높음</div><div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">A는 북서쪽, B는 남동쪽을 잇는 기본 단면입니다. '+vals.length+'개 DEM 표본 · 설계 참고값이며 도로 접속 높이와 경사는 측량으로 확인하세요.</div>'
 }
 function terrainReviewStart(){
  if(!lawMode||!SELECTED_PARCEL){workspaceStatus('표고 검토는 필지를 선택한 상태에서 실행할 수 있습니다.');return}
