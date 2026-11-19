@@ -1806,7 +1806,7 @@ function terrainReviewRender(f,out){
   const a=Math.min(...samples.map(x=>x.z)),b=Math.max(...samples.map(x=>x.z)),d=Math.max(.1,b-a),pts=samples.map(x=>(8+x.i*17)+','+(73-(x.z-a)/d*54)).join(' ');
   chart='<svg viewBox="0 0 224 84" role="img" aria-label="필지 A–B 표고 단면" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="3"/><text x="5" y="12" fill="#dce8f1" font-size="9">A–B 단면</text><text x="5" y="82" fill="#bccbd8" font-size="9">A</text><text x="209" y="82" fill="#bccbd8" font-size="9">B</text></svg>'
  }
- out.innerHTML='<div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">'+vals.length+'개 DEM 표본 · 설계 참고값입니다. 실제 도로 접속 높이와 경사는 측량으로 확인하세요.</div>'
+ out.innerHTML='<div class="hint">표고 색상 · 낮음 <span style="display:inline-block;width:74px;height:9px;vertical-align:middle;border-radius:5px;background:linear-gradient(90deg,#2865b8,#58a6be,#daca6f,#c97141)"></span> 높음</div><div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">A는 북서쪽, B는 남동쪽을 잇는 기본 단면입니다. '+vals.length+'개 DEM 표본 · 설계 참고값이며 도로 접속 높이와 경사는 측량으로 확인하세요.</div>'
 }
 function terrainReviewStart(){
  if(!lawMode||!SELECTED_PARCEL){workspaceStatus('표고 검토는 필지를 선택한 상태에서 실행할 수 있습니다.');return}
@@ -1820,7 +1820,7 @@ function terrainReviewStart(){
    try{map.setLayoutProperty(id,'visibility','none')}catch(e){}
   }
  }
- TERRAIN_REVIEW_ACTIVE=true;const button=$('terrainReviewToggle');button.textContent='검토 종료';button.setAttribute('aria-pressed','true');button.classList.add('danger');
+ TERRAIN_REVIEW_ACTIVE=true;const button=$('terrainReviewToggle');button.textContent='검토 종료';button.setAttribute('aria-pressed','true');button.style.background='#9f312d';button.style.borderColor='#f87171';
  terrainReviewSchedule()
 }
 function terrainReviewStop(silent=false){
@@ -1829,12 +1829,13 @@ function terrainReviewStop(silent=false){
  if(TERRAIN_REVIEW_VISIBILITY){for(const [id,visibility] of Object.entries(TERRAIN_REVIEW_VISIBILITY)){if(!map.getLayer(id))continue;try{map.setLayoutProperty(id,'visibility',visibility||'visible')}catch(e){}}}
  TERRAIN_REVIEW_VISIBILITY=null;
  if(TERRAIN_REVIEW_CAMERA){map.easeTo({...TERRAIN_REVIEW_CAMERA,duration:650});TERRAIN_REVIEW_CAMERA=null}
- const button=$('terrainReviewToggle');if(button){button.textContent='검토 실행';button.setAttribute('aria-pressed','false');button.classList.remove('danger')}
+ const button=$('terrainReviewToggle');if(button){button.textContent='검토 실행';button.setAttribute('aria-pressed','false');button.style.background='';button.style.borderColor=''}
  if(!silent&&$('terrainReviewContent'))$('terrainReviewContent').textContent='검토를 종료하고 원래 건물 표시를 복원했습니다.'
 }
 function workspaceStatus(text){if($('workspaceStatus'))$('workspaceStatus').textContent=text;message(text)}
 function workspaceUpdate(){
  if(!WORKSPACE_READY)return;
+ if(TERRAIN_REVIEW_ACTIVE&&!lawMode)terrainReviewStop(true);
  workspaceModeSwitchSync();
  const record=buildingSelected(),model=editSelectedModel(),parcelMode=lawMode,parcel=parcelMode?SELECTED_PARCEL:EDIT_PARCEL;
  if(WORKSPACE_BUILD_JOB&&WORKSPACE_BUILD_JOB.key!==record?.key)WORKSPACE_BUILD_JOB=null;
