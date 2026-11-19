@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.11.19-04</title>
+<title>Jinju3D Local · v2026.11.19-05</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -313,7 +313,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 <link rel="stylesheet" href="eye-walk.css?v=2026.11.03-05">
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-04</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-05</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -337,7 +337,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
  <div id="workspaceReveal" class="workspace-reveal" aria-hidden="true" inert><div id="workspaceRevealInner" class="workspace-reveal-inner">
  <div id="workspaceBuildingActions" class="workspace-grid workspace-actions"><button type="button" data-workspace-action="shadow">그림자 보기</button><button type="button" data-workspace-action="surface">표면 일조</button><button type="button" data-workspace-action="law">법규 검토</button><button type="button" data-workspace-action="compare">제거 전·후 비교</button></div>
  <div id="workspaceParcelActions" hidden><div class="workspace-three"><button type="button" data-workspace-action="law">법규 검토</button><button type="button" data-workspace-action="model">새 건물 배치</button><button type="button" data-workspace-action="list">필지 안 건물</button></div><button type="button" data-workspace-action="shadow" class="workspace-wide">필지 주변 그림자·일조</button></div>
- <div id="workspacePanels"><section id="workspaceList" class="drawer-sec" hidden><h3>필지 안 건물</h3><div id="workspaceBuildingList"></div><div class="hint">목록에서 한 동을 선택하면 건물 작업으로 전환합니다. 숨긴 건물도 다시 선택해 복원할 수 있습니다.</div></section><section id="workspaceTerrainReview" class="drawer-sec" hidden><h3>지형·레벨 검토</h3><div id="terrainReviewContent" class="mini" role="status" aria-live="polite">필지를 선택하면 DEM 표고를 확인합니다.</div></section></div>
+ <div id="workspacePanels"><section id="workspaceList" class="drawer-sec" hidden><h3>필지 안 건물</h3><div id="workspaceBuildingList"></div><div class="hint">목록에서 한 동을 선택하면 건물 작업으로 전환합니다. 숨긴 건물도 다시 선택해 복원할 수 있습니다.</div></section><section id="workspaceTerrainReview" class="drawer-sec" hidden><h3>지형·레벨 검토</h3><button id="terrainReviewToggle" type="button" class="primary" aria-pressed="false">검토 실행</button><div class="hint" style="margin:6px 0">실행하면 주변 건물이 숨겨지고 선택 필지의 표고 색상과 A–B 단면이 지도에 표시됩니다. 2D·3D 버튼으로 시점을 바꿀 수 있습니다.</div><div id="terrainReviewContent" class="mini" role="status" aria-live="polite">검토 실행을 눌러 지형 분석을 시작하세요.</div></section></div>
  <details id="workspaceBuildingManagement" class="workspace-fold"><summary>건물 관리 · 추가·숨김·복원</summary><div class="workspace-stack"><button type="button" id="workspaceAdd">같은 필지에 새 건물 추가</button><button type="button" id="workspaceReplace">이 건물 대신 새로 배치</button></div><div id="workspaceBuildingManagementControls"></div></details>
  <details id="workspaceCustomManagement" class="workspace-fold" hidden><summary>사용자 건물 관리 · 편집·추가·삭제</summary><div class="workspace-stack"><button type="button" id="workspaceCustomEdit">선택 동 편집</button><button type="button" id="workspaceCustomAdd">같은 필지에 새 동 추가</button><button type="button" id="workspaceCustomDelete">선택한 사용자 건물 삭제</button></div></details>
 
@@ -813,7 +813,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.11.19-04',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.19-05',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1744,9 +1744,94 @@ function setupWorkspaceModeSwitch(){
  toggle.onclick=()=>$(lawMode?'buildingMode':'lawMode').click();host.appendChild(toggle);workspaceModeSwitchSync();
 }
 
-let terrainReviewToken=0,terrainReviewTimer=0;
-function terrainReviewSchedule(){const token=++terrainReviewToken;clearTimeout(terrainReviewTimer);const out=$('terrainReviewContent');out.textContent='선택 필지 DEM 표고를 읽는 중…';const run=(n=0)=>{if(token!==terrainReviewToken||!SELECTED_PARCEL)return;if(!map.getTerrain?.()||!terrainSourceReady()){if(n<18)terrainReviewTimer=setTimeout(()=>run(n+1),400);else out.textContent='DEM을 불러오지 못했습니다. 지도를 이동한 뒤 다시 선택해 주세요.';return}terrainReviewRender(SELECTED_PARCEL,out)};terrainReviewTimer=setTimeout(()=>run(),120)}
-function terrainReviewRender(f,out){const [w,s,e,n]=turf.bbox(f),vals=[],N=5;for(let r=0;r<N;r++)for(let c=0;c<N;c++){const p=[w+(e-w)*(c+.5)/N,n-(n-s)*(r+.5)/N];try{if(!turf.booleanPointInPolygon(turf.point(p),f))continue}catch(x){continue}let z=null;try{z=map.queryTerrainElevation(p,{exaggerated:false})}catch(x){}if(Number.isFinite(z))vals.push({r,c,p,z})}if(!vals.length){out.innerHTML='현재 화면에서 DEM 표고를 확인할 수 없습니다.<br><span class="lawdim">미확보 지점은 추정값으로 채우지 않습니다.</span>';return}const lo=Math.min(...vals.map(x=>x.z)),hi=Math.max(...vals.map(x=>x.z)),range=hi-lo;let slope=0;for(const a of vals)for(const b of vals)if(Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1){const d=turf.distance(a.p,b.p,{units:'meters'});if(d)slope=Math.max(slope,Math.abs(a.z-b.z)/d*100)}const palette=['#2865b8','#58a6be','#daca6f','#c97141'],cells=vals.map(v=>{const q=range?(v.z-lo)/range:.5,i=Math.min(2,Math.floor(q*3)),u=q*3-i,A=palette[i],B=palette[i+1],col='#'+[1,3,5].map(k=>Math.round(parseInt(A.slice(k,k+2),16)*(1-u)+parseInt(B.slice(k,k+2),16)*u).toString(16).padStart(2,'0')).join('');return'<rect x="'+(v.c*27+2)+'" y="'+(v.r*22+2)+'" width="24" height="19" rx="3" fill="'+col+'"><title>'+v.z.toFixed(1)+' m</title></rect>'}).join('');const p=[];for(let i=0;i<=12;i++){const q=[w+(e-w)*i/12,n-(n-s)*i/12];try{if(!turf.booleanPointInPolygon(turf.point(q),f))continue}catch(x){continue}let z=null;try{z=map.queryTerrainElevation(q,{exaggerated:false})}catch(x){}if(Number.isFinite(z))p.push({i,z})}let chart='';if(p.length>1){const a=Math.min(...p.map(x=>x.z)),b=Math.max(...p.map(x=>x.z)),d=Math.max(.1,b-a),pts=p.map(x=>(8+x.i*17)+','+(73-(x.z-a)/d*54)).join(' ');chart='<svg viewBox="0 0 224 84" role="img" aria-label="필지 A–B 표고 단면" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="3"/><text x="5" y="12" fill="#dce8f1" font-size="9">A–B 단면</text><text x="5" y="82" fill="#bccbd8" font-size="9">A</text><text x="209" y="82" fill="#bccbd8" font-size="9">B</text></svg>'}out.innerHTML='<div style="display:flex;gap:10px;align-items:center"><svg viewBox="0 0 140 114" role="img" aria-label="필지 표고 표본" style="width:120px;flex:none;background:#13263a;border-radius:8px">'+cells+'</svg><div>최저 <b>'+lo.toFixed(1)+' m</b><br>최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b><br>표본 경사 <b>'+slope.toFixed(1)+'%</b></div></div>'+chart+'<div class="hint" style="margin-top:6px">'+vals.length+'개 DEM 표본 · 설계 참고값입니다. 실제 도로 접속 높이와 경사는 측량으로 확인하세요.</div>'}
+let terrainReviewToken=0,terrainReviewTimer=0,TERRAIN_REVIEW_ACTIVE=false,TERRAIN_REVIEW_VISIBILITY=null,TERRAIN_REVIEW_CAMERA=null;
+function terrainReviewColor(q){const palette=['#2865b8','#58a6be','#daca6f','#c97141'],x=Math.max(0,Math.min(.9999,q))*3,i=Math.min(2,Math.floor(x)),u=x-i,A=palette[i],B=palette[i+1];return'#'+[1,3,5].map(k=>Math.round(parseInt(A.slice(k,k+2),16)*(1-u)+parseInt(B.slice(k,k+2),16)*u).toString(16).padStart(2,'0')).join('')}
+function terrainReviewSetData(id,data){try{map.getSource(id)?.setData(data)}catch(e){}}
+function terrainReviewEnsureMapLayers(){
+ const empty={type:'FeatureCollection',features:[]};
+ if(!map.getSource('terrain-review-cells'))map.addSource('terrain-review-cells',{type:'geojson',data:empty});
+ if(!map.getLayer('terrain-review-cells-fill'))map.addLayer({id:'terrain-review-cells-fill',type:'fill',source:'terrain-review-cells',paint:{'fill-color':['get','color'],'fill-opacity':.72,'fill-outline-color':'#f8fafc'}});
+ if(!map.getSource('terrain-review-section'))map.addSource('terrain-review-section',{type:'geojson',data:empty});
+ if(!map.getLayer('terrain-review-section-line'))map.addLayer({id:'terrain-review-section-line',type:'line',source:'terrain-review-section',paint:{'line-color':'#00e5ff','line-width':4,'line-opacity':1}});
+ if(!map.getSource('terrain-review-section-points'))map.addSource('terrain-review-section-points',{type:'geojson',data:empty});
+ if(!map.getLayer('terrain-review-section-dots'))map.addLayer({id:'terrain-review-section-dots',type:'circle',source:'terrain-review-section-points',paint:{'circle-radius':6,'circle-color':'#00e5ff','circle-stroke-color':'#07111f','circle-stroke-width':2}});
+ if(!map.getLayer('terrain-review-section-labels'))map.addLayer({id:'terrain-review-section-labels',type:'symbol',source:'terrain-review-section-points',layout:{'text-field':['get','label'],'text-size':14,'text-offset':[0,-1.1],'text-allow-overlap':true},paint:{'text-color':'#ffffff','text-halo-color':'#07111f','text-halo-width':2}});
+}
+function terrainReviewClearOverlay(){const empty={type:'FeatureCollection',features:[]};for(const id of ['terrain-review-cells','terrain-review-section','terrain-review-section-points'])terrainReviewSetData(id,empty)}
+function terrainReviewSchedule(){
+ if(!TERRAIN_REVIEW_ACTIVE||!SELECTED_PARCEL)return;
+ const token=++terrainReviewToken;clearTimeout(terrainReviewTimer);const out=$('terrainReviewContent');out.textContent='선택 필지 DEM 표고를 읽는 중…';
+ const run=(n=0)=>{if(token!==terrainReviewToken||!TERRAIN_REVIEW_ACTIVE||!SELECTED_PARCEL)return;if(!map.getTerrain?.()||!terrainSourceReady()){if(n<18)terrainReviewTimer=setTimeout(()=>run(n+1),400);else out.textContent='DEM을 불러오지 못했습니다. 지도를 이동한 뒤 검토를 다시 실행해 주세요.';return}terrainReviewRender(SELECTED_PARCEL,out)};
+ terrainReviewTimer=setTimeout(()=>run(),120)
+}
+function terrainReviewRender(f,out){
+ const [w,s,e,n]=turf.bbox(f),vals=[],N=5;
+ for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+  const p=[w+(e-w)*(c+.5)/N,n-(n-s)*(r+.5)/N];
+  try{if(!turf.booleanPointInPolygon(turf.point(p),f))continue}catch(x){continue}
+  let z=null;try{z=map.queryTerrainElevation(p,{exaggerated:false})}catch(x){}
+  if(Number.isFinite(z))vals.push({r,c,p,z})
+ }
+ if(!vals.length){terrainReviewClearOverlay();out.innerHTML='현재 화면에서 DEM 표고를 확인할 수 없습니다.<br><span class="lawdim">미확보 지점은 추정값으로 채우지 않습니다.</span>';return}
+ const lo=Math.min(...vals.map(x=>x.z)),hi=Math.max(...vals.map(x=>x.z)),range=hi-lo;
+ let slope=0;
+ for(const a of vals)for(const b of vals)if(Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1){const d=turf.distance(a.p,b.p,{units:'meters'});if(d)slope=Math.max(slope,Math.abs(a.z-b.z)/d*100)}
+ const cellFeatures=[];
+ for(const v of vals){
+  const x0=w+(e-w)*v.c/N,x1=w+(e-w)*(v.c+1)/N,y1=n-(n-s)*(v.r+1)/N,y0=n-(n-s)*v.r/N;
+  try{
+   const rect=turf.polygon([[[x0,y1],[x1,y1],[x1,y0],[x0,y0],[x0,y1]]]);
+   const clipped=turf.intersect(turf.featureCollection([rect,f]));
+   if(clipped){clipped.properties={...(clipped.properties||{}),elevation_m:v.z,color:terrainReviewColor(range?(v.z-lo)/range:.5)};cellFeatures.push(clipped)}
+  }catch(x){}
+ }
+ const samples=[];
+ for(let i=0;i<=12;i++){
+  const coord=[w+(e-w)*i/12,n-(n-s)*i/12];
+  try{if(!turf.booleanPointInPolygon(turf.point(coord),f))continue}catch(x){continue}
+  let z=null;try{z=map.queryTerrainElevation(coord,{exaggerated:false})}catch(x){}
+  if(Number.isFinite(z))samples.push({i,z,coord})
+ }
+ const groups=[];let group=[],last=-2;
+ for(const item of samples){if(item.i!==last+1){if(group.length>1)groups.push(group);group=[]}group.push(item.coord);last=item.i}
+ if(group.length>1)groups.push(group);
+ const lineData={type:'FeatureCollection',features:groups.length?[{type:'Feature',properties:{},geometry:groups.length===1?{type:'LineString',coordinates:groups[0]}:{type:'MultiLineString',coordinates:groups}}]:[]};
+ const pointData={type:'FeatureCollection',features:samples.length>1?[{type:'Feature',properties:{label:'A'},geometry:{type:'Point',coordinates:samples[0].coord}},{type:'Feature',properties:{label:'B'},geometry:{type:'Point',coordinates:samples[samples.length-1].coord}}]:[]};
+ terrainReviewEnsureMapLayers();
+ terrainReviewSetData('terrain-review-cells',{type:'FeatureCollection',features:cellFeatures});
+ terrainReviewSetData('terrain-review-section',lineData);
+ terrainReviewSetData('terrain-review-section-points',pointData);
+ let chart='';
+ if(samples.length>1){
+  const a=Math.min(...samples.map(x=>x.z)),b=Math.max(...samples.map(x=>x.z)),d=Math.max(.1,b-a),pts=samples.map(x=>(8+x.i*17)+','+(73-(x.z-a)/d*54)).join(' ');
+  chart='<svg viewBox="0 0 224 84" role="img" aria-label="필지 A–B 표고 단면" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="3"/><text x="5" y="12" fill="#dce8f1" font-size="9">A–B 단면</text><text x="5" y="82" fill="#bccbd8" font-size="9">A</text><text x="209" y="82" fill="#bccbd8" font-size="9">B</text></svg>'
+ }
+ out.innerHTML='<div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">'+vals.length+'개 DEM 표본 · 설계 참고값입니다. 실제 도로 접속 높이와 경사는 측량으로 확인하세요.</div>'
+}
+function terrainReviewStart(){
+ if(!lawMode||!SELECTED_PARCEL){workspaceStatus('표고 검토는 필지를 선택한 상태에서 실행할 수 있습니다.');return}
+ if(TERRAIN_REVIEW_ACTIVE){terrainReviewStop();return}
+ if(SOLAR_SHADOW_ON)solarSetShadowEnabled(false);else if(SOLAR_THREE_MAP)solarThreeMapOff();
+ TERRAIN_REVIEW_VISIBILITY={};TERRAIN_REVIEW_CAMERA={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing(),pitch:map.getPitch()};
+ for(const layer of map.getStyle()?.layers||[]){
+  const id=String(layer.id||''),sourceLayer=String(layer['source-layer']||'');
+  if(/building/i.test(id)||/building(_part)?/i.test(sourceLayer)){
+   TERRAIN_REVIEW_VISIBILITY[id]=map.getLayoutProperty(id,'visibility');
+   try{map.setLayoutProperty(id,'visibility','none')}catch(e){}
+  }
+ }
+ TERRAIN_REVIEW_ACTIVE=true;const button=$('terrainReviewToggle');button.textContent='검토 종료';button.setAttribute('aria-pressed','true');button.classList.add('danger');
+ terrainReviewSchedule()
+}
+function terrainReviewStop(silent=false){
+ if(!TERRAIN_REVIEW_ACTIVE)return;
+ TERRAIN_REVIEW_ACTIVE=false;++terrainReviewToken;clearTimeout(terrainReviewTimer);terrainReviewClearOverlay();
+ if(TERRAIN_REVIEW_VISIBILITY){for(const [id,visibility] of Object.entries(TERRAIN_REVIEW_VISIBILITY)){if(!map.getLayer(id))continue;try{map.setLayoutProperty(id,'visibility',visibility||'visible')}catch(e){}}}
+ TERRAIN_REVIEW_VISIBILITY=null;
+ if(TERRAIN_REVIEW_CAMERA){map.easeTo({...TERRAIN_REVIEW_CAMERA,duration:650});TERRAIN_REVIEW_CAMERA=null}
+ const button=$('terrainReviewToggle');if(button){button.textContent='검토 실행';button.setAttribute('aria-pressed','false');button.classList.remove('danger')}
+ if(!silent&&$('terrainReviewContent'))$('terrainReviewContent').textContent='검토를 종료하고 원래 건물 표시를 복원했습니다.'
+}
 function workspaceStatus(text){if($('workspaceStatus'))$('workspaceStatus').textContent=text;message(text)}
 function workspaceUpdate(){
  if(!WORKSPACE_READY)return;
@@ -1863,7 +1948,9 @@ function setupWorkspaceUI(){
  const region=$('district').closest('.drawer-sec'),regionMenu=document.createElement('details'),regionTitle=document.createElement('summary');regionMenu.id='workspaceRegion';regionTitle.textContent='읍·면·동 이동';regionMenu.appendChild(regionTitle);move(region,regionMenu);move(regionMenu,document.querySelector('.top'));
  document.querySelector('.drawer-title').textContent='지도 작업';document.querySelector('.drawer-sub').textContent='선택한 건물 또는 필지를 기준으로 작업합니다.';document.querySelector('.drawer-tab[data-tab="law"]').textContent='지도 작업';
  for(const button of document.querySelectorAll('[data-workspace-action]'))button.addEventListener('click',()=>workspaceAction(button.dataset.workspaceAction,{start:true}));
+ $('terrainReviewToggle').addEventListener('click',terrainReviewStart);
  $('workspaceClearSelection').addEventListener('click',()=>{
+  if(TERRAIN_REVIEW_ACTIVE)terrainReviewStop(true);
   solarPlaybackStop();workspaceCancelPlacement();
   if(lawMode)buildingClearLawContext();else{editClearModelSelection();buildingClearSelection(true,true);editUpdateModel()}
   workspaceUpdate();$('lawMode').focus();
@@ -1889,6 +1976,7 @@ function screenReadButton(host,label,source){const b=screenButton(label,host,()=
 function screenChoose(main,sub){
  if(!SCREEN_UI)return;
  if(main==='terrain'&&(!lawMode||!SELECTED_PARCEL))return;
+ if(TERRAIN_REVIEW_ACTIVE&&main!=='terrain')terrainReviewStop(true);
  if(main!=='walk')window.EYE_WALK?.cancelPick();
  if(main==='settings'&&SCREEN_UI.main!=='settings')SCREEN_UI.returnRoute={main:SCREEN_UI.main,sub:SCREEN_UI.sub,action:SCREEN_UI.action};
  SCREEN_UI.routing=true;
@@ -5734,7 +5822,7 @@ function selectParcelForLaw(f,{buildingContext=false}={}){
   try{map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:buildingContext?[]:[SELECTED_PARCEL]})}catch(e){}
   if(!buildingContext||!EDIT_PARCEL)editSetParcel(SELECTED_PARCEL,{keepBuilding:buildingContext});
   refreshSelectedParcelAddressUI();workspaceUpdate();
-  if(!buildingContext)terrainReviewSchedule();
+  if(!buildingContext&&TERRAIN_REVIEW_ACTIVE)terrainReviewSchedule();
   renderLawReview();buildingRenderLawSummary();
   ensurePyeonggeo2Reference().then(()=>{if(SELECTED_PARCEL===null)return;renderLawReview()});
   ensureGajwaGeumsanReference().then(()=>{if(SELECTED_PARCEL!==null)renderLawReview()});
@@ -6327,8 +6415,8 @@ $('smartToggle').onclick=()=>{smartOsm=!smartOsm;$('smartToggle').textContent=sm
 $('mergeRefresh').onclick=()=>{if(!detailReady){message('먼저 읍·면·동을 선택해 주세요');return}for(const k of [...districtOsmCache.keys()])if(k.startsWith(selectedId+'@'))districtOsmCache.delete(k);buildWholeDistrictSupplement(true)};
 $('go').onclick=()=>{if($('district').value)selectDistrict($('district').value)};$('district').onchange=()=>{if($('district').value)selectDistrict($('district').value)};
 $('home').onclick=()=>{setLawMode(false);solarSetShadowEnabled(false);buildingReset();EDIT_PARCEL=null;EDIT_CUSTOM=null;EDIT_HIDDEN_PARCEL=null;EDIT_RECT=null;editBasemapBuildingFootprints(false);map.getSource('edit-custom-model')?.setData(editCustomCollection());$('editParcelInfo').textContent='선택된 필지가 없습니다.';editModelSummary();scanToken++;selectedDistrict=null;selectedId='';detailReady=false;currentBuildings=null;currentParcels=null;currentParcelGrid=null;SELECTED_PARCEL=null;CURRENT_PLANNING=null;CURRENT_PLANNING_ID='';AUTO_ZONE_SHARES=[];$('district').value='';$('sDistrict').textContent='진주시 전체';$('sBld').textContent='미로드';for(const k of['sOsmRaw','sDup','sOsm','sOsm3d','sFacility'])$(k).textContent='-';map.getSource('smart-osm')?.setData({type:'FeatureCollection',features:[]});$('mergeState').textContent='행정구역 선택 후 자동 계산';const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:60},pitch:0,bearing:0,duration:1200})};
-$('view2d').onclick=()=>{if(SOLAR_SHADOW_ON)solarSetShadowEnabled(false);else if(SOLAR_THREE_MAP)solarThreeMapOff();map.setLayoutProperty('buildings-foundation','visibility','none');map.setLayoutProperty('buildings-3d','visibility','none');map.setLayoutProperty('smart-osm-foundation','visibility','none');map.setLayoutProperty('smart-osm-3d','visibility','none');map.setPaintProperty('buildings-2d','fill-opacity',.72);map.setPaintProperty('smart-osm-2d','fill-opacity',.46);map.setPaintProperty('smart-facility-2d','fill-opacity',.26);if(!selectedDistrict){const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:60},pitch:0,bearing:0,duration:900})}else map.easeTo({pitch:0,bearing:0,duration:900})};
-$('view3d').onclick=()=>{map.setLayoutProperty('buildings-foundation','visibility','visible');map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-foundation','visibility',smartOsm?'visible':'none');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({pitch:62,bearing:28,duration:1200})};
+$('view2d').onclick=()=>{if(TERRAIN_REVIEW_ACTIVE){map.easeTo({pitch:0,bearing:0,duration:900});return}if(SOLAR_SHADOW_ON)solarSetShadowEnabled(false);else if(SOLAR_THREE_MAP)solarThreeMapOff();map.setLayoutProperty('buildings-foundation','visibility','none');map.setLayoutProperty('buildings-3d','visibility','none');map.setLayoutProperty('smart-osm-foundation','visibility','none');map.setLayoutProperty('smart-osm-3d','visibility','none');map.setPaintProperty('buildings-2d','fill-opacity',.72);map.setPaintProperty('smart-osm-2d','fill-opacity',.46);map.setPaintProperty('smart-facility-2d','fill-opacity',.26);if(!selectedDistrict){const b=turf.bbox(CITY);map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:{top:80,bottom:70,left:60,right:60},pitch:0,bearing:0,duration:900})}else map.easeTo({pitch:0,bearing:0,duration:900})};
+$('view3d').onclick=()=>{if(TERRAIN_REVIEW_ACTIVE){map.easeTo({pitch:62,bearing:28,duration:1200});return}map.setLayoutProperty('buildings-foundation','visibility','visible');map.setLayoutProperty('buildings-3d','visibility','visible');map.setLayoutProperty('smart-osm-foundation','visibility',smartOsm?'visible':'none');map.setLayoutProperty('smart-osm-3d','visibility',smartOsm?'visible':'none');map.setPaintProperty('buildings-2d','fill-opacity',.08);map.setPaintProperty('smart-osm-2d','fill-opacity',.08);map.setPaintProperty('smart-facility-2d','fill-opacity',.18);map.easeTo({pitch:62,bearing:28,duration:1200})};
 async function waitForMapReady(m,timeout=5000){
   if(m.isStyleLoaded?.())return;
   await new Promise(resolve=>{
