@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.11.12-02</title>
+<title>Jinju3D Local · v2026.11.19-01</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -313,7 +313,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 <link rel="stylesheet" href="eye-walk.css?v=2026.11.03-05">
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.12-02</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-01</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -337,7 +337,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
  <div id="workspaceReveal" class="workspace-reveal" aria-hidden="true" inert><div id="workspaceRevealInner" class="workspace-reveal-inner">
  <div id="workspaceBuildingActions" class="workspace-grid workspace-actions"><button type="button" data-workspace-action="shadow">그림자 보기</button><button type="button" data-workspace-action="surface">표면 일조</button><button type="button" data-workspace-action="law">법규 검토</button><button type="button" data-workspace-action="compare">제거 전·후 비교</button></div>
  <div id="workspaceParcelActions" hidden><div class="workspace-three"><button type="button" data-workspace-action="law">법규 검토</button><button type="button" data-workspace-action="model">새 건물 배치</button><button type="button" data-workspace-action="list">필지 안 건물</button></div><button type="button" data-workspace-action="shadow" class="workspace-wide">필지 주변 그림자·일조</button></div>
- <div id="workspacePanels"><section id="workspaceList" class="drawer-sec" hidden><h3>필지 안 건물</h3><div id="workspaceBuildingList"></div><div class="hint">목록에서 한 동을 선택하면 건물 작업으로 전환합니다. 숨긴 건물도 다시 선택해 복원할 수 있습니다.</div></section></div>
+ <div id="workspacePanels"><section id="workspaceList" class="drawer-sec" hidden><h3>필지 안 건물</h3><div id="workspaceBuildingList"></div><div class="hint">목록에서 한 동을 선택하면 건물 작업으로 전환합니다. 숨긴 건물도 다시 선택해 복원할 수 있습니다.</div></section><section id="workspaceTerrainReview" class="drawer-sec" hidden><h3>지형·레벨 검토</h3><div id="terrainReviewContent" class="mini" role="status" aria-live="polite">필지를 선택하면 DEM 표고를 확인합니다.</div></section></div>
  <details id="workspaceBuildingManagement" class="workspace-fold"><summary>건물 관리 · 추가·숨김·복원</summary><div class="workspace-stack"><button type="button" id="workspaceAdd">같은 필지에 새 건물 추가</button><button type="button" id="workspaceReplace">이 건물 대신 새로 배치</button></div><div id="workspaceBuildingManagementControls"></div></details>
  <details id="workspaceCustomManagement" class="workspace-fold" hidden><summary>사용자 건물 관리 · 편집·추가·삭제</summary><div class="workspace-stack"><button type="button" id="workspaceCustomEdit">선택 동 편집</button><button type="button" id="workspaceCustomAdd">같은 필지에 새 동 추가</button><button type="button" id="workspaceCustomDelete">선택한 사용자 건물 삭제</button></div></details>
 
@@ -813,7 +813,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.11.12-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.19-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1744,6 +1744,9 @@ function setupWorkspaceModeSwitch(){
  toggle.onclick=()=>$(lawMode?'buildingMode':'lawMode').click();host.appendChild(toggle);workspaceModeSwitchSync();
 }
 
+let terrainReviewToken=0,terrainReviewTimer=0;
+function terrainReviewSchedule(){const token=++terrainReviewToken;clearTimeout(terrainReviewTimer);const out=$('terrainReviewContent');out.textContent='선택 필지 DEM 표고를 읽는 중…';const run=(n=0)=>{if(token!==terrainReviewToken||!SELECTED_PARCEL)return;if(!map.getTerrain?.()||!terrainSourceReady()){if(n<18)terrainReviewTimer=setTimeout(()=>run(n+1),400);else out.textContent='DEM을 불러오지 못했습니다. 지도를 이동한 뒤 다시 선택해 주세요.';return}terrainReviewRender(SELECTED_PARCEL,out)};terrainReviewTimer=setTimeout(()=>run(),120)}
+function terrainReviewRender(f,out){const [w,s,e,n]=turf.bbox(f),vals=[],N=5;for(let r=0;r<N;r++)for(let c=0;c<N;c++){const p=[w+(e-w)*(c+.5)/N,n-(n-s)*(r+.5)/N];try{if(!turf.booleanPointInPolygon(turf.point(p),f))continue}catch(x){continue}let z=null;try{z=map.queryTerrainElevation(p,{exaggerated:false})}catch(x){}if(Number.isFinite(z))vals.push({r,c,p,z})}if(!vals.length){out.innerHTML='현재 화면에서 DEM 표고를 확인할 수 없습니다.<br><span class="lawdim">미확보 지점은 추정값으로 채우지 않습니다.</span>';return}const lo=Math.min(...vals.map(x=>x.z)),hi=Math.max(...vals.map(x=>x.z)),range=hi-lo;let slope=0;for(const a of vals)for(const b of vals)if(Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1){const d=turf.distance(a.p,b.p,{units:'meters'});if(d)slope=Math.max(slope,Math.abs(a.z-b.z)/d*100)}const palette=['#2865b8','#58a6be','#daca6f','#c97141'],cells=vals.map(v=>{const q=range?(v.z-lo)/range:.5,i=Math.min(2,Math.floor(q*3)),u=q*3-i,A=palette[i],B=palette[i+1],col='#'+[1,3,5].map(k=>Math.round(parseInt(A.slice(k,k+2),16)*(1-u)+parseInt(B.slice(k,k+2),16)*u).toString(16).padStart(2,'0')).join('');return'<rect x="'+(v.c*27+2)+'" y="'+(v.r*22+2)+'" width="24" height="19" rx="3" fill="'+col+'"><title>'+v.z.toFixed(1)+' m</title></rect>'}).join('');const p=[];for(let i=0;i<=12;i++){const q=[w+(e-w)*i/12,n-(n-s)*i/12];try{if(!turf.booleanPointInPolygon(turf.point(q),f))continue}catch(x){continue}let z=null;try{z=map.queryTerrainElevation(q,{exaggerated:false})}catch(x){}if(Number.isFinite(z))p.push({i,z})}let chart='';if(p.length>1){const a=Math.min(...p.map(x=>x.z)),b=Math.max(...p.map(x=>x.z)),d=Math.max(.1,b-a),pts=p.map(x=>(8+x.i*17)+','+(73-(x.z-a)/d*54)).join(' ');chart='<svg viewBox="0 0 224 84" role="img" aria-label="필지 A–B 표고 단면" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="3"/><text x="5" y="12" fill="#dce8f1" font-size="9">A–B 단면</text><text x="5" y="82" fill="#bccbd8" font-size="9">A</text><text x="209" y="82" fill="#bccbd8" font-size="9">B</text></svg>'}out.innerHTML='<div style="display:flex;gap:10px;align-items:center"><svg viewBox="0 0 140 114" role="img" aria-label="필지 표고 표본" style="width:120px;flex:none;background:#13263a;border-radius:8px">'+cells+'</svg><div>최저 <b>'+lo.toFixed(1)+' m</b><br>최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b><br>표본 경사 <b>'+slope.toFixed(1)+'%</b></div></div>'+chart+'<div class="hint" style="margin-top:6px">'+vals.length+'개 DEM 표본 · 설계 참고값입니다. 실제 도로 접속 높이와 경사는 측량으로 확인하세요.</div>'}
 function workspaceStatus(text){if($('workspaceStatus'))$('workspaceStatus').textContent=text;message(text)}
 function workspaceUpdate(){
  if(!WORKSPACE_READY)return;
@@ -1777,6 +1780,7 @@ function workspaceUpdate(){
  $('editHideBuildings').disabled=!parcel;$('editRestore').disabled=!parcel;
  $('workspaceLaw').hidden=WORKSPACE_ACTIVE!=='law';$('workspaceModel').hidden=WORKSPACE_ACTIVE!=='model';
  $('workspaceList').hidden=WORKSPACE_ACTIVE!=='list';$('workspaceSolar').hidden=!['shadow','surface','compare'].includes(WORKSPACE_ACTIVE);
+ $('workspaceTerrainReview').hidden=!parcelMode||!SELECTED_PARCEL;
  $('solarShadowToggle').hidden=WORKSPACE_ACTIVE!=='shadow';
  $('workspaceSolarPrimary').hidden=WORKSPACE_ACTIVE!=='shadow';$('workspaceExposure').hidden=WORKSPACE_ACTIVE!=='shadow';
  $('solarSurfacePanel').hidden=!['surface','compare'].includes(WORKSPACE_ACTIVE);
@@ -5727,6 +5731,7 @@ function selectParcelForLaw(f,{buildingContext=false}={}){
   try{map.getSource('selected-parcel')?.setData({type:'FeatureCollection',features:buildingContext?[]:[SELECTED_PARCEL]})}catch(e){}
   if(!buildingContext||!EDIT_PARCEL)editSetParcel(SELECTED_PARCEL,{keepBuilding:buildingContext});
   refreshSelectedParcelAddressUI();workspaceUpdate();
+  if(!buildingContext)terrainReviewSchedule();
   renderLawReview();buildingRenderLawSummary();
   ensurePyeonggeo2Reference().then(()=>{if(SELECTED_PARCEL===null)return;renderLawReview()});
   ensureGajwaGeumsanReference().then(()=>{if(SELECTED_PARCEL!==null)renderLawReview()});
