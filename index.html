@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.11.19-01</title>
+<title>Jinju3D Local · v2026.11.19-03</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -212,7 +212,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 .screen-ui .top h1{font-size:15px}.screen-ui .top .address-search{margin:0;flex:1;max-width:420px;min-width:140px;width:auto}.screen-ui .top #workspaceMapView{margin:0;display:flex;gap:5px}.screen-ui .top #workspaceRegion{margin:0;position:relative;flex:0 0 auto}.screen-ui #workspaceRegion>div{position:absolute;top:44px;right:0;width:300px;background:#101f33;padding:14px;border:1px solid #64748b;z-index:50}.screen-ui .top #screenSettings{width:auto;min-height:44px;margin-left:auto}
 .screen-ui #drawer{top:var(--screen-top);bottom:var(--screen-bottom);height:auto;width:var(--screen-width);background:#101f33;backdrop-filter:none}.screen-ui #drawer .drawer-head,.screen-ui #drawer .drawer-tabs{display:none}.screen-ui #drawer .drawer-body{padding:0;overflow:hidden;display:flex;flex-direction:column;min-height:0}.screen-ui .drawer-toggle{top:50%;right:0}.screen-ui .drawer-toggle.open{right:var(--screen-width)}
 .screen-ui #screenMapMode{position:absolute;z-index:28;left:12px;top:calc(var(--screen-top) + 10px);max-width:calc(100vw - var(--screen-width) - 32px)}.screen-ui #workspaceModeBar{padding:0;margin:0;background:transparent;border:0}.screen-ui #workspaceModeText{display:none}.screen-ui #workspaceModeButtons{display:flex;gap:6px}.screen-ui #workspaceModeButtons button{width:auto;min-height:44px;padding:8px 12px}
-.screen-ui #screenWorkspace{height:100%;min-height:0;display:flex;flex-direction:column}.screen-ui #screenSelection{padding:10px 14px;border-bottom:1px solid #334155;flex:0 0 auto}.screen-ui #workspaceSummary{padding:0;border:0;border-radius:0;background:transparent;line-height:1.45;font-size:12px;max-height:44px;overflow:hidden}.screen-ui #workspaceSummary b{font-size:14px}.screen-ui #screenMainNav,.screen-ui #screenSubNav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:8px 10px;flex:0 0 auto;border-bottom:1px solid #334155}.screen-ui #screenSubNav{padding:8px 12px;border:0}.screen-ui #screenMainNav button,.screen-ui #screenSubNav button{min-height:44px;font-size:12px;padding:7px 3px}.screen-ui #screenMainNav button[aria-pressed=true],.screen-ui #screenSubNav button[aria-pressed=true],.screen-ui [data-placement-screen][aria-pressed=true]{background:#155e75;border-color:#67e8f9;color:#ecfeff}
+.screen-ui #screenWorkspace{height:100%;min-height:0;display:flex;flex-direction:column}.screen-ui #screenSelection{padding:10px 14px;border-bottom:1px solid #334155;flex:0 0 auto}.screen-ui #workspaceSummary{padding:0;border:0;border-radius:0;background:transparent;line-height:1.45;font-size:12px;max-height:44px;overflow:hidden}.screen-ui #workspaceSummary b{font-size:14px}.screen-ui #screenMainNav,.screen-ui #screenSubNav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:8px 10px;flex:0 0 auto;border-bottom:1px solid #334155}.screen-ui #screenSubNav{padding:8px 12px;border:0}.screen-ui #screenMainNav button,.screen-ui #screenSubNav button{min-height:44px;font-size:12px;padding:7px 3px}.screen-ui #screenMainNav button[aria-pressed=true],.screen-ui #screenSubNav button[aria-pressed=true],.screen-ui [data-placement-screen][aria-pressed=true]{background:#155e75;border-color:#67e8f9;color:#ecfeff}
 .screen-ui #screenViewport{flex:1;min-height:0;overflow:auto;padding:4px 14px 12px}.screen-ui .screen-page{min-width:0}.screen-ui .screen-page[hidden],.screen-ui [hidden]{display:none!important}.screen-ui #screenViewport .drawer-sec,.screen-ui #screenViewport details{background:transparent;border:0!important;border-radius:0;margin:0!important;padding:0!important}.screen-ui #screenViewport summary{min-height:44px;font-size:13px}.screen-ui .screen-flat>summary{display:none!important}.screen-ui #screenViewport .hint{font-size:11px;line-height:1.5}.screen-ui #screenViewport .mini{font-size:12px;line-height:1.5}.screen-ui #screenViewport h3{font-size:14px;margin:8px 0}.screen-ui #screenViewport .settings-label{font-size:12px;margin:8px 0 4px}.screen-ui #screenViewport button,.screen-ui #screenViewport select,.screen-ui #screenViewport input:not([type=checkbox]):not([type=radio]):not([type=range]){min-height:44px;font-size:13px}.screen-ui #screenViewport input:not([type=checkbox]):not([type=radio]):not([type=range]),.screen-ui #screenViewport select{font-size:16px}.screen-ui #screenViewport input[type=checkbox],.screen-ui #screenViewport input[type=radio]{width:18px;height:18px;padding:0;margin-right:6px}.screen-ui #solarSeasonButtons{margin:6px 0!important}.screen-ui #solarSeasonControls .settings-label{margin-top:6px!important}.screen-ui #solarReadout{font-size:11px!important;margin-top:6px!important}.screen-ui #solarMainStatus{font-size:11px!important;max-height:48px;overflow:hidden}.screen-ui #screenViewport .screen-read-button{margin-top:10px;min-height:44px}.screen-ui #screenViewport .screen-choice{display:grid;gap:10px}.screen-ui #screenViewport .screen-choice button{min-height:48px}.screen-ui #screenViewport .screen-inline-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .screen-ui #screenFooter{position:absolute;bottom:0;left:0;right:0;z-index:40;height:var(--screen-bottom);display:flex;align-items:center;gap:10px;padding:7px 12px;background:#101f33;border-top:1px solid #334155}.screen-ui #screenFooterStatus{flex:1;min-width:0;max-height:42px;overflow:hidden;font-size:12px;color:#cbd5e1;line-height:1.5}.screen-ui #screenFooter button{width:auto;min-height:44px;flex:0 0 auto;font-size:13px}.screen-ui #workspaceClearSelection{margin:0}.screen-ui #screenFooterAction{background:#155e75;border-color:#67e8f9}
 .screen-ui #screenReader{position:fixed;inset:0;z-index:245;padding:12px;background:#030712df;align-items:center;justify-content:center}.screen-ui #screenReaderWindow{width:min(900px,100%);height:min(650px,calc(100dvh - 24px));display:flex;flex-direction:column;background:#101f33;border:1px solid #64748b;border-radius:12px;min-width:0}.screen-ui #screenReaderHeader,.screen-ui #screenReaderFooter{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;flex:0 0 auto}.screen-ui #screenReaderHeader{border-bottom:1px solid #334155}.screen-ui #screenReaderFooter{border-top:1px solid #334155}.screen-ui #screenReader button{width:auto;min-height:44px;font-size:13px}.screen-ui #screenReaderViewport{margin:12px 16px;flex:1;min-height:0;overflow:hidden}.screen-ui #screenReaderFlow{height:100%;column-width:var(--reader-column);column-gap:24px;column-fill:auto;transition:none}.screen-ui #screenReaderFlow>*{margin:0!important;max-width:100%;font-size:13px;line-height:1.65}.screen-ui #screenReaderFlow button,.screen-ui #screenReaderFlow input,.screen-ui #screenReaderFlow select,.screen-ui #screenReaderFlow .row{break-inside:avoid}.screen-ui #screenReaderFlow input,.screen-ui #screenReaderFlow select{font-size:16px;min-height:44px}.screen-ui #screenReaderFlow .hint,.screen-ui #screenReaderFlow .mini{font-size:12px}.screen-ui #screenReaderFlow details>summary{min-height:44px}
@@ -313,7 +313,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 <link rel="stylesheet" href="eye-walk.css?v=2026.11.03-05">
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-01</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-03</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -813,7 +813,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.11.19-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.19-03',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1888,6 +1888,7 @@ function screenPage(key){return SCREEN_UI.pages[key]||(SCREEN_UI.pages[key]=scre
 function screenReadButton(host,label,source){const b=screenButton(label,host,()=>screenReaderOpen(typeof source==='function'?source():$(source),label));b.className='screen-read-button';return b}
 function screenChoose(main,sub){
  if(!SCREEN_UI)return;
+ if(main==='terrain'&&(!lawMode||!SELECTED_PARCEL))return;
  if(main!=='walk')window.EYE_WALK?.cancelPick();
  if(main==='settings'&&SCREEN_UI.main!=='settings')SCREEN_UI.returnRoute={main:SCREEN_UI.main,sub:SCREEN_UI.sub,action:SCREEN_UI.action};
  SCREEN_UI.routing=true;
@@ -1895,6 +1896,7 @@ function screenChoose(main,sub){
  activateDrawerTab('law');
  SCREEN_UI.main=main;SCREEN_UI.sub=sub;
  if(main==='walk'){SCREEN_UI.action=WORKSPACE_ACTIVE;SCREEN_UI.routing=false;screenWorkspaceSync();return}
+ if(main==='terrain'){SCREEN_UI.action=WORKSPACE_ACTIVE;SCREEN_UI.routing=false;screenWorkspaceSync();return}
  const action=main==='info'?(sub==='list'?'list':'law'):main==='place'?'model':sub==='analysis'||sub==='result'?'surface':'shadow';
  SCREEN_UI.action=action;
  workspaceAction(action,{start:main==='solar'&&(sub==='analysis'||sub==='result')});
@@ -1914,10 +1916,10 @@ function screenWorkspaceSync(){
   state.action=WORKSPACE_ACTIVE;state.main=WORKSPACE_ACTIVE==='law'||WORKSPACE_ACTIVE==='list'?'info':WORKSPACE_ACTIVE==='model'?'place':'solar';
   state.sub=WORKSPACE_ACTIVE==='list'?'list':WORKSPACE_ACTIVE==='model'?'launch':WORKSPACE_ACTIVE==='law'?'basic':['surface','compare'].includes(WORKSPACE_ACTIVE)?'analysis':'shadow';
  }
- if(state.target!==WORKSPACE_LAST_TARGET){state.target=WORKSPACE_LAST_TARGET;if(!['settings','walk'].includes(state.main)){state.main='info';state.sub='basic';state.action=WORKSPACE_ACTIVE}}
- const isSettings=state.main==='settings';$('screenMainNav').hidden=isSettings;$('screenSubNav').hidden=!selected&&!isSettings&&state.main!=='walk';
+ if(state.target!==WORKSPACE_LAST_TARGET){state.target=WORKSPACE_LAST_TARGET;if(!['settings','walk','terrain'].includes(state.main)){state.main='info';state.sub='basic';state.action=WORKSPACE_ACTIVE}}
+ const isSettings=state.main==='settings';$('screenMainNav').hidden=isSettings;$('screenSubNav').hidden=state.main==='terrain'||!selected&&!isSettings&&state.main!=='walk';
  $('screenSettingsHeader').hidden=!isSettings;$('screenSelection').hidden=isSettings;$('workspaceClearSelection').hidden=isSettings||!selected;
- const routes=isSettings?state.settings.map((item,i)=>[String(i),item.label]):state.main==='walk'?[['start','시작 위치'],['records','측정 기록'],['settings','조작 설정']]:state.main==='info'?[['basic','기본 정보'],['law','규모·법규'],['height','높이·일조'],['list','필지 안 건물']]:state.main==='place'?[['launch','배치'],['single','선택 동 관리'],['parcel','필지 전체']]:[['shadow','그림자'],['analysis','표면 분석'],['result','결과 보기'],['detail','상세 설정']];
+ const routes=isSettings?state.settings.map((item,i)=>[String(i),item.label]):state.main==='terrain'?[]:state.main==='walk'?[['start','시작 위치'],['records','측정 기록'],['settings','조작 설정']]:state.main==='info'?[['basic','기본 정보'],['law','규모·법규'],['height','높이·일조'],['list','필지 안 건물']]:state.main==='place'?[['launch','배치'],['single','선택 동 관리'],['parcel','필지 전체']]:[['shadow','그림자'],['analysis','표면 분석'],['result','결과 보기'],['detail','상세 설정']];
  $('screenSubNav').style.gridTemplateColumns='repeat('+Math.min(4,routes.length)+',minmax(0,1fr))';
  if(isSettings){
   const picker=state.settingsPicker;picker.hidden=false;$('screenSubNav').replaceChildren(picker);$('screenSubNav').style.gridTemplateColumns='minmax(0,1fr)';
@@ -1926,7 +1928,7 @@ function screenWorkspaceSync(){
  }else{
   $('screenSubNav').replaceChildren();for(const [key,label] of routes){const b=screenButton(label,$('screenSubNav'),()=>screenChoose(state.main,key));b.setAttribute('aria-pressed',String(key===state.sub))}
  }
- for(const b of document.querySelectorAll('[data-screen-main]')){b.setAttribute('aria-pressed',String(b.dataset.screenMain===state.main));b.disabled=!selected&&b.dataset.screenMain!=='walk'}
+ for(const b of document.querySelectorAll('[data-screen-main]')){b.setAttribute('aria-pressed',String(b.dataset.screenMain===state.main));b.disabled=b.dataset.screenMain==='terrain'?!(lawMode&&!!SELECTED_PARCEL):!selected&&b.dataset.screenMain!=='walk'}
  let key=!selected&&!isSettings&&state.main!=='walk'?'empty':isSettings?'settings-'+state.sub:state.main+'-'+state.sub;
  if(!state.pages[key])key=state.main==='place'?'place-launch':'info-basic';
  for(const [name,page] of Object.entries(state.pages)){page.className='screen-page';page.hidden=name!==key}
@@ -2027,7 +2029,7 @@ function setupScreenUI(){
  const settingsHeader=screenNode('div','screenSettingsHeader',root);screenNode('strong','',settingsHeader,'지도 설정');const list=screenButton('설정 목록',settingsHeader,()=>screenChoose('settings','home'));list.id='screenSettingsList';screenButton('지도 작업으로 돌아가기',settingsHeader,screenReturnToWorkspace).id='screenSettingsBack';
  const selection=screenNode('div','screenSelection',root);screenMove('workspaceSummary',selection);
  const nav=screenNode('nav','screenMainNav',root);nav.setAttribute('aria-label','선택 대상 작업');
- for(const [key,label,sub] of [['info','정보·법규','basic'],['solar','일조·그림자','shadow'],['place','건물 배치','launch']]){const b=screenButton(label,nav,()=>screenChoose(key,sub));b.dataset.screenMain=key}
+ for(const [key,label,sub] of [['info','정보·법규','basic'],['solar','일조·그림자','shadow'],['place','건물 배치','launch'],['terrain','표고 검토','review']]){const b=screenButton(label,nav,()=>screenChoose(key,sub));b.dataset.screenMain=key}
  screenNode('div','screenSubNav',root);screenNode('div','screenViewport',root);
  const mapMode=screenNode('div','screenMapMode',document.body);screenMove('workspaceModeBar',mapMode);screenModeSwitchLayout();
  const settingsButton=screenButton('지도 설정',document.querySelector('.top'),()=>{screenChoose('settings','home');setDrawer(true)});settingsButton.id='screenSettings';
@@ -2040,6 +2042,7 @@ function setupScreenUI(){
   else if(SCREEN_UI.page==='solar-shadow')screenChoose('solar','analysis');else if(['place-launch','place-single'].includes(SCREEN_UI.page)){$('editOpenPlacement').click();if(SCREEN_UI.page==='place-single')screenPlacementChoose('edit')}
  });action.id='screenFooterAction';
  screenNode('p','',screenPage('empty'),'지도에서 건물 또는 필지를 선택하세요.');
+ const terrain=screenPage('terrain-review');screenMove('workspaceTerrainReview',terrain);
  const basic=screenPage('info-basic');screenNode('h3','',basic,'선택 대상 정보');
  screenReadButton(basic,'건물·연결 필지 상세 보기',()=>editSelectedModel()?$('editModelDetails'):$('workspaceInfo'));
  screenMove('buildingParcelSelect',basic);screenReadButton(basic,'연결 필지 법규 요약','buildingLawSummary');
