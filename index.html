@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.11.19-07</title>
+<title>Jinju3D Local · v2026.11.19-08</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -313,7 +313,7 @@ body.screen-ui{--screen-width:360px;--screen-top:66px;--screen-bottom:60px}
 <link rel="stylesheet" href="eye-walk.css?v=2026.11.03-05">
 </head><body>
 <div id="scanMap"></div><div id="map"></div><div id="vworld"></div>
-<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-07</span></h1>
+<div class="top"><h1>Jin-Min-Map <span class="version">v2026.11.19-08</span></h1>
   <div class="address-search">
     <div class="address-search-field"><input id="addressSearch" type="search" autocomplete="off" placeholder="지번주소 또는 도로명주소 검색">
     <button id="addressSearchClear" class="address-search-clear" aria-label="검색 지우기" type="button">×</button></div>
@@ -813,7 +813,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.11.19-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.19-08',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1826,7 +1826,7 @@ function terrainReviewRender(f,out){
  const pointData={type:'FeatureCollection',features:samples.length>1?[{type:'Feature',properties:{label:'A'},geometry:{type:'Point',coordinates:samples[0].coord}},{type:'Feature',properties:{label:'B'},geometry:{type:'Point',coordinates:samples[samples.length-1].coord}}]:[]};
  terrainReviewSetData('terrain-review-section',lineData);terrainReviewSetData('terrain-review-section-points',pointData);
  let chart='';
- if(samples.length>1){const a=Math.min(...samples.map(x=>x.z)),b=Math.max(...samples.map(x=>x.z)),d=Math.max(.1,b-a),pts=samples.map(x=>(8+x.i*17)+','+(73-(x.z-a)/d*54)).join(' ');chart='<svg viewBox="0 0 224 84" role="img" aria-label="필지 A–B 표고 단면" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="3"/><text x="5" y="12" fill="#dce8f1" font-size="9">A–B 단면</text><text x="5" y="82" fill="#bccbd8" font-size="9">A</text><text x="209" y="82" fill="#bccbd8" font-size="9">B</text></svg>'}
+ if(samples.length>1){const a=Math.min(...samples.map(x=>x.z)),b=Math.max(...samples.map(x=>x.z)),mid=(a+b)/2,sectionLength=Math.max(1,turf.distance(samples[0].coord,samples[samples.length-1].coord,{units:'meters'})),xScale=188/sectionLength,yScale=xScale,pts=samples.map(x=>(40+x.i/12*188)+','+(42-(x.z-mid)*yScale)).join(' ');chart='<svg viewBox="0 0 236 84" role="img" aria-label="필지 A–B 표고 단면, 실제 거리와 표고 비율" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><text x="3" y="12" fill="#dce8f1" font-size="9">A–B 단면 · 실제 비율</text><text x="3" y="34" fill="#bccbd8" font-size="8">'+b.toFixed(1)+'m</text><text x="3" y="78" fill="#bccbd8" font-size="8">'+a.toFixed(1)+'m</text><line x1="38" y1="20" x2="38" y2="72" stroke="#64748b" stroke-width="1"/><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="2.5"/><text x="40" y="82" fill="#bccbd8" font-size="9">A</text><text x="218" y="82" fill="#bccbd8" font-size="9">B</text><text x="88" y="82" fill="#94a3b8" font-size="8">거리 '+sectionLength.toFixed(1)+'m · 표고 차 '+(b-a).toFixed(1)+'m</text></svg>'}
  out.innerHTML='<div class="hint">표고 색상 · 낮음 <span style="display:inline-block;width:74px;height:9px;vertical-align:middle;border-radius:5px;background:linear-gradient(90deg,#1d4ed8,#168bd2,#20b8c5,#f2d14a,#f28c28,#d52b32)"></span> 높음</div><div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">A는 북서쪽, B는 남동쪽을 잇는 기본 단면입니다. '+vals.length+'개 DEM 표본 · 설계 참고값이며 도로 접속 높이와 경사는 측량으로 확인하세요.</div>'
 }
 function terrainReviewStart(){
