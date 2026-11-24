@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jinju3D Local · v2026.11.24-01</title>
+<title>Jinju3D Local · v2026.11.24-02</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/@turf/turf@7.2.0/turf.min.js"></script>
@@ -813,7 +813,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.11.24-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.24-02',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
 const STATIC_FAST_IDS=new Set(['38030760']);function isStaticFast(id){return STATIC_FAST_IDS.has(String(id))||!!MANIFEST?.buildings?.[String(id)]?.static_precomputed}
@@ -1745,7 +1745,7 @@ function setupWorkspaceModeSwitch(){
 }
 
 let terrainReviewToken=0,terrainReviewTimer=0,TERRAIN_REVIEW_ACTIVE=false,TERRAIN_REVIEW_VISIBILITY=null,TERRAIN_REVIEW_CAMERA=null;
-const TERRAIN_REVIEW_PALETTE=['#1d4ed8','#168bd2','#20b8c5','#f2d14a','#f28c28','#d52b32'];
+const TERRAIN_REVIEW_PALETTE=['#66899a','#829f9a','#aab39a','#c7b184','#bb8d70','#a96f66'];
 function terrainReviewColor(q){const x=Math.max(0,Math.min(.9999,q))*(TERRAIN_REVIEW_PALETTE.length-1),i=Math.min(TERRAIN_REVIEW_PALETTE.length-2,Math.floor(x)),u=x-i,A=TERRAIN_REVIEW_PALETTE[i],B=TERRAIN_REVIEW_PALETTE[i+1];return'#'+[1,3,5].map(k=>Math.round(parseInt(A.slice(k,k+2),16)*(1-u)+parseInt(B.slice(k,k+2),16)*u).toString(16).padStart(2,'0')).join('')}
 function terrainReviewSetData(id,data){try{map.getSource(id)?.setData(data)}catch(e){}}
 function terrainReviewEnsureMapLayers(url,bounds){
@@ -1753,7 +1753,7 @@ function terrainReviewEnsureMapLayers(url,bounds){
   const c=document.createElement('canvas');c.width=2;c.height=2;
   map.addSource('terrain-review-raster',{type:'image',url:url||c.toDataURL('image/png'),coordinates:bounds||[[0,0],[0,0],[0,0],[0,0]]});
  }
- if(!map.getLayer('terrain-review-raster-layer'))map.addLayer({id:'terrain-review-raster-layer',type:'raster',source:'terrain-review-raster',paint:{'raster-opacity':.9,'raster-resampling':'linear'}});
+ if(!map.getLayer('terrain-review-raster-layer'))map.addLayer({id:'terrain-review-raster-layer',type:'raster',source:'terrain-review-raster',paint:{'raster-opacity':.84,'raster-resampling':'linear'}});
  if(!map.getSource('terrain-review-section'))map.addSource('terrain-review-section',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
  if(!map.getSource('terrain-review-spots'))map.addSource('terrain-review-spots',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
  if(!map.getLayer('terrain-review-spot-dots'))map.addLayer({id:'terrain-review-spot-dots',type:'circle',source:'terrain-review-spots',paint:{'circle-radius':5,'circle-color':'#fff7d6','circle-stroke-color':'#713f12','circle-stroke-width':2}});
@@ -1799,7 +1799,7 @@ function terrainReviewMakeRaster(f,lo,hi){
  const raw=Math.max(.25,(hi-lo)/5),power=Math.pow(10,Math.floor(Math.log10(raw))),ratio=raw/power,contourStep=(ratio<=1?1:ratio<=2?2:ratio<=5?5:10)*power;
  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
  for(let level=Math.ceil(lo/contourStep)*contourStep;level<=hi+1e-6;level+=contourStep){
-  ctx.beginPath();const major=Math.round(level/(contourStep*5))===level/(contourStep*5);ctx.strokeStyle=major?'rgba(92,48,24,.82)':'rgba(92,48,24,.58)';ctx.lineWidth=major?2.2:1.25;
+  ctx.beginPath();const major=Math.round(level/(contourStep*5))===level/(contourStep*5);ctx.strokeStyle=major?'rgba(83,62,48,.62)':'rgba(83,62,48,.38)';ctx.lineWidth=major?2.2:1.25;
   for(let gy=0;gy<gridN-1;gy++)for(let gx=0;gx<gridN-1;gx++){
    const z=[values[gy*gridN+gx],values[gy*gridN+gx+1],values[(gy+1)*gridN+gx+1],values[(gy+1)*gridN+gx]],xy=[[gx,gy],[gx+1,gy],[gx+1,gy+1],[gx,gy+1]];
    if(z.some(v=>!Number.isFinite(v)))continue;const hits=[];
@@ -1844,7 +1844,7 @@ function terrainReviewRender(f,out){
  terrainReviewSetData('terrain-review-spots',{type:'FeatureCollection',features:picked.map((x,i)=>({type:'Feature',properties:{label:(i===0?'저점 ':i===picked.length-1?'고점 ':'표고 ')+x.z.toFixed(1)+'m'},geometry:{type:'Point',coordinates:x.p}}))});
  let chart='';
  if(samples.length>1){const a=Math.min(...samples.map(x=>x.z)),b=Math.max(...samples.map(x=>x.z)),mid=(a+b)/2,sectionLength=Math.max(1,turf.distance(samples[0].coord,samples[samples.length-1].coord,{units:'meters'})),xScale=188/sectionLength,yScale=xScale,pts=samples.map(x=>(40+x.i/12*188)+','+(42-(x.z-mid)*yScale)).join(' ');chart='<svg viewBox="0 0 236 84" role="img" aria-label="필지 A–B 표고 단면, 실제 거리와 표고 비율" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><text x="3" y="12" fill="#dce8f1" font-size="9">A–B 단면 · 실제 비율</text><text x="3" y="34" fill="#bccbd8" font-size="8">'+b.toFixed(1)+'m</text><text x="3" y="78" fill="#bccbd8" font-size="8">'+a.toFixed(1)+'m</text><line x1="38" y1="20" x2="38" y2="72" stroke="#64748b" stroke-width="1"/><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="2.5"/><text x="40" y="82" fill="#bccbd8" font-size="9">A</text><text x="218" y="82" fill="#bccbd8" font-size="9">B</text><text x="88" y="82" fill="#94a3b8" font-size="8">거리 '+sectionLength.toFixed(1)+'m · 표고 차 '+(b-a).toFixed(1)+'m</text></svg>'}
- out.innerHTML='<div class="hint">표고 색상 · 낮음 <span style="display:inline-block;width:74px;height:9px;vertical-align:middle;border-radius:5px;background:linear-gradient(90deg,#1d4ed8,#168bd2,#20b8c5,#f2d14a,#f28c28,#d52b32)"></span> 높음</div><div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">A는 북서쪽, B는 남동쪽을 잇는 기본 단면입니다. '+vals.length+'개 DEM 표본. 갈색 선은 DEM 보간 등고선(간격 '+(raster?.contourStep||'-')+'m), 표시는 참고 표고입니다. 정밀 설계·측량을 대체하지 않습니다.</div>'
+ out.innerHTML='<div class="hint">표고 색상 · 낮음 <span style="display:inline-block;width:74px;height:9px;vertical-align:middle;border-radius:5px;background:linear-gradient(90deg,#66899a,#829f9a,#aab39a,#c7b184,#bb8d70,#a96f66)"></span> 높음</div><div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">A는 북서쪽, B는 남동쪽을 잇는 기본 단면입니다. '+vals.length+'개 DEM 표본. 갈색 선은 DEM 보간 등고선(간격 '+(raster?.contourStep||'-')+'m), 표시는 참고 표고입니다. 정밀 설계·측량을 대체하지 않습니다.</div>'
 }
 function terrainReviewStart(){
  if(!lawMode||!SELECTED_PARCEL){workspaceStatus('표고 검토는 필지를 선택한 상태에서 실행할 수 있습니다.');return}
