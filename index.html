@@ -1744,7 +1744,7 @@ function setupWorkspaceModeSwitch(){
  toggle.onclick=()=>$(lawMode?'buildingMode':'lawMode').click();host.appendChild(toggle);workspaceModeSwitchSync();
 }
 
-let terrainReviewToken=0,terrainReviewTimer=0,TERRAIN_REVIEW_ACTIVE=false,TERRAIN_REVIEW_VISIBILITY=null,TERRAIN_REVIEW_CAMERA=null,TERRAIN_SECTION_ENDPOINTS=null,TERRAIN_SECTION_MANUAL=false,TERRAIN_SECTION_DRAG=null,TERRAIN_SECTION_DRAG_TIMER=0,TERRAIN_REVIEW_CONTOUR_STEP=null,TERRAIN_SECTION_DRAG_BOUND=false;
+let terrainReviewToken=0,terrainReviewTimer=0,TERRAIN_REVIEW_ACTIVE=false,TERRAIN_REVIEW_VISIBILITY=null,TERRAIN_REVIEW_CAMERA=null,TERRAIN_SECTION_ENDPOINTS=null,TERRAIN_SECTION_MANUAL=false,TERRAIN_SECTION_DRAG=null,TERRAIN_REVIEW_CONTOUR_STEP=null,TERRAIN_REVIEW_STATS=null,TERRAIN_SECTION_DRAG_FRAME=0,TERRAIN_SECTION_DRAG_BOUND=false;
 const TERRAIN_REVIEW_PALETTE=['#66899a','#829f9a','#aab39a','#c7b184','#bb8d70','#a96f66'];
 function terrainReviewColor(q){const x=Math.max(0,Math.min(.9999,q))*(TERRAIN_REVIEW_PALETTE.length-1),i=Math.min(TERRAIN_REVIEW_PALETTE.length-2,Math.floor(x)),u=x-i,A=TERRAIN_REVIEW_PALETTE[i],B=TERRAIN_REVIEW_PALETTE[i+1];return'#'+[1,3,5].map(k=>Math.round(parseInt(A.slice(k,k+2),16)*(1-u)+parseInt(B.slice(k,k+2),16)*u).toString(16).padStart(2,'0')).join('')}
 function terrainReviewSetData(id,data){try{map.getSource(id)?.setData(data)}catch(e){}}
@@ -1816,19 +1816,27 @@ function terrainReviewMakeRaster(f,lo,hi){
  return{url:canvas.toDataURL('image/png'),bounds:[[w,n],[e,n],[e,s],[w,s]],contourStep}
 }
 function terrainReviewRender(f,out,sectionOnly=false){
- const [w,s,e,n]=turf.bbox(f),vals=[],N=9;
- for(let r=0;r<N;r++)for(let c=0;c<N;c++){
-  const p=[w+(e-w)*(c+.5)/N,n-(n-s)*(r+.5)/N];
-  try{if(!turf.booleanPointInPolygon(turf.point(p),f))continue}catch(x){continue}
-  let z=null;try{z=map.queryTerrainElevation(p,{exaggerated:false})}catch(x){}
-  if(Number.isFinite(z))vals.push({r,c,p,z})
+ const [w,s,e,n]=turf.bbox(f),useSectionOnly=!!(sectionOnly&&TERRAIN_REVIEW_STATS);
+ let vals=[],lo,hi,range,slope=0,surfaceSampleCount=0,raster=null;
+ if(useSectionOnly){
+  ({lo,hi,range,slope,sampleCount:surfaceSampleCount}=TERRAIN_REVIEW_STATS);
+ }else{
+  const N=9;
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+   const p=[w+(e-w)*(c+.5)/N,n-(n-s)*(r+.5)/N];
+   try{if(!turf.booleanPointInPolygon(turf.point(p),f))continue}catch(x){continue}
+   let z=null;try{z=map.queryTerrainElevation(p,{exaggerated:false})}catch(x){}
+   if(Number.isFinite(z))vals.push({r,c,p,z})
+  }
+  if(!vals.length){terrainReviewClearOverlay();out.innerHTML='현재 화면에서 DEM 표고를 확인할 수 없습니다.<br><span class="lawdim">미확보 지점은 추정값으로 채우지 않습니다.</span>';return}
+  lo=Math.min(...vals.map(x=>x.z));hi=Math.max(...vals.map(x=>x.z));range=hi-lo;
+  for(const x of vals)for(const y of vals)if(Math.abs(x.r-y.r)+Math.abs(x.c-y.c)===1){const d=turf.distance(x.p,y.p,{units:'meters'});if(d)slope=Math.max(slope,Math.abs(x.z-y.z)/d*100)}
+  surfaceSampleCount=vals.length;
+  TERRAIN_REVIEW_STATS={lo,hi,range,slope,sampleCount:surfaceSampleCount};
+  raster=terrainReviewMakeRaster(f,lo,hi);
+  if(raster){TERRAIN_REVIEW_CONTOUR_STEP=raster.contourStep;terrainReviewEnsureMapLayers(raster.url,raster.bounds)}
  }
- if(!vals.length){terrainReviewClearOverlay();out.innerHTML='현재 화면에서 DEM 표고를 확인할 수 없습니다.<br><span class="lawdim">미확보 지점은 추정값으로 채우지 않습니다.</span>';return}
- const lo=Math.min(...vals.map(x=>x.z)),hi=Math.max(...vals.map(x=>x.z)),range=hi-lo;let slope=0;
- for(const a of vals)for(const b of vals)if(Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1){const d=turf.distance(a.p,b.p,{units:'meters'});if(d)slope=Math.max(slope,Math.abs(a.z-b.z)/d*100)}
- const raster=sectionOnly?null:terrainReviewMakeRaster(f,lo,hi);if(raster){TERRAIN_REVIEW_CONTOUR_STEP=raster.contourStep;terrainReviewEnsureMapLayers(raster.url,raster.bounds)}
- const samples=[];
- const sectionA=TERRAIN_SECTION_ENDPOINTS?.[0]||[w,n],sectionB=TERRAIN_SECTION_ENDPOINTS?.[1]||[e,s],sectionLine=turf.lineString([sectionA,sectionB]),sectionLengthForSamples=turf.length(sectionLine,{units:'meters'});
+ const sectionA=TERRAIN_SECTION_ENDPOINTS?.[0]||[w,n],sectionB=TERRAIN_SECTION_ENDPOINTS?.[1]||[e,s],sectionLine=turf.lineString([sectionA,sectionB]),sectionLengthForSamples=turf.length(sectionLine,{units:'meters'}),samples=[];
  for(let i=0;i<=12;i++){
   const coord=turf.along(sectionLine,sectionLengthForSamples*i/12,{units:'meters'}).geometry.coordinates;
   try{if(!turf.booleanPointInPolygon(turf.point(coord),f))continue}catch(x){continue}
@@ -1842,12 +1850,14 @@ function terrainReviewRender(f,out,sectionOnly=false){
  const lineData={type:'FeatureCollection',features:groups.length?[{type:'Feature',properties:{},geometry:groups.length===1?{type:'LineString',coordinates:groups[0]}:{type:'MultiLineString',coordinates:groups}}]:[]};
  const pointData={type:'FeatureCollection',features:samples.length>1?[{type:'Feature',properties:{label:'A'},geometry:{type:'Point',coordinates:samples[0].coord}},{type:'Feature',properties:{label:'B'},geometry:{type:'Point',coordinates:samples[samples.length-1].coord}}]:[]};
  terrainReviewSetData('terrain-review-section',lineData);terrainReviewSetData('terrain-review-section-points',pointData);
- const sorted=[...vals].sort((a,b)=>a.z-b.z),picked=[];
- for(const candidate of [sorted[0],sorted[Math.floor((sorted.length-1)/2)],sorted[sorted.length-1]])if(candidate&&!picked.some(x=>turf.distance(x.p,candidate.p,{units:'meters'})<2))picked.push(candidate);
- terrainReviewSetData('terrain-review-spots',{type:'FeatureCollection',features:picked.map((x,i)=>({type:'Feature',properties:{label:(i===0?'저점 ':i===picked.length-1?'고점 ':'표고 ')+x.z.toFixed(1)+'m'},geometry:{type:'Point',coordinates:x.p}}))});
+ if(!useSectionOnly){
+  const sorted=[...vals].sort((x,y)=>x.z-y.z),picked=[];
+  for(const candidate of [sorted[0],sorted[Math.floor((sorted.length-1)/2)],sorted[sorted.length-1]])if(candidate&&!picked.some(x=>turf.distance(x.p,candidate.p,{units:'meters'})<2))picked.push(candidate);
+  terrainReviewSetData('terrain-review-spots',{type:'FeatureCollection',features:picked.map((x,i)=>({type:'Feature',properties:{label:(i===0?'저점 ':i===picked.length-1?'고점 ':'표고 ')+x.z.toFixed(1)+'m'},geometry:{type:'Point',coordinates:x.p}}))});
+ }
  let chart='';
- if(samples.length>1){const a=Math.min(...samples.map(x=>x.z)),b=Math.max(...samples.map(x=>x.z)),mid=(a+b)/2,sectionLength=Math.max(1,turf.distance(samples[0].coord,samples[samples.length-1].coord,{units:'meters'})),xScale=188/sectionLength,yScale=xScale,pts=samples.map(x=>(40+x.i/12*188)+','+(42-(x.z-mid)*yScale)).join(' ');chart='<svg viewBox="0 0 236 84" role="img" aria-label="필지 A–B 표고 단면, 실제 거리와 표고 비율" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><text x="3" y="12" fill="#dce8f1" font-size="9">A–B 단면 · 실제 비율</text><text x="3" y="34" fill="#bccbd8" font-size="8">'+b.toFixed(1)+'m</text><text x="3" y="78" fill="#bccbd8" font-size="8">'+a.toFixed(1)+'m</text><line x1="38" y1="20" x2="38" y2="72" stroke="#64748b" stroke-width="1"/><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="2.5"/><text x="40" y="82" fill="#bccbd8" font-size="9">A</text><text x="218" y="82" fill="#bccbd8" font-size="9">B</text><text x="88" y="82" fill="#94a3b8" font-size="8">거리 '+sectionLength.toFixed(1)+'m · 표고 차 '+(b-a).toFixed(1)+'m</text></svg>'}
- out.innerHTML='<div class="hint">표고 색상 · 낮음 <span style="display:inline-block;width:74px;height:9px;vertical-align:middle;border-radius:5px;background:linear-gradient(90deg,#66899a,#829f9a,#aab39a,#c7b184,#bb8d70,#a96f66)"></span> 높음</div><div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">'+(TERRAIN_SECTION_MANUAL?'사용자 지정 A–B 단면입니다.':'A는 북서쪽, B는 남동쪽 기본 단면입니다.')+' '+vals.length+'개 DEM 표본. 갈색 선은 DEM 보간 등고선(간격 '+(raster?.contourStep||TERRAIN_REVIEW_CONTOUR_STEP||'-')+'m), 표시는 참고 표고입니다. 정밀 설계·측량을 대체하지 않습니다.</div>'
+ if(samples.length>1){const zlo=Math.min(...samples.map(x=>x.z)),zhi=Math.max(...samples.map(x=>x.z)),mid=(zlo+zhi)/2,sectionLength=Math.max(1,turf.distance(samples[0].coord,samples[samples.length-1].coord,{units:'meters'})),xScale=188/sectionLength,yScale=xScale,pts=samples.map(x=>(40+x.i/12*188)+','+(42-(x.z-mid)*yScale)).join(' ');chart='<svg viewBox="0 0 236 84" role="img" aria-label="필지 A–B 표고 단면, 실제 거리와 표고 비율" style="width:100%;height:84px;background:#13263a;border-radius:8px;margin-top:7px"><text x="3" y="12" fill="#dce8f1" font-size="9">A–B 단면 · 실제 비율</text><text x="3" y="34" fill="#bccbd8" font-size="8">'+zhi.toFixed(1)+'m</text><text x="3" y="78" fill="#bccbd8" font-size="8">'+zlo.toFixed(1)+'m</text><line x1="38" y1="20" x2="38" y2="72" stroke="#64748b" stroke-width="1"/><polyline points="'+pts+'" fill="none" stroke="#62d6e6" stroke-width="2.5"/><text x="40" y="82" fill="#bccbd8" font-size="9">A</text><text x="218" y="82" fill="#bccbd8" font-size="9">B</text><text x="88" y="82" fill="#94a3b8" font-size="8">거리 '+sectionLength.toFixed(1)+'m · 표고 차 '+(zhi-zlo).toFixed(1)+'m</text></svg>'}
+ out.innerHTML='<div class="hint">표고 색상 · 낮음 <span style="display:inline-block;width:74px;height:9px;vertical-align:middle;border-radius:5px;background:linear-gradient(90deg,#66899a,#829f9a,#aab39a,#c7b184,#bb8d70,#a96f66)"></span> 높음</div><div>최저 <b>'+lo.toFixed(1)+' m</b> · 최고 <b>'+hi.toFixed(1)+' m</b><br>높이 차 <b>'+range.toFixed(1)+' m</b> · 표본 경사 <b>'+slope.toFixed(1)+'%</b></div>'+chart+'<div class="hint" style="margin-top:6px">'+(TERRAIN_SECTION_MANUAL?'사용자 지정 A–B 단면입니다.':'A는 북서쪽, B는 남동쪽 기본 단면입니다.')+' '+surfaceSampleCount+'개 DEM 표본. 갈색 선은 DEM 보간 등고선(간격 '+(TERRAIN_REVIEW_CONTOUR_STEP||'-')+'m), 표시는 참고 표고입니다. 정밀 설계·측량을 대체하지 않습니다.</div>'
 }
 function terrainReviewSectionDragStart(e){
  if(!TERRAIN_REVIEW_ACTIVE||!e.features?.length)return;
@@ -1863,13 +1873,12 @@ function terrainReviewSectionDragMove(e){
  try{if(!turf.booleanPointInPolygon(turf.point(p),SELECTED_PARCEL))return}catch(err){return}
  TERRAIN_SECTION_ENDPOINTS=TERRAIN_SECTION_ENDPOINTS||[];
  TERRAIN_SECTION_ENDPOINTS[TERRAIN_SECTION_DRAG==='A'?0:1]=p;TERRAIN_SECTION_MANUAL=true;
- clearTimeout(TERRAIN_SECTION_DRAG_TIMER);
- TERRAIN_SECTION_DRAG_TIMER=setTimeout(()=>terrainReviewRender(SELECTED_PARCEL,$('terrainReviewContent'),true),110);
+ if(!TERRAIN_SECTION_DRAG_FRAME)TERRAIN_SECTION_DRAG_FRAME=requestAnimationFrame(()=>{TERRAIN_SECTION_DRAG_FRAME=0;if(TERRAIN_SECTION_DRAG&&TERRAIN_REVIEW_ACTIVE)terrainReviewRender(SELECTED_PARCEL,$('terrainReviewContent'),true)});
 }
 function terrainReviewSectionDragEnd(){
  if(!TERRAIN_SECTION_DRAG)return;
  map.off('mousemove',terrainReviewSectionDragMove);map.off('touchmove',terrainReviewSectionDragMove);map.off('mouseup',terrainReviewSectionDragEnd);map.off('touchend',terrainReviewSectionDragEnd);
- TERRAIN_SECTION_DRAG=null;map.getCanvas().style.cursor='';map.dragPan.enable();clearTimeout(TERRAIN_SECTION_DRAG_TIMER);
+ TERRAIN_SECTION_DRAG=null;map.getCanvas().style.cursor='';map.dragPan.enable();if(TERRAIN_SECTION_DRAG_FRAME){cancelAnimationFrame(TERRAIN_SECTION_DRAG_FRAME);TERRAIN_SECTION_DRAG_FRAME=0;}
  if(TERRAIN_REVIEW_ACTIVE&&SELECTED_PARCEL)terrainReviewRender(SELECTED_PARCEL,$('terrainReviewContent'),true);
 }
 function terrainReviewBindSectionDrag(){
@@ -1891,12 +1900,12 @@ function terrainReviewStart(){
    try{map.setLayoutProperty(id,'visibility','none')}catch(e){}
   }
  }
- TERRAIN_REVIEW_ACTIVE=true;TERRAIN_SECTION_ENDPOINTS=null;TERRAIN_SECTION_MANUAL=false;TERRAIN_REVIEW_CONTOUR_STEP=null;$('terrainSectionReset').hidden=true;const button=$('terrainReviewToggle');button.textContent='검토 종료';button.setAttribute('aria-pressed','true');button.style.background='#9f312d';button.style.borderColor='#f87171';
+ TERRAIN_REVIEW_ACTIVE=true;TERRAIN_SECTION_ENDPOINTS=null;TERRAIN_SECTION_MANUAL=false;TERRAIN_REVIEW_STATS=null;TERRAIN_REVIEW_CONTOUR_STEP=null;$('terrainSectionReset').hidden=true;const button=$('terrainReviewToggle');button.textContent='검토 종료';button.setAttribute('aria-pressed','true');button.style.background='#9f312d';button.style.borderColor='#f87171';
  terrainReviewSchedule()
 }
 function terrainReviewStop(silent=false){
  if(!TERRAIN_REVIEW_ACTIVE)return;
- TERRAIN_REVIEW_ACTIVE=false;TERRAIN_SECTION_ENDPOINTS=null;TERRAIN_SECTION_MANUAL=false;TERRAIN_SECTION_DRAG=null;clearTimeout(TERRAIN_SECTION_DRAG_TIMER);++terrainReviewToken;clearTimeout(terrainReviewTimer);terrainReviewClearOverlay();
+ TERRAIN_REVIEW_ACTIVE=false;TERRAIN_SECTION_ENDPOINTS=null;TERRAIN_SECTION_MANUAL=false;TERRAIN_SECTION_DRAG=null;if(TERRAIN_SECTION_DRAG_FRAME){cancelAnimationFrame(TERRAIN_SECTION_DRAG_FRAME);TERRAIN_SECTION_DRAG_FRAME=0}TERRAIN_REVIEW_STATS=null;++terrainReviewToken;clearTimeout(terrainReviewTimer);terrainReviewClearOverlay();
  if(TERRAIN_REVIEW_VISIBILITY){for(const [id,visibility] of Object.entries(TERRAIN_REVIEW_VISIBILITY)){if(!map.getLayer(id))continue;try{map.setLayoutProperty(id,'visibility',visibility||'visible')}catch(e){}}}
  TERRAIN_REVIEW_VISIBILITY=null;
  if(TERRAIN_REVIEW_CAMERA){map.easeTo({...TERRAIN_REVIEW_CAMERA,duration:650});TERRAIN_REVIEW_CAMERA=null}
