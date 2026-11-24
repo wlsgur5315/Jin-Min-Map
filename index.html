@@ -1891,12 +1891,12 @@ function terrainReviewStart(){
    try{map.setLayoutProperty(id,'visibility','none')}catch(e){}
   }
  }
- TERRAIN_REVIEW_ACTIVE=true;TERRAIN_SECTION_PICK_MODE=false;TERRAIN_SECTION_ENDPOINTS=null;TERRAIN_SECTION_MANUAL=false;TERRAIN_REVIEW_CONTOUR_STEP=null;$('terrainSectionReset').hidden=true;const button=$('terrainReviewToggle');button.textContent='검토 종료';button.setAttribute('aria-pressed','true');button.style.background='#9f312d';button.style.borderColor='#f87171';
+ TERRAIN_REVIEW_ACTIVE=true;TERRAIN_SECTION_ENDPOINTS=null;TERRAIN_SECTION_MANUAL=false;TERRAIN_REVIEW_CONTOUR_STEP=null;$('terrainSectionReset').hidden=true;const button=$('terrainReviewToggle');button.textContent='검토 종료';button.setAttribute('aria-pressed','true');button.style.background='#9f312d';button.style.borderColor='#f87171';
  terrainReviewSchedule()
 }
 function terrainReviewStop(silent=false){
  if(!TERRAIN_REVIEW_ACTIVE)return;
- TERRAIN_REVIEW_ACTIVE=false;TERRAIN_SECTION_PICK_MODE=false;TERRAIN_SECTION_ENDPOINTS=null;TERRAIN_SECTION_MANUAL=false;TERRAIN_SECTION_DRAG=null;clearTimeout(TERRAIN_SECTION_DRAG_TIMER);++terrainReviewToken;clearTimeout(terrainReviewTimer);terrainReviewClearOverlay();
+ TERRAIN_REVIEW_ACTIVE=false;TERRAIN_SECTION_ENDPOINTS=null;TERRAIN_SECTION_MANUAL=false;TERRAIN_SECTION_DRAG=null;clearTimeout(TERRAIN_SECTION_DRAG_TIMER);++terrainReviewToken;clearTimeout(terrainReviewTimer);terrainReviewClearOverlay();
  if(TERRAIN_REVIEW_VISIBILITY){for(const [id,visibility] of Object.entries(TERRAIN_REVIEW_VISIBILITY)){if(!map.getLayer(id))continue;try{map.setLayoutProperty(id,'visibility',visibility||'visible')}catch(e){}}}
  TERRAIN_REVIEW_VISIBILITY=null;
  if(TERRAIN_REVIEW_CAMERA){map.easeTo({...TERRAIN_REVIEW_CAMERA,duration:650});TERRAIN_REVIEW_CAMERA=null}
