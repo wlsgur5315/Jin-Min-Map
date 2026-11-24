@@ -1835,6 +1835,7 @@ function terrainReviewRender(f,out,sectionOnly=false){
   let z=null;try{z=map.queryTerrainElevation(coord,{exaggerated:false})}catch(x){}
   if(Number.isFinite(z))samples.push({i,z,coord})
  }
+ if(!TERRAIN_SECTION_ENDPOINTS&&samples.length>1)TERRAIN_SECTION_ENDPOINTS=[samples[0].coord,samples[samples.length-1].coord];
  const groups=[];let group=[],last=-2;
  for(const item of samples){if(item.i!==last+1){if(group.length>1)groups.push(group);group=[]}group.push(item.coord);last=item.i}
  if(group.length>1)groups.push(group);
@@ -1854,8 +1855,7 @@ function terrainReviewSectionDragStart(e){
  if(label!=='A'&&label!=='B')return;
  e.preventDefault();TERRAIN_SECTION_DRAG=label;map.getCanvas().style.cursor='grabbing';map.dragPan.disable();
  $('terrainSectionReset').hidden=false;
- map.on('mousemove',terrainReviewSectionDragMove);map.on('touchmove',terrainReviewSectionDragMove);
- map.once('mouseup',terrainReviewSectionDragEnd);map.once('touchend',terrainReviewSectionDragEnd);
+ map.on('mousemove',terrainReviewSectionDragMove);map.on('touchmove',terrainReviewSectionDragMove);map.on('mouseup',terrainReviewSectionDragEnd);map.on('touchend',terrainReviewSectionDragEnd);
 }
 function terrainReviewSectionDragMove(e){
  if(!TERRAIN_SECTION_DRAG||!TERRAIN_REVIEW_ACTIVE||!e.lngLat||!SELECTED_PARCEL)return;
@@ -1868,7 +1868,7 @@ function terrainReviewSectionDragMove(e){
 }
 function terrainReviewSectionDragEnd(){
  if(!TERRAIN_SECTION_DRAG)return;
- map.off('mousemove',terrainReviewSectionDragMove);map.off('touchmove',terrainReviewSectionDragMove);
+ map.off('mousemove',terrainReviewSectionDragMove);map.off('touchmove',terrainReviewSectionDragMove);map.off('mouseup',terrainReviewSectionDragEnd);map.off('touchend',terrainReviewSectionDragEnd);
  TERRAIN_SECTION_DRAG=null;map.getCanvas().style.cursor='';map.dragPan.enable();clearTimeout(TERRAIN_SECTION_DRAG_TIMER);
  if(TERRAIN_REVIEW_ACTIVE&&SELECTED_PARCEL)terrainReviewRender(SELECTED_PARCEL,$('terrainReviewContent'),true);
 }
