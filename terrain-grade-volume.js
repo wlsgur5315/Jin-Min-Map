@@ -100,18 +100,18 @@ function showSolo(map,data){
   const root=document.createElement('div');root.id='terrainParcelSolo';root.style.cssText='position:absolute;inset:0;z-index:10;background:#0c1726;touch-action:none;overflow:hidden';
   const canvas=document.createElement('canvas');canvas.setAttribute('aria-label','선택 필지 입체 모형 · 드래그로 회전');canvas.tabIndex=0;canvas.style.cssText='width:100%;height:100%;display:block;touch-action:none';root.appendChild(canvas);
   const bar=document.createElement('div');bar.style.cssText='position:absolute;left:12px;right:12px;bottom:14px;display:flex;gap:6px;flex-wrap:wrap;align-items:center';
-  const text=document.createElement('span');text.textContent='선택 필지 단독 · 드래그 회전 / 두 손가락 확대';text.style.cssText='font-size:12px;color:#cbd5e1;margin-right:auto;background:#0c1726cc;padding:6px';bar.appendChild(text);
+  const text=document.createElement('span');text.textContent='선택 필지 단독 · 드래그 회전 · WASD 이동 · Q/E 회전 · R/F 기울기';text.style.cssText='font-size:12px;color:#cbd5e1;margin-right:auto;background:#0c1726cc;padding:6px';bar.appendChild(text);
   root.appendChild(bar);map.getContainer().appendChild(root);
-  solo={root,canvas,data,yaw:-.55,pitch:.9,zoom:1,frame:0,points:new Map()};
+  solo={root,canvas,data,yaw:-.55,pitch:.9,zoom:1,panX:0,panY:0,frame:0,points:new Map()};
   const request=()=>{if(solo&&!solo.frame)solo.frame=requestAnimationFrame(()=>{if(solo){solo.frame=0;drawSolo()}})};
   solo.request=request;solo.observer=new ResizeObserver(request);solo.observer.observe(root);
-  for(const [title,action]of [['−',()=>solo.zoom=Math.max(.4,solo.zoom/1.2)],['＋',()=>solo.zoom=Math.min(3,solo.zoom*1.2)],['위에서',()=>solo.pitch=Math.PI/2],['시점 초기화',()=>{solo.yaw=-.55;solo.pitch=.9;solo.zoom=1}]]){const b=document.createElement('button');b.type='button';b.textContent=title;b.style.cssText='width:auto;min-width:44px;min-height:44px';b.onclick=e=>{e.stopPropagation();action();request()};bar.appendChild(b)}
+  for(const [title,action]of [['−',()=>solo.zoom=Math.max(.4,solo.zoom/1.2)],['＋',()=>solo.zoom=Math.min(3,solo.zoom*1.2)],['위에서',()=>solo.pitch=0],['시점 초기화',()=>{solo.yaw=-.55;solo.pitch=.9;solo.zoom=1;solo.panX=solo.panY=0}]]){const b=document.createElement('button');b.type='button';b.textContent=title;b.style.cssText='width:auto;min-width:44px;min-height:44px';b.onclick=e=>{e.stopPropagation();action();request()};bar.appendChild(b)}
   const distance=()=>{const p=[...solo.points.values()];return p.length===2?Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y):0};
-  canvas.onpointerdown=e=>{e.preventDefault();e.stopPropagation();canvas.setPointerCapture(e.pointerId);solo.points.set(e.pointerId,{x:e.clientX,y:e.clientY})};
-  canvas.onpointermove=e=>{if(!solo.points.has(e.pointerId))return;e.preventDefault();e.stopPropagation();const prev=solo.points.get(e.pointerId),before=distance();solo.points.set(e.pointerId,{x:e.clientX,y:e.clientY});if(solo.points.size===1){solo.yaw+=(e.clientX-prev.x)*.008;solo.pitch=Math.max(.15,Math.min(Math.PI/2,solo.pitch+(e.clientY-prev.y)*.006))}else if(before>0)solo.zoom=Math.max(.4,Math.min(3,solo.zoom*distance()/before));request()};
+  canvas.onpointerdown=e=>{e.preventDefault();e.stopPropagation();canvas.focus({preventScroll:true});canvas.setPointerCapture(e.pointerId);solo.points.set(e.pointerId,{x:e.clientX,y:e.clientY})};
+  canvas.onpointermove=e=>{if(!solo.points.has(e.pointerId))return;e.preventDefault();e.stopPropagation();const prev=solo.points.get(e.pointerId),before=distance();solo.points.set(e.pointerId,{x:e.clientX,y:e.clientY});if(solo.points.size===1){solo.yaw-=(e.clientX-prev.x)*.008;solo.pitch=Math.max(0,Math.min(Math.PI/2,solo.pitch-(e.clientY-prev.y)*.006))}else if(before>0)solo.zoom=Math.max(.4,Math.min(3,solo.zoom*distance()/before));request()};
   canvas.onpointerup=canvas.onpointercancel=canvas.onlostpointercapture=e=>solo?.points.delete(e.pointerId);
   canvas.onwheel=e=>{e.preventDefault();e.stopPropagation();solo.zoom=Math.max(.4,Math.min(3,solo.zoom*Math.exp(-e.deltaY*.001)));request()};
-  canvas.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','-','0'].includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')solo.yaw-=.1;if(e.key==='ArrowRight')solo.yaw+=.1;if(e.key==='ArrowUp')solo.pitch=Math.min(Math.PI/2,solo.pitch+.1);if(e.key==='ArrowDown')solo.pitch=Math.max(.15,solo.pitch-.1);if(e.key==='+')solo.zoom=Math.min(3,solo.zoom*1.1);if(e.key==='-')solo.zoom=Math.max(.4,solo.zoom/1.1);if(e.key==='0'){solo.yaw=-.55;solo.pitch=.9;solo.zoom=1}request()};
+
   for(const type of ['click','dblclick','mousedown','touchstart','touchmove'])root.addEventListener(type,e=>e.stopPropagation());
  }
  solo.data=data;solo.request();
@@ -120,7 +120,7 @@ function drawSolo(){
  const {canvas,root,data,yaw,pitch,zoom}=solo,w=root.clientWidth,h=root.clientHeight;if(!w||!h)return;
  const dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=w*dpr;canvas.height=h*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.fillStyle='#0c1726';ctx.fillRect(0,0,w,h);
  const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch),radius=Math.max(...data.triangles.flatMap(t=>t.p.map(p=>Math.hypot(...p)))),scale=Math.min(w*.43,h*.36)/Math.max(radius,1e-12)*zoom;
- const project=p=>{const x=p[0]*cy-p[1]*sy,y=p[0]*sy+p[1]*cy;return[w/2+x*scale,h*.47+(y*cp-p[2]*sp)*scale,y*sp+p[2]*cp]};
+ const project=p=>{const x=p[0]*cy-p[1]*sy,y=p[0]*sy+p[1]*cy;return[w/2+solo.panX+x*scale,h*.47+solo.panY+(y*cp-p[2]*sp)*scale,y*sp+p[2]*cp]};
  const tris=data.triangles.map(t=>({p:t.p.map(project),color:t.color}));tris.sort((a,b)=>a.p.reduce((v,p)=>v+p[2],0)-b.p.reduce((v,p)=>v+p[2],0));
  for(const t of tris){ctx.beginPath();t.p.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();const c=t.color;ctx.fillStyle=`rgba(${c[0]*255},${c[1]*255},${c[2]*255},${c[3]})`;ctx.fill()}
  const line=(points,color)=>{ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();for(let i=0;i<points.length;i+=2){const a=project(points[i]),b=project(points[i+1]);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1])}ctx.stroke()};line(data.groundLines||[],'#d8e4df');line(data.lines,'#ffe48a');
@@ -128,6 +128,17 @@ function drawSolo(){
 }
 
 window.JinTerrainVolume={
+ isSolo(){return !!solo},
+ navigate({x=0,y=0,turn=0,tilt=0,zoom=0,dt=0,speed=1,north=false}){
+  if(!solo)return;
+  if(north)solo.yaw=0;
+  const distance=280*dt*speed,length=Math.hypot(x,y);
+  if(length){solo.panX-=x/length*distance;solo.panY-=y/length*distance}
+  solo.yaw-=turn*55*Math.PI/180*dt*speed;
+  solo.pitch=Math.max(0,Math.min(Math.PI/2,solo.pitch+tilt*32*Math.PI/180*dt*speed));
+  solo.zoom=Math.max(.4,Math.min(3,solo.zoom*Math.pow(2,zoom*1.2*dt*speed)));
+  solo.request();
+ },
  update(map,g,parcel,h,isolated=false){const data=build(g,parcel,h,isolated);if(isolated){if(map.getLayer(ID))map.removeLayer(ID);layer=null;showSolo(map,data);return}closeSolo();if(!map.getLayer(ID)){layer=create(map);map.addLayer(layer)}layer.data=data;map.triggerRepaint()},
  clear(map){closeSolo();if(map.getLayer(ID))map.removeLayer(ID);layer=null;map.triggerRepaint()},
  build
