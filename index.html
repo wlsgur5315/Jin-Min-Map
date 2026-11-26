@@ -38,7 +38,7 @@
 .source-card{width:min(560px,92vw);max-height:82vh;overflow:auto;background:#091426;border:1px solid #334155;border-radius:16px;padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.42)}.source-card h2{font-size:16px;margin:0 0 5px}.source-card p{font-size:10px;color:#b5c2d2;line-height:1.55}.source-list{display:grid;gap:8px;margin-top:12px}.source-item{background:#ffffff07;border:1px solid #ffffff10;border-radius:10px;padding:10px}.source-item b{font-size:11px}.source-item div{font-size:9.5px;color:#b7c3d2;line-height:1.5;margin-top:4px}.source-item a{color:#93c5fd;text-decoration:underline;text-underline-offset:2px}.source-label{display:inline-block;margin:7px 5px 0 0;padding:2px 6px;border:1px solid #475569;border-radius:999px;color:#bfdbfe;font-size:8.5px;font-weight:700}.source-credit{padding:6px 8px;border-radius:7px;background:#0b1f32;color:#e2e8f0;font-size:9.5px!important}.source-credit strong{color:#a5f3fc}.source-subtitle{margin:15px 0 0;padding-bottom:5px;border-bottom:1px solid #ffffff20;color:#e2e8f0;font-size:11px;font-weight:800}
 .map-info{position:absolute;z-index:25;left:58px;bottom:112px;max-width:min(360px,62vw);display:none;background:rgba(7,15,29,.9);border:1px solid rgba(255,255,255,.14);border-radius:11px;padding:9px 11px;backdrop-filter:blur(14px);font-size:9.5px;line-height:1.55;box-shadow:0 6px 20px rgba(0,0,0,.25)}.map-info.show{display:block}
 .status.compact{grid-template-columns:1fr auto;font-size:9px}.settings-label{font-size:9px;color:#94a3b8;margin:8px 0 4px}
-.message{bottom:18px}
+.message{bottom:18px;opacity:0;visibility:hidden;transform:translate(-50%,8px);transition:opacity .2s ease,transform .2s ease,visibility .2s}.message.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
 @media(max-width:760px){.drawer{width:min(320px,86vw)}.drawer-toggle.open{right:min(320px,86vw)}.top{max-width:230px}.map-info{left:14px;bottom:164px;max-width:74vw}.info-fab{bottom:118px}.message{bottom:18px}.panel{display:none!important}}
 
 
@@ -813,7 +813,7 @@ async function solarThreeDemoOpen(){
 document.getElementById('solarThreeDemoOpen')?.addEventListener('click',solarThreeDemoOpen);
 document.getElementById('solarThreeDemoClose')?.addEventListener('click',()=>{SOLAR_THREE_STATE?.stop();document.getElementById('solarThreeDemo').style.display='none'});
 
-const APP_VERSION='v2026.11.25-07',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
+const APP_VERSION='v2026.11.26-01',STYLE_URL='https://tiles.openfreemap.org/styles/liberty';
 document.getElementById('appVersion').textContent=APP_VERSION;document.title='Jinju3D Local · '+APP_VERSION;
 const FALLBACK_STYLE={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
 let DISTRICTS=null,CITY=null,MANIFEST=null,selectedDistrict=null,selectedId='',detailReady=false,currentBuildings=null,currentParcels=null,currentParcelGrid=null,smartOsm=true,precisionMode=false,vworldMap=null,scanSourceName=null,scanToken=0,REGISTER_INDEX=null,REGISTER_READY=false,REGISTER_LOADING=null,registerMatchedGis=0;
@@ -876,7 +876,7 @@ setupMapKeyboard();
 
 $('latestBtn').onclick=()=>openLatestVersion();
 function openLatestVersion(){const u=new URL(location.href);u.searchParams.set('v',APP_VERSION.replace(/^v/,'').replace(/\./g,'').replace(/-/g,''));u.searchParams.set('refresh',Date.now().toString());location.href=u.toString()}
-function message(t){$('msg').textContent=t}function loading(v){$('bar').classList.toggle('on',v)}
+let MESSAGE_TIMEOUT=null;function message(t){const el=$('msg');el.textContent=t;el.classList.add('show');clearTimeout(MESSAGE_TIMEOUT);MESSAGE_TIMEOUT=setTimeout(()=>el.classList.remove('show'),3200)}function loading(v){$('bar').classList.toggle('on',v)}
 async function loadJson(url){const sep=url.includes('?')?'&':'?';const r=await fetch(url+sep+'app='+encodeURIComponent(APP_VERSION),{cache:'no-store'});if(!r.ok)throw Error(url);return r.json()}
 async function loadGzipJson(url){const sep=url.includes('?')?'&':'?';const r=await fetch(url+sep+'app='+encodeURIComponent(APP_VERSION),{cache:'no-store'});if(!r.ok)throw Error(url);const ds=new DecompressionStream('gzip');return new Response(r.body.pipeThrough(ds)).json()}
 
